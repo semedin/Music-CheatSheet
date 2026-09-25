@@ -11,7 +11,7 @@ export function parseMidi(bytes){
  while(p<b.length){const tag=b.toString('ascii',p,p+4),len=b.readUInt32BE(p+4);p+=8;const stop=p+len;if(tag!=='MTrk'){p=stop;continue;}let tick=0,running=0;const active=new Map();
   while(p<stop){tick+=vlq();let s=b[p];if(s&128){p++;if(s<240)running=s;}else s=running;
    if(s===255){const type=b[p++],n=vlq();if(type===81)tempos.push(60000000/b.readUIntBE(p,3));p+=n;continue;}
-   if(s===240||s===247){p+=vlq();continue;}
+   if(s===240||s===247){const size=vlq();p+=size;continue;}
    const a=b[p++],v=(s&240)===192||(s&240)===208?0:b[p++],key=(s&15)+':'+a;
    if((s&240)===144&&v){if(!active.has(key))active.set(key,[]);active.get(key).push({n:a,t:tick/ppq,v});}
    else if((s&240)===128||((s&240)===144&&!v)){const start=active.get(key)?.shift();if(start)notes.push({...start,d:(tick/ppq)-start.t});}
@@ -19,7 +19,7 @@ export function parseMidi(bytes){
  }
  return {notes:notes.sort((a,b)=>a.t-b.t||a.n-b.n),beats:Math.ceil(end/4)*4,bpm:tempos[0]||null,ppq};
 }
-const files=fs.readdirSync(path.join(root,'material')).filter(n=>/^Trance_melody_\d+\.mid$/i.test(n)).sort();
-const data=files.map((file,i)=>{const bytes=fs.readFileSync(path.join(root,'material',file));return {id:'source-'+(i+1),file,original:bytes.toString('base64'),...parseMidi(bytes)};});
+const files=fs.readdirSync(path.join(root,'material')).filter(n=>/\.midi?$/i.test(n)).sort((a,b)=>a.localeCompare(b,'en',{numeric:true}));
+const data=files.map(file=>{const bytes=fs.readFileSync(path.join(root,'material',file)),old=file.match(/^Trance_melody_(\d+)\.mid$/i),recent=file.match(/^Melody (\d+)\.mid$/i);return {id:old?'source-'+Number(old[1]):recent?'example-'+Number(recent[1]):'file-'+Buffer.from(file).toString('hex'),file,original:bytes.toString('base64'),...parseMidi(bytes)};});
 if(process.argv.includes('--inspect')){for(const s of data)console.log(s.file,JSON.stringify({notes:s.notes.length,beats:s.beats,bpm:s.bpm,pitches:[...new Set(s.notes.map(n=>n.n))],bars:Array.from({length:s.beats/4},(_,i)=>[...new Set(s.notes.filter(n=>n.t>=i*4&&n.t<(i+1)*4).map(n=>n.n%12))])}));}
-else{const read=n=>fs.readFileSync(path.join(dir,n),'utf8');const html=read('template.html').replace('__CSS__',()=>read('style.css')).replace('__SCRIPT__',()=>`const SOURCES=${JSON.stringify(data)};\n`+['catalog.js','engine.js','audio.js','app.js'].map(read).join('\n'));new vm.Script(html.match(/<script>([\s\S]*?)<\/script>/)[1]);fs.writeFileSync(path.join(root,'trance.html'),html);console.log('Built standalone trance.html: '+Buffer.byteLength(html)+' bytes, '+data.length+' embedded source MIDIs.');}
+else{const read=n=>fs.readFileSync(path.join(dir,n),'utf8');const html=read('template.html').replace('__CSS__',()=>read('style.css')).replace('__SCRIPT__',()=>`const SOURCES=${JSON.stringify(data)};\n`+['catalog.js','development.js','engine.js','audio.js','lab.js','app.js'].map(read).join('\n'));new vm.Script(html.match(/<script>([\s\S]*?)<\/script>/)[1]);fs.writeFileSync(path.join(root,'trance.html'),html);console.log('Built standalone trance.html: '+Buffer.byteLength(html)+' bytes, '+data.length+' embedded source MIDIs.');}

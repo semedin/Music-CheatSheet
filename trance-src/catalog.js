@@ -25,11 +25,13 @@ const SOURCE_INFO=[
 const ORIGINAL_NAMES=['Event horizon','A thousand suns','Terminal velocity','The return','Redshift','After the rain','Saltwater memory','Somewhere, forever','Pressure system','Cold transmission','Rave architecture','Beyond the strobe','Spiral language','Ancient circuitry','Organism','Parallel consciousness'];
 const TREATMENTS=[
  ['original','Original','The source notes, timings and velocities are preserved. New studies use their written motif.'],
- ['lift','Octave lift','Raise the answer by an octave while keeping the first half familiar.'],
- ['space','Call & response','Remove alternating beats in the answer and lengthen what remains.'],
- ['triplet','Triplet orbit','Re-space each bar into an even triplet grid. Hear the same pitches with a different forward pull.'],
- ['slow','Slow burn','Keep every fourth note and lengthen it: a breakdown seed with room for atmosphere.'],
- ['weave','Chord weave','Write a new sixteenth-note line from the displayed chord tones, alternating direction each bar.']
+ ['lift','Rising answer','Keep the opening, then develop the upper melody through rising scale steps and a higher peak. The low pedal stays grounded.'],
+ ['space','Singing reply','Leave rhythmic space in the answer, reverse its contour, then connect it to a held final note.'],
+ ['triplet','Triplet orbit','Carry the upper melodic shape across triplet eighths. Low pedal notes are omitted so the phrase stays audible.'],
+ ['slow','Breakdown theme','Extract the upper voice into longer, singable notes. Hear the phrase without its sixteenth-note machinery.'],
+ ['weave','Chord conversation','A moving upper line connected by stepwise passing notes, with lower chord-tone replies between accents.'],
+ ['sequence','Diatonic sequence','Move successive two-bar melodic cells through the scale, keeping their rhythm and reconnecting to the final tonic.'],
+ ['resolve','Cadence rewrite','Rewrite the last two bars as a dominant-to-tonic answer. In minor, the raised seventh pulls home.']
 ];
 const SOUNDS=[
  {id:'supersaw',name:'Horizon supersaw',type:'Lead',tag:'Wide / euphoric',wave:'sawtooth',voices:5,detune:13,cut:6500,a:.012,r:.20,s:.65,desc:'The expansive lead: a centred saw surrounded by quieter detuned voices.',steps:['Start with a saw, 7 unison voices and modest detune (about 8–18 cents). Keep a solid centre voice.','Use a low-pass around 5–9 kHz. Amp: attack 5–15 ms, decay 400 ms, sustain 65%, release 150–250 ms.','High-pass the stereo support layer near 180 Hz; add filtered dotted-eighth delay and a long, quiet reverb.'],move:'Open the filter over 16 bars. Increase reverb in the break, then pull it back for the drop.',fix:'If the hook feels blurry, reduce detune and release before adding another layer.'},

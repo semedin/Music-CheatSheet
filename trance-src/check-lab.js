@@ -1,0 +1,16 @@
+  changeStudy('example-12-answer');
+  const opening=JSON.stringify(sketch.melody.filter(n=>n.t<8)),firstAnswer=JSON.stringify(sketch.melody);
+  click('#newAnswer');assert(current().settings.seed===1,'Answer button changes seed');assert(JSON.stringify(sketch.melody)!==firstAnswer,'Answer changes actual pitches');assert(JSON.stringify(sketch.melody.filter(n=>n.t<8))===opening,'Opening motif remains exact');
+  click('#undoAnswer');assert(JSON.stringify(sketch.melody)===firstAnswer,'Undo restores exact phrase');
+  set('phraseLength','16');assert(sketch.beats===64&&document.querySelectorAll('[data-phrase-bar]').length===16,'16-bar composition and overview');
+  set('arcSelect','valley');assert(current().settings.arc==='valley','Melodic shape selector');const shapeBefore=JSON.stringify(sketch.melody);set('movement','4');assert(JSON.stringify(sketch.melody)!==shapeBefore,'Movement changes melody pitches');
+  set('densitySelect','flow');assert(current().notes.length>80&&current().settings.density==='flow','Rhythm changes note placement');
+  set('rollZoom','all');assert($('rollMeta').textContent.includes('16'),'Full phrase visible');set('rollZoom','4');click('#nextBars');assert(activeWindow().start===16&&$('rollMeta').textContent.includes('5'),'Piano roll pages to bars 5-8');click('#prevBars');assert(activeWindow().start===0,'Previous bars');
+  click('[data-phrase-bar="12"]');assert(activeWindow().start===48,'Overview jumps to last four bars');click('#loopWindow');assert(state.loop&&activeListening().beats===16,'Loop view previews four bars');assert(sketch.beats===64,'Loop view preserves the complete export');
+  set('listenMode','upper');assert(!listenMutes().chords&&listenMutes().melody,'Upper line listening isolates melody');assert($('laneButtons').querySelector('[data-part="chords"]').disabled,'Solo disables mix toggles');
+  set('listenMode','chordTop');assert(activeListening().melody.length===4,'Chord top line listening mode');set('listenMode','full');click('#loopWindow');
+  click('#resetDevelopment');assert(current().beats===32&&current().settings.arc==='arch'&&current().settings.seed===0,'Reset returns to source-based default');
+  click('[data-family="example-12"]');assert(current().source&&sketch.melody.length===508,'Source comparison retains all 508 notes');assert($('developmentControls').disabled,'Source is protected from generator controls');
+  click('[data-family="example-12-ascension"]');assert(!current().source&&sketch.beats===64,'Source family opens related 16-bar development');
+  click('#newAnswer');const savedCustom=JSON.stringify(state.dev);save();state.dev={};restore();assert(JSON.stringify(state.dev)===savedCustom,'Custom development settings restore');
+  set('listenMode','full');state.viewBars='4';state.viewStart=0;state.loop=false;changeStudy('source-1');

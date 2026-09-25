@@ -1,5 +1,5 @@
-[29812:30736:0925/144922.739:ERROR:components\os_crypt\async\browser\os_crypt_win.cc:63] Failed to encrypt: Määritettyä tiedostoa ei löydy. (0x2)
-[29812:7376:0925/144922.759:ERROR:chrome\installer\util\google_update_settings_win.cc:270] Failed opening key Software\Google\Update\ClientStateMedium\{8A69D345-D564-463c-AFF1-A69D9E530F96} to set usagestats; result: 5
-[29812:9580:0925/144922.834:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
-[29812:9456:0925/144922.835:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
-140959 bytes written to file C:\Users\jonat\OneDrive\Tiedostot\Music CheatSheet\trance-src\qa\1440-studio.png
+[3240:29128:0925/154525.641:ERROR:components\os_crypt\async\browser\os_crypt_win.cc:63] Failed to encrypt: Määritettyä tiedostoa ei löydy. (0x2)
+[3240:7468:0925/154525.666:ERROR:chrome\installer\util\google_update_settings_win.cc:270] Failed opening key Software\Google\Update\ClientStateMedium\{8A69D345-D564-463c-AFF1-A69D9E530F96} to set usagestats; result: 5
+[3240:8248:0925/154525.735:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
+[3240:23164:0925/154525.735:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
+209779 bytes written to file C:\Users\jonat\OneDrive\Tiedostot\Music CheatSheet\trance-src\qa\1440-studio.png
