@@ -9,7 +9,7 @@ synthesis. There is no server, account, install or package manager.
 
 1. Keep every file in **one folder**. Pages link to each other by file name.
 2. Open **[`index.html`](index.html)**, the home page. It lists every page, the notes and the MIDI packs, with search (<kbd>/</kbd>).
-3. Every page has the same top bar: **Home · Motif Studio · V2 Studio · Trance · Drums · Rumble · Sound design · Field guides**.
+3. Every page has the same top bar: **Home · Motif Studio · V2 Studio · Trance · X-Ray · Drums · Rumble · Sound design · Field guides**.
 
 Use headphones or monitors: several labs work below 150 Hz, where laptop speakers are silent.
 
@@ -23,6 +23,12 @@ Use headphones or monitors: several labs work below 150 Hz, where laptop speaker
 | [`trance.html`](trance.html) | **Trance, beyond the ordinary.** All 12 supplied melodies plus 16 studies across eight trance styles, six treatments each (168 sketches) with chords, bass and drums; 24 artist perspectives, 16 sound recipes, arrangement maps, MIDI and ZIP export. | [TRANCE.md](TRANCE.md) | `trance-src/` |
 | [`studio-v2.html`](studio-v2.html) | **V2 Studio.** 1,760 recipes across 24 genres and 32 artist profiles; five coordinated parts, 48 instruments, 16 drum kits. | [VERSION-2.md](VERSION-2.md), [ARTIST-STUDIES.md](ARTIST-STUDIES.md) | `v2-src/` |
 | [`melody-v2.html`](melody-v2.html) · [`chords-v2.html`](chords-v2.html) · [`bass-v2.html`](bass-v2.html) | The V2 melody, harmony and bass workbenches. | [VERSION-2.md](VERSION-2.md) | `v2-src/` |
+
+### Listen & analyse
+
+| Page | What it is | Notes | Built from |
+|---|---|---|---|
+| [`xray.html`](xray.html) | **X-Ray, look inside a reference track.** Drop in an MP3, WAV, FLAC or AAC. Get tempo, key, the arrangement in bars, drum pattern and swing, chords, kick note, LUFS and tonal balance; A/B it loudness-matched against your mix; export a skeleton MIDI for Ableton. | [XRAY.md](XRAY.md) | hand-edited (tested by `xray-tests.mjs`) |
 
 ### Drums & low end
 
@@ -72,7 +78,7 @@ site/hub.css            ← styles for index.html
 
 *-src/                  ← sources for the generated pages (see table below)
 material/               ← source MIDI for trance.html
-*.md                    ← release notes and handbooks
+*.md                    ← release notes, handbooks and the TODO list of pages to build
 ```
 
 **The home page and top bar come from one list.** `site/catalog.mjs` is the only place that
@@ -115,6 +121,7 @@ node v2-src/test.mjs             # V2 studios
 node v3-src/test.mjs             # V3 Motif Studio engine
 node drum-library-src/test.mjs   # drum studio
 node rumble-tests.mjs            # rumble lab
+node xray-tests.mjs              # X-Ray analysis engine against known answers
 node trance-src/test.mjs         # trance room
 ```
 
@@ -137,6 +144,7 @@ node trance-src/test.mjs         # trance room
 
 ## Release history
 
+- **X-Ray**: a reference-track analyser with MP3 support, A/B against your mix and a skeleton MIDI export. See [XRAY.md](XRAY.md).
 - **Trance**: a standalone trance writing room and a 168-sketch MIDI pack. See [TRANCE.md](TRANCE.md).
 - **V3, Motif Studio**: motif-first phrase writing, 69 styles, 120 artist perspectives and two new MIDI packs. See [VERSION-3.md](VERSION-3.md).
 - **Sound Design V2, drum studio, Rumble**: standalone labs with their own notes ([SOUND-DESIGN-V2.md](SOUND-DESIGN-V2.md), [DRUM-STUDIO.md](DRUM-STUDIO.md), [RUMBLE.md](RUMBLE.md)).

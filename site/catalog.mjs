@@ -30,6 +30,16 @@ export const SECTIONS = [
     ],
   },
   {
+    id: 'analyse',
+    title: 'Listen & analyse',
+    blurb: 'Take a reference track apart: tempo, key, arrangement, groove, harmony, low end and loudness, measured in your browser.',
+    pages: [
+      {file: 'xray.html', title: 'X-Ray — look inside a reference track', edition: 'New',
+        text: 'Drop in an MP3, WAV, FLAC or AAC. Get the arrangement in bars, drum pattern and swing, chords, kick note, LUFS and tonal balance; A/B it against your mix; export a skeleton MIDI for Ableton.',
+        doc: 'XRAY.md'},
+    ],
+  },
+  {
     id: 'drums',
     title: 'Drums & low end',
     blurb: 'Rhythm, kick and bass.',
@@ -107,6 +117,7 @@ export const DOCS = [
   {file: 'VERSION-2.md', title: 'Fieldwork V2 notes', text: 'V2 workflow, catalog structure and Ableton setup.'},
   {file: 'ARTIST-STUDIES.md', title: 'Artist studies', text: 'The V2 artist roster, sound bank and MIDI pack.'},
   {file: 'TRANCE.md', title: 'Trance notes', text: 'Trance room contents, exports and validation.'},
+  {file: 'XRAY.md', title: 'X-Ray notes', text: 'What X-Ray measures, how, and how it was validated.'},
   {file: 'DRUM-STUDIO.md', title: 'Drum studio notes', text: 'The Kit: workflow and validation.'},
   {file: 'RUMBLE.md', title: 'Rumble notes', text: 'Rumble lab workflow and validation limits.'},
   {file: 'SOUND-DESIGN-V2.md', title: 'Sound Design V2 notes', text: 'Scope, start-here steps and validation.'},
@@ -128,6 +139,7 @@ export const NAV = [
   {file: 'fieldwork-v3.html', label: 'Motif Studio'},
   {file: 'studio-v2.html', label: 'V2 Studio', match: ['melody-v2.html', 'chords-v2.html', 'bass-v2.html']},
   {file: 'trance.html', label: 'Trance'},
+  {file: 'xray.html', label: 'X-Ray'},
   {file: 'drum-library.html', label: 'Drums'},
   {file: 'rumble.html', label: 'Rumble'},
   {file: 'serum-v2.html', label: 'Sound design', match: ['serum.html', 'patch-lab.html', 'sampling.html']},

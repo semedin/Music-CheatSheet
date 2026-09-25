@@ -16,7 +16,6 @@ The Move). It has almost nothing on:
 |---|---|
 | Mixing, space (reverb/delay), loudness | Users can write an idea here but can't finish it. |
 | Ear training | Every guide says "listen for it" but nothing teaches you to hear it. |
-| Analysing a reference track | "Make it sound like X" has no tool. |
 | Performance and jamming | Everything is step-edited; nothing is played live. |
 | Vocals | Mentioned in The Cut, never taught. |
 | Genre rooms beyond trance and disco house | Garage, breaks, acid, dub techno and amapiano appear only as rows in the Pattern Bank. |
@@ -78,7 +77,7 @@ Arc's Transitions lab covers *where* transitions go. This page covers the sounds
 
 ---
 
-## Tier 2: train the ear, read the reference
+## Tier 2: train the ear
 
 ### 5. `ear.html` — **Ear Gym** · five minutes a day, electronic music only
 Ear training built for this genre, not for conservatory interval drills.
@@ -90,17 +89,9 @@ Ear training built for this genre, not for conservatory interval drills.
   phase lab, Groove's swing section, Voicing's chord shapes).
 - **Level exams** (Bronze to Club-ready), unlocked by accuracy over the last 50 answers.
 
-### 6. `xray.html` — **X-Ray** · look inside a reference track
-Drop in a track from your own library. Analysis runs locally and nothing is uploaded.
-- It detects **BPM** (onset autocorrelation), **key** (chromagram plus key profiles, shown on the
-  Camelot wheel) and **section boundaries** (a novelty curve).
-- It draws the **arrangement map in bars**: intro 32, break 16, drop 32… plus energy, band
-  loudness (sub/low/mid/high) and stereo width by band over time.
-- **Kick-vs-bass ratio**, **hat brightness** and **loudness**, compared side by side with your
-  own bounce.
-- **Steal the structure.** Export the section map as a MIDI file with one named, empty clip per
-  section, so you can drag it into Live's arrangement as a skeleton.
-- **Loop A–B** with a 16th-note grid overlay, so you can transcribe a part against it.
+### 6. `xray.html` — **X-Ray** · look inside a reference track ✅ built
+Shipped: see [XRAY.md](XRAY.md). The next steps for it: tempo maps for live-played tracks, a
+per-section key-change detector, and `.als` export once the folder-wide Live Set exporter exists.
 
 ---
 
