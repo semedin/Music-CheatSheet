@@ -1,0 +1,4 @@
+[29568:30876:0925/145019.895:ERROR:components\os_crypt\async\browser\os_crypt_win.cc:63] Failed to encrypt: Määritettyä tiedostoa ei löydy. (0x2)
+[29568:25392:0925/145019.915:ERROR:chrome\installer\util\google_update_settings_win.cc:270] Failed opening key Software\Google\Update\ClientStateMedium\{8A69D345-D564-463c-AFF1-A69D9E530F96} to set usagestats; result: 5
+[29568:32596:0925/145019.989:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
+[29568:13688:0925/145019.993:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.

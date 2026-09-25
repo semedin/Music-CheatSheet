@@ -1,0 +1,5 @@
+[17248:33084:0925/144805.664:ERROR:components\os_crypt\async\browser\os_crypt_win.cc:63] Failed to encrypt: Määritettyä tiedostoa ei löydy. (0x2)
+[17248:32100:0925/144805.685:ERROR:chrome\installer\util\google_update_settings_win.cc:270] Failed opening key Software\Google\Update\ClientStateMedium\{8A69D345-D564-463c-AFF1-A69D9E530F96} to set usagestats; result: 5
+[17248:31888:0925/144805.762:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
+[17248:11816:0925/144805.772:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
+134320 bytes written to file C:\Users\jonat\OneDrive\Tiedostot\Music CheatSheet\trance-src\qa\390.png

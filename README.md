@@ -20,7 +20,7 @@ Use headphones or monitors: several labs work below 150 Hz, where laptop speaker
 | Page | What it is | Notes | Built from |
 |---|---|---|---|
 | [`fieldwork-v3.html`](fieldwork-v3.html) | **Motif Studio (V3, latest).** Write a two-bar motif, then grow it into an 8- or 16-bar phrase. 69 styles, 120 artist perspectives, 59 preview voices, 19 drum kits; MIDI and WAV export. | [VERSION-3.md](VERSION-3.md) | `v3-src/` |
-| `trance.html` | **Trance melody workbench** built around the twelve source melodies in `material/`. | — | `trance-src/` |
+| [`trance.html`](trance.html) | **Trance, beyond the ordinary.** All 12 supplied melodies plus 16 studies across eight trance styles, six treatments each (168 sketches) with chords, bass and drums; 24 artist perspectives, 16 sound recipes, arrangement maps, MIDI and ZIP export. | [TRANCE.md](TRANCE.md) | `trance-src/` |
 | [`studio-v2.html`](studio-v2.html) | **V2 Studio.** 1,760 recipes across 24 genres and 32 artist profiles; five coordinated parts, 48 instruments, 16 drum kits. | [VERSION-2.md](VERSION-2.md), [ARTIST-STUDIES.md](ARTIST-STUDIES.md) | `v2-src/` |
 | [`melody-v2.html`](melody-v2.html) · [`chords-v2.html`](chords-v2.html) · [`bass-v2.html`](bass-v2.html) | The V2 melody, harmony and bass workbenches. | [VERSION-2.md](VERSION-2.md) | `v2-src/` |
 
@@ -57,6 +57,7 @@ The original V1 index, with its "I have a problem" table and reading paths, is
 |---|---|
 | [`Fieldwork-V3-1104-Style-Studies.zip`](Fieldwork-V3-1104-Style-Studies.zip) | 1,104 MIDI files: 552 original ideas, each as melody + full sketch |
 | [`Fieldwork-V3-960-Artist-Studies.zip`](Fieldwork-V3-960-Artist-Studies.zip) | 960 MIDI files: 480 artist-perspective ideas, melody + full sketch |
+| [`Fieldwork-Trance-168-Sketches.zip`](Fieldwork-Trance-168-Sketches.zip) | 168 four-part trance sketches |
 | [`Fieldwork-V2-504-MIDI-Library.zip`](Fieldwork-V2-504-MIDI-Library.zip) | 480 genre clips + 24 five-part sketches |
 | [`Fieldwork-V2-Artist-Studies-1312-MIDI.zip`](Fieldwork-V2-Artist-Studies-1312-MIDI.zip) | 1,280 clips + 32 five-part sketches |
 
@@ -90,7 +91,7 @@ folder yet".
 | `fieldwork-v3.html` | `v3-src/` | `node v3-src/build.mjs` (`--pack` also rebuilds the V3 zips) |
 | `serum-v2.html` | `sound-design-src/` | `node sound-design-src/build.mjs` |
 | `drum-library.html` | `drum-library-src/` | `node drum-library-src/build.mjs` |
-| `trance.html` | `trance-src/` + `material/` | `node trance-src/build.mjs` |
+| `trance.html` | `trance-src/` + `material/` | `node trance-src/build.mjs` (`node trance-src/pack.mjs` rebuilds the zip) |
 | `index.html` + top bar everywhere | `site/` | `node site/build.mjs` |
 
 Every other `.html` file is edited directly.
@@ -114,10 +115,11 @@ node v2-src/test.mjs             # V2 studios
 node v3-src/test.mjs             # V3 Motif Studio engine
 node drum-library-src/test.mjs   # drum studio
 node rumble-tests.mjs            # rumble lab
+node trance-src/test.mjs         # trance room
 ```
 
-`v3-src/browser-check.mjs`, `drum-library-src/browser-check.mjs` and
-`sound-design-src/check.mjs` drive a real browser and write reports into each `qa/` folder.
+`v3-src/browser-check.mjs`, `drum-library-src/browser-check.mjs`,
+`sound-design-src/check.mjs` and `trance-src/check.mjs` drive a real browser and write reports into each `qa/` folder.
 
 ## Conventions
 
@@ -127,7 +129,7 @@ node rumble-tests.mjs            # rumble lab
   links need a connection.
 - **MIDI export** is written byte by byte in JavaScript and downloaded as a `Blob`, so it
   works from `file://`.
-- **Saving.** The V2 Studio, drum studio, Rumble and Sound Design V2 keep sessions, notes or
+- **Saving.** The V2 Studio, drum studio, Rumble, Sound Design V2 and Trance keep sessions, notes or
   favourites in `localStorage`, and several studios export/import session files. The V1
   guides keep everything in memory only.
 - **Browsers.** Everything works in current Chrome, Edge, Firefox and Safari. Audio starts
@@ -135,6 +137,7 @@ node rumble-tests.mjs            # rumble lab
 
 ## Release history
 
+- **Trance**: a standalone trance writing room and a 168-sketch MIDI pack. See [TRANCE.md](TRANCE.md).
 - **V3, Motif Studio**: motif-first phrase writing, 69 styles, 120 artist perspectives and two new MIDI packs. See [VERSION-3.md](VERSION-3.md).
 - **Sound Design V2, drum studio, Rumble**: standalone labs with their own notes ([SOUND-DESIGN-V2.md](SOUND-DESIGN-V2.md), [DRUM-STUDIO.md](DRUM-STUDIO.md), [RUMBLE.md](RUMBLE.md)).
 - **V2.1, Artist Studies**: 1,280 artist-inspired recipes, 48 instruments and 16 drum kits. See [ARTIST-STUDIES.md](ARTIST-STUDIES.md).

@@ -15,9 +15,9 @@ export const SECTIONS = [
       {file: 'fieldwork-v3.html', title: 'Motif Studio', edition: 'V3', badge: 'Latest',
         text: 'Write a two-bar motif, then grow it into an 8- or 16-bar phrase. 69 styles, 120 artist perspectives, 59 preview voices and 19 drum kits.',
         doc: 'VERSION-3.md', src: 'v3-src'},
-      {file: 'trance.html', title: 'Trance', edition: 'New',
-        text: 'Trance melody workbench built around twelve source MIDI melodies.',
-        src: 'trance-src'},
+      {file: 'trance.html', title: 'Trance — beyond the ordinary', edition: 'New',
+        text: '12 supplied melodies plus 16 studies across eight trance styles: 168 arranged sketches with chords, bass and drums, 24 artist perspectives and 16 sound recipes.',
+        doc: 'TRANCE.md', src: 'trance-src'},
       {file: 'studio-v2.html', title: 'V2 Studio', edition: 'V2',
         text: '1,760 MIDI recipes across 24 genres and 32 artist profiles, with five coordinated parts, 48 instruments and 16 drum kits.',
         doc: 'VERSION-2.md', src: 'v2-src'},
@@ -105,6 +105,7 @@ export const DOCS = [
   {file: 'VERSION-3.md', title: 'Fieldwork V3 notes', text: 'Motif Studio workflow, design decisions and limits.'},
   {file: 'VERSION-2.md', title: 'Fieldwork V2 notes', text: 'V2 workflow, catalog structure and Ableton setup.'},
   {file: 'ARTIST-STUDIES.md', title: 'Artist studies', text: 'The V2 artist roster, sound bank and MIDI pack.'},
+  {file: 'TRANCE.md', title: 'Trance notes', text: 'Trance room contents, exports and validation.'},
   {file: 'DRUM-STUDIO.md', title: 'Drum studio notes', text: 'The Kit: workflow and validation.'},
   {file: 'RUMBLE.md', title: 'Rumble notes', text: 'Rumble lab workflow and validation limits.'},
   {file: 'SOUND-DESIGN-V2.md', title: 'Sound Design V2 notes', text: 'Scope, start-here steps and validation.'},
@@ -115,6 +116,7 @@ export const DOCS = [
 export const DOWNLOADS = [
   {file: 'Fieldwork-V3-1104-Style-Studies.zip', title: 'V3 style studies', text: '1,104 MIDI files: 552 ideas, melody + full sketch.'},
   {file: 'Fieldwork-V3-960-Artist-Studies.zip', title: 'V3 artist studies', text: '960 MIDI files: 480 ideas, melody + full sketch.'},
+  {file: 'Fieldwork-Trance-168-Sketches.zip', title: 'Trance sketches', text: '168 four-part trance sketches: 16 studies × six treatments + 12 sources.'},
   {file: 'Fieldwork-V2-504-MIDI-Library.zip', title: 'V2 MIDI library', text: '480 genre clips + 24 five-part sketches.'},
   {file: 'Fieldwork-V2-Artist-Studies-1312-MIDI.zip', title: 'V2 artist studies', text: '1,280 clips + 32 five-part sketches.'},
 ];
