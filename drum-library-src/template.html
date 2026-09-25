@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e8e5db">
+<title>The Kit — Fieldwork drum studio</title>
+<meta name="description" content="48 playable drum studies, 192 pattern takes, an editable sequencer and a Splice sound-finding guide.">
+<style>/* STUDIO_STYLES */</style>
+</head>
+<body>
+<a class="skip-link" href="#seq">Skip to drum studio</a>
+<header class="sitehead wrap"><a class="wordmark" href="index.html"><span class="brand-icon">f.</span> FIELDWORK <span class="edition">/ INSTRUMENTS & IDEAS</span></a><nav aria-label="Site"><a href="rumble.html">Low-end lab ↗</a><a href="index.html">Back to studio ↗</a></nav></header>
+<main>
+<section class="hero wrap" aria-labelledby="title">
+ <div class="hero-copy"><div class="eyebrow"><span class="live-dot"></span> FIELD GUIDE 03 / THE DRUM STUDIO</div>
+ <h1 id="title">Small hits.<br><em>Big movement.</em></h1>
+ <p class="sub">Find the pocket. Build the kit. Make it yours.<br>A playable atlas of drum patterns, from dusty house to broken rhythms — with the sounds to search for next.</p>
+ <div class="hero-actions"><a class="primary" href="#library">Explore the patterns <span>↗</span></a><button class="text-button" id="surprise">Surprise me ↗</button></div>
+ <div class="hero-stats"><div><b>48</b><span>STYLE STUDIES</span></div><div><b>192</b><span>PATTERN TAKES</span></div><div><b>12</b><span>DRUM LANES</span></div><div><b>∞</b><span>POSSIBILITIES</span></div></div>
+ </div>
+ <div class="hero-art" aria-hidden="true"><div class="art-top"><span>THE KIT / RHYTHM SYSTEM</span><span>FW—03</span></div><div class="art-title">the kit<span>®</span></div><div class="art-rings"><i></i><i></i><i></i><i></i><span>FIND YOUR<br>FREQUENCY.</span></div><div class="art-pads"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="art-bottom"><span>12 VOICES · ONE GOOD IDEA</span><span>● ● ○</span></div></div>
+</section>
+<div class="section-nav"><nav class="wrap" aria-label="On this page"><a href="#seq">01 <b>Playground</b></a><a href="#library">02 <b>Pattern library</b></a><a href="#morph">03 <b>Morph lab</b></a><a href="#roles">04 <b>Field notes</b></a><span>MADE TO BE PLAYED.</span></nav></div>
+<div class="wrap">
+<section class="sec" id="seq" aria-labelledby="studioTitle">
+ <div class="section-heading"><div><div class="eyebrow">01 / THE PLAYGROUND</div><h2 id="studioTitle">Your next groove starts here.</h2></div><p>Pick a pattern. Move a few hits.<br>Hear what makes it move.</p></div>
+ <div class="workbench">
+ <div class="instrument">
+  <div class="instrument-head"><div><span class="eyebrow" id="patternIndex">STUDY 01 / 48</span><h3 id="patName">Classic house</h3></div><button class="star" id="favourite" aria-label="Save Classic house to favourites" aria-pressed="false">☆</button><span class="tag" id="patFamily">House</span></div>
+  <div class="transport"><button class="tbtn" id="playBtn" aria-pressed="false">▶ PLAY</button><label class="knob">BPM <input type="number" id="bpm" min="65" max="190" value="124"></label><label class="knob">SWING <input type="range" id="swing" min="50" max="70" value="52"><b id="swingv">52%</b></label><label class="knob">FEEL <input type="range" id="human" min="0" max="20" value="0"><b id="humanv">0ms</b></label><label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="65"><b id="volv">65</b></label></div>
+  <div class="instrument-options"><label>TAKE <select id="take"><option>Foundation</option><option>Stripped</option><option>Displaced</option><option>Turnaround</option></select></label><label>KIT <select id="kit"></select></label><span id="nowPlaying" aria-live="polite">Ready when you are.</span></div>
+  <p class="take-hint" id="takeHint">Foundation · The full style study. Start here, then make it yours.</p>
+  <div class="seqwrap" tabindex="0" role="region" aria-label="Two-bar drum sequencer. Scroll horizontally on small screens."><div class="seq"><div class="lanecol" id="laneCol"></div><div class="stepcol" id="stepCol"></div></div></div>
+  <div class="grid-key"><span><i class="key-hit"></i>HIT</span><span><i class="key-accent"></i>ACCENT</span><span><i class="key-ghost"></i>GHOST</span><span>Click to cycle · drag to paint</span><span>M mute / S solo / ~ swing</span></div>
+  <div class="toolbar"><button class="tool" id="undo" disabled>↶ Undo</button><button class="tool" id="redo" disabled>↷ Redo</button><span class="sep"></span><button class="tool" id="varyBtn">✧ Vary texture</button><button class="tool" id="fillBtn">Add fill</button><button class="tool" id="dblBtn">Bar 1 → 2</button><button class="tool" id="resetPattern">Reset take</button><button class="tool" id="clearAll">Clear</button></div>
+  <details class="advanced"><summary>More tools <span>Euclidean rhythm · lane rotation · mix</span></summary><div class="advanced-controls"><label>Lane <select id="euLane"></select></label><label>Hits / 16 <input type="number" id="euHits" min="1" max="16" value="5"></label><label>Rotate <input type="number" id="euRot" min="0" max="15" value="0"></label><button class="tool" id="euGo">Apply Euclid</button><button class="tool" id="rotateLane">Shift lane →</button><label>Lane level <input type="range" id="laneLevel" min="0" max="100" value="100"><output id="laneLevelV">100%</output></label></div></details>
+  <div class="export-row"><button class="primary" id="exportMidi">↓ Export MIDI</button><button class="tool" id="saveSession">Save session</button><button class="tool" id="restoreSession">Restore saved</button><button class="tool" id="exportSession">↓ Session file</button><button class="tool" id="importSession">↑ Open session</button><input type="file" id="sessionFile" accept=".json,application/json" hidden></div>
+  <p class="instrument-note">2 bars · 4/4 · sixteenth-note grid · synthesized previews. MIDI includes swing, velocities and the audible mix. Human timing is preview-only.</p>
+ </div>
+ <aside class="sound-panel" aria-labelledby="soundTitle"><div class="eyebrow">THE SOUND PALETTE <span>↗</span></div><h3 id="soundTitle">Right rhythm.<br>Right sounds.</h3><p id="patternDescription"></p><div class="listen-for"><span class="eyebrow">LISTEN FOR</span><p id="patternTip"></p></div><div class="sound-heading"><h4>Find your kit on Splice</h4><button class="text-button" id="copyKit">Copy all ↗</button></div><p class="sound-help">Start with a phrase below. Filter to <b>one-shots</b>, then try fewer keywords if results are too narrow.</p><div class="sound-list" id="soundList"></div><a class="source-link" href="https://support.splice.com/en/articles/8652594-finding-sounds" target="_blank" rel="noopener noreferrer">Splice search & filter guide ↗</a><p class="sound-foot">Search ideas, not included samples. Browser kits are synthesized sketches. Use Splice to audition your own final sounds.</p></aside>
+ </div>
+</section>
+<section class="sec" id="library" aria-labelledby="libraryTitle">
+ <div class="section-heading"><div><div class="eyebrow">02 / THE PATTERN ATLAS</div><h2 id="libraryTitle">Different scenes. Shared DNA.</h2></div><p>48 starting points, not rules.<br>Four takes on every groove.</p></div>
+ <div class="library-controls"><label class="search-field"><span>⌕</span><input id="search" type="search" placeholder="Search a style, feel or sound…" aria-label="Search styles, feel or sounds"><kbd>/</kbd></label><label class="sort-label">SORT <select id="sort"><option value="curated">Curated</option><option value="tempo">Tempo ↑</option><option value="name">A–Z</option><option value="density">Density ↑</option></select></label><button class="tool" id="onlyFavourites" aria-pressed="false">☆ Favourites</button></div>
+ <div class="libfilter" id="libFilter" aria-label="Filter by family"></div><div class="result-row"><span id="resultCount" role="status"></span><button class="text-button" id="clearFilters">Reset filters ↺</button></div><div class="grid3" id="libGrid"></div><div id="emptyLibrary" class="empty" hidden><h3>No grooves in this pocket.</h3><p>Try a broader search or reset your filters.</p></div><button class="tool show-more" id="showMore">Show more patterns ↓</button>
+</section>
+<section class="sec" id="morph" aria-labelledby="morphTitle"><div class="section-heading"><div><div class="eyebrow">03 / CROSS-POLLINATION</div><h2 id="morphTitle">Somewhere between two grooves.</h2></div><p>Change the skeleton first.<br>Then bring in the detail.</p></div><div class="morph-panel"><div><p class="morph-intro">What happens when house learns to skip?</p><p>Choose two foundations and move through their differences. Kick, snare, clap and open-hat changes come first. Send your hybrid to the playground to hear it.</p></div><div><div class="morphrow"><label class="mslot"><span class="eyebrow">FROM / A</span><select id="selA"></select></label><button class="swap" id="swapAB" aria-label="Swap morph patterns">⇄</button><label class="mslot"><span class="eyebrow">TO / B</span><select id="selB"></select></label></div><div class="diffbar"><output id="diffN">0 changes</output><input type="range" id="morphSl" min="0" max="100" value="0" aria-label="Morph between patterns"><output id="morphPercent">0%</output></div><div class="toolbar"><button class="tool" id="morphStruct">Structure boundary</button><button class="primary" id="morphLoad">Send to playground ↗</button></div><div class="difflist" id="diffList"></div></div></div></section>
+<details class="field-notes"><summary><span><span class="eyebrow">04 / KEEP LEARNING</span><strong>The decisions behind the drums.</strong></span><span class="notes-plus">+</span></summary><p>Roles, rhythmic vocabulary and a tempo reference. Expand a concept, then try it in the playground.</p><!-- REFERENCE --></details>
+<footer class="foot"><div><span class="wordmark">FIELDWORK / THE KIT</span><p>Start with a kick and one good idea.</p></div><p>Original teaching patterns · no sample downloads required<br><a href="index.html">Back to the studio ↗</a> · <a href="rumble.html">Explore the low end ↗</a></p></footer>
+</div>
+</main><div id="toast" class="toast" role="status" aria-live="polite"></div>
+<dialog id="copyDialog"><form method="dialog"><h3>Your sound search</h3><p>Copy the text below into Splice.</p><textarea id="copyText" rows="9" readonly aria-label="Sound search phrases"></textarea><button class="primary">Done</button></form></dialog>
+<script>/* STUDIO_SCRIPT */</script>
+</body></html>

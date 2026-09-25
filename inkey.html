@@ -1,0 +1,938 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>In Key — transposing samples, and by how much</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E2DED2;--panel:#F2EFE6;--panel-2:#EAE5D8;
+  --ink:#191713;--ink-2:#635C50;--ink-3:#8C8474;--line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32;--b2:#FF8A2B;--b3:#FFC531;--b4:#F2EDE0;--cy:#3FD0C9;--vi:#A78BFA;--gr:#5FBF52;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1260px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(46px,11.5vw,124px);line-height:.82;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:62ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+.transport{position:sticky;top:0;z-index:95;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:11px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;background:var(--b1);color:#fff;
+  border:0;border-radius:3px;padding:9px 14px;cursor:pointer;white-space:nowrap}
+.tbtn.ghost{background:transparent;color:var(--b4);border:1px solid rgba(242,237,224,.35)}
+.tbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.tbtn:disabled{opacity:.4;cursor:default}
+.tbtn:hover:not(:disabled){filter:brightness(1.12)}
+.knob{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.66)}
+.knob input[type=range]{width:74px;accent-color:var(--b2)}
+.knob b{color:var(--b4);min-width:34px;display:inline-block}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:32ch}
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 0}
+.nav a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;
+  color:var(--ink-2);border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--panel)}
+.nav a:hover{border-color:var(--ink);color:var(--ink)}
+.sec{padding:48px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:20px}
+.sec-head h2{font-size:clamp(26px,4.4vw,42px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:68ch;margin-top:12px;color:var(--ink-2)}
+.lab{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:20px}
+.tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.11em;padding:3px 7px;border-radius:2px;
+  background:var(--ink);color:var(--b4);text-transform:uppercase;white-space:nowrap}
+
+/* the answer */
+.answer{background:var(--ink);border-radius:5px;padding:18px 20px;color:var(--b4);margin-bottom:14px;
+  display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+@media(max-width:760px){.answer{grid-template-columns:1fr}}
+.bignum{font-family:var(--display);font-size:clamp(46px,9vw,86px);font-weight:800;line-height:.86;color:var(--b3);white-space:nowrap}
+.bignum.zero{color:var(--gr)}
+.bignum small{display:block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;
+  color:rgba(242,237,224,.55);text-transform:uppercase;margin-top:7px}
+.answer .exp{font-size:14.5px;color:rgba(242,237,224,.82);margin:0}
+.answer .exp b{color:var(--b3)}
+.answer .exp .g{color:var(--gr)} .answer .exp .r{color:var(--b1)}
+
+.pickers{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end;margin-bottom:14px}
+@media(max-width:760px){.pickers{grid-template-columns:1fr}}
+.pick{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:11px 12px}
+.pick .eyebrow{margin-bottom:7px}
+.pick .row{display:flex;gap:6px}
+.pick select{flex:1;font-family:var(--mono);font-size:12px;padding:7px;border:1px solid var(--line);
+  border-radius:3px;background:var(--panel);color:var(--ink)}
+.swap{font-family:var(--mono);font-size:15px;background:var(--ink);color:var(--b4);border:0;border-radius:50%;
+  width:38px;height:38px;cursor:pointer;justify-self:center;margin-bottom:6px}
+
+.opts{width:100%;border-collapse:collapse;font-size:13px;background:var(--panel);margin-top:4px}
+.opts th,.opts td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
+.opts th{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2)}
+.opts td.n{font-family:var(--mono);font-weight:700}
+.opts tr.best td{background:rgba(95,191,82,.16)}
+.opts tr.best td.n{color:#2f7d27}
+.opts tr:hover td{background:var(--panel-2)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+
+.stats{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
+.stats b{color:var(--ink);font-size:14px;display:block;font-family:var(--display);font-weight:800;letter-spacing:0}
+.stats b.g{color:var(--gr)} .stats b.r{color:var(--b1)} .stats b.a{color:var(--b2)}
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.tool{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:8px 12px;cursor:pointer;color:var(--ink-2)}
+.tool:hover{border-color:var(--ink);color:var(--ink)}
+.tool[aria-pressed="true"],.tool.hi{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.tool.hi:hover{background:var(--b1);border-color:var(--b1);color:#fff}
+.tool:disabled{opacity:.4;cursor:default}
+.sep{width:1px;height:22px;background:var(--line);margin:0 3px}
+
+/* matrix */
+.mtx{border-collapse:collapse;font-family:var(--mono);font-size:11px;width:100%}
+.mtx th,.mtx td{border:1px solid var(--line);padding:5px 3px;text-align:center;min-width:38px}
+.mtx th{background:var(--panel-2);font-size:10px;font-weight:700;color:var(--ink-2)}
+.mtx td.z{background:rgba(95,191,82,.30);font-weight:700}
+.mtx td.n1{background:rgba(95,191,82,.13)}
+.mtx td.n2{background:rgba(255,197,49,.16)}
+.mtx td.n3{background:rgba(255,138,43,.18)}
+.mtx td.n4{background:rgba(255,75,50,.16)}
+.mtx tr.hi th,.mtx td.hi{outline:2px solid var(--b1);outline-offset:-2px;font-weight:700}
+.mtxwrap{border:1px solid var(--line);border-radius:6px;overflow:auto;background:var(--panel)}
+
+/* wheel */
+.wheelbox{display:grid;grid-template-columns:minmax(280px,420px) 1fr;gap:20px;align-items:start}
+@media(max-width:820px){.wheelbox{grid-template-columns:1fr}}
+.wheel{width:100%;height:auto;display:block}
+.wheel .seg{cursor:pointer;transition:opacity .1s}
+.wheel .seg:hover{opacity:.82}
+.wheel text{font-family:var(--mono);font-size:11px;font-weight:700;pointer-events:none;user-select:none}
+
+/* key finder */
+.drones{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:6px;margin-top:11px}
+.dr{font-family:var(--mono);font-size:12px;font-weight:700;background:var(--lane);color:var(--b4);border:1px solid transparent;
+  border-radius:4px;padding:13px 4px;cursor:pointer;text-align:center}
+.dr:hover{border-color:var(--b3)}
+.dr.lit{background:var(--b1);color:#fff}
+.dr small{display:block;font-size:8.5px;color:rgba(242,237,224,.4);margin-top:3px;font-weight:400}
+
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+table.plain{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+table.plain th,table.plain td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+table.plain th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-bottom:1px solid var(--ink)}
+table.plain td.num{font-family:var(--mono);font-weight:700}
+table.plain tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.68;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:10px 12px;border-radius:0 3px 3px 0;margin:13px 0 0}
+.callout b{color:var(--b1)}
+.note{font-size:14.5px;color:var(--ink-2);margin:13px 0 0;max-width:78ch}
+.note b{color:var(--ink)}
+.foot{border-top:2px solid var(--ink);margin-top:54px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:620px){.knob input[type=range]{width:56px}.tnow{display:none}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="index.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Field guide 12 · keys · transposing · harmonic mixing</div>
+    <h1>Is it<br>+3 or <em>−9</em>?</h1>
+    <p class="sub">You bought a vocal in F♯ minor. Your track is in A minor. Ableton wants a number in a box and gives you no help whatsoever working out which one. This page answers that in one line — and then asks the better question first: <strong>does the sample need transposing at all?</strong> Often it does not, and nobody tells you.</p>
+  </div>
+</div>
+
+<div class="transport">
+  <div class="wrap">
+    <button class="tbtn" id="loadBtn">◉ LOAD THE DEMO</button>
+    <button class="tbtn ghost" id="stopBtn" disabled>■ STOP</button>
+    <label class="knob">BPM <input type="range" id="bpm" min="90" max="140" value="122"><b id="bpmv">122</b></label>
+    <label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="70"><b id="volv">70</b></label>
+    <span class="tnow" id="nowPlaying">the calculator works without loading — audio needs a click</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="index.html" class="nav-home">← Index</a>
+    <a href="#calc">1 · The answer</a>
+    <a href="#matrix">2 · Lookup grid</a>
+    <a href="#wheel">3 · The wheel</a>
+    <a href="#find">4 · Find the key</a>
+    <a href="#cost">5 · What it costs</a>
+    <a href="#tempo">6 · Repitch &amp; tempo</a>
+    <a href="#live">7 · In Ableton</a>
+  </nav>
+
+  <!-- ================= 1 CALCULATOR ================= -->
+  <section class="sec" id="calc">
+    <div class="sec-head">
+      <div class="eyebrow">Section 01 · interactive</div>
+      <h2>The answer</h2>
+      <p>Set the key your sample is in and the key your track is in. The number is what you type into the <b>Transpose</b> field in Clip View. Press play and you will hear the sample against your track's chords — raw, then shifted.</p>
+    </div>
+
+    <div class="lab">
+      <div class="pickers">
+        <div class="pick">
+          <div class="eyebrow">The sample is in</div>
+          <div class="row">
+            <select id="sRoot"></select>
+            <select id="sMode"></select>
+          </div>
+        </div>
+        <button class="swap" id="swapBtn" title="Swap">⇄</button>
+        <div class="pick">
+          <div class="eyebrow">My track is in</div>
+          <div class="row">
+            <select id="pRoot"></select>
+            <select id="pMode"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="answer">
+        <div class="bignum" id="bigNum">+3<small>semitones</small></div>
+        <p class="exp" id="expText">—</p>
+      </div>
+
+      <div class="stats" id="calcStats"></div>
+
+      <div class="tablewrap" style="margin-top:14px">
+        <table class="opts" id="optsTable">
+          <thead><tr><th>Shift</th><th>Result</th><th>Notes outside your key</th><th>Verdict</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="toolbar">
+        <button class="tbtn" id="playRaw" disabled>▶ HEAR IT RAW</button>
+        <button class="tbtn" id="playFix" disabled>▶ HEAR IT SHIFTED</button>
+        <span class="sep"></span>
+        <button class="tool" id="srcVocal" aria-pressed="true">Vocal phrase</button>
+        <button class="tool" id="srcMelo">Melodic loop</button>
+        <span class="sep"></span>
+        <button class="tool" id="formantBtn" aria-pressed="false" disabled>Formant correction</button>
+      </div>
+
+      <p class="callout"><b>What you are hearing.</b> The sample is rendered fresh into an audio buffer in whatever key you select, so it genuinely is in that key. Shifting it changes the playback rate exactly as Ableton's Transpose does in Re-Pitch mode — which is why large shifts sound like a chipmunk. That artifact is real, not a simulation, and it is the reason section 5 exists.</p>
+      <p class="note"><b>Start here if you are new to this:</b> set the sample to <b>C major</b> and your track to <b>A minor</b>, and look at the number. It is zero. Those two keys contain exactly the same seven notes — C major is the relative major of A minor — so a sample labelled C major drops straight into an A minor track untouched. Half the transposing people do is unnecessary.</p>
+    </div>
+  </section>
+
+  <!-- ================= 2 MATRIX ================= -->
+  <section class="sec" id="matrix">
+    <div class="sec-head">
+      <div class="eyebrow">Section 02</div>
+      <h2>Lookup grid</h2>
+      <p>No thinking required. Find your sample's root down the side, your project's root across the top, read the number. It is always the shortest of the two possible shifts, so it never asks you to move more than six semitones. Your current selection is outlined.</p>
+    </div>
+    <div class="mtxwrap"><table class="mtx" id="mtx"></table></div>
+    <p class="note"><b>This grid assumes both keys are the same type</b> — minor to minor, or major to major. If your sample is major and your track is minor, use the calculator above instead, because the relative-key shortcut usually gives you a better answer than raw root-to-root arithmetic. Green cells are free or nearly free; red means you are asking a lot of the algorithm.</p>
+  </section>
+
+  <!-- ================= 3 WHEEL ================= -->
+  <section class="sec" id="wheel">
+    <div class="sec-head">
+      <div class="eyebrow">Section 03 · interactive</div>
+      <h2>The wheel</h2>
+      <p>The Camelot wheel that DJ software prints on everything, with the actual key names on it. Click any segment to set your project key. The lit segments are the ones that mix with it without a fight.</p>
+    </div>
+    <div class="lab">
+      <div class="wheelbox">
+        <div><svg class="wheel" id="wheelSvg" viewBox="0 0 420 420" role="img" aria-label="Camelot wheel"></svg></div>
+        <div>
+          <div class="stats" id="wheelStats" style="margin-top:0"></div>
+          <div class="tablewrap" style="margin-top:14px">
+            <table class="plain">
+              <thead><tr><th>Move</th><th>Means</th><th>Effect</th></tr></thead>
+              <tbody id="wheelRules"></tbody>
+            </table>
+          </div>
+          <p class="callout" style="margin-top:0"><b>Why adjacent keys work.</b> Two keys one step apart on the wheel share <b>six of their seven notes</b> — they differ by exactly one. That is not a convention someone invented for DJs, it is arithmetic, and it is why the calculator above will often tell you a one-note clash is worth leaving alone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 4 FIND ================= -->
+  <section class="sec" id="find">
+    <div class="sec-head">
+      <div class="eyebrow">Section 04 · interactive</div>
+      <h2>Find the key of a sample</h2>
+      <p>Splice tags are wrong often enough that it is worth checking, and plenty of material has no tag at all. No software here can analyse a file you have not given it — but the manual method takes two minutes and always works.</p>
+    </div>
+    <div class="lab">
+      <div class="stats" style="margin-top:0">
+        <span>Step 1<b>Loop your sample</b></span>
+        <span>Step 2<b>Click through the drones</b></span>
+        <span>Step 3<b>One will sit still</b></span>
+        <span>Step 4<b>Then test major vs minor</b></span>
+      </div>
+      <p class="note" style="margin-top:14px"><b>Play your sample on loop in Ableton</b>, then click these one at a time while it plays. Eleven of them will grind against it. One will disappear into it — that is your root. Sustained notes and the last note of a phrase are the easiest places to hear it.</p>
+      <div class="drones" id="drones"></div>
+      <div class="toolbar">
+        <button class="tool" id="droneOff" disabled>Stop the drone</button>
+        <span class="sep"></span>
+        <button class="tool" id="testMinor" disabled>Test minor triad</button>
+        <button class="tool" id="testMajor" disabled>Test major triad</button>
+        <span class="tag" id="droneTag">no drone</span>
+      </div>
+      <p class="callout"><b>Then major or minor.</b> Once you have the root, play both triads against the sample. The one that vanishes into it is your answer; the other will sound sour on its third. If <em>neither</em> is comfortable the sample is probably modal — try Dorian if it feels minor but bright, and Phrygian if it feels minor and dark.</p>
+      <p class="note"><b>Two shortcuts worth knowing.</b> A bass line usually states the root on the downbeat, so a sample with bass in it is far easier to pitch than a vocal alone. And if the sample ends on a long note, that note is the root roughly nine times out of ten.</p>
+    </div>
+  </section>
+
+  <!-- ================= 5 COST ================= -->
+  <section class="sec" id="cost">
+    <div class="sec-head">
+      <div class="eyebrow">Section 05</div>
+      <h2>What transposing costs</h2>
+      <p>Every semitone you move a sample damages it slightly. How much depends entirely on what the material is.</p>
+    </div>
+    <div class="tablewrap"><table class="plain">
+      <thead><tr><th>Shift</th><th>Vocals</th><th>Melodic / chords</th><th>Drums &amp; percussion</th></tr></thead>
+      <tbody>
+        <tr><td class="num">0</td><td>Free</td><td>Free</td><td>Free</td></tr>
+        <tr><td class="num">±1–2</td><td>Essentially inaudible</td><td>Inaudible</td><td>Inaudible</td></tr>
+        <tr><td class="num">±3–4</td><td>Character starts to move — noticeable on a lead vocal, fine on a chop</td><td>Fine</td><td>Fine, and often desirable</td></tr>
+        <tr><td class="num">±5–6</td><td>Obviously processed. Needs Complex Pro with Formants on</td><td>Usually still fine</td><td>Fine — this is how you get a different kit</td></tr>
+        <tr><td class="num">±7 or more</td><td>Find another sample</td><td>Thin going up, sluggish going down</td><td>Still works, but it is a new sound rather than the same one</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>Why vocals are the hard case</h3>
+        <ul>
+          <li>A voice has <b>formants</b> — fixed resonances of the singer's throat and mouth that do not move when they sing higher. Repitching moves them anyway, which is exactly what makes a pitched-up vocal sound like a cartoon.</li>
+          <li><b>Complex Pro's Formants control</b> holds them still while the pitch moves. Turn it on before you decide a transposed vocal is unusable.</li>
+          <li>Down is more forgiving than up. A vocal dropped four semitones sounds thick; the same vocal raised four sounds like a child.</li>
+          <li>The formant button in the calculator above applies a crude version of this so you can hear the difference. It is a filter-bank approximation, not Ableton's algorithm.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Cheaper alternatives to transposing</h3>
+        <ul>
+          <li><b>Transpose your project instead.</b> If the vocal is the hook and everything else is MIDI, move your own parts. Free and artifact-free.</li>
+          <li><b>Use the relative key.</b> Check the calculator first — the answer is often zero.</li>
+          <li><b>Chop out the offending note.</b> If only one note of a sample clashes, cut it rather than pitching the whole thing.</li>
+          <li><b>Pitch only some of it.</b> A vocal chop and a sustained vocal do not need the same treatment; chops survive far more transposition than held notes.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 6 TEMPO ================= -->
+  <section class="sec" id="tempo">
+    <div class="sec-head">
+      <div class="eyebrow">Section 06 · interactive</div>
+      <h2>Repitch changes tempo</h2>
+      <p>If a clip is set to <b>Re-Pitch</b>, or unwarped, pitch and speed are locked together like a turntable. That means every tempo decision is secretly a key decision, and vice versa. This catches everyone at least once.</p>
+    </div>
+    <div class="lab">
+      <div class="pickers" style="grid-template-columns:1fr 1fr">
+        <div class="pick">
+          <div class="eyebrow">Sample tempo</div>
+          <div class="row"><input type="range" id="srcBpm" min="60" max="180" value="94" style="flex:1;accent-color:var(--b1)"><b id="srcBpmv" style="font-family:var(--mono);font-size:12px;min-width:60px;text-align:right">94 BPM</b></div>
+        </div>
+        <div class="pick">
+          <div class="eyebrow">Transpose applied</div>
+          <div class="row"><input type="range" id="tSemis" min="-12" max="12" value="0" style="flex:1;accent-color:var(--b1)"><b id="tSemisv" style="font-family:var(--mono);font-size:12px;min-width:60px;text-align:right">0 st</b></div>
+        </div>
+      </div>
+      <div class="stats" id="tempoStats"></div>
+      <p class="callout" id="tempoNote">—</p>
+      <div class="tablewrap" style="margin-top:14px"><table class="plain">
+        <thead><tr><th>Transpose</th><th>Speed becomes</th><th>A 94 BPM loop becomes</th><th>A 120 BPM loop becomes</th></tr></thead>
+        <tbody id="tempoTable"></tbody>
+      </table></div>
+      <p class="note"><b>The useful direction is backwards.</b> If you need a 94 BPM sample to sit in a 126 BPM track and you want to repitch rather than stretch, the calculator tells you that is <b>+5.07 semitones</b> — so a sample in F♯ minor arrives in B minor, not F♯ minor. Work that out before you write eight bars of chords in the wrong key.</p>
+    </div>
+  </section>
+
+  <!-- ================= 7 ABLETON ================= -->
+  <section class="sec" id="live">
+    <div class="sec-head">
+      <div class="eyebrow">Section 07</div>
+      <h2>In Ableton</h2>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>Where the controls actually are</h3>
+        <ul>
+          <li><b>Clip View → Transpose</b> is the semitone field. <b>Detune</b> next to it is in cents, 100 to a semitone, for fixing a sample that is slightly flat.</li>
+          <li><b>Warp mode changes what Transpose does.</b> In Re-Pitch it moves tempo with it; in every other mode the tempo stays put.</li>
+          <li><b>Complex Pro</b> exposes <b>Formants</b> and <b>Envelope</b>. Formants on for vocals, Envelope lower for tonal material and higher for percussive.</li>
+          <li><b>Simpler</b> has its own Transpose knob, which is the one to use if you are playing a sample chromatically from MIDI.</li>
+          <li>The <b>Pitch MIDI effect does nothing to audio</b>. It only transposes MIDI notes on the way to an instrument, and reaching for it on an audio track is the single most common beginner mistake here.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Live 12 specifically</h3>
+        <ul>
+          <li>Live 12 has a <b>global Key and Scale</b> setting, and clips can be tagged with a key so the set stays coherent. It does <em>not</em> analyse audio to work out what key a sample is in — that part is still section 4's job.</li>
+          <li><b>Auto Shift</b> (12.1) is a real-time pitch-correction device that follows the global key. It is aimed at monophonic vocals rather than at transposing a whole loop, but for a vocal that is nearly right it is faster than transposing.</li>
+          <li>Auto Shift also does <b>real-time formant shifting</b> independently of pitch, which is worth knowing about even when you are not correcting anything.</li>
+          <li>Scale-aware MIDI plus <b>Fold to scale</b> means once your project key is set, writing wrong notes gets much harder.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>A workflow that avoids the problem</h3>
+        <ul>
+          <li><b>Decide your key before you go sample hunting.</b> Then filter Splice by that key and its relative — most of the work disappears.</li>
+          <li><b>Rename files with the key in them</b> the moment you download. Future you will not remember.</li>
+          <li><b>Check the tag.</b> Drop the sample in, play the drone from section 4, confirm. Ten seconds against an hour of confusion later.</li>
+          <li><b>Commit early.</b> Transpose and resample to a new audio file once you are sure, so the rest of the project sees the corrected version.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Diagnosis</h3>
+        <ul>
+          <li><b>"It sounds nearly right but sour"</b> — one note out. Check the calculator: a single foreign note is often a shift of one on the wheel.</li>
+          <li><b>"It sounds like a chipmunk"</b> — you pitched up too far without Formants. Try down instead of up.</li>
+          <li><b>"It went out of key when I changed the project tempo"</b> — the clip is in Re-Pitch or unwarped.</li>
+          <li><b>"The tag says F minor but it fights everything"</b> — the tag is wrong, or it is the relative major. Run the drone test.</li>
+          <li><b>"It is in key and still sounds bad"</b> — the key is not the problem. It is probably register or masking, which is a different guide.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <p><strong>Most of this collapses into one habit.</strong> Work out the key of anything you import, immediately, before it becomes part of an arrangement you have grown attached to. Everything else on this page is arithmetic, and arithmetic is easy — it is only ever hard because it gets discovered too late.</p>
+    <p style="color:var(--ink-3);font-size:13px">Demo audio is synthesised and rendered fresh into a buffer in whichever key you select; the transposition is genuine playback-rate repitching. Formant correction here is a filter-bank approximation rather than Ableton's algorithm.</p>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   THEORY
+   ===================================================================== */
+const NOTE=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const NICE=['C','C#/Db','D','D#/Eb','E','F','F#/Gb','G','G#/Ab','A','A#/Bb','B'];
+const MODES={
+ major:{n:'major',iv:[0,2,4,5,7,9,11]},
+ minor:{n:'minor',iv:[0,2,3,5,7,8,10]},
+ dorian:{n:'Dorian',iv:[0,2,3,5,7,9,10]},
+ phrygian:{n:'Phrygian',iv:[0,1,3,5,7,8,10]},
+ lydian:{n:'Lydian',iv:[0,2,4,6,7,9,11]},
+ mixolydian:{n:'Mixolydian',iv:[0,2,4,5,7,9,10]},
+ locrian:{n:'Locrian',iv:[0,1,3,5,6,8,10]},
+ harmonic:{n:'harmonic minor',iv:[0,2,3,5,7,8,11]}
+};
+const pc=n=>((n%12)+12)%12;
+function scaleSet(root,mode){ return new Set(MODES[mode].iv.map(i=>pc(root+i))); }
+function keyName(root,mode){ return NOTE[pc(root)]+' '+MODES[mode].n; }
+/* how many notes of the sample's scale fall outside the project's scale after a shift */
+function foreign(sSet,pSet,shift){
+  const out=[];
+  sSet.forEach(x=>{ const t=pc(x+shift); if(!pSet.has(t)) out.push(t); });
+  return out.sort((a,b)=>a-b);
+}
+/* every shift, scored */
+function analyse(sRoot,sMode,pRoot,pMode){
+  const sSet=scaleSet(sRoot,sMode), pSet=scaleSet(pRoot,pMode);
+  const rows=[];
+  for(let sh=-11;sh<=11;sh++){
+    const f=foreign(sSet,pSet,sh);
+    rows.push({shift:sh,foreign:f,n:f.length,newRoot:pc(sRoot+sh),mag:Math.abs(sh)});
+  }
+  /* fewest foreign notes first, then the smallest move, then prefer downward */
+  rows.sort((a,b)=>a.n-b.n||a.mag-b.mag||a.shift-b.shift);
+  return {rows,sSet,pSet};
+}
+const CAMELOT_MINOR=[5,12,7,2,9,4,11,6,1,8,3,10];   /* index = pitch class of the minor root */
+const CAMELOT_MAJOR=[8,3,10,5,12,7,2,9,4,11,6,1];   /* index = pitch class of the major root */
+function camelot(root,mode){
+  const M=MODES[mode].iv;
+  /* reduce any mode to its parent major, then read the wheel */
+  let parent=null;
+  for(let r=0;r<12;r++){
+    const maj=[...scaleSet(r,'major')].sort((a,b)=>a-b).join(',');
+    if([...scaleSet(root,mode)].sort((a,b)=>a-b).join(',')===maj){parent=r;break;}
+  }
+  if(parent===null) return null;
+  const isMinorish=[3,10].some(i=>M.includes(i))&&!M.includes(4);
+  return isMinorish
+    ? {num:CAMELOT_MINOR[pc(parent+9)],letter:'A',parent}
+    : {num:CAMELOT_MAJOR[parent],letter:'B',parent};
+}
+
+/* =====================================================================
+   AUDIO
+   ===================================================================== */
+let AC=null,master=null,limiter=null,bus=null;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.7;
+    limiter=AC.createDynamicsCompressor();
+    limiter.threshold.value=-6;limiter.knee.value=4;limiter.ratio.value=12;
+    limiter.attack.value=.003;limiter.release.value=.12;
+    bus=AC.createGain(); bus.connect(limiter); limiter.connect(master); master.connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function eg(g,t,pk,a,d){g.setValueAtTime(0,t);g.linearRampToValueAtTime(pk,t+a);g.exponentialRampToValueAtTime(.0001,t+a+d);}
+/* --- voices that render into any context --- */
+function gVox(ctx,dest,t,m,dur,v=1){
+  const o=ctx.createOscillator();o.type='sawtooth';o.frequency.value=mtof(m);
+  const lfo=ctx.createOscillator();lfo.type='sine';lfo.frequency.value=5.4;
+  const la=ctx.createGain();la.gain.value=8;
+  lfo.connect(la);la.connect(o.detune);lfo.start(t);lfo.stop(t+dur+.25);
+  let prev=o;
+  [[720,11],[1200,12],[2650,14]].forEach(([hz,q])=>{
+    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=hz;bp.Q.value=q;
+    prev.connect(bp);prev=bp;});
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.62*v,t+.05);
+  g.gain.setValueAtTime(.62*v,t+Math.max(.08,dur-.1));
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur+.06);
+  prev.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.25);
+}
+function gPluck(ctx,dest,t,m,dur,v=1){
+  const o=ctx.createOscillator();o.type='sawtooth';o.frequency.value=mtof(m);
+  const o2=ctx.createOscillator();o2.type='sawtooth';o2.frequency.value=mtof(m)*1.006;
+  const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.Q.value=7;
+  lp.frequency.setValueAtTime(2800,t);lp.frequency.exponentialRampToValueAtTime(600,t+.14);
+  const g=ctx.createGain();eg(g.gain,t,.34*v,.004,Math.max(.08,dur));
+  o.connect(lp);o2.connect(lp);lp.connect(g);g.connect(dest);
+  o.start(t);o2.start(t);o.stop(t+dur+.2);o2.stop(t+dur+.2);
+}
+function gKeys(ctx,dest,t,notes,dur,v=1){
+  notes.forEach(m=>{
+    const f=mtof(m);
+    [[1,.5],[2,.16],[3.01,.06]].forEach(([r,a])=>{
+      const o=ctx.createOscillator();o.type='sine';o.frequency.value=f*r;
+      const g=ctx.createGain();
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(a*.28*v,t+.01);
+      g.gain.exponentialRampToValueAtTime(.0001,t+dur+.3);
+      o.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.4);});
+  });
+}
+function gBass(ctx,dest,t,m,dur,v=1){
+  const f=mtof(m);
+  const o=ctx.createOscillator();o.type='sawtooth';o.frequency.value=f;
+  const s=ctx.createOscillator();s.type='sine';s.frequency.value=f;
+  const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.Q.value=4;
+  lp.frequency.setValueAtTime(1100,t);lp.frequency.exponentialRampToValueAtTime(300,t+.13);
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.3*v,t+.005);
+  g.gain.setValueAtTime(.3*v,t+Math.max(.03,dur-.04));
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur+.04);
+  const sg=ctx.createGain();sg.gain.value=.6;
+  o.connect(lp);s.connect(sg);sg.connect(lp);lp.connect(g);g.connect(dest);
+  o.start(t);s.start(t);o.stop(t+dur+.1);s.stop(t+dur+.1);
+}
+function gKick(ctx,dest,t){
+  const o=ctx.createOscillator();o.type='sine';
+  o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(50,t+.05);
+  const g=ctx.createGain();eg(g.gain,t,.8,.002,.3);
+  o.connect(g);g.connect(dest);o.start(t);o.stop(t+.38);
+}
+
+/* =====================================================================
+   THE SAMPLE  —  rendered into a real buffer in the chosen key
+   ===================================================================== */
+const S={sRoot:6,sMode:'minor',pRoot:9,pMode:'minor',bpm:122,
+  srcType:'vocal',formant:false,loaded:false,playing:null,
+  drone:null,srcBpm:94,tSemis:0};
+const stepDur=()=>60/S.bpm/4;
+let SAMPLE=null, sampleKeyTag='';
+const VOCAL_PHRASE=[[0,12,3.6],[4,15,3.4],[8,19,7.4],[16,17,3.4],[20,15,3.4],[24,12,7.4]];
+const MELODIC_LOOP=[[0,12,1.8],[2,15,1.8],[3,19,1.8],[6,17,3.6],[8,12,1.8],[10,19,1.8],
+                    [11,22,1.8],[14,19,3.6],[16,15,1.8],[18,19,1.8],[20,22,1.8],[22,17,3.6],
+                    [24,12,1.8],[26,15,1.8],[28,19,1.8],[30,12,3.4]];
+async function renderSample(){
+  const sr=AC.sampleRate, sd=60/S.srcBpm/4;
+  const dur=32*sd+0.8;
+  const oc=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,Math.ceil(sr*dur),sr);
+  const out=oc.createGain(); out.gain.value=.6; out.connect(oc.destination);
+  const base=48+S.sRoot;                        /* the sample's own root */
+  const src=S.srcType==='vocal'?VOCAL_PHRASE:MELODIC_LOOP;
+  const iv=MODES[S.sMode].iv;
+  const toScale=x=>{ /* map generic degrees onto the sample's own mode */
+    const oct=Math.floor(x/12)*12, r=pc(x);
+    const deg=[0,2,3,5,7,8,10].indexOf(r);
+    return oct+(deg>=0?iv[deg]:r);
+  };
+  src.forEach(([st,p,l])=>{
+    const m=base+toScale(p);
+    if(S.srcType==='vocal') gVox(oc,out,st*sd,m,l*sd,1);
+    else gPluck(oc,out,st*sd,m,l*sd,1);
+  });
+  SAMPLE=await oc.startRendering();
+  sampleKeyTag=keyName(S.sRoot,S.sMode);
+}
+function playSample(when,semis,dur){
+  if(!SAMPLE) return;
+  const s=AC.createBufferSource(); s.buffer=SAMPLE;
+  s.playbackRate.value=Math.pow(2,semis/12);
+  const g=AC.createGain(); g.gain.value=.85;
+  let node=s;
+  if(S.formant&&semis!==0){
+    /* crude formant repair: push the original formant bands back up after repitching */
+    [[720,4.5],[1200,4],[2650,3.5]].forEach(([hz,q])=>{
+      const f=AC.createBiquadFilter(); f.type='peaking'; f.frequency.value=hz; f.Q.value=q;
+      f.gain.value=semis>0?6:-4;
+      node.connect(f); node=f;
+    });
+    const tilt=AC.createBiquadFilter(); tilt.type='highshelf';
+    tilt.frequency.value=2200; tilt.gain.value=semis>0?-5:4;
+    node.connect(tilt); node=tilt;
+  }
+  node.connect(g); g.connect(bus);
+  s.start(when,0,dur||undefined);
+  return s;
+}
+
+/* =====================================================================
+   TRANSPORT
+   ===================================================================== */
+let timer=null,nextT=0;
+const nowEl=document.getElementById('nowPlaying');
+function stopAll(){
+  if(timer)clearTimeout(timer);timer=null;
+  S.playing=null;
+  ['playRaw','playFix'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(b) b.textContent=id==='playRaw'?'▶ HEAR IT RAW':'▶ HEAR IT SHIFTED';});
+  stopDrone();
+  nowEl.textContent=S.loaded?'ready':'the calculator works without loading — audio needs a click';
+}
+function startDemo(mode){
+  audio(); stopAll(); S.playing=mode;
+  document.getElementById(mode==='raw'?'playRaw':'playFix').textContent='■ STOP';
+  const best=analyse(S.sRoot,S.sMode,S.pRoot,S.pMode).rows[0];
+  nowEl.textContent=mode==='raw'
+    ? '▸ sample untouched, over '+keyName(S.pRoot,S.pMode)
+    : '▸ sample shifted '+(best.shift>0?'+':'')+best.shift+' st';
+  nextT=AC.currentTime+.12; schedule(); 
+}
+function schedule(){
+  while(nextT<AC.currentTime+.4){
+    const sd=stepDur(), base=nextT, loopSteps=32, dur=loopSteps*sd;
+    const pIv=MODES[S.pMode].iv, pr=48+S.pRoot;
+    /* the project: two chords and a bass, firmly in the project key */
+    [[0,0],[16,3]].forEach(([st,deg])=>{
+      const r=pr+pIv[deg];
+      const ch=[0,2,4,6].map(d=>pr+ (pIv[(deg+d)%7]||0) + (deg+d>=7?12:0));
+      gKeys(AC,bus,base+st*sd,ch,15*sd,.62);
+      for(let s=0;s<16;s+=4) gBass(AC,bus,base+(st+s)*sd,r-24,3.4*sd,.85);
+    });
+    for(let s=0;s<loopSteps;s+=4) gKick(AC,bus,base+s*sd);
+    /* the sample */
+    const best=analyse(S.sRoot,S.sMode,S.pRoot,S.pMode).rows[0];
+    const semis=S.playing==='raw'?0:best.shift;
+    const rate=Math.pow(2,semis/12);
+    playSample(base,semis,SAMPLE?SAMPLE.duration/rate:undefined);
+    nextT+=dur;
+  }
+  timer=setTimeout(()=>{if(S.playing)schedule();},70);
+}
+document.getElementById('loadBtn').onclick=async function(){
+  if(S.loaded) return;
+  this.textContent='RENDERING…'; this.disabled=true;
+  audio();
+  try{
+    await renderSample();
+    S.loaded=true; this.textContent='◉ LOADED';
+    ['stopBtn','playRaw','playFix','formantBtn','droneOff','testMinor','testMajor']
+      .forEach(id=>{const e=document.getElementById(id); if(e) e.disabled=false;});
+    nowEl.textContent='ready — sample rendered in '+sampleKeyTag;
+  }catch(err){ this.textContent='RENDER FAILED'; nowEl.textContent=err.message; }
+};
+document.getElementById('stopBtn').onclick=()=>stopAll();
+document.getElementById('playRaw').onclick=()=>S.playing==='raw'?stopAll():startDemo('raw');
+document.getElementById('playFix').onclick=()=>S.playing==='fix'?stopAll():startDemo('fix');
+document.getElementById('bpm').oninput=e=>{S.bpm=+e.target.value;document.getElementById('bpmv').textContent=S.bpm;};
+document.getElementById('vol').oninput=e=>{document.getElementById('volv').textContent=e.target.value;
+  if(master)master.gain.value=(+e.target.value/100)*.95;};
+document.getElementById('formantBtn').onclick=function(){S.formant=!S.formant;
+  this.setAttribute('aria-pressed',S.formant);};
+document.getElementById('srcVocal').onclick=async function(){
+  S.srcType='vocal'; this.setAttribute('aria-pressed','true');
+  document.getElementById('srcMelo').setAttribute('aria-pressed','false');
+  if(S.loaded){await renderSample();}
+};
+document.getElementById('srcMelo').onclick=async function(){
+  S.srcType='melodic'; this.setAttribute('aria-pressed','true');
+  document.getElementById('srcVocal').setAttribute('aria-pressed','false');
+  if(S.loaded){await renderSample();}
+};
+document.addEventListener('keydown',e=>{
+  if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.key==='Escape')stopAll();
+});
+
+/* =====================================================================
+   PICKERS
+   ===================================================================== */
+function fillSel(id,opts,val){
+  const el=document.getElementById(id); el.innerHTML='';
+  opts.forEach(([v,label])=>{const o=document.createElement('option');o.value=v;o.textContent=label;el.appendChild(o);});
+  el.value=val;
+}
+const ROOTOPTS=NICE.map((n,i)=>[i,n]);
+const MODEOPTS=Object.entries(MODES).map(([k,v])=>[k,v.n]);
+fillSel('sRoot',ROOTOPTS,S.sRoot); fillSel('sMode',MODEOPTS,S.sMode);
+fillSel('pRoot',ROOTOPTS,S.pRoot); fillSel('pMode',MODEOPTS,S.pMode);
+['sRoot','sMode','pRoot','pMode'].forEach(id=>{
+  document.getElementById(id).onchange=async e=>{
+    S[id]=(id.endsWith('Root'))?+e.target.value:e.target.value;
+    if((id==='sRoot'||id==='sMode')&&S.loaded) await renderSample();
+    renderAll();
+    if(S.playing) startDemo(S.playing);
+  };
+});
+document.getElementById('swapBtn').onclick=async()=>{
+  const r=S.sRoot,m=S.sMode; S.sRoot=S.pRoot; S.sMode=S.pMode; S.pRoot=r; S.pMode=m;
+  fillSel('sRoot',ROOTOPTS,S.sRoot);fillSel('sMode',MODEOPTS,S.sMode);
+  fillSel('pRoot',ROOTOPTS,S.pRoot);fillSel('pMode',MODEOPTS,S.pMode);
+  if(S.loaded) await renderSample();
+  renderAll();
+};
+
+/* =====================================================================
+   RENDER — the answer
+   ===================================================================== */
+const VERDICT=n=>n===0?['#5FBF52','Perfect fit']:(n===1?['#9ACD5E','One note out — usually fine']:
+  (n===2?['#FFC531','Two out — audible']:(n===3?['#FF8A2B','Three out — a fight']:['#FF4B32','Wrong key'])));
+function renderAnswer(){
+  const {rows}=analyse(S.sRoot,S.sMode,S.pRoot,S.pMode);
+  const best=rows[0];
+  const bn=document.getElementById('bigNum');
+  bn.innerHTML=(best.shift>0?'+':'')+best.shift+'<small>semitones</small>';
+  bn.className='bignum'+(best.shift===0?' zero':'');
+  const alt=rows.find(r=>r.n===best.n&&r.shift!==best.shift&&Math.abs(r.shift)<=12);
+  const [col,verd]=VERDICT(best.n);
+  const sameNotes=best.n===0;
+  let exp='';
+  if(best.shift===0&&sameNotes){
+    exp='<b class="g">Do nothing.</b> '+keyName(S.sRoot,S.sMode)+' and '+keyName(S.pRoot,S.pMode)+
+      ' contain exactly the same seven notes. Drop the sample in and leave Transpose at zero.';
+  }else if(sameNotes){
+    exp='Type <b>'+(best.shift>0?'+':'')+best.shift+'</b> into Transpose. After that the sample shares <span class="g">every note</span> with '+
+      keyName(S.pRoot,S.pMode)+'.'+(alt?' The other direction is '+(alt.shift>0?'+':'')+alt.shift+', which moves further for no benefit.':'');
+  }else{
+    exp='Best available is <b>'+(best.shift>0?'+':'')+best.shift+'</b>, leaving <b>'+best.n+
+      '</b> note'+(best.n>1?'s':'')+' outside your key ('+best.foreign.map(x=>NOTE[x]).join(', ')+
+      '). '+(best.n<=1?'<span class="g">That is usually worth keeping</span> — one foreign note reads as colour rather than a mistake.'
+      :'<span class="r">Consider a different sample</span>, or chop out the notes that clash.');
+  }
+  document.getElementById('expText').innerHTML=exp;
+
+  const sSet=scaleSet(S.sRoot,S.sMode), pSet=scaleSet(S.pRoot,S.pMode);
+  const cam=camelot(S.pRoot,S.pMode), camS=camelot(S.sRoot,S.sMode);
+  const degree=pc(S.sRoot-S.pRoot);
+  const DEGN={0:'the root',1:'a flat 2nd',2:'the 2nd',3:'the flat 3rd',4:'the 3rd',5:'the 4th',
+    6:'a tritone',7:'the 5th',8:'the flat 6th',9:'the 6th',10:'the flat 7th',11:'the 7th'};
+  document.getElementById('calcStats').innerHTML=
+    `<span>Sample<b>${keyName(S.sRoot,S.sMode)}${camS?' · '+camS.num+camS.letter:''}</b></span>
+     <span>Track<b>${keyName(S.pRoot,S.pMode)}${cam?' · '+cam.num+cam.letter:''}</b></span>
+     <span>Untouched, notes out<b class="${foreign(sSet,pSet,0).length===0?'g':(foreign(sSet,pSet,0).length<=1?'a':'r')}">${foreign(sSet,pSet,0).length} of 7</b></span>
+     <span>Sample root sits on<b>${DEGN[degree]}</b></span>
+     <span>Verdict<b style="color:${col}">${verd}</b></span>`;
+
+  /* option table: the shortest useful moves */
+  const shown=[];
+  [...rows].sort((a,b)=>a.mag-b.mag||a.shift-b.shift).forEach(r=>{
+    if(r.mag>7) return;
+    if(shown.some(x=>x.shift===r.shift)) return;
+    shown.push(r);
+  });
+  shown.sort((a,b)=>a.n-b.n||a.mag-b.mag);
+  const tb=document.getElementById('optsTable').querySelector('tbody');
+  tb.innerHTML=shown.slice(0,8).map(r=>{
+    const [c,v]=VERDICT(r.n);
+    return `<tr class="${r.shift===best.shift?'best':''}">
+      <td class="n">${r.shift>0?'+':''}${r.shift}</td>
+      <td>${NOTE[r.newRoot]} ${MODES[S.sMode].n}</td>
+      <td class="n">${r.n===0?'none':r.foreign.map(x=>NOTE[x]).join(' ')}</td>
+      <td><span class="dot" style="background:${c}"></span>${v}</td></tr>`;
+  }).join('');
+}
+
+/* =====================================================================
+   MATRIX
+   ===================================================================== */
+function renderMatrix(){
+  const t=document.getElementById('mtx');
+  let h='<tr><th>sample ↓ / track →</th>'+NOTE.map((n,i)=>`<th data-col="${i}">${n}</th>`).join('')+'</tr>';
+  for(let s=0;s<12;s++){
+    h+=`<tr class="${s===S.sRoot?'hi':''}"><th>${NOTE[s]}</th>`;
+    for(let p=0;p<12;p++){
+      const raw=pc(p-s);
+      const sh=raw>6?raw-12:raw;
+      const a=Math.abs(sh);
+      const cls=a===0?'z':(a<=1?'n1':(a<=2?'n2':(a<=4?'n3':'n4')));
+      h+=`<td class="${cls}${(s===S.sRoot&&p===S.pRoot)?' hi':''}">${sh>0?'+':''}${sh}</td>`;
+    }
+    h+='</tr>';
+  }
+  t.innerHTML=h;
+}
+
+/* =====================================================================
+   WHEEL
+   ===================================================================== */
+function arc(cx,cy,r0,r1,a0,a1){
+  const p=(r,a)=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];
+  const [x0,y0]=p(r1,a0),[x1,y1]=p(r1,a1),[x2,y2]=p(r0,a1),[x3,y3]=p(r0,a0);
+  const large=(a1-a0)>Math.PI?1:0;
+  return `M${x0} ${y0}A${r1} ${r1} 0 ${large} 1 ${x1} ${y1}L${x2} ${y2}A${r0} ${r0} 0 ${large} 0 ${x3} ${y3}Z`;
+}
+function renderWheel(){
+  const svg=document.getElementById('wheelSvg');
+  const cx=210,cy=210;
+  const cur=camelot(S.pRoot,S.pMode);
+  let h='';
+  const compat=new Set();
+  if(cur){
+    compat.add(cur.num+cur.letter);
+    compat.add(cur.num+(cur.letter==='A'?'B':'A'));
+    compat.add((cur.num%12+1)+cur.letter);
+    compat.add(((cur.num+10)%12+1)+cur.letter);
+  }
+  for(let i=0;i<12;i++){
+    const num=i+1;
+    const a0=(i-3)*Math.PI/6-Math.PI/12, a1=a0+Math.PI/6;
+    [['B',120,196],['A',58,118]].forEach(([L,r0,r1])=>{
+      const code=num+L;
+      const isCur=cur&&code===cur.num+cur.letter;
+      const isCom=compat.has(code);
+      const root=L==='A'?CAMELOT_MINOR.indexOf(num):CAMELOT_MAJOR.indexOf(num);
+      const fill=isCur?'#FF4B32':(isCom?'#FFC531':(L==='A'?'#EAE5D8':'#F2EFE6'));
+      h+=`<path class="seg" d="${arc(cx,cy,r0,r1,a0,a1)}" fill="${fill}" stroke="#C4BDAC" stroke-width="1"
+             data-root="${root}" data-mode="${L==='A'?'minor':'major'}"><title>${code} · ${NOTE[root]} ${L==='A'?'minor':'major'}</title></path>`;
+      const mid=(a0+a1)/2, rr=(r0+r1)/2;
+      const tx=cx+rr*Math.cos(mid), ty=cy+rr*Math.sin(mid);
+      h+=`<text x="${tx}" y="${ty-3}" text-anchor="middle" fill="${isCur?'#fff':'#191713'}">${code}</text>`;
+      h+=`<text x="${tx}" y="${ty+9}" text-anchor="middle" font-size="9" fill="${isCur?'rgba(255,255,255,.8)':'#635C50'}">${NOTE[root]}${L==='A'?'m':''}</text>`;
+    });
+  }
+  h+=`<circle cx="${cx}" cy="${cy}" r="52" fill="#1C1A17"/>`;
+  h+=`<text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#FFC531" font-size="15">${cur?cur.num+cur.letter:'—'}</text>`;
+  h+=`<text x="${cx}" y="${cy+13}" text-anchor="middle" fill="#F2EDE0" font-size="10">${NOTE[S.pRoot]} ${MODES[S.pMode].n}</text>`;
+  svg.innerHTML=h;
+  svg.querySelectorAll('.seg').forEach(p=>p.onclick=async()=>{
+    S.pRoot=+p.dataset.root; S.pMode=p.dataset.mode;
+    fillSel('pRoot',ROOTOPTS,S.pRoot); fillSel('pMode',MODEOPTS,S.pMode);
+    renderAll(); if(S.playing) startDemo(S.playing);
+  });
+  const rel=cur?cur.num+(cur.letter==='A'?'B':'A'):'—';
+  document.getElementById('wheelStats').innerHTML=
+    `<span>Your key<b>${cur?cur.num+cur.letter:'—'}</b></span>
+     <span>Relative<b>${rel}</b></span>
+     <span>Down a fifth<b>${cur?((cur.num+10)%12+1)+cur.letter:'—'}</b></span>
+     <span>Up a fifth<b>${cur?(cur.num%12+1)+cur.letter:'—'}</b></span>`;
+  document.getElementById('wheelRules').innerHTML=[
+    ['Same number, other letter','Relative major or minor','Identical notes. Always free.'],
+    ['+1 on the number','Up a fifth','One note different. The standard mix.'],
+    ['−1 on the number','Down a fifth','One note different. Slightly darker.'],
+    ['+7 on the number','Up a minor third','The energy boost. Two notes different, lifts a set.'],
+    ['Anything else','Two or more notes apart','Transpose, or accept the clash deliberately.']
+  ].map(r=>`<tr><td class="num">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+}
+
+/* =====================================================================
+   DRONES
+   ===================================================================== */
+let droneNodes=[];
+function stopDrone(){
+  droneNodes.forEach(n=>{try{n.stop();}catch(e){}});
+  droneNodes=[]; S.drone=null;
+  const t=document.getElementById('droneTag'); if(t) t.textContent='no drone';
+  document.querySelectorAll('.dr.lit').forEach(e=>e.classList.remove('lit'));
+}
+function playDrone(root,chord){
+  audio(); stopDrone(); S.drone=root;
+  const t=AC.currentTime+.02;
+  const notes=chord==='minor'?[0,3,7]:(chord==='major'?[0,4,7]:[0,12]);
+  notes.forEach(iv=>{
+    [0,1].forEach(k=>{
+      const o=AC.createOscillator(); o.type=k?'sawtooth':'sine';
+      o.frequency.value=mtof(48+root+iv);
+      o.detune.value=k?6:0;
+      const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1400;
+      const g=AC.createGain();
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(k?.045:.09,t+.08);
+      o.connect(lp);lp.connect(g);g.connect(bus);o.start(t);
+      droneNodes.push(o);
+    });
+  });
+  document.getElementById('droneTag').textContent=NOTE[root]+(chord==='none'?' drone':' '+chord+' triad');
+}
+const dr=document.getElementById('drones');
+NOTE.forEach((n,i)=>{
+  const b=document.createElement('button'); b.className='dr'; b.dataset.root=i;
+  b.innerHTML=NICE[i]+'<small>'+mtof(48+i).toFixed(1)+' Hz</small>';
+  dr.appendChild(b);
+});
+dr.addEventListener('click',e=>{
+  const b=e.target.closest('[data-root]'); if(!b) return;
+  const r=+b.dataset.root;
+  if(S.drone===r){stopDrone();return;}
+  playDrone(r,'none');
+  document.querySelectorAll('.dr').forEach(x=>x.classList.toggle('lit',x===b));
+});
+document.getElementById('droneOff').onclick=()=>stopDrone();
+document.getElementById('testMinor').onclick=()=>{if(S.drone!==null)playDrone(S.drone,'minor');
+  else playDrone(S.pRoot,'minor');};
+document.getElementById('testMajor').onclick=()=>{if(S.drone!==null)playDrone(S.drone,'major');
+  else playDrone(S.pRoot,'major');};
+
+/* =====================================================================
+   TEMPO
+   ===================================================================== */
+function renderTempo(){
+  const rate=Math.pow(2,S.tSemis/12);
+  const newBpm=S.srcBpm*rate;
+  const toTarget=12*Math.log2(S.bpm/S.srcBpm);
+  const newRoot=pc(S.sRoot+Math.round(S.tSemis));
+  document.getElementById('tempoStats').innerHTML=
+    `<span>Speed multiplier<b>${rate.toFixed(4)}×</b></span>
+     <span>New tempo<b class="${Math.abs(newBpm-S.bpm)<2?'g':''}">${newBpm.toFixed(1)} BPM</b></span>
+     <span>New key<b>${NOTE[newRoot]} ${MODES[S.sMode].n}</b></span>
+     <span>To reach ${S.bpm} BPM<b class="${Math.abs(toTarget)>3?'r':'a'}">${toTarget>0?'+':''}${toTarget.toFixed(2)} st</b></span>`;
+  const arrive=pc(S.sRoot+Math.round(toTarget));
+  document.getElementById('tempoNote').innerHTML=
+    `<b>Repitching ${S.srcBpm} BPM to ${S.bpm} BPM</b> needs ${toTarget>0?'+':''}${toTarget.toFixed(2)} semitones, `+
+    `which lands your ${keyName(S.sRoot,S.sMode)} sample in <b>${NOTE[arrive]} ${MODES[S.sMode].n}</b>`+
+    (Math.abs(toTarget)>3?' — a long way, so use a stretching warp mode instead unless you want that pitch change.'
+      :' — close enough that Re-Pitch is usually the better-sounding option.');
+  document.getElementById('tempoTable').innerHTML=[-12,-7,-5,-3,-2,-1,0,1,2,3,5,7,12].map(n=>{
+    const r=Math.pow(2,n/12);
+    return `<tr${n===Math.round(S.tSemis)?' style="background:rgba(255,197,49,.18)"':''}>
+      <td class="num">${n>0?'+':''}${n} st</td><td class="num">${(r*100).toFixed(1)}%</td>
+      <td class="num">${(94*r).toFixed(1)} BPM</td><td class="num">${(120*r).toFixed(1)} BPM</td></tr>`;
+  }).join('');
+}
+document.getElementById('srcBpm').oninput=e=>{S.srcBpm=+e.target.value;
+  document.getElementById('srcBpmv').textContent=S.srcBpm+' BPM';renderTempo();};
+document.getElementById('tSemis').oninput=e=>{S.tSemis=+e.target.value;
+  document.getElementById('tSemisv').textContent=(S.tSemis>0?'+':'')+S.tSemis+' st';renderTempo();};
+document.getElementById('bpm').addEventListener('input',renderTempo);
+
+/* boot */
+function renderAll(){renderAnswer();renderMatrix();renderWheel();renderTempo();}
+window.addEventListener('resize',renderWheel);
+renderAll();
+</script>

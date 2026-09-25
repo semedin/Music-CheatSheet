@@ -1,0 +1,980 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e8e5db">
+<title>The Kit — Fieldwork drum studio</title>
+<meta name="description" content="48 playable drum studies, 192 pattern takes, an editable sequencer and a Splice sound-finding guide.">
+<style>
+:root{
+  --bg:#E2DED2; --panel:#F2EFE6; --panel-2:#EAE5D8;
+  --ink:#191713; --ink-2:#635C50; --ink-3:#8C8474; --line:#C4BDAC;
+  --lane:#1C1A17; --cell:#2A2723; --cell-hi:#35312B;
+  --b1:#FF4B32; --b2:#FF8A2B; --b3:#FFC531; --b4:#F2EDE0; --cy:#3FD0C9; --vi:#A78BFA;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(46px,11vw,118px);line-height:.84;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:60ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+
+.transport{position:sticky;top:0;z-index:80;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:14px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.09em;background:var(--b1);color:#fff;
+  border:0;border-radius:3px;padding:9px 15px;cursor:pointer;white-space:nowrap}
+.tbtn.ghost{background:transparent;color:var(--b4);border:1px solid rgba(242,237,224,.35)}
+.tbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.tbtn:hover{filter:brightness(1.12)}
+.knob{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.07em;color:rgba(242,237,224,.68)}
+.knob input[type=range]{width:88px;accent-color:var(--b2)}
+.knob b{color:var(--b4);min-width:40px;display:inline-block}
+.knob select{font-family:var(--mono);font-size:11px;background:#2A2723;color:var(--b4);border:1px solid rgba(242,237,224,.3);
+  border-radius:3px;padding:5px 7px}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.5);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:32ch}
+
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 0}
+.nav a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  text-decoration:none;color:var(--ink-2);border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--panel)}
+.nav a:hover{border-color:var(--ink);color:var(--ink)}
+
+.sec{padding:50px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:22px}
+.sec-head h2{font-size:clamp(26px,4.4vw,42px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:66ch;margin-top:12px;color:var(--ink-2)}
+
+.lab{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:20px}
+.lab-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.lab-head h3{font-size:20px;flex:1;min-width:160px}
+.tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;padding:3px 7px;border-radius:2px;
+  background:var(--ink);color:var(--b4);white-space:nowrap;text-transform:uppercase}
+.tag.alt{background:var(--b1)}
+.tag.cy{background:var(--cy);color:var(--ink)}
+
+/* ---------- sequencer ---------- */
+.seqwrap{background:var(--lane);border-radius:5px;padding:9px;overflow-x:auto}
+.seq{display:grid;grid-template-columns:118px 1fr;gap:0;min-width:640px}
+.lanecol{display:flex;flex-direction:column;gap:3px}
+.stepcol{display:flex;flex-direction:column;gap:3px}
+.lhead{height:26px;display:flex;align-items:center;gap:4px;padding-right:8px}
+.lname{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--b4);
+  flex:1;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.lname:hover{color:var(--b3)}
+.lbtn{font-family:var(--mono);font-size:8.5px;font-weight:700;width:17px;height:17px;border-radius:2px;
+  border:1px solid rgba(242,237,224,.22);background:transparent;color:rgba(242,237,224,.5);cursor:pointer;padding:0;line-height:1}
+.lbtn:hover{color:var(--b4);border-color:rgba(242,237,224,.5)}
+.lbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.lbtn.m[aria-pressed="true"]{background:var(--b1);color:#fff;border-color:var(--b1)}
+.lbtn.sw[aria-pressed="true"]{background:var(--cy);color:var(--ink);border-color:var(--cy)}
+.row{display:grid;grid-template-columns:repeat(32,1fr);gap:3px;height:26px}
+.cell{border:0;border-radius:2px;background:var(--cell);cursor:pointer;padding:0;position:relative;transition:background .05s}
+.cell.beat{background:var(--cell-hi)}
+.cell:hover{outline:1px solid rgba(242,237,224,.35)}
+.cell.on{background:var(--c)}
+.cell.acc{background:var(--c);box-shadow:inset 0 0 0 2px rgba(255,255,255,.85)}
+.cell.gho{background:var(--c);opacity:.42}
+.cell.bar1{box-shadow:inset 2px 0 0 rgba(255,255,255,.35)}
+.cell.on.bar1,.cell.acc.bar1,.cell.gho.bar1{box-shadow:inset 2px 0 0 rgba(255,255,255,.5)}
+.cell.pending{outline:2px dashed var(--b1);outline-offset:-2px}
+.cell.applied{outline:2px solid var(--cy);outline-offset:-2px}
+.cell.lit{filter:brightness(1.6)}
+.ruler{display:grid;grid-template-columns:repeat(32,1fr);gap:3px;height:16px;margin-bottom:4px}
+.ruler i{font-family:var(--mono);font-size:8px;color:rgba(242,237,224,.35);display:grid;place-items:center;font-style:normal}
+.ruler i.b{color:var(--b3);font-weight:700}
+.ph{grid-column:1/-1;height:3px;background:transparent;position:relative;margin-top:5px}
+.ph i{position:absolute;top:0;width:3px;height:3px;background:var(--b4);border-radius:2px;transition:left .04s linear}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--ink-3);
+  letter-spacing:.06em;margin-top:11px;align-items:center;text-transform:uppercase}
+.legend b{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px;align-items:center}
+.tool{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:7px 11px;cursor:pointer;color:var(--ink-2)}
+.tool:hover{border-color:var(--ink);color:var(--ink)}
+.tool.hi{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.tool.hi:hover{background:var(--b1);border-color:var(--b1);color:#fff}
+.sep{width:1px;height:22px;background:var(--line);margin:0 3px}
+.mini-ctrl{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;color:var(--ink-3);
+  text-transform:uppercase;letter-spacing:.07em}
+.mini-ctrl input[type=range]{width:78px;accent-color:var(--b1)}
+.mini-ctrl select{font-family:var(--mono);font-size:10px;padding:5px 6px;border:1px solid var(--line);border-radius:3px;background:var(--panel-2);color:var(--ink)}
+.mini-ctrl b{color:var(--ink);min-width:26px}
+
+/* ---------- morph ---------- */
+.morphrow{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:14px}
+@media(max-width:760px){.morphrow{grid-template-columns:1fr}}
+.mslot{background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:10px 12px}
+.mslot .eyebrow{margin-bottom:5px}
+.mslot select{width:100%;font-family:var(--mono);font-size:12px;padding:7px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink)}
+.swap{font-family:var(--mono);font-size:14px;background:var(--ink);color:var(--b4);border:0;border-radius:50%;
+  width:36px;height:36px;cursor:pointer;justify-self:center}
+.diffbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.diffcount{font-family:var(--display);font-size:34px;font-weight:800;line-height:1}
+.diffcount small{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:.1em;display:block;text-transform:uppercase}
+#morphSl{flex:1;min-width:180px;accent-color:var(--b1);height:26px}
+.difflist{font-family:var(--mono);font-size:11px;line-height:1.9;color:var(--ink-2);margin-top:10px;
+  max-height:150px;overflow-y:auto;background:var(--panel-2);border-radius:3px;padding:9px 11px}
+.difflist span.d{color:var(--b1)} .difflist span.a{color:#1a9c96}
+
+/* ---------- library ---------- */
+.libfilter{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+.grid3{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.gcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:15px;display:flex;flex-direction:column;gap:10px}
+.gcard-top{display:flex;align-items:baseline;gap:9px}
+.gcard h3{font-size:18px;flex:1;line-height:1.1}
+.bpm{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--b1)}
+.gcanvas{height:76px;background:var(--lane);border-radius:3px;overflow:hidden}
+.gcanvas canvas{display:block;width:100%;height:100%}
+.gcard p{font-size:14px;color:var(--ink-2);margin:0}
+.sig{font-family:var(--mono);font-size:11.5px;line-height:1.6;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:8px 10px;border-radius:0 3px 3px 0}
+.sig b{color:var(--b1)}
+.gload{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  background:var(--ink);color:var(--b4);border:0;border-radius:3px;padding:9px 13px;cursor:pointer;align-self:flex-start}
+.gload:hover{background:var(--b1);color:#fff}
+
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700}
+tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:10px 12px;border-radius:0 3px 3px 0;margin:14px 0 0}
+.callout b{color:var(--b1)}
+.note{font-size:14.5px;color:var(--ink-2);margin:13px 0 0;max-width:76ch}
+.note b{color:var(--ink)}
+.foot{border-top:2px solid var(--ink);margin-top:54px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:620px){.knob input[type=range]{width:66px}.tnow{display:none}.diffcount{font-size:26px}}
+
+:root{--bg:#e8e5db;--panel:#f4f1e9;--panel-2:#e9e5da;--ink:#22251f;--ink-2:#62675b;--ink-3:#74796b;--line:#cccdbf;--b1:#dd542f;--display:'Arial',sans-serif;--body:'Segoe UI',Arial,sans-serif;--mono:'Consolas','Courier New',monospace}
+body{background-image:none;font-size:15px}button,input,select{font:inherit}button,a,input,select,summary{touch-action:manipulation}button{transition:background .15s,transform .15s}button:active{transform:translateY(1px)}button:disabled{opacity:.4;cursor:not-allowed}a{color:inherit}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #d85b36;outline-offset:3px}h1,h2,h3{letter-spacing:-.045em}.wrap{max-width:1440px;padding:0 48px}.eyebrow{font-size:10px;letter-spacing:.13em;color:var(--ink-2)}.skip-link{position:fixed;top:-100px;left:12px;background:var(--ink);color:white;padding:12px;z-index:300}.skip-link:focus{top:12px}.sitehead{height:83px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.wordmark{display:flex;align-items:center;gap:12px;font:700 12px var(--mono);letter-spacing:.08em;text-decoration:none}.brand-icon{font:bold 33px Georgia;letter-spacing:-.14em;margin-right:8px}.edition{font-size:9px;font-weight:400;color:var(--ink-2)}.sitehead nav{display:flex;gap:30px;font-size:11px}.sitehead nav a{text-decoration:none}.hero{display:grid;grid-template-columns:1.4fr .85fr;gap:60px;align-items:center;padding-top:54px;padding-bottom:50px;border:0}.hero h1{font-size:clamp(54px,6.4vw,92px);line-height:.97;text-transform:none;letter-spacing:-.07em;margin-top:21px;font-weight:800}.hero h1 em{color:var(--b1)}.hero .sub{font-size:15px;line-height:1.8;max-width:60ch;margin-top:23px}.live-dot{display:inline-block;width:7px;height:7px;background:var(--b1);border-radius:50%;margin-right:8px}.hero-actions{display:flex;gap:24px;align-items:center;margin-top:26px}.primary{background:var(--b1);color:#fff8ee;border:1px solid var(--b1);padding:12px 18px;border-radius:4px;font:600 11px var(--mono);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:26px}.primary:hover{background:#bd4222;border-color:#bd4222}.text-button{border:0;background:none;color:var(--ink-2);font:11px var(--mono);padding:8px 0;cursor:pointer}.text-button:hover{color:var(--b1)}.hero-stats{display:flex;gap:38px;margin-top:39px}.hero-stats div{display:flex;flex-direction:column;gap:3px}.hero-stats b{font:500 25px var(--mono);letter-spacing:-.07em}.hero-stats span{font:8px var(--mono);letter-spacing:.08em;color:var(--ink-2)}
+.hero-art{position:relative;background:#d7dbca;border:1px solid #bec3b0;border-radius:5px;min-height:365px;overflow:hidden;box-shadow:10px 13px 0 #dcdccf;transform:rotate(2deg);padding:20px 24px;color:#384031}.art-top,.art-bottom{display:flex;justify-content:space-between;font:8px var(--mono);letter-spacing:.07em}.art-top{border-bottom:1px solid #aeb7a1;padding-bottom:13px}.art-title{font:bold 66px Arial;letter-spacing:-.075em;margin-top:12px;position:relative;z-index:2}.art-title span{font:18px Arial;vertical-align:top;margin-left:6px}.art-rings{height:135px;position:relative}.art-rings i{position:absolute;width:190px;height:190px;border:1px solid #7c896d;border-radius:50%;left:calc(50% - 95px);top:-57px}.art-rings i:nth-child(2){transform:translateX(-35px)}.art-rings i:nth-child(3){transform:translateX(35px)}.art-rings i:nth-child(4){transform:translateY(-22px);border-color:#dd542f}.art-rings span{position:absolute;right:0;bottom:5px;background:#d7dbca;font:8px/1.4 var(--mono);padding:4px}.art-pads{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;border-top:1px solid #aeb7a1;padding-top:15px}.art-pads i{aspect-ratio:1;background:#46513b;border-radius:3px;box-shadow:inset 0 -4px #0002}.art-pads i:nth-child(3n){background:#dd542f}.art-pads i:nth-child(4n){background:#f4f0df}.art-bottom{margin-top:16px}.section-nav{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#dfdfd1}.section-nav nav{display:flex;align-items:center;gap:38px;height:57px}.section-nav a{text-decoration:none;font:10px var(--mono);color:#858978;white-space:nowrap}.section-nav b{font:500 12px var(--body);color:var(--ink);margin-left:9px}.section-nav nav>span{margin-left:auto;font:8px var(--mono);letter-spacing:.12em;color:var(--ink-2)}.sec{padding:43px 0 0;scroll-margin-top:20px}.section-heading{display:flex;justify-content:space-between;align-items:end;margin-bottom:23px;gap:24px}.section-heading h2{font-size:30px;margin-top:9px}.section-heading>p{font-size:12px;color:var(--ink-2);line-height:1.65;margin:0}.workbench{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:20px;align-items:start}.instrument{border:1px solid #333b31;background:#242a24;border-radius:6px;color:#f0f0e6;box-shadow:0 5px 10px #20251f0c;min-width:0;overflow:hidden}.instrument-head{display:flex;align-items:center;gap:12px;padding:21px 22px 17px}.instrument-head>div{flex:1;min-width:0}.instrument-head .eyebrow{color:#9aa58e;font-size:8px}.instrument-head h3{font-size:24px;margin-top:7px}.instrument .tag{background:#3b4434;color:#c5d6b6;font-size:9px;padding:5px 9px;letter-spacing:.03em}.star{border:1px solid #6c7362;border-radius:4px;background:transparent;color:inherit;font-size:21px;width:34px;height:34px;cursor:pointer}.star[aria-pressed=true]{color:#e2ac67}.transport{position:static;display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:13px 20px;background:#1d231e;border-top:1px solid #384235;border-bottom:1px solid #384235}.tbtn{font-size:10px;padding:11px 17px;color:#fff}.tbtn[aria-pressed=true]{background:#cad5a2;color:#242a24}.knob{font-size:8px;gap:7px}.knob input[type=range]{width:54px;accent-color:#c9d2a1}.knob b{font-size:9px;min-width:25px}.knob input[type=number]{width:53px;background:transparent;border:1px solid #55604d;border-radius:3px;padding:5px;color:#eee;font:12px var(--mono)}.instrument-options{padding:13px 20px;display:flex;align-items:center;gap:16px;font:8px var(--mono);color:#adb6a2}.instrument-options label{display:flex;align-items:center;gap:7px}.instrument select{background:#343d31;color:#e5eadb;border:1px solid #535e4b;font:10px var(--mono);border-radius:3px;padding:6px}.instrument-options>span{margin-left:auto;font-size:8px;color:#b7c4a6}.seqwrap{margin:0 12px;background:#1b211c;border:1px solid #35402f;border-radius:4px;padding:10px 8px 9px;scrollbar-color:#667354 #20251f}.seq{grid-template-columns:138px 1fr;min-width:700px}.lhead,.row{height:27px}.ruler{height:27px;margin-bottom:0}.ruler i{color:#828d76;font-size:8px}.ruler i.b{color:#cbd4b8}.lname{font:9px var(--mono);text-transform:none;letter-spacing:0;color:#c5ceb9;border:0;background:none;text-align:left;padding:3px;min-width:0}.lbtn{width:18px;height:20px;font-size:8px;border-color:#475140;color:#939f83}.cell{border-radius:2px;background:#2c3429;min-width:0}.cell.beat{background:#394132}.cell.gho{opacity:.45}.cell.lit{filter:brightness(1.5);outline:1px solid white}.cell.acc{box-shadow:inset 0 0 0 1px #fff9}.cell.bar1{border-left:2px solid #9da58b}.ph i{background:#dfe9c5}.grid-key{padding:12px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font:8px var(--mono);color:#a6b398}.grid-key span{display:flex;gap:5px;align-items:center}.grid-key i{width:7px;height:7px;background:#cbd59a;border-radius:1px}.grid-key .key-accent{outline:1px solid white}.grid-key .key-ghost{opacity:.4}.instrument .toolbar{padding:0 19px 14px;margin:0;gap:5px}.tool{font-size:9px;text-transform:none;letter-spacing:0;padding:8px 10px;border-radius:3px}.instrument .tool{background:#333c2e;border-color:#4b5842;color:#d1d9c2}.instrument .tool:hover{border-color:#99aa81;background:#404c39}.instrument .sep{background:#535d49}.advanced{border-top:1px solid #424d39;padding:11px 20px;font-size:11px;color:#c0ccae}.advanced summary{cursor:pointer}.advanced summary span{margin-left:12px;color:#8f9e7d;font-size:9px}.advanced-controls{display:flex;gap:12px;flex-wrap:wrap;margin:15px 0 6px;align-items:end}.advanced-controls label{display:flex;flex-direction:column;gap:5px;font:9px var(--mono)}.advanced-controls input[type=number]{width:62px;background:#333d2d;border:1px solid #58674b;padding:6px;color:#dce6cd;border-radius:3px}.advanced-controls input[type=range]{width:130px;accent-color:#c9d2a1}.export-row{padding:15px 20px 0;border-top:1px solid #424d39;display:flex;flex-wrap:wrap;gap:7px;align-items:center}.export-row .primary{font-size:10px;padding:9px 12px}.instrument-note{padding:0 20px 17px;margin:12px 0 0;font:9px/1.7 var(--mono);color:#a3b095}.sound-panel{border:1px solid var(--line);border-radius:5px;background:#f2f0e6;padding:21px}.sound-panel>.eyebrow{display:flex;justify-content:space-between;font-size:8px}.sound-panel h3{font-size:27px;margin:13px 0;line-height:1.05}.sound-panel>p{font-size:12px;line-height:1.6;color:var(--ink-2)}.listen-for{border-left:2px solid #9dAA80;padding:2px 0 2px 12px;margin:16px 0 22px}.listen-for .eyebrow{font-size:8px}.listen-for p{font-size:11px;margin:5px 0 0;color:var(--ink-2);line-height:1.6}.sound-heading{display:flex;align-items:center;gap:8px}.sound-heading h4{font-size:13px;letter-spacing:-.03em}.sound-heading .text-button{margin-left:auto;font-size:9px;white-space:nowrap}.sound-help{font-size:10px!important;margin:3px 0 11px}.sound-item{border-top:1px solid #d8dace;padding:10px 0}.sound-item-head{display:flex;justify-content:space-between;font:9px var(--mono);margin-bottom:6px}.sound-item-head span{display:flex;align-items:center;gap:6px}.sound-item-head i{height:5px;width:5px;border-radius:50%}.sound-item-head button{background:none;border:0;color:#6d775e;font:9px var(--mono);cursor:pointer}.search-link{font:10px/1.5 var(--mono);display:flex;justify-content:space-between;gap:8px;text-decoration:none;background:#e5e8da;padding:7px 9px;border-radius:3px}.search-link:hover{background:#d8dfc8}.sound-item small{display:block;color:var(--ink-2);font-size:10px;line-height:1.5;margin-top:5px}.source-link{display:inline-block;font:9px var(--mono);margin-top:12px}.sound-foot{font-size:9px!important;margin:10px 0 0}
+.library-controls{display:flex;gap:12px;align-items:center}.search-field{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:0 13px;flex:1}.search-field>span{font-size:24px;color:var(--ink-2)}.search-field input{border:0;background:transparent;width:100%;font-size:12px;min-width:0;padding:12px 0;outline-offset:0}.search-field kbd{border:1px solid var(--line);padding:0 5px;color:var(--ink-3);font-size:11px}.sort-label{display:flex;align-items:center;gap:8px;font:9px var(--mono);color:var(--ink-2)}.sort-label select{padding:10px 12px;border:1px solid var(--line);background:var(--panel);border-radius:4px;color:var(--ink);font-size:11px}.library-controls>.tool{padding:12px;background:transparent}.library-controls>.tool[aria-pressed=true]{background:var(--ink);color:white}.libfilter{margin:18px 0 0;gap:6px}.libfilter .tool{border-radius:30px;background:transparent;padding:7px 13px}.libfilter .tool[aria-pressed=true]{background:var(--ink);color:#f7f6ed;border-color:var(--ink)}.libfilter small{margin-left:7px;opacity:.65;font-size:8px}.result-row{display:flex;justify-content:space-between;align-items:center;margin:12px 0;font:9px var(--mono);color:var(--ink-2)}.result-row button{font-size:9px}.grid3{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.gcard{border-radius:5px;padding:18px;gap:0;transition:border-color .15s,box-shadow .15s;min-width:0}.gcard:hover{border-color:#929d80;box-shadow:0 4px 13px #252a2010}.card-meta{display:flex;justify-content:space-between;align-items:center;font:8px var(--mono);color:var(--ink-2);text-transform:uppercase;letter-spacing:.07em}.card-family{display:flex;gap:6px;align-items:center}.card-family i{height:6px;width:6px;border-radius:50%;background:var(--family)}.card-meta .star{border:0;width:26px;height:26px;font-size:19px}.gcard-top{margin:10px 0 13px;align-items:start}.gcard h3{font-size:20px;line-height:1.13;letter-spacing:-.04em}.bpm{font-size:10px;color:var(--ink-2);white-space:nowrap;margin-top:3px}.gcanvas{height:69px;border-radius:3px}.gcard p{font-size:11px;line-height:1.7;margin:13px 0 12px;color:var(--ink-2)}.card-tags{display:flex;gap:6px;font:8px var(--mono);color:#6e785f;flex-wrap:wrap}.card-tags span{border:1px solid #d8dcce;padding:3px 6px;border-radius:2px}.card-query{display:block;margin:13px 0;font:9px/1.6 var(--mono);color:var(--ink-2);text-decoration:none}.card-query span{display:block;font-size:7px;letter-spacing:.08em;color:#818876}.card-query:hover{color:var(--b1)}.card-actions{display:flex;align-items:center;gap:8px;margin-top:auto;border-top:1px solid #dcdfd1;padding-top:12px}.card-actions button{border:0;background:none;font:10px var(--mono);cursor:pointer;color:var(--ink);padding:5px 0}.card-actions button:first-child{color:var(--b1)}.card-actions button:last-child{margin-left:auto;color:var(--ink-2);font-size:9px}.card-actions .preview-active{font-weight:bold}.show-more{display:block;margin:23px auto 0;background:transparent;padding:12px 28px}.empty{text-align:center;border:1px dashed var(--line);padding:40px}.empty p{margin-top:12px}.morph-panel{display:grid;grid-template-columns:1fr 2fr;gap:40px;background:#dce1d2;border:1px solid #c0c9b2;border-radius:5px;padding:28px}.morph-panel>div>p{font-size:12px;color:var(--ink-2);line-height:1.7}.morph-intro{font-size:23px!important;line-height:1.1!important;font-weight:700;color:var(--ink)!important;letter-spacing:-.04em}.morphrow{grid-template-columns:minmax(0,1fr) 30px minmax(0,1fr);gap:10px}.mslot{background:transparent;border-color:#b9c3aa;padding:9px}.mslot select{background:#edf0e5;font-size:10px;min-width:0}.mslot .eyebrow{display:block;font-size:8px}.swap{width:30px;height:30px}.diffbar{font:10px var(--mono)}.diffbar input{accent-color:var(--b1);min-width:90px;flex:1}.difflist{font:10px/1.7 var(--mono);max-height:90px;background:#e9ecdf;margin-top:16px}.morph-panel .primary{font-size:10px;padding:9px 13px}.field-notes{margin-top:43px;border-top:1px solid var(--ink);border-bottom:1px solid var(--line);padding:23px 0;scroll-margin-top:20px}.field-notes>summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none}.field-notes>summary strong{display:block;font-size:27px;letter-spacing:-.04em;margin-top:6px}.notes-plus{font:30px var(--mono);font-weight:300}.field-notes[open] .notes-plus{transform:rotate(45deg)}.field-notes>p{margin-top:18px;color:var(--ink-2)}.field-notes .sec-head h2{font-size:28px;text-transform:none}.foot{border:0;margin-top:24px;padding:14px 0 36px;display:flex;justify-content:space-between;gap:20px}.foot p{font-size:10px;line-height:1.8;margin:8px 0 0}.foot .wordmark{font-size:10px}.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);background:#222c20;color:#f0f2e6;box-shadow:0 4px 20px #0003;padding:13px 22px;border:1px solid #7d8d68;border-radius:5px;z-index:200;max-width:calc(100vw - 32px);font-size:12px;opacity:0;pointer-events:none;transition:.2s}.toast.visible{opacity:1;transform:translate(-50%,0)}dialog{max-width:500px;width:calc(100% - 32px);border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:25px}dialog::backdrop{background:#18201499}dialog textarea{width:100%;background:var(--bg);border:1px solid var(--line);padding:12px;margin-bottom:15px;font:12px var(--mono)}dialog h3{font-size:24px;margin-bottom:10px}[hidden]{display:none!important}
+@media(min-width:1450px){.hero{gap:100px}.hero-art{min-height:380px}.art-rings{height:150px}}
+@media(max-width:1150px){.wrap{padding-left:28px;padding-right:28px}.hero{gap:40px}.hero-stats{gap:27px}.workbench{grid-template-columns:minmax(0,1fr) 280px}.transport{gap:13px}.knob input[type=range]{width:42px}.grid3{gap:12px}.gcard{padding:14px}.gcard h3{font-size:18px}.edition{display:none}.instrument-options{flex-wrap:wrap}.instrument-options>span{width:100%;margin-left:0}.hero-art{min-height:340px}.art-title{font-size:56px}.art-rings{height:125px}}
+@media(max-width:950px){.workbench{grid-template-columns:1fr}.sound-panel{display:grid;grid-template-columns:1fr 1fr;column-gap:25px}.sound-panel>.eyebrow,.sound-panel h3,.sound-panel>p,.listen-for{grid-column:1}.sound-heading,.sound-list,.source-link{grid-column:2}.sound-heading{grid-row:1 / 3;align-self:start}.sound-panel .sound-help{grid-column:2;grid-row:3;margin-top:-18px}.sound-list{grid-row:4 / 9}.source-link{grid-row:9}.sound-panel .sound-foot{grid-row:9}.hero-art{min-height:315px;padding:18px}.art-rings i{width:160px;height:160px;left:calc(50% - 80px);top:-35px}.art-rings{height:125px}.hero-stats{gap:22px}.section-nav nav{gap:23px}.section-nav nav>span{display:none}.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}.morph-panel{grid-template-columns:1fr;gap:12px}.morph-panel>div:first-child{max-width:65ch}.hero h1{font-size:58px}.hero{gap:25px}.hero-stats span{font-size:7px}}
+@media(max-width:640px){.wrap{padding-left:18px;padding-right:18px}.sitehead{height:64px}.sitehead nav{gap:12px;font-size:10px}.sitehead nav a:first-child{display:none}.hero{grid-template-columns:1fr;padding-top:32px;padding-bottom:28px;gap:28px}.hero h1{font-size:clamp(46px,12vw,72px)}.hero .sub{font-size:13px;margin-top:18px;line-height:1.7}.hero-art{display:none}.hero-stats{justify-content:space-between;gap:10px;margin-top:27px}.hero-stats b{font-size:23px}.hero-stats span{font-size:7px}.hero-actions{gap:22px;margin-top:21px}.section-nav nav{overflow-x:auto;gap:22px;height:50px}.section-nav a{font-size:9px}.section-nav b{font-size:11px;margin-left:4px}.sec{padding-top:30px}.section-heading{display:block;margin-bottom:18px}.section-heading h2{font-size:27px}.section-heading>p{margin-top:10px;font-size:11px}.section-heading>p br{display:none}.instrument-head{padding:16px 14px}.instrument-head h3{font-size:21px}.instrument-head .tag{font-size:8px;padding:4px 6px}.instrument-head{gap:8px}.transport{gap:12px;padding:12px}.knob{gap:5px}.knob input[type=range]{width:46px}.knob:last-child{margin-left:0}.instrument-options{padding:12px}.grid-key{padding:12px;font-size:7px;gap:10px}.instrument .toolbar{padding:0 12px 13px}.instrument .tool{font-size:9px;padding:8px}.advanced{padding:11px 12px}.advanced summary span{font-size:8px;margin-left:4px}.export-row{padding:13px 12px 0}.instrument-note{padding:0 12px 13px;font-size:8px}.sound-panel{display:block;padding:18px}.sound-panel h3 br{display:none}.sound-panel .sound-help{margin-top:4px}.sound-list{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.sound-item small{font-size:9px}.sound-panel h3{font-size:24px}.library-controls{flex-wrap:wrap;gap:9px}.search-field{flex-basis:100%}.sort-label{flex:1}.sort-label select{flex:1}.library-controls>.tool{padding:10px}.libfilter{gap:5px;margin-top:14px}.libfilter .tool{padding:7px 10px;font-size:9px}.grid3{grid-template-columns:1fr}.gcard{padding:18px}.gcard h3{font-size:22px}.gcard p{font-size:12px}.gcanvas{height:75px}.card-meta{font-size:9px}.card-tags{font-size:9px}.card-query{font-size:10px}.card-actions button{font-size:11px;padding:8px 0}.morph-panel{padding:18px}.morphrow{grid-template-columns:minmax(0,1fr) 26px minmax(0,1fr);gap:6px}.mslot{padding:7px}.mslot select{font-size:9px;padding:6px 3px}.swap{width:26px;height:26px}.diffbar{gap:8px;font-size:9px}.field-notes>summary strong{font-size:23px}.foot{display:block}.foot>p{margin-top:18px}.grid2{grid-template-columns:1fr}.tcard{padding:14px}.tcard li{font-size:13px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+/* Keep active step colours above the alternating beat backgrounds. */
+.cell.on,.cell.acc,.cell.gho{background:var(--c)}
+.lanecol{position:sticky;left:0;z-index:2;background:#1b211c;padding-right:3px}
+.seqwrap{position:relative}.card-tags{margin-top:10px}.take-hint{font:9px/1.6 var(--mono);color:#b1bea0;margin:0;padding:0 20px 12px}
+.hero-actions{flex-wrap:wrap}
+@media(max-width:640px){.section-heading>p br::after{content:' '}.section-heading>p br{display:initial}.take-hint{padding:0 12px 12px;font-size:8px}}
+@media print{.hero-art,.section-nav,.transport,.toolbar,.export-row,.advanced,.hero-actions,.toast{display:none}.wrap{padding:0}.workbench{display:block}.instrument{break-inside:avoid}.sound-panel{margin-top:20px}.grid3{grid-template-columns:repeat(2,1fr)}.gcard{break-inside:avoid}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#seq">Skip to drum studio</a>
+<header class="sitehead wrap"><a class="wordmark" href="index.html"><span class="brand-icon">f.</span> FIELDWORK <span class="edition">/ INSTRUMENTS & IDEAS</span></a><nav aria-label="Site"><a href="rumble.html">Low-end lab ↗</a><a href="index.html">Back to studio ↗</a></nav></header>
+<main>
+<section class="hero wrap" aria-labelledby="title">
+ <div class="hero-copy"><div class="eyebrow"><span class="live-dot"></span> FIELD GUIDE 03 / THE DRUM STUDIO</div>
+ <h1 id="title">Small hits.<br><em>Big movement.</em></h1>
+ <p class="sub">Find the pocket. Build the kit. Make it yours.<br>A playable atlas of drum patterns, from dusty house to broken rhythms — with the sounds to search for next.</p>
+ <div class="hero-actions"><a class="primary" href="#library">Explore the patterns <span>↗</span></a><button class="text-button" id="surprise">Surprise me ↗</button></div>
+ <div class="hero-stats"><div><b>48</b><span>STYLE STUDIES</span></div><div><b>192</b><span>PATTERN TAKES</span></div><div><b>12</b><span>DRUM LANES</span></div><div><b>∞</b><span>POSSIBILITIES</span></div></div>
+ </div>
+ <div class="hero-art" aria-hidden="true"><div class="art-top"><span>THE KIT / RHYTHM SYSTEM</span><span>FW—03</span></div><div class="art-title">the kit<span>®</span></div><div class="art-rings"><i></i><i></i><i></i><i></i><span>FIND YOUR<br>FREQUENCY.</span></div><div class="art-pads"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="art-bottom"><span>12 VOICES · ONE GOOD IDEA</span><span>● ● ○</span></div></div>
+</section>
+<div class="section-nav"><nav class="wrap" aria-label="On this page"><a href="#seq">01 <b>Playground</b></a><a href="#library">02 <b>Pattern library</b></a><a href="#morph">03 <b>Morph lab</b></a><a href="#roles">04 <b>Field notes</b></a><span>MADE TO BE PLAYED.</span></nav></div>
+<div class="wrap">
+<section class="sec" id="seq" aria-labelledby="studioTitle">
+ <div class="section-heading"><div><div class="eyebrow">01 / THE PLAYGROUND</div><h2 id="studioTitle">Your next groove starts here.</h2></div><p>Pick a pattern. Move a few hits.<br>Hear what makes it move.</p></div>
+ <div class="workbench">
+ <div class="instrument">
+  <div class="instrument-head"><div><span class="eyebrow" id="patternIndex">STUDY 01 / 48</span><h3 id="patName">Classic house</h3></div><button class="star" id="favourite" aria-label="Save Classic house to favourites" aria-pressed="false">☆</button><span class="tag" id="patFamily">House</span></div>
+  <div class="transport"><button class="tbtn" id="playBtn" aria-pressed="false">▶ PLAY</button><label class="knob">BPM <input type="number" id="bpm" min="65" max="190" value="124"></label><label class="knob">SWING <input type="range" id="swing" min="50" max="70" value="52"><b id="swingv">52%</b></label><label class="knob">FEEL <input type="range" id="human" min="0" max="20" value="0"><b id="humanv">0ms</b></label><label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="65"><b id="volv">65</b></label></div>
+  <div class="instrument-options"><label>TAKE <select id="take"><option>Foundation</option><option>Stripped</option><option>Displaced</option><option>Turnaround</option></select></label><label>KIT <select id="kit"></select></label><span id="nowPlaying" aria-live="polite">Ready when you are.</span></div>
+  <p class="take-hint" id="takeHint">Foundation · The full style study. Start here, then make it yours.</p>
+  <div class="seqwrap" tabindex="0" role="region" aria-label="Two-bar drum sequencer. Scroll horizontally on small screens."><div class="seq"><div class="lanecol" id="laneCol"></div><div class="stepcol" id="stepCol"></div></div></div>
+  <div class="grid-key"><span><i class="key-hit"></i>HIT</span><span><i class="key-accent"></i>ACCENT</span><span><i class="key-ghost"></i>GHOST</span><span>Click to cycle · drag to paint</span><span>M mute / S solo / ~ swing</span></div>
+  <div class="toolbar"><button class="tool" id="undo" disabled>↶ Undo</button><button class="tool" id="redo" disabled>↷ Redo</button><span class="sep"></span><button class="tool" id="varyBtn">✧ Vary texture</button><button class="tool" id="fillBtn">Add fill</button><button class="tool" id="dblBtn">Bar 1 → 2</button><button class="tool" id="resetPattern">Reset take</button><button class="tool" id="clearAll">Clear</button></div>
+  <details class="advanced"><summary>More tools <span>Euclidean rhythm · lane rotation · mix</span></summary><div class="advanced-controls"><label>Lane <select id="euLane"></select></label><label>Hits / 16 <input type="number" id="euHits" min="1" max="16" value="5"></label><label>Rotate <input type="number" id="euRot" min="0" max="15" value="0"></label><button class="tool" id="euGo">Apply Euclid</button><button class="tool" id="rotateLane">Shift lane →</button><label>Lane level <input type="range" id="laneLevel" min="0" max="100" value="100"><output id="laneLevelV">100%</output></label></div></details>
+  <div class="export-row"><button class="primary" id="exportMidi">↓ Export MIDI</button><button class="tool" id="saveSession">Save session</button><button class="tool" id="restoreSession">Restore saved</button><button class="tool" id="exportSession">↓ Session file</button><button class="tool" id="importSession">↑ Open session</button><input type="file" id="sessionFile" accept=".json,application/json" hidden></div>
+  <p class="instrument-note">2 bars · 4/4 · sixteenth-note grid · synthesized previews. MIDI includes swing, velocities and the audible mix. Human timing is preview-only.</p>
+ </div>
+ <aside class="sound-panel" aria-labelledby="soundTitle"><div class="eyebrow">THE SOUND PALETTE <span>↗</span></div><h3 id="soundTitle">Right rhythm.<br>Right sounds.</h3><p id="patternDescription"></p><div class="listen-for"><span class="eyebrow">LISTEN FOR</span><p id="patternTip"></p></div><div class="sound-heading"><h4>Find your kit on Splice</h4><button class="text-button" id="copyKit">Copy all ↗</button></div><p class="sound-help">Start with a phrase below. Filter to <b>one-shots</b>, then try fewer keywords if results are too narrow.</p><div class="sound-list" id="soundList"></div><a class="source-link" href="https://support.splice.com/en/articles/8652594-finding-sounds" target="_blank" rel="noopener noreferrer">Splice search & filter guide ↗</a><p class="sound-foot">Search ideas, not included samples. Browser kits are synthesized sketches. Use Splice to audition your own final sounds.</p></aside>
+ </div>
+</section>
+<section class="sec" id="library" aria-labelledby="libraryTitle">
+ <div class="section-heading"><div><div class="eyebrow">02 / THE PATTERN ATLAS</div><h2 id="libraryTitle">Different scenes. Shared DNA.</h2></div><p>48 starting points, not rules.<br>Four takes on every groove.</p></div>
+ <div class="library-controls"><label class="search-field"><span>⌕</span><input id="search" type="search" placeholder="Search a style, feel or sound…" aria-label="Search styles, feel or sounds"><kbd>/</kbd></label><label class="sort-label">SORT <select id="sort"><option value="curated">Curated</option><option value="tempo">Tempo ↑</option><option value="name">A–Z</option><option value="density">Density ↑</option></select></label><button class="tool" id="onlyFavourites" aria-pressed="false">☆ Favourites</button></div>
+ <div class="libfilter" id="libFilter" aria-label="Filter by family"></div><div class="result-row"><span id="resultCount" role="status"></span><button class="text-button" id="clearFilters">Reset filters ↺</button></div><div class="grid3" id="libGrid"></div><div id="emptyLibrary" class="empty" hidden><h3>No grooves in this pocket.</h3><p>Try a broader search or reset your filters.</p></div><button class="tool show-more" id="showMore">Show more patterns ↓</button>
+</section>
+<section class="sec" id="morph" aria-labelledby="morphTitle"><div class="section-heading"><div><div class="eyebrow">03 / CROSS-POLLINATION</div><h2 id="morphTitle">Somewhere between two grooves.</h2></div><p>Change the skeleton first.<br>Then bring in the detail.</p></div><div class="morph-panel"><div><p class="morph-intro">What happens when house learns to skip?</p><p>Choose two foundations and move through their differences. Kick, snare, clap and open-hat changes come first. Send your hybrid to the playground to hear it.</p></div><div><div class="morphrow"><label class="mslot"><span class="eyebrow">FROM / A</span><select id="selA"></select></label><button class="swap" id="swapAB" aria-label="Swap morph patterns">⇄</button><label class="mslot"><span class="eyebrow">TO / B</span><select id="selB"></select></label></div><div class="diffbar"><output id="diffN">0 changes</output><input type="range" id="morphSl" min="0" max="100" value="0" aria-label="Morph between patterns"><output id="morphPercent">0%</output></div><div class="toolbar"><button class="tool" id="morphStruct">Structure boundary</button><button class="primary" id="morphLoad">Send to playground ↗</button></div><div class="difflist" id="diffList"></div></div></div></section>
+<details class="field-notes"><summary><span><span class="eyebrow">04 / KEEP LEARNING</span><strong>The decisions behind the drums.</strong></span><span class="notes-plus">+</span></summary><p>Roles, rhythmic vocabulary and a tempo reference. Expand a concept, then try it in the playground.</p>  <!-- ================= ROLES ================= -->
+  <section class="sec" id="roles">
+    <div class="sec-head">
+      <div class="eyebrow">Field notes · 01</div>
+      <h2>What each drum is for</h2>
+      <p>Twelve lanes, complementary roles. Start with a rhythmic anchor, then give every added part a reason to be there.</p>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>The floor: kick</h3>
+        <ul>
+          <li><b>Four on the floor</b> gives a steady quarter-note pulse. Kick length, accent and the parts around it determine whether that pulse feels heavy, buoyant or restrained.</li>
+          <li>A syncopated kick can suggest garage, breaks or electro. House also uses pickups and displaced kicks: listen to the whole phrase, not just one lane.</li>
+          <li>Try a sixteenth-note pickup just before the next downbeat: step <b>16 in bar 2</b> (step 32 across both bars). Lower its velocity to keep beat 1 strong.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>The answer: snare &amp; clap</h3>
+        <ul>
+          <li>On beats <b>2 and 4</b>, they create a familiar backbeat. One hit on beat 3 instead suggests a half-time feel.</li>
+          <li>A <b>clap</b> often has several closely spaced transients; a <b>snare</b> can add a pitched body. Both appear across house, techno and garage.</li>
+          <li>Try a clap layer 10–20 ms behind a snare in your DAW. Compare against simultaneous hits; a loose flam is not always the right choice.</li>
+          <li><b>Ghost snares</b> are quiet articulations between the main hits. Try MIDI velocity 30–50 as a starting point, then adjust for your samples.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>The engine: hats</h3>
+        <ul>
+          <li>Hats carry the <b>subdivision</b> — they tell you whether the track is in 8ths, 16ths or shuffled 16ths, and that single choice does more genre work than anything except tempo.</li>
+          <li>The <b>open hat on offbeat eighth notes</b> is a familiar house device, also common in techno. Length, tone and the surrounding parts change its effect.</li>
+          <li>Swing lives here. Swing the hats, leave the kick straight, and the tension between them is the groove.</li>
+          <li>Vary hat velocity in a pattern, not randomly. Strong, weak, medium, weak.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>The colour: percussion</h3>
+        <ul>
+          <li><b>Rim / clave</b> is for syncopation. One rim on an unexpected 16th does more than eight bars of hats.</li>
+          <li><b>Shaker</b> can add a softer rhythmic layer between the hats. Its attacks still contribute to the groove: keep it quiet enough to support the main pulse.</li>
+          <li><b>Congas and toms</b> have resonant bodies. Think about their pitch and articulation as well as their rhythm, especially alongside a bassline.</li>
+          <li><b>Cowbell and tambourine</b> add strong tonal or noisy accents. Both appear in many styles; sound choice and placement determine their character here.</li>
+          <li>Percussion should be the first thing you mute when a loop feels cluttered, and it usually turns out you don't need most of it.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VOCAB ================= -->
+  <section class="sec" id="vocab">
+    <div class="sec-head">
+      <div class="eyebrow">Field notes · 02</div>
+      <h2>Hat &amp; clap vocabulary</h2>
+      <p>Useful starting shapes, not genre requirements. Positions are sixteenth-note steps within one bar, counted from 1.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Shape</th><th>Steps</th><th>Where it lives</th></tr></thead>
+        <tbody>
+          <tr><td><b>Offbeat 8ths (open hat)</b></td><td class="num">3, 7, 11, 15</td><td>House, disco, acid. The definitive house sound.</td></tr>
+          <tr><td><b>Straight 8ths (closed)</b></td><td class="num">1, 3, 5, 7, 9, 11, 13, 15</td><td>Techno, Detroit. Driving and neutral.</td></tr>
+          <tr><td><b>Straight 16ths</b></td><td class="num">all 16</td><td>Hypnotic techno, disco house, French house. Relentless.</td></tr>
+          <tr><td><b>Shuffled 16ths</b></td><td class="num">all 16, swung 58–64%</td><td>Garage, jackin house, shuffle house. The stagger.</td></tr>
+          <tr><td><b>Skipping 16ths</b></td><td class="num">1, 2, 4, 5, 6, 8 …</td><td>2-step. Gaps are the whole point.</td></tr>
+          <tr><td><b>Backbeat clap</b></td><td class="num">5 and 13</td><td>Common in house, disco and techno.</td></tr>
+          <tr><td><b>Clap on beat 4 only</b></td><td class="num">13</td><td>A sparse phrase marker. Try it in minimal or dub arrangements.</td></tr>
+          <tr><td><b>Displaced snare</b></td><td class="num">5 and 12 or 14</td><td>2-step, breaks. Pulls the bar off balance.</td></tr>
+          <tr><td><b>Ghost snare fill</b></td><td class="num">4, 8, 16 at velocity 30–50</td><td>Breaks, jungle, funk-leaning house.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>Structure vs texture</h3>
+        <ul>
+          <li>Use the morph lab to compare these examples. Structural edits change the kick and backbeat; texture edits change the supporting detail.</li>
+          <li><b>Classic house → peak-time techno:</b> compare the stronger hat pulse and tom turnaround, then audition the tempo and kit together.</li>
+          <li><b>Classic house → hypnotic techno:</b> removing the clap is one possible route to a less pronounced backbeat. Many hypnotic tracks still use claps.</li>
+          <li><b>Tech house → 2-step:</b> listen to the syncopated kick against the snare, then add the skipping hats and shuffle.</li>
+          <li>Check the kick and backbeat first, then the subdivision, swing and sound palette. Each can change how a groove reads.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Density discipline</h3>
+        <ul>
+          <li>Compare hit density at the same tempo and kit. Density changes the energy, but sustain and velocity matter just as much as the number of notes.</li>
+          <li>Overlapping hits can create useful layers. If the transient gets blurry, try a different sample, lower velocity or a small timing offset in your DAW.</li>
+          <li>The best test for a busy loop: mute everything except kick and one other part. If that doesn't groove, adding parts won't fix it.</li>
+          <li>Silence on the downbeat of a bar is one of the strongest arrangement tools there is, and it costs nothing.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NUMBERS ================= -->
+  <section class="sec" id="numbers">
+    <div class="sec-head">
+      <div class="eyebrow">Field notes · 03</div>
+      <h2>Numbers</h2>
+      <p>Settings for these particular studies, not fixed genre ranges. Backbeat positions refer to the first bar; ghost hits are included. A and B on the sequencer ruler label the two bars.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Genre</th><th>BPM</th><th>Kick</th><th>Backbeat</th><th>Hats</th><th>Swing</th></tr></thead>
+        <tbody id="genreTable"></tbody>
+      </table>
+    </div>
+    <div class="grid2">
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Swing</th><th>Feel</th></tr></thead>
+          <tbody>
+            <tr><td class="num">50%</td><td>Dead straight. Techno, most French house.</td></tr>
+            <tr><td class="num">52–55%</td><td>Barely there. You feel it, you don't hear it. Most house.</td></tr>
+            <tr><td class="num">56–60%</td><td>Audible shuffle. Deep house, jackin house, Afro.</td></tr>
+            <tr><td class="num">61–66%</td><td>Heavy stagger. Garage, shuffle house. 66.7% is exact triplet.</td></tr>
+            <tr><td class="num">&gt;67%</td><td>Beyond triplet spacing. A deliberately exaggerated shuffle.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Euclid</th><th>Pattern</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td class="num">E(3,8)</td><td class="num">x..x..x.</td><td>Tresillo. Shaker, conga, latin house.</td></tr>
+            <tr><td class="num">E(5,8)</td><td class="num">x.xx.xx.</td><td>Cinquillo. Busy percussion.</td></tr>
+            <tr><td class="num">E(5,16)</td><td class="num">x..x..x..x..x...</td><td>Clave-ish. Rim, clave, tom.</td></tr>
+            <tr><td class="num">E(7,16)</td><td class="num">x.x.x.x..x.x.x..</td><td>Even but irregular. Hats, shaker.</td></tr>
+            <tr><td class="num">E(9,16)</td><td class="num">x.x.x.x.xx.x.x.x</td><td>Dense. Tribal percussion beds.</td></tr>
+            <tr><td class="num">E(11,16)</td><td class="num">xx.xx.xxx.xx.xx.</td><td>Nearly full. Ghost-level shaker only.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</details>
+<footer class="foot"><div><span class="wordmark">FIELDWORK / THE KIT</span><p>Start with a kick and one good idea.</p></div><p>Original teaching patterns · no sample downloads required<br><a href="index.html">Back to the studio ↗</a> · <a href="rumble.html">Explore the low end ↗</a></p></footer>
+</div>
+</main><div id="toast" class="toast" role="status" aria-live="polite"></div>
+<dialog id="copyDialog"><form method="dialog"><h3>Your sound search</h3><p>Copy the text below into Splice.</p><textarea id="copyText" rows="9" readonly aria-label="Sound search phrases"></textarea><button class="primary">Done</button></form></dialog>
+<script>
+/* =====================================================================
+   AUDIO
+   ===================================================================== */
+let AC=null,master=null,limiter=null,busses={};
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.72;
+    limiter=AC.createDynamicsCompressor();
+    limiter.threshold.value=-5; limiter.knee.value=3; limiter.ratio.value=12;
+    limiter.attack.value=.002; limiter.release.value=.11;
+    limiter.connect(master); master.connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+let _nb=null;
+function noise(){
+  if(!_nb){const n=Math.floor(AC.sampleRate*.6);_nb=AC.createBuffer(1,n,AC.sampleRate);
+    const d=_nb.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;}
+  const s=AC.createBufferSource(); s.buffer=_nb; s.loop=true; return s;
+}
+function shaper(k){
+  const ws=AC.createWaveShaper(),n=512,c=new Float32Array(n),a=1+k*22;
+  for(let i=0;i<n;i++){const x=i*2/n-1;c[i]=Math.tanh(a*x)/Math.tanh(a);}
+  ws.curve=c; return ws;
+}
+function gEnv(g,t,peak,a,d){
+  g.setValueAtTime(0,t); g.linearRampToValueAtTime(peak,t+a);
+  g.exponentialRampToValueAtTime(.0001,t+a+d);
+}
+const KITS={
+ '909':{kf0:150,kf1:52,kpd:.045,kdec:.40,kdrv:.28,
+        sTone:190,sNoise:.62,sDec:.16,cSpread:.011,cDec:.24,
+        hDec:.038,hoDec:.30,hMetal:.35,hHP:7600,rDec:.055,
+        cbF:[540,800],cbDec:.4,tF:150,tDec:.35,rideDec:.9},
+ '808':{kf0:120,kf1:44,kpd:.09,kdec:.95,kdrv:.12,
+        sTone:172,sNoise:.42,sDec:.13,cSpread:.014,cDec:.20,
+        hDec:.032,hoDec:.42,hMetal:.85,hHP:8200,rDec:.045,
+        cbF:[587,845],cbDec:.55,tF:120,tDec:.55,rideDec:.7},
+ '707':{kf0:170,kf1:60,kpd:.032,kdec:.26,kdrv:.20,
+        sTone:210,sNoise:.70,sDec:.13,cSpread:.009,cDec:.17,
+        hDec:.030,hoDec:.22,hMetal:.20,hHP:8800,rDec:.045,
+        cbF:[620,900],cbDec:.30,tF:170,tDec:.26,rideDec:.6}
+};
+const V={
+ kick(t,v,K){
+   const o=AC.createOscillator(); o.type='sine';
+   o.frequency.setValueAtTime(K.kf0,t);
+   o.frequency.exponentialRampToValueAtTime(K.kf1,t+K.kpd);
+   const g=AC.createGain(); gEnv(g.gain,t,1.0*v,.002,K.kdec);
+   const dr=shaper(K.kdrv);
+   o.connect(g); g.connect(dr); dr.connect(voiceOutput||limiter);
+   o.start(t); o.stop(t+K.kdec+.1);
+   const c=AC.createOscillator(); c.type='triangle'; c.frequency.value=K.kf0*2.4;
+   const cg=AC.createGain(); gEnv(cg.gain,t,.20*v,.001,.02);
+   c.connect(cg); cg.connect(voiceOutput||limiter); c.start(t); c.stop(t+.06);
+ },
+ snare(t,v,K){
+   const n=noise(); const hp=AC.createBiquadFilter(); hp.type='bandpass';
+   hp.frequency.value=1900; hp.Q.value=.7;
+   const ng=AC.createGain(); gEnv(ng.gain,t,.42*v*K.sNoise,.001,K.sDec);
+   n.connect(hp); hp.connect(ng); ng.connect(voiceOutput||limiter); n.start(t); n.stop(t+K.sDec+.1);
+   [1,1.58].forEach((m,i)=>{
+     const o=AC.createOscillator(); o.type='triangle'; o.frequency.value=K.sTone*m;
+     const g=AC.createGain(); gEnv(g.gain,t,(i?.16:.30)*v,.001,K.sDec*.75);
+     o.connect(g); g.connect(voiceOutput||limiter); o.start(t); o.stop(t+K.sDec+.1);
+   });
+ },
+ clap(t,v,K){
+   const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1250; bp.Q.value=1.1;
+   bp.connect(voiceOutput||limiter);
+   [0,1,2].forEach(i=>{
+     const n=noise(); const g=AC.createGain();
+     const tt=t+i*K.cSpread;
+     gEnv(g.gain,tt,.34*v,.0008,.017);
+     n.connect(g); g.connect(bp); n.start(tt); n.stop(tt+.06);
+   });
+   const n=noise(); const g=AC.createGain();
+   gEnv(g.gain,t+2*K.cSpread,.24*v,.003,K.cDec);
+   n.connect(g); g.connect(bp); n.start(t+2*K.cSpread); n.stop(t+K.cDec+.1);
+ },
+ rim(t,v,K){
+   const o=AC.createOscillator(); o.type='square'; o.frequency.value=1720;
+   const o2=AC.createOscillator(); o2.type='square'; o2.frequency.value=475;
+   const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1650; bp.Q.value=2.4;
+   const g=AC.createGain(); gEnv(g.gain,t,.34*v,.0006,K.rDec);
+   o.connect(bp);o2.connect(bp);bp.connect(g);g.connect(voiceOutput||limiter);
+   o.start(t);o2.start(t);o.stop(t+.1);o2.stop(t+.1);
+ },
+ hat(t,v,K,open){
+   const dec=open?K.hoDec:K.hDec;
+   const hp=AC.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=K.hHP;
+   const g=AC.createGain(); gEnv(g.gain,t,(open?.20:.26)*v,.0006,dec);
+   hp.connect(g); g.connect(voiceOutput||limiter);
+   const n=noise(); const ng=AC.createGain(); ng.gain.value=1-K.hMetal*.7;
+   n.connect(ng); ng.connect(hp); n.start(t); n.stop(t+dec+.1);
+   if(K.hMetal>.05){
+     const mg=AC.createGain(); mg.gain.value=K.hMetal*.14; mg.connect(hp);
+     [2,3,4.16,5.43,6.79,8.21].forEach(r=>{
+       const o=AC.createOscillator(); o.type='square'; o.frequency.value=40*r*1.6;
+       o.connect(mg); o.start(t); o.stop(t+dec+.05);
+     });
+   }
+ },
+ ride(t,v,K){
+   const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=3600; bp.Q.value=.9;
+   const g=AC.createGain(); gEnv(g.gain,t,.13*v,.001,K.rideDec);
+   bp.connect(g); g.connect(voiceOutput||limiter);
+   const n=noise(); const ng=AC.createGain(); ng.gain.value=.5;
+   n.connect(ng); ng.connect(bp); n.start(t); n.stop(t+K.rideDec+.1);
+   [2.1,3.4,4.7,6.2].forEach(r=>{
+     const o=AC.createOscillator(); o.type='square'; o.frequency.value=180*r;
+     const og=AC.createGain(); og.gain.value=.09;
+     o.connect(og); og.connect(bp); o.start(t); o.stop(t+K.rideDec);
+   });
+   const p=AC.createOscillator(); p.type='triangle'; p.frequency.value=1500;
+   const pg=AC.createGain(); gEnv(pg.gain,t,.10*v,.0008,.05);
+   p.connect(pg); pg.connect(voiceOutput||limiter); p.start(t); p.stop(t+.1);
+ },
+ shaker(t,v){
+   const n=noise(); const bp=AC.createBiquadFilter(); bp.type='bandpass';
+   bp.frequency.value=6200; bp.Q.value=1.3;
+   const g=AC.createGain();
+   g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.20*v,t+.012);
+   g.gain.exponentialRampToValueAtTime(.0001,t+.075);
+   n.connect(bp); bp.connect(g); g.connect(voiceOutput||limiter); n.start(t); n.stop(t+.14);
+ },
+ tamb(t,v){
+   const n=noise(); const bp=AC.createBiquadFilter(); bp.type='bandpass';
+   bp.frequency.value=8600; bp.Q.value=2.2;
+   const g=AC.createGain(); gEnv(g.gain,t,.20*v,.002,.13);
+   n.connect(bp); bp.connect(g); g.connect(voiceOutput||limiter); n.start(t); n.stop(t+.22);
+ },
+ conga(t,v){
+   const o=AC.createOscillator(); o.type='sine';
+   o.frequency.setValueAtTime(390,t); o.frequency.exponentialRampToValueAtTime(255,t+.035);
+   const g=AC.createGain(); gEnv(g.gain,t,.42*v,.002,.20);
+   const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=340; bp.Q.value=2.2;
+   o.connect(bp); bp.connect(g); g.connect(voiceOutput||limiter); o.start(t); o.stop(t+.3);
+   const n=noise(); const ng=AC.createGain(); gEnv(ng.gain,t,.07*v,.0008,.014);
+   const nh=AC.createBiquadFilter(); nh.type='highpass'; nh.frequency.value=2200;
+   n.connect(nh); nh.connect(ng); ng.connect(voiceOutput||limiter); n.start(t); n.stop(t+.05);
+ },
+ cow(t,v,K){
+   const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=2200; bp.Q.value=1.1;
+   const g=AC.createGain(); gEnv(g.gain,t,.16*v,.001,K.cbDec);
+   bp.connect(g); g.connect(voiceOutput||limiter);
+   K.cbF.forEach(f=>{const o=AC.createOscillator();o.type='square';o.frequency.value=f;
+     o.connect(bp);o.start(t);o.stop(t+K.cbDec+.05);});
+ },
+ tom(t,v,K){
+   const o=AC.createOscillator(); o.type='sine';
+   o.frequency.setValueAtTime(K.tF,t); o.frequency.exponentialRampToValueAtTime(K.tF*.62,t+.10);
+   const g=AC.createGain(); gEnv(g.gain,t,.55*v,.002,K.tDec);
+   o.connect(g); g.connect(voiceOutput||limiter); o.start(t); o.stop(t+K.tDec+.1);
+   const n=noise(); const ng=AC.createGain(); gEnv(ng.gain,t,.05*v,.001,.03);
+   n.connect(ng); ng.connect(voiceOutput||limiter); n.start(t); n.stop(t+.08);
+ }
+};
+
+/* =====================================================================
+   LANES
+   ===================================================================== */
+const LANES=[
+ {id:'kick',  name:'Kick',    c:'#FF4B32', gm:36, play:(t,v,K)=>V.kick(t,v,K),   swing:false},
+ {id:'clap',  name:'Clap',    c:'#FF8A2B', gm:39, play:(t,v,K)=>V.clap(t,v,K),   swing:false},
+ {id:'snare', name:'Snare',   c:'#FF8A2B', gm:38, play:(t,v,K)=>V.snare(t,v,K),  swing:false},
+ {id:'rim',   name:'Rim',     c:'#3FD0C9', gm:37, play:(t,v,K)=>V.rim(t,v,K),    swing:true},
+ {id:'chh',   name:'Closed hat',c:'#FFC531',gm:42,play:(t,v,K)=>V.hat(t,v,K,0),  swing:true},
+ {id:'ohh',   name:'Open hat', c:'#FFC531', gm:46, play:(t,v,K)=>V.hat(t,v,K,1), swing:true},
+ {id:'ride',  name:'Ride',     c:'#FFC531', gm:51, play:(t,v,K)=>V.ride(t,v,K),  swing:true},
+ {id:'shaker',name:'Shaker',   c:'#3FD0C9', gm:70, play:(t,v)=>V.shaker(t,v),    swing:true},
+ {id:'tamb',  name:'Tambourine',c:'#3FD0C9',gm:54, play:(t,v)=>V.tamb(t,v),      swing:true},
+ {id:'conga', name:'Conga',    c:'#3FD0C9', gm:62, play:(t,v)=>V.conga(t,v),     swing:true},
+ {id:'cow',   name:'Cowbell',  c:'#3FD0C9', gm:56, play:(t,v,K)=>V.cow(t,v,K),   swing:true},
+ {id:'tom',   name:'Tom',      c:'#3FD0C9', gm:45, play:(t,v,K)=>V.tom(t,v,K),   swing:true}
+];
+const VEL={'X':1.0,'x':.72,'o':.34};
+
+/* =====================================================================
+   PATTERN LIBRARY   ( X accent · x normal · o ghost · - off )
+   ===================================================================== */
+const r=s=>s+s;
+const LIB=[
+{name:'Classic house',fam:'House',bpm:124,swing:52,
+ d:'The 909 template that everything else in house is a deviation from. Kick as a clock, clap on the backbeat, and the open hat sitting on every offbeat 8th — that open hat is the sound people mean when they say "house".',
+ sig:'Remove the <b>open hats</b> and this becomes generic techno. That one lane is the genre.',
+ p:{kick:r('X---X---X---X---'),clap:r('----X-------X---'),
+    chh:r('x---x---x---x---'),ohh:r('--X---X---X---X-')}},
+
+{name:'Deep house',fam:'House',bpm:122,swing:56,
+ d:'Everything softened and pulled back. No clap on the backbeat — a rim instead, which sits under the mix rather than punching through it. The shaker does the work the hats would normally do, so the top end never gets aggressive.',
+ sig:'The backbeat is a <b>rim, not a clap</b>, and the swing is high enough to hear. Energy comes from the bass, not the drums.',
+ p:{kick:r('X---X---X---X---'),rim:r('----x-------x---'),
+    chh:r('--o---o---o---o-'),shaker:r('xoxoxoxoxoxoxoxo'),
+    ohh:'--------------------------X-----'}},
+
+{name:'Disco house',fam:'House',bpm:122,swing:54,
+ d:'House drums with a disco kit on top: a real snare instead of a clap, 16th hats, and a tambourine riding the offbeat 16ths. Busier than classic house by design, because it is imitating a live rhythm section.',
+ sig:'<b>Tambourine on the offbeat 16ths</b> plus a snare backbeat. That combination reads as 1978 no matter what else you do.',
+ p:{kick:r('X---X---X---X---'),snare:r('----X-------X---'),
+    chh:r('xo-oxo-oxo-oxo-o'),ohh:r('--x---x---x---x-'),
+    tamb:r('-x-x-x-x-x-x-x-x')}},
+
+{name:'French house',fam:'House',bpm:126,swing:50,
+ d:'Straight, hard and filtered. No swing at all — the groove comes from the sample loop, not the grid, so the drums stay rigid underneath. Hats run 16ths flat out and the open hat appears once a bar as punctuation.',
+ sig:'<b>Zero swing</b> and relentless 16th hats. The looseness in French house is in the source material, never in the drum programming.',
+ p:{kick:r('X---X---X---X---'),clap:r('----X-------X---'),
+    chh:r('xoxoxoxoxoxoxoxo'),tamb:r('-o-o-o-o-o-o-o-o'),
+    ohh:'--------------------------x-----'}},
+
+{name:'Jackin house',fam:'House',bpm:126,swing:60,
+ d:'Heavy shuffle plus a kick that refuses to stay on the grid. The 16th pickup before beat one is the "jack" — it drags the bar forward into the next one. Rim hits fill the gaps the shuffle opens up.',
+ sig:'A <b>16th kick pickup</b> at the end of the bar, and swing at 60%. Both, or it is just house.',
+ p:{kick:'X---X---X---X---X---X---X---X--x',clap:r('----X-------X---'),
+    chh:r('x-o-x-o-x-o-x-o-'),ohh:r('--x---x---x---x-'),
+    rim:r('--x-----x-x-----')}},
+
+{name:'Tech house',fam:'House',bpm:126,swing:54,
+ d:'House skeleton, techno restraint. The hats drop to offbeat 8ths only, a shaker carries the 16ths at ghost level, and one syncopated rim provides the only surprise in the bar. Sparse enough that the bassline has to be the hook.',
+ sig:'Closed hats on the <b>offbeat 8ths only</b> and a single rim off the grid. Everything is subtraction.',
+ p:{kick:r('X---X---X---X---'),clap:r('----X-------X---'),
+    chh:r('--x---x---x---x-'),rim:r('------x---x-----'),
+    shaker:r('-o-o-o-o-o-o-o-o'),ohh:'--------------x---------------x-'}},
+
+{name:'Minimal',fam:'House',bpm:125,swing:52,
+ d:'Almost nothing, on purpose. Kick, a ghost hat on the offbeat, one rim somewhere unexpected. The whole point is that the listener fills in what is missing, which is why minimal tracks feel like they are moving despite barely playing anything.',
+ sig:'<b>Under twelve hits in two bars.</b> If you can hear the space, it is working.',
+ p:{kick:r('X---X---X---X---'),chh:r('--o---o---o---o-'),
+    rim:'------x-----------------x-------'}},
+
+{name:'Hypnotic techno',fam:'Techno',bpm:132,swing:50,
+ d:'No backbeat at all. Removing the clap removes the sense of a bar, and 16th hats running flat out remove the sense of a beat — what is left is a texture that your body reads as forward motion with nothing to count against.',
+ sig:'<b>No clap, no snare, nothing on 2 and 4.</b> That absence is the entire genre.',
+ p:{kick:r('X---X---X---X---'),chh:r('xoxoxoxoxoxoxoxo'),
+    ride:'--------x---------------x-------'}},
+
+{name:'Peak-time techno',fam:'Techno',bpm:138,swing:50,
+ d:'The big-room version: clap back on the backbeat, open hats on the offbeats, tempo up past 135. Structurally almost identical to classic house — the difference is entirely tempo, sound design and the absence of swing.',
+ sig:'This is <b>classic house at 138 with no swing</b>. Load them both into the morph lab and count the differences.',
+ p:{kick:r('X---X---X---X---'),clap:r('----X-------X---'),
+    chh:r('x-x-x-x-x-x-x-x-'),ohh:r('--x---x---x---x-'),
+    tom:'----------------------------x-x-'}},
+
+{name:'Hard groove techno',fam:'Techno',bpm:140,swing:52,
+ d:'Fast, tribal and percussion-led — the Ben Sims / Jeff Mills lineage. The congas carry a syncopated line that is really a melody, and the kick just holds the floor while the percussion does everything interesting.',
+ sig:'The <b>conga line is the hook</b>. Mute it and there is no track.',
+ p:{kick:r('X---X---X---X---'),conga:r('--x-x---x--x-x--'),
+    chh:r('xoxoxoxoxoxoxoxo'),rim:r('----x-------x-x-'),
+    shaker:r('-o-o-o-o-o-o-o-o')}},
+
+{name:'Dub techno',fam:'Techno',bpm:125,swing:54,
+ d:'Basic Channel territory. The drums are deliberately unremarkable and mixed low; everything expressive happens in the chord stab and the delay tail. Programming this well means resisting the urge to add anything.',
+ sig:'<b>One rim per two bars.</b> The reverb is the instrument, not the kit.',
+ p:{kick:r('X---X---X---X---'),chh:r('--o---o---o---o-'),
+    rim:'------x-------------------------',
+    ride:'----------------------------o---'}},
+
+{name:'Detroit techno',fam:'Techno',bpm:130,swing:50,
+ d:'Straight 8th hats, clap on the backbeat, and toms used melodically rather than as fills. The 808/909 kit played with a musician\'s sensibility — this is where techno and funk are closest.',
+ sig:'<b>Toms as a melodic line</b>, not as a fill. Pitch them and they become a counter-melody.',
+ p:{kick:r('X---X---X---X---'),clap:r('----X-------X---'),
+    chh:r('x-x-x-x-x-x-x-x-'),ohh:r('--x---x---x---x-'),
+    tom:'--------x---x-------x---x---x---'}},
+
+{name:'Chicago acid house',fam:'House',bpm:120,swing:56,
+ d:'The 1987 original: 909 kit, open hat on every offbeat, cowbell in the middle of the bar because the machine had one. Slower than modern house and much swung — the shuffle came from the drum machine, not from a decision.',
+ sig:'<b>Open hat on all four offbeats</b> plus a cowbell. Period-correct and completely unsubtle.',
+ p:{kick:r('X---X---X---X---'),clap:r('----X-------X---'),
+    chh:r('x---x---x---x---'),ohh:r('--X---X---X---X-'),
+    cow:'------x---------------x---------'}},
+
+{name:'UK garage · 2-step',fam:'Garage',bpm:135,swing:62,
+ d:'The kick leaves the floor. Two or three kicks per bar in shifting positions, snare on 2 and 4 holding everything together, and shuffled 16th hats with gaps in them. The bar never feels balanced, which is exactly the point.',
+ sig:'<b>Syncopated kick + straight backbeat.</b> Remove the four-on-the-floor and keep the snare, and you are in 2-step.',
+ p:{kick:'X-----x---X-----X-------x---X---',snare:r('----X-------X---'),
+    chh:r('xo-oxo-ox-o-xo-o'),
+    ohh:'--------------x---------------x-',
+    rim:'-----o--------------------o-----'}},
+
+{name:'Speed garage',fam:'Garage',bpm:135,swing:58,
+ d:'2-step\'s four-to-the-floor cousin. The kick returns to the grid, so all the syncopation moves into the hats and the bassline. Faster and harder than house at the same tempo because of the shuffle and the snare.',
+ sig:'Four-on-the-floor with a <b>snare backbeat and heavy shuffle</b>. The bass does the syncopating.',
+ p:{kick:r('X---X---X---X---'),snare:r('----X-------X---'),
+    chh:r('xo-oxo-oxo-oxo-o'),ohh:r('--x---x---x---x-'),
+    rim:'-------x----------------x-------'}},
+
+{name:'Breakbeat',fam:'Breaks',bpm:130,swing:50,
+ d:'A programmed version of a live funk drummer. Kick and snare trade places across the bar, ghost snares fill the 16ths between them, and the two bars are deliberately different — a break that repeats identically stops sounding like a person.',
+ sig:'<b>Ghost snares at velocity 30–50.</b> They are the difference between a break and a drum machine.',
+ p:{kick:'X--x----X-------X-----x-----x---',
+    snare:'----X--o----X--o----X---X---X--o',
+    chh:r('x-x-x-x-x-x-x-x-')}},
+
+{name:'Afro house',fam:'Afro / Latin',bpm:122,swing:56,
+ d:'Four-on-the-floor with a full percussion ensemble on top. The congas run a rolling pattern that never quite repeats where you expect, the shaker fills every 16th, and the kit drums stay minimal so the percussion has room.',
+ sig:'<b>Congas carry a rolling phrase across the bar line</b>, not a one-bar loop. That is what makes it feel endless.',
+ p:{kick:r('X---X---X---X---'),conga:'--x-x-x---x-x-x---x-x---x-x-x-x-',
+    shaker:r('xoxoxoxoxoxoxoxo'),rim:r('------x-----x---'),
+    ohh:'------------x-------------------',
+    tom:'--------------------------x-----'}},
+
+{name:'Latin / tribal house',fam:'Afro / Latin',bpm:124,swing:54,
+ d:'Built on the tresillo — the three-against-eight pattern underneath most Latin music. Congas play it, the cowbell marks the quarters, and the tambourine sits on the offbeats. Dense but every part is in a different rhythmic layer.',
+ sig:'The conga plays <b>E(3,8)</b>: hits on steps 1, 4 and 7. Everything else is built around that.',
+ p:{kick:r('X---X---X---X---'),conga:r('x--x--x-x--x--x-'),
+    cow:r('----x---x---x---'),shaker:r('-o-o-o-o-o-o-o-o'),
+    tamb:r('--x---x---x---x-')}}
+];
+
+
+/* Original studies, expanded with hand-programmed two-bar examples.
+   Positions below are one-based sixteenth notes. These are teaching sketches. */
+const hits=(positions,ghosts=[])=>{const a=Array(32).fill('-');positions.forEach(n=>a[n-1]='x');ghosts.forEach(n=>a[n-1]='o');return a.join('');};
+const floor=r('X---X---X---X---'),back=r('----X-------X---'),eighth=r('x-x-x-x-x-x-x-x-'),off=r('--x---x---x---x-'),sixteen=r('xoxoxoxoxoxoxoxo');
+const EXTRA=[
+ ['Soulful house','House',121,57,'Warm','warm organic gospel','A soft backbeat and tambourine leave a pocket for a vocal.','Keep the tambourine quieter than the clap; the shaker supplies continuity.',{kick:floor,clap:back,chh:off,shaker:r('x-oox-oox-oox-oo'),tamb:hits([7,15,23,31]),conga:hits([4,11,20,27],[16,32])}],
+ ['Lo-fi house','House',118,58,'Dust','dusty tape vinyl','A hazy, lightly shuffled groove with a dry rim and uneven hats.','Shorten the kick before adding saturation; leave the rim small and close.',{kick:floor,rim:back,chh:r('x-ox--o-x-ox--o-'),ohh:hits([15,27]),snare:hits([],[12,28])}],
+ ['Piano house','House',126,52,'909','bright punchy piano','A firm clap and bright offbeat hats support busy chord rhythms.','Keep the drum rhythm simple enough for the piano to provide the syncopation.',{kick:floor,clap:back,snare:r('----o-------o---'),chh:eighth,ohh:off,tamb:hits([8,16,24,30,32])}],
+ ['Progressive house','House',124,52,'Warm','progressive smooth deep','A steady pulse with a two-bar tom answer for long transitions.','Introduce the tom answer only every few phrases when arranging.',{kick:floor,clap:back,chh:r('x-o-x-o-x-o-x-oo'),ohh:hits([7,15,23,31]),tom:hits([11,26,28,31]),shaker:r('-o-o-o-o-o-o-o-o')}],
+ ['Melodic house','House',122,54,'Warm','melodic rounded organic','Rounded drums and a restrained shaker create room for sustained harmony.','Use a short, low kick and avoid a long open hat under every chord.',{kick:floor,clap:back,chh:hits([3,7,11,19,23,31]),shaker:r('x-oox-oox-oox-oo'),conga:hits([10,16,26,30])}],
+ ['Bass house','House',128,50,'Punch','bass house tight heavy','A compact, forceful beat with stop-start hats and a kick pickup.','Dry, short drums let a distorted bass occupy the sustain.',{kick:hits([1,5,9,13,17,21,25,29,32]),clap:back,chh:r('--x---x-x-x--o--'),ohh:hits([7,23]),snare:hits([],[16,28,30])}],
+ ['Microhouse','House',123,59,'Click','micro minimal click foley','Small clicks and a sparse backbeat make tiny offsets audible.','Search for foley transients and trim them into very short percussion hits.',{kick:floor,rim:hits([13,29]),chh:hits([3,8,11,19,24,27],[6,22]),conga:hits([10,26]),shaker:hits([],[2,15,18,31])}],
+ ['Acid techno','Techno',138,51,'909','acid raw analog','A rigid machine pulse leaves the rhythmic focus to a moving acid sequence.','Keep the drums dry; automate the acid phrase rather than filling every lane.',{kick:floor,clap:back,chh:sixteen,ohh:off,cow:hits([4,12,20,27]),tom:hits([30,32])}],
+ ['Industrial techno','Techno',142,50,'Grit','industrial distorted metal','Sparse metallic strikes cut across a dense, straight hat bed.','Choose one metallic accent and leave space for its tail.',{kick:floor,snare:back,chh:sixteen,ride:hits([1,9,17,25]),rim:hits([4,10,19,26,31]),tom:hits([15,32])}],
+ ['Hard techno','Techno',150,50,'Grit','hard techno distorted punch','A fast four-on-the-floor study with an insistent ride and short turnaround.','Keep the kick tail controlled at this tempo so the next transient stays clear.',{kick:floor,clap:back,chh:eighth,ohh:off,ride:r('x---x---x---x---'),snare:hits([30,31,32])}],
+ ['Minimal techno','Techno',128,53,'Click','minimal techno dry click','An almost empty top line turns two rim hits into a recurring motif.','Audition the rim pitch as carefully as a synth note.',{kick:floor,chh:hits([3,11,19,27],[8,24]),rim:hits([7,22]),tom:hits([16,30])}],
+ ['Melodic techno','Techno',126,50,'Punch','melodic techno clean deep','A centered kick and clap with a small tom figure around the backbeat.','Leave the midrange percussion sparse when the synth arpeggio gets busy.',{kick:floor,clap:back,chh:eighth,ohh:hits([7,15,23,31]),tom:hits([10,12,26,28,32]),shaker:r('-o-o-o-o-o-o-o-o')}],
+ ['Broken dub techno','Techno',124,55,'Warm','dub deep broken muted','An off-center kick and isolated rim offer space for dub chord echoes.','Try the rim through a filtered dotted-eighth delay in your DAW.',{kick:hits([1,7,11,17,23,29]),rim:hits([13,29]),chh:r('--o---x---o---x-'),ride:hits([],[16,32]),tom:hits([10,26])}],
+ ['UK funky','Garage',130,54,'707','uk funky tribal dry','A house pulse meets a displaced snare and a conversational conga part.','Listen to the snare placement against the congas before adding bass.',{kick:floor,snare:r('----x-----x--x--'),chh:off,conga:hits([3,8,11,19,22,27,32]),shaker:r('-o-o-o-o-o-o-o-o')}],
+ ['Bassline garage','Garage',138,59,'Punch','bassline garage bouncy punch','A brisk, shuffled four-on-the-floor foundation with a snare-led backbeat.','Keep the kick compact so an offbeat bass phrase can answer it.',{kick:floor,snare:back,chh:r('xo-oxo-ox-ooxo-o'),ohh:hits([7,15,23,31]),rim:hits([4,20,30])}],
+ ['Future garage','Garage',132,61,'Dust','future garage atmospheric dusty','A broken kick, restrained snare and ghost hats make a spacious half-lit groove.','Use a dry snare core and add a separate, quieter reverb layer.',{kick:hits([1,8,11,17,24,27]),snare:back,chh:r('x-oo--o-x-o---oo'),rim:hits([],[12,28]),shaker:hits([3,15,19,31])}],
+ ['Electro','Breaks',132,50,'808','electro 808 robotic','A syncopated machine kick and snare stay rigid while the toms answer.','Use tight 808-style hits; the straight timing is part of this example.',{kick:hits([1,7,9,16,19,23,25,30]),snare:back,chh:eighth,ohh:hits([8,24]),tom:hits([11,15,27,31]),cow:hits([4,20])}],
+ ['Jungle','Breaks',168,54,'Break','jungle chopped break acoustic','Two distinct bars of syncopated kicks, ghost snares and brisk hats.','This is a sixteenth-grid sketch; chopped breaks also use finer timing and sample articulation.',{kick:hits([1,7,11,17,20,27]),snare:hits([5,13,21,28],[4,8,12,16,24,30,32]),chh:r('x-xxx-x-x-xxx-x-'),ride:hits([1,17]),ohh:hits([15,31])}],
+ ['Liquid drum & bass','Breaks',174,52,'Break','liquid drum bass crisp soft','A fast two-step foundation with soft ghost notes around clear snares.','Choose a snare with body and a short tail; let the harmony provide width.',{kick:hits([1,11,17,27]),snare:hits([5,13,21,29],[8,16,24,32]),chh:eighth,shaker:r('-o-o-o-o-o-o-o-o'),ohh:hits([15,31])}],
+ ['Neuro drum & bass','Breaks',172,50,'Punch','neuro drum bass tight processed','A sharply defined two-step beat with compact syncopated accents.','Trim tails and use a focused snare; leave room for detailed bass movement.',{kick:hits([1,11,17,26,31]),snare:hits([5,13,21,29],[12,28]),chh:r('x-oxx-x-x-oxx-x-'),ohh:hits([7,23]),rim:hits([16,32])}],
+ ['Halftime bass','Breaks',170,54,'808','halftime deep sub sparse','One heavy snare halfway through each bar opens a wide rhythmic pocket.','At 170 BPM this backbeat feels like 85; keep the bass phrase equally spacious.',{kick:hits([1,7,17,23,30]),snare:hits([9,25],[16,32]),chh:r('x---x-ox--o-x---'),ohh:hits([15,31]),rim:hits([12,28])}],
+ ['Big beat','Breaks',128,52,'Break','big beat crunchy funk','Chunky kicks and strong snares push a busy, break-like top line.','Try a crunchy snare and tambourine; match their room character.',{kick:hits([1,4,9,11,17,23,25,28]),snare:hits([5,13,21,29],[8,16,24,32]),chh:sixteen,tamb:off,ohh:hits([15,31])}],
+ ['Amapiano','Afro / Latin',112,58,'Warm','amapiano log drum soft shaker','Soft kick anchors, swung shaker and tom syncopation outline a spacious groove.','The tom lane stands in for a log-drum rhythm; use a tuned log-drum instrument in your DAW.',{kick:hits([1,9,17,25]),rim:hits([5,13,21,29]),shaker:sixteen,chh:off,tom:hits([4,7,12,16,19,23,28,31]),conga:hits([10,26])}],
+ ['Organic house','Afro / Latin',116,56,'Warm','organic house hand percussion','A soft floor pulse under congas, shaker and gently changing accents.','Seek natural, dry percussion and vary velocity before reaching for more reverb.',{kick:floor,rim:hits([13,29]),shaker:r('xoooxoxoxoooxoxo'),conga:hits([3,6,11,15,19,24,27,30]),tom:hits([8,32]),ohh:hits([7,23])}],
+ ['Baile funk','Afro / Latin',130,50,'808','baile funk tamborzao punch','A syncopated kick and tom conversation inspired by tamborzão textures.','Use this as a starting rhythm; the tone and articulation of the percussion matter.',{kick:hits([1,7,11,17,23,27]),snare:hits([5,13,21,29]),tom:hits([3,6,9,15,19,22,25,31]),conga:hits([4,12,20,28]),chh:hits([1,9,17,25])}],
+ ['Reggaeton','Afro / Latin',96,50,'Punch','reggaeton dembow dry','A dembow-inspired kick and displaced snare pattern with sparse hat support.','Keep the kick and snare relationship prominent; start with short, dry one-shots.',{kick:r('X-------X-------'),snare:r('----x--x----x--x'),chh:eighth,rim:hits([8,16,24,32]),conga:hits([11,27])}],
+ ['Uplifting trance','Trance',138,50,'909','trance bright punchy','A straight floor pulse, bright offbeats and a rising snare turnaround.','Choose a clean kick and a bright open hat with enough space for rolling bass.',{kick:floor,clap:back,chh:eighth,ohh:off,ride:hits([1,9,17,25]),snare:hits([29,30,31,32])}],
+ ['Psytrance','Trance',145,50,'Click','psytrance tight short clean','A very tight kick, restrained clap and animated sixteenth hat accents.','The bass is a separate part: keep the kick short enough for the following bass notes.',{kick:floor,clap:back,chh:r('x-oox-oox-oxx-oo'),ohh:hits([7,15,23,31]),rim:hits([4,12,20,28]),tom:hits([30,32])}],
+ ['Boom bap','Hip-hop',90,60,'Dust','boom bap dusty vinyl acoustic','A loose kick phrase, dry backbeat and ghost snares sketch a sampled-drum feel.','Try a rounded kick and dusty snare from a similar room or recording texture.',{kick:hits([1,8,11,17,20,27]),snare:back,chh:eighth,ohh:hits([16,32]),snare:hits([5,13,21,29],[4,12,24])}],
+ ['Trap','Hip-hop',140,54,'808','trap 808 crisp tight','Half-time snare and short hat bursts leave space for a separate 808 bassline.','These rolls use sixteenths; add 32nds or triplets in your DAW for finer detail.',{kick:hits([1,7,17,23,28]),snare:hits([9,25]),clap:hits([9,25]),chh:r('x-x-x-xxx-x-xxxx'),ohh:hits([5,21]),rim:hits([16,32])}]
+];
+EXTRA.forEach(([name,fam,bpm,swing,kit,tags,d,sig,p])=>LIB.push({name,fam,bpm,swing,kit,tags,d,sig,p}));
+const ORIGINAL_NOTES=[
+ ['909','classic house analog bright','A familiar four-on-the-floor foundation with clap backbeats and open hats on the offbeats.','Listen to the open hat length against the kick; shorten it for a tighter bounce.'],
+ ['Warm','deep house warm rounded','A restrained house study with a rim backbeat and a softly moving shaker.','The rim and shaker keep this particular example understated.'],
+ ['707','disco house live bright','A snare, animated hats and tambourine suggest a live disco rhythm section.','Use the tambourine to add lift without overpowering the snare.'],
+ ['Punch','french house crunchy filtered','A straight machine bed designed to sit under a chopped or filtered sample.','Keep the top line controlled when the sample already contains drums.'],
+ ['909','jackin house shuffled funky','A shuffled house study with syncopated rims and a late second-bar kick pickup.','The pickup and hat swing pull this example toward the next downbeat.'],
+ ['Punch','tech house dry tight','A compact floor pulse with closed offbeat hats, syncopated rims and quiet shaker.','Keep the kick short and the rim distinct from the clap.'],
+ ['Click','minimal house click sparse','A sparse house sketch that gives a pair of rim hits plenty of space.','Eighteen hits across two bars: space makes the small accents easy to hear.'],
+ ['909','hypnotic techno raw looping','This example drops the backbeat and uses continuous hats for forward movement.','Try an understated ride; hypnotic techno can also include claps and snares.'],
+ ['Punch','peak time techno punch bright','A driving floor pulse, backbeat and open hats with a tom turnaround.','Compare the tempo, hat density and sound palette with classic house.'],
+ ['909','hardgroove techno tribal conga','A fast percussion-led study with congas forming the main rhythmic motif.','Balance the conga accents before adding more top-end layers.'],
+ ['Warm','dub techno muted soft','Sparse drums leave room for chords and delay tails in a dub arrangement.','Keep the rim clear but small; audition a quiet filtered delay in the DAW.'],
+ ['808','detroit techno analog tom','Straight machine hats and a backbeat support a recurring tom phrase.','Tune the toms to work with your bass and harmony.'],
+ ['909','chicago acid house raw cowbell','A machine-house foundation with bright offbeat hats and cowbell accents.','A small amount of cowbell goes a long way; audition its pitch against the acid line.'],
+ ['707','uk garage 2 step shuffled','Syncopated kicks and a snare backbeat support skipping, heavily swung hats.','Keep the main snare clear while the hats fill and leave small gaps.'],
+ ['Punch','speed garage snare shuffled','A four-on-the-floor garage example with a snare backbeat and shuffled top line.','Try short hats so the shuffle remains articulate at this tempo.'],
+ ['Break','breakbeat acoustic crunchy','A two-bar programmed break with changing kicks and ghost snares.','Quiet snare taps suggest articulation; use several sample variations in your DAW.'],
+ ['Warm','afro house organic percussion','A floor pulse with a changing conga phrase and continuous shaker.','Treat the percussion as an interlocking conversation, not a wall of equally loud hits.'],
+ ['707','latin tribal house conga cowbell','A percussion-led house sketch with repeating conga groupings and cowbell timekeeping.','The conga lane groups sixteenth notes 3–3–2; this is one possible Latin-inspired device.']
+];
+ORIGINAL_NOTES.forEach(([kit,tags,d,sig],i)=>Object.assign(LIB[i],{kit,tags,d,sig}));
+// The legacy hat strings had 15 steps per bar. Restore the missing final rest
+// before repeating, so bar two does not start a sixteenth early.
+LIB[2].p.chh=r('xo-oxo-oxo-oxo-o-');
+LIB[14].p.chh=r('xo-oxo-oxo-oxo-o-');
+LIB[4].p.kick=floor.slice(0,31)+'x';
+/* Repair the legacy strings explicitly to their intended two-bar length. */
+LIB.forEach((p,i)=>{p.id=p.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'');Object.keys(p.p).forEach(k=>p.p[k]=p.p[k].padEnd(32,'-').slice(0,32));});
+Object.assign(KITS,{
+ Warm:{...KITS['808'],kf1:49,kdec:.30,kdrv:.08,sNoise:.4,sDec:.12,hHP:6100,hDec:.027,hoDec:.18,cDec:.14},
+ Dust:{...KITS['707'],kf0:115,kf1:57,kdec:.23,kdrv:.48,sTone:165,sNoise:.54,hHP:4800,hoDec:.16,cDec:.12},
+ Punch:{...KITS['909'],kf0:190,kf1:53,kdec:.24,kdrv:.45,sNoise:.8,sDec:.12,hDec:.022,hoDec:.17,cDec:.14},
+ Click:{...KITS['707'],kf0:210,kf1:52,kpd:.018,kdec:.18,hDec:.018,hoDec:.12,rDec:.025,cDec:.10},
+ Grit:{...KITS['909'],kf0:200,kf1:48,kdec:.32,kdrv:.72,sNoise:.9,sDec:.2,hHP:6200,hoDec:.24},
+ Break:{...KITS['707'],kf0:130,kf1:64,kdec:.20,sTone:220,sNoise:.8,sDec:.19,hMetal:.08,hHP:5900,hoDec:.21}
+});
+/* Nine synthesized kit characters; no external audio assets. */
+const KIT_NAMES=['909','808','707','Warm','Dust','Punch','Click','Grit','Break'];
+const FAMILY_COLORS={'House':'#e45d36','Techno':'#8b89c7','Garage':'#4b967d','Breaks':'#b37b3f','Afro / Latin':'#899442','Trance':'#598bac','Hip-hop':'#b47889'};
+const SOUND_ROLES={
+ kick:['kick','Short low-end anchor. Match the tail to the space before your next bass note.'],
+ clap:['clap','Look for a clear transient and a tail that does not wash over the hats.'],
+ snare:['snare','Choose the body first; quieter ghost hits should still sound related.'],
+ rim:['rimshot woodblock','A short midrange accent. Try rimshot, clave or woodblock separately.'],
+ chh:['closed hat','A short, dry hat makes swing and velocity differences easier to hear.'],
+ ohh:['open hat','Listen to the decay against the next kick. Trim or choke it if needed.'],
+ ride:['ride cymbal','Choose a soft wash or a clear bell according to the space in the mix.'],
+ shaker:['shaker','Choose a dry one-shot for this grid; a loop introduces its own groove.'],
+ tamb:['tambourine','Prefer a short hit when the pattern is busy. Watch the sharp upper mids.'],
+ conga:['conga percussion','Try low and high conga hits; varied articulation helps repeated notes.'],
+ cow:['cowbell','Audition the pitch with the bassline. Keep this strong tone in the background.'],
+ tom:['tom','Tune the resonant body to your track, and keep the decay out of the kick.']
+};
+const TAKES=['Foundation','Stripped','Displaced','Turnaround'];
+function expand(p){return Object.fromEntries(LANES.map(l=>[l.id,(p[l.id]||'-'.repeat(32)).split('')]));}
+function patternTake(p,take){
+ const out=expand(p.p);
+ if(take==='Stripped'){
+  // Retain the melodic-techno tom motif as its third voice in the stripped take.
+  const main=['kick',out.snare.some(v=>v!=='-')?'snare':out.clap.some(v=>v!=='-')?'clap':'rim',p.name==='Melodic techno'?'tom':'chh'];
+  LANES.forEach(l=>{if(!main.includes(l.id))out[l.id].fill('-');else out[l.id]=out[l.id].map((v,s)=>v==='o'||(l.id==='chh'&&s%4!==0)?'-':v);});
+ }else if(take==='Displaced'){
+  const candidates=['conga','rim','tom','shaker','chh'];
+  const id=candidates.find(k=>out[k].some(v=>v!=='-'))||'chh';
+  out[id]=out[id].slice(-1).concat(out[id].slice(0,-1));
+  out[id][31]=out[id][31]==='-'?'o':'X';
+ }else if(take==='Turnaround'){
+  const id=out.snare.some(v=>v!=='-')?'snare':'tom';
+  [27,29,30,31].forEach((s,i)=>out[id][s]=['o','x','x','X'][i]);
+  out.chh[30]='-';out.chh[31]='-';out.ohh[31]='-';
+ }
+ return out;
+}
+function soundQuery(p,id){
+ const role=id==='tom'&&p.name==='Amapiano'?'log drum':SOUND_ROLES[id][0].split(' ').slice(0,id==='chh'||id==='ohh'?2:1).join(' ');
+ const texture={Warm:'warm',Dust:'dusty',Punch:'tight',Click:'short',Grit:'distorted',Break:'acoustic','909':'909','808':'808','707':'707'}[p.kit];
+ const style=p.tags.split(' ').slice(0,2).join(' ');
+ return `${style} ${texture} ${role}`;
+}
+
+const $=id=>document.getElementById(id),NS=32;
+const clone=x=>JSON.parse(JSON.stringify(x));
+const S={index:0,take:'Foundation',name:LIB[0].name,fam:LIB[0].fam,bpm:124,swing:52,human:0,kit:'909',volume:65,pat:expand(LIB[0].p),mute:{},solo:{},laneSwing:{},level:{},playing:false};
+LANES.forEach(l=>{S.mute[l.id]=false;S.solo[l.id]=false;S.laneSwing[l.id]=l.swing;S.level[l.id]=100;});
+let voiceOutput=null,history=[],future=[],paint=null,toastTimer,libraryLimit=12,filterFamily='All',onlySaved=false,favourites=new Set(),sourceHint='';
+const STORE='fieldwork-kit-v2',FAV_STORE='fieldwork-kit-favourites-v2';
+try{const a=JSON.parse(localStorage.getItem(FAV_STORE)||'[]');if(Array.isArray(a))favourites=new Set(a.filter(id=>LIB.some(p=>p.id===id)));}catch{}
+function toast(message){$('toast').textContent=message;$('toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('visible'),3600);}
+function snapshot(){const {playing,...state}=S;return clone(state);}
+function checkpoint(){history.push(snapshot());if(history.length>70)history.shift();future=[];updateHistory();}
+function updateHistory(){$('undo').disabled=!history.length;$('redo').disabled=!future.length;}
+function restore(state){const was=S.playing;stop();Object.assign(S,clone(state));sourceHint='';syncUI();renderSound();renderLibrary();if(was)start();}
+function undo(){if(!history.length)return;future.push(snapshot());restore(history.pop());updateHistory();toast('Previous edit restored.');}
+function redo(){if(!future.length)return;history.push(snapshot());restore(future.pop());updateHistory();}
+function modify(fn,message){checkpoint();fn();sourceHint='';syncUI();renderSound();if(message)toast(message);}
+function loadPattern(index,{play=false,scroll=false,record=true}={}){
+ if(record)checkpoint();const was=S.playing;stop();const p=LIB[index];
+ Object.assign(S,{index,take:'Foundation',name:p.name,fam:p.fam,bpm:p.bpm,swing:p.swing,kit:p.kit,pat:patternTake(p,'Foundation')});
+ LANES.forEach(l=>{S.mute[l.id]=false;S.solo[l.id]=false;S.laneSwing[l.id]=l.swing;S.level[l.id]=100;});
+ sourceHint='';syncUI();renderSound();renderLibrary();if(scroll)$('seq').scrollIntoView({block:'start'});if(play||was)start();
+}
+function syncUI(){
+ $('patName').textContent=S.name;$('patFamily').textContent=S.fam;$('patternIndex').textContent=`STUDY ${String(S.index+1).padStart(2,'0')} / ${LIB.length} · ${S.take.toUpperCase()}`;
+ $('takeHint').textContent=S.take+' · '+({Foundation:'The full style study. Start here, then make it yours.',Stripped:'Kick, backbeat and one supporting voice. Space for an intro or breakdown.',Displaced:'One supporting lane moves a sixteenth later. Listen to the shifted accents.',Turnaround:'A second-bar fill creates an answer to the first bar.'}[S.take]);
+ for(const id of ['bpm','swing','human','kit','take','vol'])$(id).value=S[id==='vol'?'volume':id];
+ $('swingv').textContent=S.swing+'%';$('humanv').textContent=S.human+'ms';$('volv').textContent=S.volume;
+ $('favourite').textContent=favourites.has(LIB[S.index].id)?'★':'☆';$('favourite').setAttribute('aria-pressed',favourites.has(LIB[S.index].id));$('favourite').setAttribute('aria-label',`Favourite ${LIB[S.index].name}`);
+ $('laneLevel').value=S.level[$('euLane').value];$('laneLevelV').textContent=$('laneLevel').value+'%';
+ $('nowPlaying').textContent=S.playing?'Playing · '+S.name:'Ready when you are.';drawGrid();updateMix();
+}
+function activeLanes(pat=S.pat){return LANES.filter(l=>pat[l.id].some(v=>v!=='-'));}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function spliceURL(q){return 'https://splice.com/sounds/search/samples?search='+encodeURIComponent(q);}
+function renderSound(){
+ const p=LIB[S.index];$('patternDescription').textContent=sourceHint||p.d;$('patternTip').textContent=p.sig.replace(/<[^>]+>/g,'');
+ const used=activeLanes();$('soundList').innerHTML=used.length?used.map(l=>{
+  const q=soundQuery(p,l.id);return `<div class="sound-item"><div class="sound-item-head"><span><i style="background:${l.c}"></i>${l.name}</span><button data-copy="${l.id}" aria-label="Copy ${l.name} search">Copy</button></div><a class="search-link" href="${escapeHTML(spliceURL(q))}" target="_blank" rel="noopener noreferrer"><span>${escapeHTML(q)}</span><span aria-hidden="true">↗</span></a><small>${p.name==='Amapiano'&&l.id==='tom'?'Use a tuned log drum here; the browser tom only sketches its rhythm.':SOUND_ROLES[l.id][1]}</small></div>`;
+ }).join(''):'<p class="sound-help">Add a hit to a lane to see its sound-search guide.</p>';
+}
+async function copyText(text){try{if(!navigator.clipboard)throw Error();await navigator.clipboard.writeText(text);toast('Copied. Paste into Splice to find your sounds.');}catch{$('copyText').value=text;$('copyDialog').showModal();$('copyText').focus();$('copyText').select();}}
+$('copyKit').onclick=()=>copyText(`${LIB[S.index].name} / ${S.bpm} BPM / ${S.take}\nFilter: one-shots\n`+activeLanes().map(l=>l.name+': '+soundQuery(LIB[S.index],l.id)).join('\n'));
+$('soundList').onclick=e=>{const b=e.target.closest('[data-copy]');if(b)copyText(soundQuery(LIB[S.index],b.dataset.copy));};
+/* Grid: arrow-key navigation, pointer painting and spoken cell states. */
+const laneCol=$('laneCol'),stepCol=$('stepCol'),cells={};
+function buildGrid(){
+ laneCol.innerHTML='<div class="lhead"><span class="lname" style="color:#92a080">VOICE / M S ~</span></div>';
+ const ruler=document.createElement('div');ruler.className='ruler';
+ for(let s=0;s<NS;s++){const el=document.createElement('i');el.textContent=s%4===0?`${s<16?'A':'B'}${s%16/4+1}`:s%2===0?'&':'';if(s%4===0)el.className='b';ruler.appendChild(el);}stepCol.appendChild(ruler);
+ LANES.forEach(l=>{
+  const header=document.createElement('div');header.className='lhead';header.innerHTML=`<button class="lname" data-prev="${l.id}" aria-label="Preview ${l.name}">${l.name}</button><button class="lbtn m" data-mute="${l.id}" aria-label="Mute ${l.name}" aria-pressed="false">M</button><button class="lbtn" data-solo="${l.id}" aria-label="Solo ${l.name}" aria-pressed="false">S</button><button class="lbtn sw" data-sw="${l.id}" aria-label="Swing ${l.name}" aria-pressed="${l.swing}">~</button>`;laneCol.appendChild(header);
+  const row=document.createElement('div');row.className='row';row.dataset.lane=l.id;row.style.setProperty('--c',l.c);cells[l.id]=[];
+  for(let s=0;s<NS;s++){const b=document.createElement('button');b.className='cell'+(s%4===0?' beat':'')+(s===16?' bar1':'');b.dataset.lane=l.id;b.dataset.step=s;b.tabIndex=l.id==='kick'&&s===0?0:-1;cells[l.id].push(b);row.appendChild(b);}stepCol.appendChild(row);
+ });const ph=document.createElement('div');ph.className='ph';ph.id='phBar';ph.innerHTML='<i></i>';stepCol.appendChild(ph);
+}
+const STATE_NAMES={'-':'off',x:'hit',X:'accent',o:'ghost'},CYCLE={'-':'x',x:'X',X:'o',o:'-'};
+function drawGrid(){LANES.forEach(l=>{
+ cells[l.id].forEach((cell,s)=>{const v=S.pat[l.id][s];cell.classList.toggle('on',v==='x');cell.classList.toggle('acc',v==='X');cell.classList.toggle('gho',v==='o');cell.setAttribute('aria-pressed',v!=='-');cell.setAttribute('aria-label',`${l.name}, bar ${s<16?1:2}, step ${s%16+1}, ${STATE_NAMES[v]}`);});
+ for(const [data,key] of [['mute','mute'],['solo','solo'],['sw','laneSwing']])laneCol.querySelector(`[data-${data}="${l.id}"]`).setAttribute('aria-pressed',S[key][l.id]);
+ });}
+function focusCell(cell){stepCol.querySelectorAll('.cell[tabindex="0"]').forEach(el=>el.tabIndex=-1);cell.tabIndex=0;cell.focus({preventScroll:true});}
+function editCell(cell){const {lane,step}=cell.dataset;S.pat[lane][step]=CYCLE[S.pat[lane][step]];drawGrid();renderSound();if(S.pat[lane][step]!=='-')previewVoice(lane,VEL[S.pat[lane][step]]);}
+stepCol.addEventListener('pointerdown',e=>{const c=e.target.closest('.cell');if(!c||e.button!==0)return;e.preventDefault();checkpoint();focusCell(c);const {lane,step}=c.dataset;const value=CYCLE[S.pat[lane][step]];paint={value};S.pat[lane][step]=value;drawGrid();if(value!=='-')previewVoice(lane,VEL[value]);stepCol.setPointerCapture(e.pointerId);});
+stepCol.addEventListener('pointermove',e=>{if(!paint)return;const c=document.elementFromPoint(e.clientX,e.clientY)?.closest('.cell');if(!c||!stepCol.contains(c))return;S.pat[c.dataset.lane][c.dataset.step]=paint.value;drawGrid();});
+const finishPaint=()=>{if(paint){paint=null;renderSound();}};
+window.addEventListener('pointerup',finishPaint);window.addEventListener('pointercancel',finishPaint);
+stepCol.addEventListener('click',e=>{const c=e.target.closest('.cell');if(c&&e.detail===0){checkpoint();editCell(c);}});
+stepCol.addEventListener('keydown',e=>{const c=e.target.closest('.cell');if(!c)return;let row=LANES.findIndex(l=>l.id===c.dataset.lane),s=+c.dataset.step;if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key))return;e.preventDefault();if(e.key==='ArrowLeft')s=(s+31)%32;if(e.key==='ArrowRight')s=(s+1)%32;if(e.key==='ArrowUp')row=(row+11)%12;if(e.key==='ArrowDown')row=(row+1)%12;if(e.key==='Home')s=0;if(e.key==='End')s=31;focusCell(cells[LANES[row].id][s]);});
+laneCol.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.prev){previewVoice(b.dataset.prev,.85);return;}for(const [data,key] of [['mute','mute'],['solo','solo'],['sw','laneSwing']])if(b.dataset[data])modify(()=>{S[key][b.dataset[data]]=!S[key][b.dataset[data]];});};
+/* A short scheduling horizon keeps playback responsive to live edits. Each
+   transport run owns a gain bus so Stop also silences already-scheduled hits. */
+let timer=null,raf=null,nextT=0,nextStep=0,visualQueue=[],runBus=null,busNodes={},starting=false,audioGeneration=0;
+function audible(id){return !S.mute[id]&&(!LANES.some(l=>S.solo[l.id])||S.solo[id]);}
+function createRun(){if(runBus){const old=runBus;old.gain.setTargetAtTime(0,AC.currentTime,.005);setTimeout(()=>old.disconnect(),60);}runBus=AC.createGain();runBus.connect(limiter);busNodes={};LANES.forEach(l=>{const g=AC.createGain();g.connect(runBus);busNodes[l.id]=g;});updateMix();}
+function updateMix(){if(master)master.gain.value=S.volume/100*.8;LANES.forEach(l=>{if(busNodes[l.id])busNodes[l.id].gain.value=audible(l.id)?S.level[l.id]/100:0;});}
+function playVoice(l,t,v){voiceOutput=busNodes[l.id]||limiter;l.play(t,v,KITS[S.kit]);voiceOutput=null;}
+async function ensureAudio(){audio();await AC.resume();if(AC.state!=='running')throw Error('Audio is suspended');updateMix();if(!runBus)createRun();}
+async function previewVoice(id,v){try{await ensureAudio();playVoice(LANES.find(l=>l.id===id),AC.currentTime+.01,v);}catch{toast('Audio could not start. Try the Play button again.');}}
+async function start(){if(S.playing||starting)return;starting=true;const generation=audioGeneration;try{await ensureAudio();if(generation!==audioGeneration)return;createRun();S.playing=true;nextT=AC.currentTime+.065;nextStep=0;visualQueue=[];$('playBtn').textContent='■ STOP';$('playBtn').setAttribute('aria-pressed','true');$('nowPlaying').textContent='Playing · '+S.name;schedule();animate();renderPreviewButtons();}catch{toast('Audio could not start. Check browser audio permissions and try Play.');}finally{starting=false;}}
+function stop(){audioGeneration++;starting=false;S.playing=false;clearTimeout(timer);cancelAnimationFrame(raf);timer=raf=null;visualQueue=[];if(runBus){const old=runBus;old.gain.cancelScheduledValues(AC.currentTime);old.gain.setTargetAtTime(0,AC.currentTime,.005);setTimeout(()=>old.disconnect(),60);runBus=null;busNodes={};}if($('playBtn')){$('playBtn').textContent='▶ PLAY';$('playBtn').setAttribute('aria-pressed','false');$('nowPlaying').textContent='Ready when you are.';}stepCol.querySelectorAll('.lit').forEach(c=>c.classList.remove('lit'));renderPreviewButtons();}
+function scheduleStep(step,base,sd){LANES.forEach(l=>{const v=S.pat[l.id][step];if(v==='-'||!audible(l.id))return;const swing=S.laneSwing[l.id]&&step%2?sd*(S.swing-50)/50:0;const human=(Math.random()*2-1)*S.human/1000;playVoice(l,Math.max(AC.currentTime+.003,base+swing+human),VEL[v]);});}
+function schedule(){if(!S.playing)return;while(nextT<AC.currentTime+.1){const sd=60/S.bpm/4;scheduleStep(nextStep,nextT,sd);visualQueue.push({step:nextStep,time:nextT});nextT+=sd;nextStep=(nextStep+1)%32;}timer=setTimeout(schedule,25);}
+function animate(){if(!S.playing)return;let current;while(visualQueue.length&&visualQueue[0].time<=AC.currentTime)current=visualQueue.shift();if(current){stepCol.querySelectorAll('.lit').forEach(c=>c.classList.remove('lit'));LANES.forEach(l=>{if(S.pat[l.id][current.step]!=='-')cells[l.id][current.step].classList.add('lit');});$('phBar').firstChild.style.left=current.step/32*100+'%';}raf=requestAnimationFrame(animate);}
+$('playBtn').onclick=()=>S.playing||starting?stop():start();
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&(S.playing||starting))stop();});
+window.addEventListener('pagehide',stop);
+/* Parameters and edits. A slider drag is a single undoable action. */
+function bounded(value,min,max,fallback){const n=Number(value);return Number.isFinite(n)&&String(value).trim()!==''?Math.max(min,Math.min(max,Math.round(n))):fallback;}
+for(const id of ['bpm','swing','human','vol','laneLevel']){
+ const el=$(id);let editing=false;const begin=()=>{if(!editing){checkpoint();editing=true;}};
+ el.addEventListener('pointerdown',begin);el.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key))begin();});
+ el.addEventListener('input',()=>{begin();if(id==='bpm')return;const n=+el.value;if(id==='laneLevel')S.level[$('euLane').value]=n;else S[id==='vol'?'volume':id]=n;if(id==='swing')$('swingv').textContent=n+'%';if(id==='human')$('humanv').textContent=n+'ms';if(id==='vol')$('volv').textContent=n;if(id==='laneLevel')$('laneLevelV').textContent=n+'%';updateMix();});
+ el.addEventListener('change',()=>{if(id==='bpm'){begin();S.bpm=bounded(el.value,65,190,S.bpm);el.value=S.bpm;}editing=false;});el.addEventListener('blur',()=>editing=false);
+}
+$('kit').onchange=e=>{checkpoint();S.kit=e.target.value;};
+$('take').onchange=e=>{const take=e.target.value;modify(()=>{S.take=take;S.name=LIB[S.index].name;S.pat=patternTake(LIB[S.index],take);},take==='Foundation'?'Foundation restored.':'Take loaded.');};
+$('undo').onclick=undo;$('redo').onclick=redo;
+$('resetPattern').onclick=()=>modify(()=>{S.pat=patternTake(LIB[S.index],S.take);S.name=LIB[S.index].name;},'Current take restored.');
+$('clearAll').onclick=()=>modify(()=>LANES.forEach(l=>S.pat[l.id].fill('-')),'Grid cleared. Undo brings it back.');
+$('dblBtn').onclick=()=>modify(()=>LANES.forEach(l=>S.pat[l.id]=S.pat[l.id].slice(0,16).concat(S.pat[l.id].slice(0,16))),'Bar 1 copied to bar 2.');
+$('fillBtn').onclick=()=>modify(()=>{const id=S.pat.snare.some(v=>v!=='-')?'snare':'tom';[28,29,30,31].forEach((s,i)=>S.pat[id][s]=i===3?'X':i===0?'o':'x');S.pat.chh[31]='-';S.pat.ohh[31]='-';},'Second-bar turnaround added.');
+$('varyBtn').onclick=()=>{
+ const candidates=activeLanes().filter(l=>!['kick','clap','snare'].includes(l.id));if(!candidates.length){toast('Add a hat or percussion part first.');return;}
+ modify(()=>{const l=candidates[Math.floor(Math.random()*candidates.length)],s=Math.floor(Math.random()*32);S.pat[l.id][s]=CYCLE[S.pat[l.id][s]];for(let j=0;j<2;j++){const step=(s+3+j*7)%32;S.pat[l.id][step]=CYCLE[S.pat[l.id][step]];}},'Texture varied. Kick and backbeat preserved.');
+};
+function euclid(k,n,rotation=0){const result=Array(n).fill(0);let bucket=n-k;for(let i=0;i<n;i++){bucket+=k;if(bucket>=n){bucket-=n;result[(i+rotation)%n]=1;}}return result;}
+$('euGo').onclick=()=>modify(()=>{const k=bounded($('euHits').value,1,16,5),rot=bounded($('euRot').value,0,15,0);$('euHits').value=k;$('euRot').value=rot;const a=euclid(k,16,rot);S.pat[$('euLane').value]=Array.from({length:32},(_,s)=>a[s%16]?(s%4===0?'X':'x'):'-');},'Euclidean rhythm applied to the selected lane.');
+$('rotateLane').onclick=()=>modify(()=>{const id=$('euLane').value;S.pat[id]=S.pat[id].slice(-1).concat(S.pat[id].slice(0,-1));},'Lane shifted one sixteenth note.');
+$('euLane').onchange=()=>{$('laneLevel').value=S.level[$('euLane').value];$('laneLevelV').textContent=$('laneLevel').value+'%';};
+/* Portable, strictly validated sessions. Saving is explicit, including on file://. */
+function validateSession(file){
+ if(!file||file.format!=='fieldwork-kit'||file.version!==2||!file.state)throw Error('Not a Fieldwork Kit v2 session.');
+ const x=file.state,out={};
+ for(const [key,min,max] of [['index',0,LIB.length-1],['bpm',65,190],['swing',50,70],['human',0,20],['volume',0,100]]){if(!Number.isInteger(x[key])||x[key]<min||x[key]>max)throw Error('Invalid '+key);out[key]=x[key];}
+ if(!KIT_NAMES.includes(x.kit)||!TAKES.includes(x.take))throw Error('Unknown kit or take.');out.kit=x.kit;out.take=x.take;
+ if(typeof x.name!=='string'||!x.name.length||x.name.length>160)throw Error('Invalid pattern name.');out.name=x.name;out.fam=LIB[out.index].fam;
+ for(const key of ['pat','mute','solo','laneSwing','level']){if(!x[key]||typeof x[key]!=='object')throw Error('Missing '+key);out[key]={};LANES.forEach(l=>{const v=x[key][l.id];if(key==='pat'){if(!Array.isArray(v)||v.length!==32||!v.every(n=>['-','x','X','o'].includes(n)))throw Error('Invalid pattern lane.');out[key][l.id]=v.slice();}else if(key==='level'){if(!Number.isInteger(v)||v<0||v>100)throw Error('Invalid lane level.');out[key][l.id]=v;}else{if(typeof v!=='boolean')throw Error('Invalid lane control.');out[key][l.id]=v;}});}
+ return out;
+}
+function session(){return {format:'fieldwork-kit',version:2,state:snapshot()};}
+function download(bytes,type,name){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([bytes],{type}));a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1000);}
+function filename(){return S.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,100)+'-'+S.take.toLowerCase();}
+$('saveSession').onclick=()=>{try{localStorage.setItem(STORE,JSON.stringify(session()));toast('Session saved in this browser.');}catch{toast('Browser storage unavailable. Use Session file to keep this groove.');}};
+$('restoreSession').onclick=()=>{try{const saved=localStorage.getItem(STORE);if(!saved){toast('No saved session yet. Use Save session first.');return;}const data=validateSession(JSON.parse(saved));checkpoint();restore(data);toast('Saved session restored.');}catch{toast('Could not restore this saved session. Your current pattern is unchanged.');}};
+$('exportSession').onclick=()=>{download(JSON.stringify(session(),null,2),'application/json',filename()+'.json');toast('Session file exported.');};
+$('importSession').onclick=()=>$('sessionFile').click();
+$('sessionFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{if(f.size>100000)throw Error('File too large.');const data=validateSession(JSON.parse(await f.text()));checkpoint();restore(data);toast('Session opened.');}catch{toast('Cannot open this file. Choose a valid Fieldwork Kit session.');}finally{e.target.value='';}};
+/* General MIDI, channel 10. Preserve loop length, swing and audible lane mix. */
+function varlen(n){const out=[n&127];while(n>>=7)out.unshift((n&127)|128);return out;}
+function midiBytes(state=S){
+ const ppq=480,tps=120,events=[],solo=LANES.some(l=>state.solo[l.id]);
+ LANES.forEach(l=>{if(state.mute[l.id]||(solo&&!state.solo[l.id])||state.level[l.id]===0)return;state.pat[l.id].forEach((v,s)=>{if(v==='-')return;const t=s*tps+(state.laneSwing[l.id]&&s%2?Math.round(tps*(state.swing-50)/50):0),vel=Math.max(1,Math.round(VEL[v]*118*state.level[l.id]/100));events.push({t,type:0x99,note:l.gm,vel},{t:t+48,type:0x89,note:l.gm,vel:0});});});
+ events.sort((a,b)=>a.t-b.t||a.type-b.type);const tempo=Math.round(60000000/state.bpm),trk=[0,255,81,3,(tempo>>16)&255,(tempo>>8)&255,tempo&255,0,255,88,4,4,2,24,8];let last=0;
+ events.forEach(e=>{trk.push(...varlen(e.t-last),e.type,e.note,e.vel);last=e.t;});trk.push(...varlen(3840-last),255,47,0);const n=trk.length;
+ return new Uint8Array([77,84,104,100,0,0,0,6,0,0,0,1,ppq>>8,ppq&255,77,84,114,107,(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255,...trk]);
+}
+$('exportMidi').onclick=()=>{download(midiBytes(),'audio/midi',filename()+'-'+S.bpm+'bpm.mid');toast('Two-bar MIDI exported. Drop it onto a General MIDI drum rack.');};
+/* Library: combined search, favourites, density/tempo sorts and progressive loading. */
+const FAMS=['All',...new Set(LIB.map(p=>p.fam))];
+function hitCount(p){return Object.values(p.p).join('').replace(/-/g,'').length;}
+function filteredLibrary(){const words=$('search').value.toLowerCase().trim().split(/\s+/).filter(Boolean);const result=LIB.map((p,i)=>({p,i})).filter(({p})=>(filterFamily==='All'||p.fam===filterFamily)&&(!onlySaved||favourites.has(p.id))&&words.every(w=>(p.name+' '+p.fam+' '+p.tags+' '+p.d+' '+p.kit+' '+Object.keys(p.p).map(k=>soundQuery(p,k)).join(' ')).toLowerCase().includes(w)));const sort=$('sort').value;if(sort==='tempo')result.sort((a,b)=>a.p.bpm-b.p.bpm);if(sort==='name')result.sort((a,b)=>a.p.name.localeCompare(b.p.name));if(sort==='density')result.sort((a,b)=>hitCount(a.p)-hitCount(b.p));return result;}
+function renderLibrary(){
+ const all=filteredLibrary(),shown=all.slice(0,libraryLimit);$('resultCount').textContent=`${shown.length} of ${all.length} studies · ${all.length*4} available takes`;$('emptyLibrary').hidden=all.length>0;$('showMore').hidden=shown.length===all.length;
+ $('showMore').textContent=`Show ${Math.min(12,all.length-shown.length)} more patterns ↓`;
+ $('libGrid').innerHTML=shown.map(({p,i})=>`<article class="gcard" style="--family:${FAMILY_COLORS[p.fam]}"><div class="card-meta"><span class="card-family"><i></i>${p.fam} / ${String(i+1).padStart(2,'0')}</span><button class="star" data-fav="${i}" aria-pressed="${favourites.has(p.id)}" aria-label="Favourite ${escapeHTML(p.name)}">${favourites.has(p.id)?'★':'☆'}</button></div><div class="gcard-top"><h3>${p.name}</h3><span class="bpm">${p.bpm} <small>BPM</small></span></div><div class="gcanvas"><canvas data-g="${i}" role="img" aria-label="${escapeHTML(p.name)}: two bars, ${hitCount(p)} hits"></canvas></div><div class="card-tags"><span>${p.swing}% swing</span><span>${hitCount(p)} hits / 2 bars</span><span>${p.kit} kit</span></div><p>${p.d}</p><a class="card-query" href="${escapeHTML(spliceURL(soundQuery(p,'kick')))}" target="_blank" rel="noopener noreferrer"><span>TRY ON SPLICE ↗</span>${escapeHTML(soundQuery(p,'kick'))}</a><div class="card-actions"><button data-load="${i}">Open in playground ↗</button><button data-preview="${i}" aria-label="Preview ${escapeHTML(p.name)}">▶ Preview</button></div></article>`).join('');drawAllCards();renderPreviewButtons();
+}
+function renderPreviewButtons(){document.querySelectorAll('[data-preview]').forEach(b=>{const active=S.playing&&+b.dataset.preview===S.index;b.textContent=active?'■ Stop':'▶ Preview';b.classList.toggle('preview-active',active);b.setAttribute('aria-label',(active?'Stop ':'Preview ')+LIB[+b.dataset.preview].name);b.setAttribute('aria-pressed',active);});}
+function drawCard(cv,p){const dpr=Math.min(2,window.devicePixelRatio||1),w=cv.clientWidth||330,h=cv.clientHeight||69;cv.width=w*dpr;cv.height=h*dpr;const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.fillStyle='#242c22';x.fillRect(0,0,w,h);const used=LANES.filter(l=>p.p[l.id]?.replace(/-/g,'').length),rh=(h-12)/Math.max(1,used.length),cw=(w-16)/32;for(let s=0;s<32;s++){x.fillStyle=s%4===0?'#414b36':'#30392b';x.fillRect(8+s*cw,6,Math.max(1,cw-2),h-12);}used.forEach((l,row)=>{for(let s=0;s<32;s++){const v=p.p[l.id][s];if(v==='-')continue;x.fillStyle=l.c;x.globalAlpha=v==='X'?1:v==='x'?.8:.35;x.fillRect(8+s*cw,6+row*rh,Math.max(1,cw-2),Math.max(2,rh-3));}});x.globalAlpha=1;x.fillStyle='#b8c69e';x.fillRect(w/2,4,1,h-8);}
+function drawAllCards(){document.querySelectorAll('canvas[data-g]').forEach(cv=>drawCard(cv,LIB[+cv.dataset.g]));}
+let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(drawAllCards,80);});
+function toggleFavourite(index){const id=LIB[index].id;if(favourites.has(id))favourites.delete(id);else favourites.add(id);try{localStorage.setItem(FAV_STORE,JSON.stringify([...favourites]));}catch{toast('Favourite updated for this visit; browser storage is unavailable.');}syncUI();renderLibrary();}
+$('favourite').onclick=()=>toggleFavourite(S.index);
+$('libGrid').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.fav!==undefined){toggleFavourite(+b.dataset.fav);return;}if(b.dataset.load!==undefined){loadPattern(+b.dataset.load,{scroll:true});return;}if(b.dataset.preview!==undefined){const i=+b.dataset.preview;if(S.playing&&S.index===i)stop();else loadPattern(i,{play:true});}};
+$('search').oninput=$('sort').onchange=()=>{libraryLimit=12;renderLibrary();};
+$('onlyFavourites').onclick=()=>{onlySaved=!onlySaved;$('onlyFavourites').setAttribute('aria-pressed',onlySaved);libraryLimit=12;renderLibrary();};
+$('clearFilters').onclick=()=>{filterFamily='All';onlySaved=false;$('search').value='';$('sort').value='curated';$('onlyFavourites').setAttribute('aria-pressed','false');libraryLimit=12;renderFamilyFilters();renderLibrary();};
+$('showMore').onclick=()=>{libraryLimit+=12;renderLibrary();};
+function renderFamilyFilters(){$('libFilter').innerHTML=FAMS.map(f=>`<button class="tool" data-family="${f}" aria-pressed="${filterFamily===f}">${f}<small>${f==='All'?LIB.length:LIB.filter(p=>p.fam===f).length}</small></button>`).join('');}
+$('libFilter').onclick=e=>{const b=e.target.closest('[data-family]');if(b){filterFamily=b.dataset.family;libraryLimit=12;renderFamilyFilters();renderLibrary();}};
+$('surprise').onclick=()=>loadPattern((S.index+1+Math.floor(Math.random()*(LIB.length-1)))%LIB.length,{play:true,scroll:true});
+/* Morph only changes the workbench when explicitly sent. */
+function morphResult(a,b,percent){const A=patternTake(a,'Foundation'),B=patternTake(b,'Foundation'),diff=[],priority={kick:0,snare:1,clap:2,ohh:3};LANES.forEach(l=>{for(let step=0;step<32;step++)if(A[l.id][step]!==B[l.id][step])diff.push({lane:l.id,name:l.name,step,to:B[l.id][step]});});diff.sort((x,y)=>(priority[x.lane]??9)-(priority[y.lane]??9)||x.step-y.step);const applied=Math.round(diff.length*percent/100);diff.slice(0,applied).forEach(d=>A[d.lane][d.step]=d.to);return {pat:A,diff,applied,structure:diff.filter(d=>['kick','snare','clap','ohh'].includes(d.lane)).length,bpm:Math.round(a.bpm+(b.bpm-a.bpm)*percent/100),swing:Math.round(a.swing+(b.swing-a.swing)*percent/100)};}
+function renderMorph(){const m=morphResult(LIB[+$('selA').value],LIB[+$('selB').value],+$('morphSl').value);$('diffN').textContent=`${m.applied} / ${m.diff.length} cells`;$('morphPercent').textContent=$('morphSl').value+'%';$('diffList').textContent=m.diff.length?`${m.structure} structural changes, then ${m.diff.length-m.structure} texture changes. ${m.bpm} BPM · ${m.swing}% swing. `+(m.applied?`Latest: ${m.diff[m.applied-1].name}, bar ${Math.floor(m.diff[m.applied-1].step/16)+1}, step ${m.diff[m.applied-1].step%16+1}.`:'Pattern A is intact.'):'Identical grids. Tempo and swing still interpolate between the selected studies.';}
+$('selA').onchange=$('selB').onchange=()=>{$('morphSl').value=0;renderMorph();};$('morphSl').oninput=renderMorph;
+$('swapAB').onclick=()=>{const a=$('selA').value;$('selA').value=$('selB').value;$('selB').value=a;$('morphSl').value=100-+$('morphSl').value;renderMorph();};
+$('morphStruct').onclick=()=>{const m=morphResult(LIB[+$('selA').value],LIB[+$('selB').value],0);$('morphSl').value=m.diff.length?m.structure/m.diff.length*100:0;renderMorph();};
+$('morphLoad').onclick=()=>{
+ checkpoint();const ai=+$('selA').value,bi=+$('selB').value,pct=+$('morphSl').value,a=LIB[ai],b=LIB[bi],m=morphResult(a,b,pct);stop();S.index=pct<50?ai:bi;S.name=pct===0?a.name:pct===100?b.name:a.name+' × '+b.name;S.fam=LIB[S.index].fam;S.take='Foundation';S.kit=LIB[S.index].kit;S.pat=m.pat;S.bpm=m.bpm;S.swing=m.swing;LANES.forEach(l=>{S.mute[l.id]=S.solo[l.id]=false;S.laneSwing[l.id]=l.swing;S.level[l.id]=100;});sourceHint=`Hybrid: ${a.name} → ${b.name}, ${pct}% across. Sound suggestions use the ${LIB[S.index].name} palette.`;syncUI();renderSound();renderLibrary();$('seq').scrollIntoView({block:'start'});start();toast('Hybrid loaded. Edit it, save it or export the MIDI.');
+};
+document.addEventListener('keydown',e=>{if(/INPUT|SELECT|TEXTAREA|BUTTON/.test(e.target.tagName)||e.target.isContentEditable||$('copyDialog').open)return;if(e.code==='Space'){e.preventDefault();S.playing||starting?stop():start();}if(e.key==='/'){e.preventDefault();$('search').focus();$('library').scrollIntoView({block:'start'});}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();}});
+document.querySelector('a[href="#roles"]').onclick=()=>document.querySelector('.field-notes').open=true;
+function init(){
+ $('kit').innerHTML=KIT_NAMES.map(k=>`<option>${k}</option>`).join('');
+ $('euLane').innerHTML=LANES.map(l=>`<option value="${l.id}">${l.name}</option>`).join('');$('euLane').value='shaker';
+ for(const id of ['selA','selB'])$(id).innerHTML=LIB.map((p,i)=>`<option value="${i}">${p.name} · ${p.bpm}</option>`).join('');$('selA').value=5;$('selB').value=13;$('morphSl').step='any';
+ buildGrid();renderFamilyFilters();syncUI();renderSound();renderLibrary();renderMorph();
+ $('genreTable').innerHTML=LIB.map(p=>{const lanes=expand(p.p),back=lanes.snare.some(v=>v!=='-')?'snare':lanes.clap.some(v=>v!=='-')?'clap':lanes.rim.some(v=>v!=='-')?'rim':null;const positions=back?lanes[back].slice(0,16).map((v,s)=>v!=='-'?s+1:null).filter(Boolean).join(', '):'—';return `<tr><td><b>${p.name}</b></td><td class="num">${p.bpm}</td><td>${p.p.kick===floor?'Four on the floor':'Other placement'}</td><td>${back?back+' · '+positions:'None'}</td><td>${lanes.chh.slice(0,16).filter(v=>v!=='-').length} closed hits / bar 1</td><td class="num">${p.swing}%</td></tr>`;}).join('');
+ if(['#roles','#vocab','#numbers'].includes(location.hash))document.querySelector('.field-notes').open=true;
+}
+init();
+</script>
+</body></html>

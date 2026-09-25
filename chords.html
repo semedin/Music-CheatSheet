@@ -1,0 +1,1106 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voicing — chords &amp; progressions for house and techno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E2DED2;--panel:#F2EFE6;--panel-2:#EAE5D8;
+  --ink:#191713;--ink-2:#635C50;--ink-3:#8C8474;--line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32;--b2:#FF8A2B;--b3:#FFC531;--b4:#F2EDE0;--cy:#3FD0C9;--vi:#A78BFA;--gr:#7BD46A;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1220px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(44px,10.5vw,116px);line-height:.84;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:60ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+
+.transport{position:sticky;top:0;z-index:90;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:12px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.09em;background:var(--b1);color:#fff;
+  border:0;border-radius:3px;padding:9px 15px;cursor:pointer;white-space:nowrap}
+.tbtn.ghost{background:transparent;color:var(--b4);border:1px solid rgba(242,237,224,.35)}
+.tbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.tbtn:hover{filter:brightness(1.12)}
+.knob{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:rgba(242,237,224,.68)}
+.knob input[type=range]{width:74px;accent-color:var(--b2)}
+.knob b{color:var(--b4);min-width:34px;display:inline-block}
+.knob select{font-family:var(--mono);font-size:11px;background:#2A2723;color:var(--b4);border:1px solid rgba(242,237,224,.3);border-radius:3px;padding:5px 6px}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:26ch}
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 0}
+.nav a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;
+  color:var(--ink-2);border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--panel)}
+.nav a:hover{border-color:var(--ink);color:var(--ink)}
+.sec{padding:50px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:22px}
+.sec-head h2{font-size:clamp(26px,4.4vw,42px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:66ch;margin-top:12px;color:var(--ink-2)}
+.lab{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:20px}
+.tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;padding:3px 7px;border-radius:2px;
+  background:var(--ink);color:var(--b4);text-transform:uppercase;white-space:nowrap}
+.tag.alt{background:var(--b1)}
+
+/* --- the money row --- */
+.moneyrow{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:var(--ink);
+  border-radius:5px;padding:13px 16px;margin-bottom:14px;color:var(--b4)}
+@media(max-width:820px){.moneyrow{grid-template-columns:1fr}}
+.mbtns{display:flex;gap:7px;flex-wrap:wrap}
+.moveread{text-align:right;font-family:var(--display);font-weight:800;font-size:34px;line-height:1;color:var(--b3)}
+.moveread small{display:block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.11em;
+  color:rgba(242,237,224,.5);text-transform:uppercase;margin-top:3px}
+.moveread.good{color:var(--gr)}
+.moneyrow p{margin:0;font-size:13.5px;color:rgba(242,237,224,.72);max-width:52ch}
+
+/* --- slots --- */
+.slots{display:flex;gap:9px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px}
+.slot{min-width:158px;flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:10px;position:relative}
+.slot.cur{border-color:var(--b1);box-shadow:0 0 0 2px rgba(255,75,50,.28)}
+.slot .sym{font-family:var(--display);font-size:25px;font-weight:800;line-height:1;margin-bottom:1px}
+.slot .rn{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--b1);font-weight:700;margin-bottom:8px}
+.slot select{width:100%;font-family:var(--mono);font-size:10px;padding:3px 4px;margin-bottom:4px;
+  border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink)}
+.slot .x{position:absolute;top:6px;right:7px;font-family:var(--mono);font-size:11px;background:none;border:0;
+  color:var(--ink-3);cursor:pointer;padding:2px 4px;line-height:1}
+.slot .x:hover{color:var(--b1)}
+.slot .notes{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);margin-top:5px;letter-spacing:.04em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.viz{background:var(--lane);border-radius:5px;height:280px;position:relative;overflow:hidden;margin-bottom:12px}
+.viz canvas{display:block;width:100%;height:100%}
+.viz .lbl{position:absolute;top:8px;left:11px;font-family:var(--mono);font-size:9px;letter-spacing:.13em;
+  color:rgba(242,237,224,.4);text-transform:uppercase;pointer-events:none}
+.kbd{position:relative;height:76px;display:flex;margin-bottom:12px;user-select:none}
+.kbd .w{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:0 0 3px 3px}
+.kbd .w.on{background:var(--b3)} .kbd .w.bass{background:var(--b1)}
+.kbd .b{position:absolute;top:0;height:58%;background:var(--ink);border-radius:0 0 2px 2px;z-index:2}
+.kbd .b.on{background:var(--b3)} .kbd .b.bass{background:var(--b1)}
+
+.rack{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:11px}
+.mod{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:11px 12px}
+.mod .eyebrow{margin-bottom:9px;color:var(--b1)}
+.p{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:7px}
+.p .r{display:flex;align-items:center;gap:7px}
+.p select{flex:1;font-family:var(--mono);font-size:10px;padding:4px 5px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink)}
+.p input[type=range]{flex:1;accent-color:var(--b1)}
+.p b{color:var(--ink);font-size:10.5px;min-width:42px;text-align:right}
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px;align-items:center}
+.tool{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:7px 11px;cursor:pointer;color:var(--ink-2)}
+.tool:hover{border-color:var(--ink);color:var(--ink)}
+.tool.hi{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.tool.hi:hover{background:var(--b1);border-color:var(--b1);color:#fff}
+
+/* --- galleries --- */
+.grid3{display:grid;gap:15px;grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+.gcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:15px;display:flex;flex-direction:column;gap:9px}
+.gcard-top{display:flex;align-items:baseline;gap:9px}
+.gcard h3{font-size:17px;flex:1;line-height:1.15}
+.chordline{font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--ink);letter-spacing:.02em}
+.rnline{font-family:var(--mono);font-size:10.5px;color:var(--b1);letter-spacing:.09em;font-weight:700}
+.gcard p{font-size:14px;color:var(--ink-2);margin:0}
+.sig{font-family:var(--mono);font-size:11.5px;line-height:1.6;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:8px 10px;border-radius:0 3px 3px 0}
+.sig b{color:var(--b1)}
+.gload{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  background:var(--ink);color:var(--b4);border:0;border-radius:3px;padding:8px 12px;cursor:pointer;align-self:flex-start}
+.gload:hover{background:var(--b1);color:#fff}
+.vgrid{display:grid;gap:11px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.vcard{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:12px;cursor:pointer}
+.vcard:hover{border-color:var(--ink)}
+.vcard h4{font-size:15px;margin-bottom:3px}
+.vcard .nn{font-family:var(--mono);font-size:11px;color:var(--b1);font-weight:700;margin-bottom:5px}
+.vcard p{font-size:13px;color:var(--ink-2);margin:0}
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700}
+tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:10px 12px;border-radius:0 3px 3px 0;margin:14px 0 0}
+.callout b{color:var(--b1)}
+.note{font-size:14.5px;color:var(--ink-2);margin:13px 0 0;max-width:76ch}
+.note b{color:var(--ink)}
+.foot{border-top:2px solid var(--ink);margin-top:54px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:620px){.knob input[type=range]{width:58px}.tnow{display:none}.moveread{text-align:left;font-size:26px}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="chords-v2.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Field guide 05 · harmony · voicing · progressions</div>
+    <h1>The chords<br>are <em>never</em><br>the problem</h1>
+    <p class="sub">Almost nobody's progression is wrong. What makes an amateur track sound amateur is <strong>voicing</strong> — the same four chords, played in root position, jumping around the keyboard instead of moving by a semitone or two. This page measures that. Press <strong>Cheap</strong> and then <strong>Expensive</strong> below and watch the number change: identical harmony, 68 semitones of movement against 12.</p>
+  </div>
+</div>
+
+<div class="transport">
+  <div class="wrap">
+    <button class="tbtn" id="playBtn">▶ PLAY</button>
+    <label class="knob">KEY <select id="keySel"></select></label>
+    <label class="knob">SOUND <select id="soundSel"></select></label>
+    <label class="knob">RHYTHM <select id="rhySel"></select></label>
+    <button class="tbtn ghost" id="drumBtn" aria-pressed="true">DRUMS</button>
+    <button class="tbtn ghost" id="bassBtn" aria-pressed="true">BASS</button>
+    <label class="knob">BPM <input type="range" id="bpm" min="100" max="140" value="122"><b id="bpmv">122</b></label>
+    <label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="70"><b id="volv">70</b></label>
+    <span class="tnow" id="nowPlaying">—</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="index.html" class="nav-home">← Index</a>
+    <a href="#lab">1 · The lab</a>
+    <a href="#voicings">2 · One chord, eight ways</a>
+    <a href="#library">3 · Progressions</a>
+    <a href="#extensions">4 · Extensions</a>
+    <a href="#modes">5 · Modes</a>
+    <a href="#rules">6 · Working rules</a>
+  </nav>
+
+  <section class="sec" id="lab">
+    <div class="sec-head">
+      <div class="eyebrow">Section 01 · interactive</div>
+      <h2>The lab</h2>
+      <p>Build a progression, then change how it is voiced without changing a single chord. The lines in the display are the individual voices — when they run almost flat, the progression sounds expensive. When they leap, it sounds like a preset demo.</p>
+    </div>
+
+    <div class="lab">
+      <div class="moneyrow">
+        <div class="mbtns">
+          <button class="tbtn ghost" id="cheapBtn">MAKE IT CHEAP</button>
+          <button class="tbtn" id="expBtn">MAKE IT EXPENSIVE</button>
+        </div>
+        <p id="moneyText">Same chords, same key, same rhythm. The only difference is inversion, spread and which notes you leave out.</p>
+        <div class="moveread" id="moveRead">0<small>semitones of voice movement</small></div>
+      </div>
+
+      <div class="slots" id="slots"></div>
+
+      <div class="viz"><canvas id="viz"></canvas><span class="lbl">Voice leading · each line is one voice moving between chords</span></div>
+      <div class="kbd" id="kbd"></div>
+
+      <div class="rack" id="rack"></div>
+
+      <div class="toolbar">
+        <button class="tool hi" id="exportMidi">⬇ Download MIDI</button>
+        <button class="tool" id="addSlot">+ Add chord</button>
+        <button class="tool" id="randProg">Suggest a progression</button>
+        <button class="tool" id="subBtn">Substitute chord 2</button>
+      </div>
+
+      <p class="note"><b>Three progressions in the library get a bigger number from the Expensive button, not a smaller one</b> — Phrygian techno, Suspended stabs and Chromatic climb. That is not a bug and it is worth understanding. All three move their roots by a semitone, so root position was already about as smooth as smooth gets; the number rises because the button adds sevenths, and more notes means more total travel. Those progressions get their power from the interval itself, not from voice leading, and the measurement is honest enough to tell you so.</p>
+      <p class="callout"><b>The measurement.</b> The number top-right is the total distance every voice travels across the loop, in semitones. It is not a quality score — some music wants leaps — but in house and techno, low is almost always better. Under 20 for a four-chord loop means the voices are behaving. Over 50 means each chord is being played from scratch with no thought about the one before it, which is exactly what root position does.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="voicings">
+    <div class="sec-head">
+      <div class="eyebrow">Section 02 · interactive</div>
+      <h2>One chord, eight ways</h2>
+      <p>All eight of these are A minor 9. Same notes, same harmony, completely different instruments as far as your ear is concerned. Click any of them.</p>
+    </div>
+    <div class="vgrid" id="vgrid"></div>
+    <p class="note"><b>The one to internalise is rootless.</b> If your bass is already playing an A, the chord does not need one — and removing it frees a voice for the 9th, which is the note that makes the chord sound like a record rather than a music lesson. Almost every "how do they get that lush house chord" question is answered by "they left the root out and added a 9th".</p>
+  </section>
+
+  <section class="sec" id="library">
+    <div class="sec-head">
+      <div class="eyebrow">Section 03 · 16 progressions</div>
+      <h2>The vocabulary</h2>
+      <p>Everything here loads into the lab in the current key. Roman numerals are relative to the minor tonic, which is where most of this music lives.</p>
+    </div>
+    <div class="grid3" id="libGrid"></div>
+  </section>
+
+  <section class="sec" id="extensions">
+    <div class="sec-head">
+      <div class="eyebrow">Section 04</div>
+      <h2>Extensions</h2>
+      <p>The notes above the seventh. They are the difference between a chord and a colour, and there are rules about which ones you may not use.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Extension</th><th>Interval</th><th>Works on</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><b>6th</b></td><td class="num">9 st</td><td>Major, minor</td><td>Softens and dates a chord — instantly 1970s. Replaces the 7th rather than joining it.</td></tr>
+          <tr><td><b>7th</b></td><td class="num">10 or 11 st</td><td>Everything</td><td>The single most important addition. A triad is folk music; a seventh is dance music.</td></tr>
+          <tr><td><b>9th</b></td><td class="num">14 st</td><td>Everything</td><td>Lush, open, "expensive". The default extension in house.</td></tr>
+          <tr><td><b>11th</b></td><td class="num">17 st</td><td><b>Minor only</b></td><td>Hollow and modal. On a major or dominant chord the natural 11 clashes hard with the 3rd.</td></tr>
+          <tr><td><b>#11</b></td><td class="num">18 st</td><td>Major, dominant</td><td>The fix for the above. Floating, Lydian, cinematic.</td></tr>
+          <tr><td><b>13th</b></td><td class="num">21 st</td><td>Dominant, minor (Dorian)</td><td>Rich and jazzy. On a dominant it is the sound of gospel house.</td></tr>
+          <tr><td><b>add9</b></td><td class="num">14 st, no 7th</td><td>Everything</td><td>Open and modern. Ambiguous because there is no 7th to tell you the function.</td></tr>
+          <tr><td><b>sus4</b></td><td class="num">5 st, no 3rd</td><td>Everything</td><td>Removes major/minor entirely. The techno stab: neither happy nor sad, just tension.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>The rules that actually bite</h3>
+        <ul>
+          <li><b>A natural 11 on a major chord is the one real "wrong note"</b> in this system. It sits a semitone above the third and the two fight. Use #11, or drop the third and call it sus4.</li>
+          <li><b>Extensions replace, they don't accumulate.</b> A five-voice m11 does not need the root, the fifth and the 11th all present. Pick four notes.</li>
+          <li><b>Put extensions on top.</b> A 9th voiced below the third sounds muddy; the same note an octave up sounds open. This is voicing, not harmony.</li>
+          <li><b>Below about 200 Hz, everything is mud.</b> Two notes a third apart in the bass register cancel any lushness the extension gave you. Keep the bottom of a voicing above roughly C3.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Substitutions worth knowing</h3>
+        <ul>
+          <li><b>Relative swap.</b> Any major chord can become the minor a third below (C → Am), and vice versa. They share two notes, so it is nearly free.</li>
+          <li><b>The tritone sub.</b> Replace a dominant with the dominant a tritone away (E7 → Bb7). Both contain the same third and seventh. This is where chromatic bass lines come from.</li>
+          <li><b>Modal interchange.</b> Borrow a chord from the parallel major or minor. In A minor, a D major instead of D minor is the Dorian move, and it lifts a track immediately.</li>
+          <li><b>Sus everything.</b> Replacing a chord with its sus4 removes its function without removing its harmony. The standard technique for making a breakdown feel unresolved.</li>
+          <li>The <b>Substitute chord 2</b> button in the lab applies one of these at random so you can hear it against your own progression.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="modes">
+    <div class="sec-head">
+      <div class="eyebrow">Section 05</div>
+      <h2>Modes</h2>
+      <p>Each mode is defined by one or two notes. Change that note and you have changed the genre.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Mode</th><th>The note that defines it</th><th>Characteristic chord</th><th>Where it lives</th></tr></thead>
+        <tbody>
+          <tr><td><b>Aeolian</b> (natural minor)</td><td>b6</td><td class="num">i – VI – VII</td><td>The default. Melodic techno, trance, most house.</td></tr>
+          <tr><td><b>Dorian</b></td><td class="num">natural 6</td><td class="num">i – IV (major)</td><td>Deep house, Detroit, garage. Minor but not sad.</td></tr>
+          <tr><td><b>Phrygian</b></td><td class="num">b2</td><td class="num">i – bII</td><td>Dark techno, industrial, hard groove. Immediately menacing.</td></tr>
+          <tr><td><b>Mixolydian</b></td><td class="num">b7 over a major 3rd</td><td class="num">I – bVII</td><td>Disco house, funk, French house. Bright but not resolved.</td></tr>
+          <tr><td><b>Harmonic minor</b></td><td class="num">natural 7</td><td class="num">i – V7</td><td>Psytrance, hard dance, anything wanting drama. Easy to overdo.</td></tr>
+          <tr><td><b>Lydian</b></td><td class="num">#4</td><td class="num">I – II (major)</td><td>Ambient, breakdowns, anything floating.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note"><b>How to actually use this.</b> Do not "write in Dorian". Write in minor, then raise the sixth in one chord and hear what happens — in A minor that means using D major instead of D minor. One chord tells the listener which mode they are in, and it usually only needs to appear once every eight bars.</p>
+  </section>
+
+  <section class="sec" id="rules">
+    <div class="sec-head">
+      <div class="eyebrow">Section 06</div>
+      <h2>Working rules</h2>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>The order to work in</h3>
+        <ul>
+          <li><b>1. Two chords.</b> Most house records have two. Get a two-chord loop that you would listen to for eight bars before adding a third.</li>
+          <li><b>2. Sevenths on everything.</b> Do this before you consider the progression finished. It is the cheapest upgrade available.</li>
+          <li><b>3. Voice-lead.</b> Invert each chord so it is near the last one. This is the step everyone skips and it is worth more than the other four combined.</li>
+          <li><b>4. Drop the root.</b> If a bass is playing, the chord does not need one.</li>
+          <li><b>5. Add one 9th.</b> One. On the chord that matters.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Diagnosis</h3>
+        <ul>
+          <li><b>"Sounds cheap / like a preset demo"</b> — root position. Switch inversion to Auto and listen again before changing anything else.</li>
+          <li><b>"Sounds muddy"</b> — the voicing is too low. Chords below C3 turn to porridge no matter how good the harmony is. Move up an octave.</li>
+          <li><b>"Sounds thin"</b> — three voices and no extensions. Add a 7th, then a 9th on top.</li>
+          <li><b>"Sounds boring"</b> — usually rhythm, not harmony. Try the same chords as offbeat stabs before you write new ones.</li>
+          <li><b>"Sounds like jazz, not house"</b> — too many extensions on too many chords. Dance music uses one rich chord and three plain ones.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Rhythm beats harmony</h3>
+        <ul>
+          <li>A single Am9 stab on the offbeat for eight bars is a better house record than a clever eight-chord progression played as whole notes.</li>
+          <li>Chords in dance music are a <b>percussion part with pitch</b>. Where they land matters more than what they are.</li>
+          <li>Try the same progression through every rhythm option in the lab. The chords will sound like four different tracks.</li>
+          <li>Long chords need movement inside them — filter, or an arpeggio. Short chords do not.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>In Live</h3>
+        <ul>
+          <li><b>Scale mode</b> on the clip plus <b>Fold to scale</b> makes wrong notes physically impossible while sketching.</li>
+          <li>The <b>Chord</b> MIDI effect stacks intervals above whatever you play — fast for sketching, but it transposes rigidly and will not voice-lead. Convert to notes and fix by hand.</li>
+          <li><b>Generate → Stacks</b> builds voicings under a line, and <b>Transform → Strum</b> offsets the notes of a chord in time, which is the single best way to stop a stab sounding like a machine.</li>
+          <li>Download the MIDI from this lab and drag it in — the voicing comes with it.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <p><strong>Learn the four-chord loop, then stop collecting progressions.</strong> There is no shortage of chord sequences in the world and no track was ever rejected for using a common one. The scarce skill is making four ordinary chords sound like they were played by someone who knew what they were doing, and that skill is entirely in this page's second section.</p>
+    <p style="color:var(--ink-3);font-size:13px">All sounds synthesised live in the browser. Roman numerals are relative to the minor tonic. The voice-movement figure is the total absolute semitone distance travelled by all voices across the loop.</p>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   THEORY ENGINE  (unit-tested separately)
+   ===================================================================== */
+const SHARP=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const FLAT={0:'C',1:'Db',2:'D',3:'Eb',4:'E',5:'F',6:'Gb',7:'G',8:'Ab',9:'A',10:'Bb',11:'B'};
+const TRIAD={maj:[0,4,7],min:[0,3,7],dom:[0,4,7],dim:[0,3,6],hdim:[0,3,6],sus2:[0,2,7],sus4:[0,5,7],aug:[0,4,8]};
+const SEVENTH={maj:11,min:10,dom:10,dim:9,hdim:10,sus2:10,sus4:10,aug:10};
+const QNAMES=[['min','minor'],['maj','major'],['dom','dominant'],['hdim','half-dim'],['dim','dim'],['sus2','sus2'],['sus4','sus4'],['aug','aug']];
+const ENAMES=[['triad','triad'],['6','6th'],['add9','add9'],['7','7th'],['9','9th'],['11','11th'],['13','13th']];
+
+function formula(q,ext){
+  let n=[...TRIAD[q]];
+  if(ext==='triad') return n;
+  if(ext==='6') return n.concat(9);
+  if(ext==='add9') return n.concat(14);
+  n.push(SEVENTH[q]);
+  if(ext==='7') return n;
+  n.push(14);
+  if(ext==='9') return n;
+  n.push(q==='min'||q==='hdim'||q==='dim'?17:18);
+  if(ext==='11') return n;
+  return n.concat(21);
+}
+function symbol(pc,q,ext){
+  const S={
+    maj:{triad:'',6:'6',add9:'add9',7:'maj7',9:'maj9',11:'maj9#11',13:'maj13'},
+    min:{triad:'m',6:'m6',add9:'m(add9)',7:'m7',9:'m9',11:'m11',13:'m13'},
+    dom:{triad:'',6:'6',add9:'add9',7:'7',9:'9',11:'9#11',13:'13'},
+    dim:{triad:'dim',6:'dim',add9:'dim',7:'dim7',9:'dim7',11:'dim7',13:'dim7'},
+    hdim:{triad:'dim',6:'m7b5',add9:'m7b5',7:'m7b5',9:'m9b5',11:'m11b5',13:'m11b5'},
+    sus2:{triad:'sus2',6:'6sus2',add9:'sus2',7:'7sus2',9:'9sus2',11:'9sus2',13:'13sus2'},
+    sus4:{triad:'sus4',6:'6sus4',add9:'sus4',7:'7sus4',9:'9sus4',11:'9sus4',13:'13sus4'},
+    aug:{triad:'aug',6:'aug',add9:'aug',7:'aug7',9:'aug9',11:'aug9',13:'aug13'}
+  };
+  return FLAT[((pc%12)+12)%12]+S[q][ext];
+}
+const DEG={0:'I',1:'bII',2:'II',3:'III',4:'#III',5:'IV',6:'#IV',7:'V',8:'VI',9:'#VI',10:'VII',11:'#VII'};
+function roman(pc,key,q){
+  const iv=((pc-key)%12+12)%12;
+  let d=DEG[iv];
+  if(q==='min'||q==='dim'||q==='hdim') d=d.toLowerCase().replace('b','b').replace('#','#');
+  if(q==='dim'||q==='hdim') d+='°';
+  return d;
+}
+function rootPos(pc,f,reg){ const base=12*reg+((pc%12)+12)%12; return f.map(i=>base+i); }
+function invert(notes,n){
+  const v=[...notes].sort((a,b)=>a-b);
+  for(let i=0;i<n;i++){const lo=v.shift();v.push(lo+12);v.sort((a,b)=>a-b);}
+  return v;
+}
+function drop2(v){const s=[...v].sort((a,b)=>a-b); if(s.length<3)return s; s[s.length-2]-=12; return s.sort((a,b)=>a-b);}
+function openV(v){const s=[...v].sort((a,b)=>a-b); if(s.length<4)return s;
+  s[s.length-2]-=12; if(s.length>=5)s[s.length-4]-=12; return s.sort((a,b)=>a-b);}
+function styleSet(q,ext){
+  const f=formula(q,ext);
+  return {full:f, rootless:f.filter(x=>x!==0), shell:[0,TRIAD[q][1],SEVENTH[q]], quartal:[0,5,10,15]};
+}
+function limitVoices(f,max){
+  if(f.length<=max) return f;
+  const out=[...f];
+  for(const drop of [7,0]){
+    while(out.length>max){const i=out.indexOf(drop); if(i<0)break; out.splice(i,1);}
+    if(out.length<=max) break;
+  }
+  while(out.length>max) out.shift();
+  return out;
+}
+function movement(a,b){
+  if(!a||!b) return 0;
+  const x=[...a].sort((p,q)=>p-q), y=[...b].sort((p,q)=>p-q);
+  const n=Math.max(x.length,y.length);
+  let s=0;
+  for(let i=0;i<n;i++) s+=Math.abs(x[Math.min(i,x.length-1)]-y[Math.min(i,y.length-1)]);
+  return s;
+}
+function voiceLead(notes,prev,lo=48,hi=76){
+  if(!prev) return notes;
+  let best=null,bs=1e9;
+  for(let rot=0;rot<notes.length;rot++)for(let oct=-2;oct<=2;oct++){
+    const c=invert(notes,rot).map(x=>x+oct*12);
+    const l=Math.min(...c),h=Math.max(...c);
+    if(l<lo-6||h>hi+8) continue;
+    const sc=movement(prev,c)+Math.abs(l-lo)*.12;
+    if(sc<bs){bs=sc;best=c;}
+  }
+  return best||notes;
+}
+function buildVoicing(slot,o,prev){
+  const sets=styleSet(slot.q,slot.ext);
+  let f=limitVoices(sets[o.style]||sets.full,o.voices);
+  let v=rootPos(slot.root,f,o.reg);
+  /* spread BEFORE inverting: dropping a note an octave after voice-leading
+     would undo the leading, because which note is second-from-top changes per chord */
+  if(o.spread==='drop2') v=drop2(v); else if(o.spread==='open') v=openV(v);
+  v=(o.inv==='auto')?voiceLead(v,prev):invert(v,+o.inv);
+  return v.map(x=>x+o.trans).sort((a,b)=>a-b);
+}
+
+/* =====================================================================
+   AUDIO
+   ===================================================================== */
+let AC=null,master=null,limiter=null,chordBus=null,bassBus=null,drumBus=null;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.7;
+    limiter=AC.createDynamicsCompressor();
+    limiter.threshold.value=-6;limiter.knee.value=4;limiter.ratio.value=12;
+    limiter.attack.value=.003;limiter.release.value=.12;
+    chordBus=AC.createGain(); chordBus.gain.value=.9;
+    bassBus=AC.createGain(); bassBus.gain.value=1;
+    drumBus=AC.createGain(); drumBus.gain.value=.85;
+    [chordBus,bassBus,drumBus].forEach(b=>b.connect(limiter));
+    limiter.connect(master); master.connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+let _nb=null;
+function noiseSrc(){
+  if(!_nb){const n=Math.floor(AC.sampleRate*.5);_nb=AC.createBuffer(1,n,AC.sampleRate);
+    const d=_nb.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;}
+  const s=AC.createBufferSource();s.buffer=_nb;s.loop=true;return s;
+}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+const SOUNDS={
+ organ:{w:'square',w2:'square',det:5,uni:2,cut:1500,res:1,fEnv:0,fD:.2,fS:1,aA:.008,aD:.05,aS:.9,aR:.28,lvl:.10},
+ stab :{w:'sawtooth',w2:'sawtooth',det:9,uni:3,cut:850,res:4,fEnv:.8,fD:.10,fS:.12,aA:.004,aD:.14,aS:.05,aR:.14,lvl:.13},
+ pad  :{w:'sawtooth',w2:'sawtooth',det:16,uni:3,cut:1700,res:1,fEnv:.35,fD:1.1,fS:.6,aA:.35,aD:.6,aS:.8,aR:.9,lvl:.085},
+ rhodes:{w:'sine',w2:'triangle',det:4,uni:2,cut:2600,res:1,fEnv:.5,fD:.35,fS:.2,aA:.004,aD:.55,aS:.25,aR:.5,lvl:.16},
+ pluck:{w:'sawtooth',w2:'sawtooth',det:7,uni:2,cut:700,res:5,fEnv:.85,fD:.07,fS:.05,aA:.003,aD:.11,aS:0,aR:.1,lvl:.13}
+};
+let SND='stab';
+function playNote(t,f,dur,vel,S,bus){
+  const out=AC.createGain(), filt=AC.createBiquadFilter();
+  filt.type='lowpass'; filt.Q.value=S.res;
+  filt.connect(out); out.connect(bus||chordBus);
+  const peak=Math.max(.0001,S.lvl*(vel/127)), sus=Math.max(.0001,peak*S.aS);
+  const g=out.gain, decEnd=t+S.aA+S.aD, rel=Math.max(t+Math.max(dur,S.aA+.01),decEnd+.001);
+  g.setValueAtTime(0,t);
+  g.linearRampToValueAtTime(peak,t+S.aA);
+  g.exponentialRampToValueAtTime(sus,decEnd);
+  g.setValueAtTime(sus,rel);
+  g.exponentialRampToValueAtTime(.0001,rel+S.aR);
+  const end=rel+S.aR+.05;
+  const base=Math.max(40,Math.min(16000,S.cut)), top=Math.min(17000,base*Math.pow(2,S.fEnv*5));
+  const susF=Math.min(17000,Math.max(40,base+(top-base)*S.fS));
+  filt.frequency.setValueAtTime(base,t);
+  filt.frequency.linearRampToValueAtTime(top,t+.004);
+  filt.frequency.exponentialRampToValueAtTime(susF,t+.004+Math.max(.01,S.fD));
+  for(let u=0;u<S.uni;u++){
+    const off=S.uni===1?0:S.det*(u/(S.uni-1)-.5)*2;
+    [[S.w,0],[S.w2,S.det*.5]].forEach(([w,d2],i)=>{
+      const o=AC.createOscillator(); o.type=w; o.frequency.value=f;
+      o.detune.value=off+d2;
+      const gg=AC.createGain(); gg.gain.value=(i?.5:1)/Math.sqrt(S.uni*1.5);
+      o.connect(gg); gg.connect(filt); o.start(t); o.stop(end);
+    });
+  }
+  return end;
+}
+function playBass(t,f,dur,vel){
+  const S={w:'sawtooth',w2:'sine',det:0,uni:1,cut:520,res:4,fEnv:.5,fD:.12,fS:.15,aA:.004,aD:.16,aS:.25,aR:.08,lvl:.34};
+  playNote(t,f,dur,vel,S,bassBus);
+}
+function bd(t){
+  const o=AC.createOscillator();o.type='sine';
+  o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(50,t+.05);
+  const g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.85,t+.002);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.32);
+  o.connect(g);g.connect(drumBus);o.start(t);o.stop(t+.38);
+}
+function hh(t,open){
+  const n=noiseSrc(),hp=AC.createBiquadFilter();hp.type='highpass';hp.frequency.value=8200;
+  const g=AC.createGain(),d=open?.18:.032;
+  g.gain.setValueAtTime(.13,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  n.connect(hp);hp.connect(g);g.connect(drumBus);n.start(t);n.stop(t+d+.05);
+}
+function clap(t){
+  const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1300;bp.Q.value=1.1;bp.connect(drumBus);
+  [0,1,2].forEach(i=>{const n=noiseSrc(),g=AC.createGain(),tt=t+i*.011;
+    g.gain.setValueAtTime(.3,tt);g.gain.exponentialRampToValueAtTime(.0001,tt+.018);
+    n.connect(g);g.connect(bp);n.start(tt);n.stop(tt+.06);});
+  const n=noiseSrc(),g=AC.createGain();
+  g.gain.setValueAtTime(.2,t+.022);g.gain.exponentialRampToValueAtTime(.0001,t+.22);
+  n.connect(g);g.connect(bp);n.start(t+.022);n.stop(t+.3);
+}
+
+/* =====================================================================
+   PROGRESSION LIBRARY   (offsets in semitones from the minor tonic)
+   ===================================================================== */
+const LIB=[
+{n:'Deep house vamp',g:'Deep house',bpm:122,rhy:'stabs',
+ c:[[0,'min','9',2],[5,'min','9',2]],
+ d:'Two chords, two bars each, and nothing else. Most deep house records are built on a vamp exactly this size — the interest comes from the groove and the filter, not from harmonic movement.',
+ s:'Both chords are minor ninths a fourth apart, so they share three notes. <b>Root position costs 42 semitones of movement; voice-led it costs 8.</b>'},
+{n:'The four-chord loop',g:'House',bpm:124,rhy:'stabs',
+ c:[[0,'min','7',1],[8,'maj','7',1],[3,'maj','7',1],[10,'maj','triad',1]],
+ d:'i–VI–III–VII. The most used progression in dance music by a wide margin, and it has never stopped working. In A minor: Am, F, C, G.',
+ s:'Every chord shares notes with its neighbour. <b>Put sevenths on all four</b> and it stops sounding like a busker and starts sounding like a record.'},
+{n:'Descending disco',g:'Disco house',bpm:122,rhy:'chops',
+ c:[[8,'maj','7',1],[7,'min','7',1],[5,'min','7',1],[3,'maj','7',1]],
+ d:'A stepwise walk down the scale — Fmaj7, Em7, Dm7, Cmaj7. Because the roots move by step, the voices barely have to move at all, which is why it sounds so smooth even played badly.',
+ s:'The one progression here that <b>root position barely hurts</b> — 40 semitones against 24 voice-led, where the four-chord loop goes 68 against 12. Stepwise roots do the leading for you.'},
+{n:'The turnaround',g:'Nu-disco',bpm:120,rhy:'chops',
+ c:[[8,'maj','7',1],[10,'dom','7',1],[7,'min','7',1],[0,'min','7',1]],
+ d:'VI–VII–v–i. Rises for two chords, then falls home. The tension in the middle is a dominant seventh, which is why it feels like it is going somewhere.',
+ s:'The G7 is the engine. <b>Make it a G13</b> and you are in gospel house territory.'},
+{n:'ii – V – i',g:'Jazz house',bpm:120,rhy:'stabs',
+ c:[[2,'hdim','7',1],[7,'dom','7',1],[0,'min','9',2]],
+ d:'The fundamental jazz cadence, transplanted. Bm7b5, E7, Am9. Every note in the first two chords wants to move to a note in the third, which is why it resolves so hard.',
+ s:'<b>Try it rootless.</b> Without roots these are nearly the same four notes moving a step at a time — 18 semitones across the loop against 52 in root position.'},
+{n:'Phrygian techno',g:'Dark techno',bpm:134,rhy:'stabs',
+ c:[[0,'min','triad',2],[1,'maj','triad',2]],
+ d:'i–bII. Two chords a semitone apart. There is no gentler way to describe it: this sounds like a threat, and it has been the sound of dark and industrial techno for thirty years.',
+ s:'A semitone move means <b>the voices barely travel at all</b> — the menace comes from the interval, not the distance.'},
+{n:'Rave anthem',g:'Rave / hard',bpm:138,rhy:'stabs',
+ c:[[0,'min','triad',1],[8,'maj','triad',1],[10,'maj','triad',1],[8,'maj','triad',1]],
+ d:'i–VI–VII–VI. Triads only, no sevenths, no extensions. The bluntness is the point — hoovers and stabs need harmonic simplicity or the distortion turns them to mud.',
+ s:'<b>Resist adding sevenths here.</b> This is the one progression on the page that gets worse when you make it sophisticated.'},
+{n:'Chicago I–vi–IV–V',g:'Classic house',bpm:122,rhy:'chops',
+ c:[[3,'maj','7',1],[0,'min','7',1],[8,'maj','7',1],[10,'dom','7',1]],
+ d:'The same four chords as a thousand pop songs, starting on the relative major. Warm, resolved, and slightly nostalgic — it is the sound of 1988 Chicago and of most piano house since.',
+ s:'Starting on the <b>relative major</b> rather than the minor changes the whole mood without changing a single note of the scale.'},
+{n:'Suspended stabs',g:'Techno',bpm:130,rhy:'stabs',
+ c:[[0,'sus2','triad',2],[10,'sus2','triad',2]],
+ d:'No thirds anywhere. Without a third, a chord is neither major nor minor — it has colour but no emotion, which is exactly what a techno stab needs so it can sit under anything.',
+ s:'<b>Sus chords are the answer</b> when a stab keeps fighting the bassline. Remove the third and the conflict disappears.'},
+{n:'Gospel house',g:'Soulful house',bpm:122,rhy:'chops',
+ c:[[5,'min','9',1],[10,'dom','13',1],[3,'maj','9',1],[0,'min','9',1]],
+ d:'Dm9, G13, Cmaj9, Am9. Dense, warm and unmistakably American. The 13th on the dominant is doing most of the work; it is the note that says "church".',
+ s:'<b>The most extreme case on the page: 84 semitones in root position, 12 voice-led.</b> As five-note root-position blocks it sounds like a piano falling downstairs.'},
+{n:'Line cliché',g:'House / disco',bpm:120,rhy:'pad',
+ c:[[0,'min','7',1],[0,'min','7',1,10],[8,'maj','7',1],[7,'dom','7',1]],
+ d:'One chord with a bass note walking down underneath it: Am7, Am7/G, Fmaj7, E7. The harmony barely changes; the movement is almost entirely in the bass.',
+ s:'The third chord has a <b>slash bass</b> — the chord is Am7 but the bass plays G. This is how you get four chords out of two.'},
+{n:'Afro i–iv–v',g:'Afro house',bpm:122,rhy:'stabs',
+ c:[[0,'min','7',1],[5,'min','7',1],[7,'min','7',1],[5,'min','7',1]],
+ d:'Three minor sevenths and nothing else. Modal rather than functional — it never resolves anywhere because there is no dominant to resolve from, so the loop just turns.',
+ s:'All minor, all sevenths. <b>The flatness is deliberate:</b> the percussion supplies the movement that the harmony refuses to.'},
+{n:'Dub techno',g:'Dub techno',bpm:124,rhy:'pad',
+ c:[[0,'min','9',2],[3,'maj','7',2]],
+ d:'Am9 and Cmaj7 — the relative major and minor, which share three notes. Played as a long chord through an enormous delay, this is essentially the entire Basic Channel discography.',
+ s:'Relative major and minor share three of four notes, so <b>voice-led the whole loop moves 10 semitones</b> against 62 in root position. That near-identity is why the pair sounds like one chord breathing.'},
+{n:'Dorian lift',g:'Deep house',bpm:123,rhy:'stabs',
+ c:[[0,'min','7',2],[5,'dom','7',2]],
+ d:'Am7 to D7. In natural minor the fourth chord would be D minor; making it major raises the sixth of the scale and puts you in Dorian. One note, entirely different feeling.',
+ s:'<b>The F# is the whole trick.</b> Change the D7 to Dm7 and hear the lift disappear. Voice-led this loop moves 6 semitones — the lowest in the library.'},
+{n:'Melodic techno',g:'Melodic techno',bpm:124,rhy:'pad',
+ c:[[0,'min','9',1],[8,'maj','7',1],[5,'min','9',1],[7,'min','7',1]],
+ d:'i–VI–iv–v with ninths on the minor chords. Spacious, slightly melancholy, designed to be played as a long pad with a filter opening across sixteen bars.',
+ s:'Ninths on the <b>minor</b> chords only. A ninth on all four would be too much — dance music wants one rich chord, not four.'},
+{n:'Chromatic climb',g:'Hard techno',bpm:145,rhy:'stabs',
+ c:[[0,'min','triad',1],[1,'min','triad',1],[2,'min','triad',1],[1,'min','triad',1]],
+ d:'Three minor triads a semitone apart. This is barely harmony — it is a rising gesture, and it works because the ear tracks the motion rather than the chords.',
+ s:'Non-functional on purpose. <b>Nothing here belongs to a key</b>, which is exactly why it feels relentless.'}
+];
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const RHY={
+ pad   :{n:'Held pad'},
+ stabs :{n:'Offbeat stabs',steps:[2,6,10,14],len:1.5},
+ chops :{n:'Disco 16ths',steps:[0,3,6,7,10,13,14],len:.85},
+ garage:{n:'Garage stabs',steps:[2,5,6,10,13,14],len:1.1},
+ arp   :{n:'16th arpeggio',arp:true},
+ swell :{n:'Slow swell'}
+};
+const S={key:9,bpm:122,rhy:'stabs',drums:true,bass:true,playing:false,
+  slots:[],
+  v:{inv:'auto',style:'rootless',spread:'drop2',voices:4,reg:4,trans:0}};
+function loadProg(i){
+  const L=LIB[i];
+  S.slots=L.c.map(c=>({root:(S.key+c[0])%12,q:c[1],ext:c[2],bars:c[3],bass:c[4]!==undefined?(S.key+c[4])%12:null}));
+  S.bpm=L.bpm; document.getElementById('bpm').value=L.bpm; document.getElementById('bpmv').textContent=L.bpm;
+  S.rhy=L.rhy; document.getElementById('rhySel').value=L.rhy;
+  document.getElementById('nowPlaying').textContent='▸ '+L.n;
+  renderSlots(); refresh();
+}
+function voicings(){
+  let prev=null; const out=[];
+  S.slots.forEach(s=>{ const v=buildVoicing(s,S.v,prev); out.push(v); prev=v; });
+  return out;
+}
+function totalMovement(vs){
+  let t=0;
+  for(let i=1;i<vs.length;i++) t+=movement(vs[i-1],vs[i]);
+  if(vs.length>1) t+=movement(vs[vs.length-1],vs[0]);   /* the loop wraps */
+  return t;
+}
+
+/* =====================================================================
+   SLOT UI
+   ===================================================================== */
+const slotsEl=document.getElementById('slots');
+function renderSlots(){
+  slotsEl.innerHTML='';
+  const vs=voicings();
+  S.slots.forEach((s,i)=>{
+    const d=document.createElement('div'); d.className='slot'; d.dataset.i=i;
+    const noteNames=vs[i].map(n=>SHARP[((n%12)+12)%12]+(Math.floor(n/12)-1)).join(' ');
+    d.innerHTML=`<button class="x" data-del="${i}" title="Remove">✕</button>
+      <div class="sym">${symbol(s.root,s.q,s.ext)}${s.bass!==null&&s.bass!==undefined?'/'+FLAT[s.bass]:''}</div>
+      <div class="rn">${roman(s.root,S.key,s.q)}</div>
+      <select data-f="root" data-i="${i}">${SHARP.map((n,p)=>`<option value="${p}"${p===s.root?' selected':''}>${FLAT[p]}</option>`).join('')}</select>
+      <select data-f="q" data-i="${i}">${QNAMES.map(q=>`<option value="${q[0]}"${q[0]===s.q?' selected':''}>${q[1]}</option>`).join('')}</select>
+      <select data-f="ext" data-i="${i}">${ENAMES.map(e=>`<option value="${e[0]}"${e[0]===s.ext?' selected':''}>${e[1]}</option>`).join('')}</select>
+      <select data-f="bars" data-i="${i}">${[1,2,4].map(b=>`<option value="${b}"${b===s.bars?' selected':''}>${b} bar${b>1?'s':''}</option>`).join('')}</select>
+      <div class="notes">${noteNames}</div>`;
+    slotsEl.appendChild(d);
+  });
+}
+slotsEl.addEventListener('change',e=>{
+  const i=+e.target.dataset.i, f=e.target.dataset.f;
+  if(isNaN(i)||!f) return;
+  S.slots[i][f]=(f==='root'||f==='bars')?+e.target.value:e.target.value;
+  renderSlots(); refresh();
+});
+slotsEl.addEventListener('click',e=>{
+  const b=e.target.closest('[data-del]'); if(!b) return;
+  if(S.slots.length<=1) return;
+  S.slots.splice(+b.dataset.del,1); renderSlots(); refresh();
+});
+document.getElementById('addSlot').onclick=()=>{
+  if(S.slots.length>=8) return;
+  S.slots.push({root:S.key,q:'min',ext:'7',bars:1,bass:null});
+  renderSlots(); refresh();
+};
+
+/* =====================================================================
+   VOICING CONTROLS
+   ===================================================================== */
+const VSPEC=[
+ ['VOICING',[
+  ['inv','Inversion','sel',[['auto','Auto (voice-led)'],['0','Root position'],['1','1st inversion'],['2','2nd inversion'],['3','3rd inversion']]],
+  ['style','Notes','sel',[['full','Full chord'],['rootless','Rootless'],['shell','Shell (1-3-7)'],['quartal','Quartal (4ths)']]],
+  ['spread','Spread','sel',[['close','Close'],['drop2','Drop 2'],['open','Open']]]]],
+ ['RANGE',[
+  ['voices','Voices','rng',3,6,1,v=>v+''],
+  ['reg','Octave','rng',2,6,1,v=>'C'+(v-1)],
+  ['trans','Transpose','rng',-12,12,1,v=>(v>0?'+':'')+v+' st']]]
+];
+const rack=document.getElementById('rack'), vEls={};
+VSPEC.forEach(([title,items])=>{
+  const m=document.createElement('div'); m.className='mod';
+  m.innerHTML=`<div class="eyebrow">${title}</div>`;
+  items.forEach(it=>{
+    const [k,label,kind]=it;
+    const l=document.createElement('label'); l.className='p';
+    if(kind==='sel') l.innerHTML=`${label}<span class="r"><select data-v="${k}">${it[3].map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select></span>`;
+    else l.innerHTML=`${label}<span class="r"><input type="range" data-v="${k}" min="${it[3]}" max="${it[4]}" step="${it[5]}"><b></b></span>`;
+    m.appendChild(l); vEls[k]={el:l,spec:it};
+  });
+  rack.appendChild(m);
+});
+function syncV(){
+  Object.entries(vEls).forEach(([k,{el,spec}])=>{
+    if(spec[2]==='sel') el.querySelector('select').value=S.v[k];
+    else{ el.querySelector('input').value=S.v[k]; el.querySelector('b').textContent=spec[6](S.v[k]); }
+  });
+}
+rack.addEventListener('input',e=>{
+  const k=e.target.dataset.v; if(!k) return;
+  const sp=vEls[k].spec;
+  if(sp[2]==='sel') S.v[k]=e.target.value;
+  else{ S.v[k]=+e.target.value; vEls[k].el.querySelector('b').textContent=sp[6](S.v[k]); }
+  refresh();
+});
+document.getElementById('cheapBtn').onclick=()=>{
+  S.v={inv:'0',style:'full',spread:'close',voices:4,reg:4,trans:0};
+  S.slots.forEach(s=>{ if(s.ext==='9'||s.ext==='11'||s.ext==='13') s.ext='triad'; });
+  syncV(); renderSlots(); refresh();
+  document.getElementById('moneyText').textContent='Root position, close voicing, every note present, triads only. Technically correct, and the reason a lot of demos sound like demos.';
+  if(!S.playing) start();
+};
+/* search every voicing combination and keep the one the voices travel least in */
+function bestVoicing(){
+  let best=null,bs=1e9;
+  ['full','rootless'].forEach(style=>['close','drop2','open'].forEach(spread=>{
+    [4,5].forEach(voices=>{
+      const o={inv:'auto',style,spread,voices,reg:S.v.reg,trans:S.v.trans};
+      let p=null,t=0; const vs=[];
+      S.slots.forEach(sl=>{const v=buildVoicing(sl,o,p);vs.push(v);t+=movement(p,v);p=v;});
+      if(vs.length>1) t+=movement(vs[vs.length-1],vs[0]);
+      if(t<bs){bs=t;best=o;}
+    });
+  }));
+  return {o:best,mv:bs};
+}
+document.getElementById('expBtn').onclick=()=>{
+  S.slots.forEach((s,i)=>{ if(s.ext==='triad') s.ext=(i===0?'9':'7'); });
+  const {o,mv}=bestVoicing();
+  S.v={...o};
+  syncV(); renderSlots(); refresh();
+  const label={full:'full chords',rootless:'rootless'}[o.style]+', '+
+    {close:'close',drop2:'drop 2',open:'open'}[o.spread]+', '+o.voices+' voices';
+  document.getElementById('moneyText').textContent=
+    'Sevenths added, then every voicing combination tested — '+label+' voice-led came out smoothest at '+mv+' semitones. Same chords throughout; the bass supplies the roots so the voices can stay put.';
+  if(!S.playing) start();
+};
+
+/* =====================================================================
+   VISUALS
+   ===================================================================== */
+function refresh(){
+  const vs=voicings();
+  const mv=totalMovement(vs);
+  const el=document.getElementById('moveRead');
+  el.innerHTML=mv+'<small>semitones of voice movement</small>';
+  el.className='moveread'+(mv<=24?' good':'');
+  drawViz(vs); drawKbd(-1);
+  renderSlots.__skip||0;
+}
+let curSlot=-1;
+function drawViz(vs){
+  const cv=document.getElementById('viz'); if(!cv) return;
+  const dpr=window.devicePixelRatio||1,w=cv.clientWidth||800,h=280;
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  if(!vs.length) return;
+  const all=vs.flat(); const lo=Math.min(...all)-3, hi=Math.max(...all)+3;
+  const pad=34, colW=(w-pad*2)/vs.length;
+  const Y=n=>h-26-((n-lo)/(hi-lo))*(h-58);
+  /* octave rules */
+  c.strokeStyle='rgba(255,255,255,.06)';
+  for(let n=Math.ceil(lo/12)*12;n<=hi;n+=12){
+    c.beginPath();c.moveTo(0,Y(n));c.lineTo(w,Y(n));c.stroke();
+    c.font='9px JetBrains Mono, monospace';c.fillStyle='rgba(242,237,224,.25)';
+    c.fillText('C'+(Math.floor(n/12)-1),4,Y(n)-3);
+  }
+  /* connecting lines */
+  for(let i=0;i<vs.length;i++){
+    const j=(i+1)%vs.length;
+    if(vs.length<2) break;
+    if(j===0&&i===vs.length-1&&vs.length<2) break;
+    const a=[...vs[i]].sort((x,y)=>x-y), b=[...vs[j]].sort((x,y)=>x-y);
+    const n=Math.max(a.length,b.length);
+    for(let k=0;k<n;k++){
+      const p=a[Math.min(k,a.length-1)], q=b[Math.min(k,b.length-1)];
+      const d=Math.abs(p-q);
+      c.strokeStyle=d<=2?'rgba(123,212,106,.75)':(d<=5?'rgba(255,197,49,.7)':'rgba(255,75,50,.7)');
+      c.lineWidth=d<=2?2:1.5;
+      c.setLineDash(j===0?[4,4]:[]);
+      c.beginPath();
+      c.moveTo(pad+colW*i+colW*.72, Y(p));
+      c.lineTo(pad+colW*j+colW*.28, Y(q));
+      c.stroke(); c.setLineDash([]);
+    }
+  }
+  /* note blocks */
+  vs.forEach((v,i)=>{
+    const x=pad+colW*i+colW*.22, bw=colW*.56;
+    if(i===curSlot){ c.fillStyle='rgba(255,197,49,.07)'; c.fillRect(pad+colW*i,0,colW,h); }
+    v.forEach(n=>{
+      c.fillStyle=i===curSlot?'#FFC531':'#3FD0C9';
+      c.fillRect(x,Y(n)-5,bw,10);
+      c.font='9px JetBrains Mono, monospace'; c.fillStyle='#1C1A17';
+      c.fillText(SHARP[((n%12)+12)%12],x+4,Y(n)+3);
+    });
+    const s=S.slots[i];
+    c.font='700 12px JetBrains Mono, monospace';
+    c.fillStyle=i===curSlot?'#FFC531':'rgba(242,237,224,.8)';
+    c.fillText(symbol(s.root,s.q,s.ext),pad+colW*i+4,h-9);
+    c.font='9px JetBrains Mono, monospace'; c.fillStyle='rgba(255,75,50,.85)';
+    c.fillText(roman(s.root,S.key,s.q),pad+colW*i+4,16);
+  });
+}
+/* keyboard */
+const kbdEl=document.getElementById('kbd');
+const KLO=36,KHI=84;
+(function(){
+  const BLACK=[1,3,6,8,10];
+  let whites=0;
+  for(let n=KLO;n<=KHI;n++) if(!BLACK.includes(n%12)) whites++;
+  let seen=0;
+  for(let n=KLO;n<=KHI;n++){
+    if(BLACK.includes(n%12)) continue;
+    const d=document.createElement('div'); d.className='w'; d.dataset.n=n; kbdEl.appendChild(d);
+  }
+  for(let n=KLO;n<=KHI;n++){
+    if(!BLACK.includes(n%12)){seen++;continue;}
+    const d=document.createElement('div'); d.className='b'; d.dataset.n=n;
+    d.style.left=(seen*(100/whites)-(100/whites)*.30)+'%';
+    d.style.width=((100/whites)*.60)+'%';
+    kbdEl.appendChild(d);
+  }
+})();
+function drawKbd(idx){
+  const on=new Set(), bass=new Set();
+  if(idx>=0){
+    const vs=voicings();
+    (vs[idx]||[]).forEach(n=>on.add(n));
+    const s=S.slots[idx];
+    if(s){ const bpc=(s.bass!==null&&s.bass!==undefined)?s.bass:s.root; bass.add(28+((bpc-4)%12+12)%12); }
+  }
+  kbdEl.querySelectorAll('[data-n]').forEach(el=>{
+    const n=+el.dataset.n;
+    el.classList.toggle('on',on.has(n));
+    el.classList.toggle('bass',[...bass].some(b=>((b%12)+12)%12===((n%12)+12)%12 && n<52));
+  });
+}
+
+/* =====================================================================
+   TRANSPORT
+   ===================================================================== */
+let timer=null,raf=null,nextT=0,loops=[];
+const stepDur=()=>60/S.bpm/4;
+const nowEl=document.getElementById('nowPlaying');
+document.getElementById('bpm').oninput=e=>{S.bpm=+e.target.value;document.getElementById('bpmv').textContent=S.bpm;};
+document.getElementById('vol').oninput=e=>{document.getElementById('volv').textContent=e.target.value;
+  if(master)master.gain.value=(+e.target.value/100)*.95;};
+const rhySel=document.getElementById('rhySel');
+Object.entries(RHY).forEach(([k,v])=>{const o=document.createElement('option');o.value=k;o.textContent=v.n;rhySel.appendChild(o);});
+rhySel.value='stabs'; rhySel.onchange=e=>S.rhy=e.target.value;
+const sndSel=document.getElementById('soundSel');
+Object.keys(SOUNDS).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k[0].toUpperCase()+k.slice(1);sndSel.appendChild(o);});
+sndSel.value='stab'; sndSel.onchange=e=>SND=e.target.value;
+const keySel=document.getElementById('keySel');
+SHARP.forEach((n,p)=>{const o=document.createElement('option');o.value=p;o.textContent=FLAT[p]+' minor';keySel.appendChild(o);});
+keySel.value=9;
+keySel.onchange=e=>{
+  const nk=+e.target.value, d=nk-S.key;
+  S.slots.forEach(s=>{ s.root=((s.root+d)%12+12)%12; if(s.bass!==null&&s.bass!==undefined) s.bass=((s.bass+d)%12+12)%12; });
+  S.key=nk; renderSlots(); refresh();
+};
+document.getElementById('drumBtn').onclick=function(){S.drums=!S.drums;this.setAttribute('aria-pressed',S.drums);};
+document.getElementById('bassBtn').onclick=function(){S.bass=!S.bass;this.setAttribute('aria-pressed',S.bass);};
+document.getElementById('playBtn').onclick=()=>S.playing?stop():start();
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)){e.preventDefault();S.playing?stop():start();}
+});
+function start(){
+  audio(); if(S.playing) return; S.playing=true;
+  document.getElementById('playBtn').textContent='■ STOP';
+  nextT=AC.currentTime+.1; loops=[]; schedule(); animate();
+}
+function stop(){
+  S.playing=false;
+  if(timer)clearTimeout(timer);timer=null;
+  if(raf)cancelAnimationFrame(raf);raf=null;
+  document.getElementById('playBtn').textContent='▶ PLAY';
+  curSlot=-1; drawViz(voicings()); drawKbd(-1);
+}
+function schedule(){
+  while(nextT<AC.currentTime+.25){
+    const sd=stepDur(), vs=voicings(), Snd=SOUNDS[SND];
+    let t=nextT, marks=[];
+    S.slots.forEach((slot,i)=>{
+      const bars=slot.bars, steps=bars*16, v=vs[i];
+      marks.push({t,i,dur:steps*sd});
+      const R=RHY[S.rhy];
+      if(S.rhy==='pad'||S.rhy==='swell'){
+        const s2=S.rhy==='swell'?{...Snd,aA:Math.max(Snd.aA,.9)}:Snd;
+        v.forEach(n=>playNote(t,mtof(n),steps*sd*.94,96,s2));
+      }else if(R.arp){
+        for(let s=0;s<steps;s++){
+          const n=v[s%v.length]+(Math.floor(s/v.length)%2?12:0);
+          playNote(t+s*sd,mtof(n),sd*.9,s%4===0?112:82,Snd);
+        }
+      }else{
+        for(let b=0;b<bars;b++) R.steps.forEach(st=>{
+          v.forEach(n=>playNote(t+(b*16+st)*sd,mtof(n),R.len*sd,st%4===0?110:92,Snd));
+        });
+      }
+      if(S.bass){
+        const bpc=(slot.bass!==null&&slot.bass!==undefined)?slot.bass:slot.root;
+        const bn=33+((bpc-9)%12+12)%12;
+        for(let b=0;b<bars;b++)[2,6,10,14].forEach(st=>playBass(t+(b*16+st)*sd,mtof(bn),sd*1.5,105));
+      }
+      if(S.drums){
+        for(let b=0;b<bars;b++){
+          for(let s=0;s<16;s+=4) bd(t+(b*16+s)*sd);
+          for(let s=2;s<16;s+=4) hh(t+(b*16+s)*sd,true);
+          clap(t+(b*16+4)*sd); clap(t+(b*16+12)*sd);
+        }
+      }
+      t+=steps*sd;
+    });
+    loops.push({start:nextT,dur:t-nextT,marks});
+    nextT=t;
+  }
+  loops=loops.filter(l=>l.start+l.dur>AC.currentTime-.5);
+  timer=setTimeout(schedule,60);
+}
+function animate(){
+  function frame(){
+    if(!S.playing){raf=null;return;}
+    const now=AC.currentTime;
+    const L=loops.find(l=>now>=l.start&&now<l.start+l.dur);
+    if(L){
+      const m=[...L.marks].reverse().find(x=>now>=x.t);
+      if(m&&m.i!==curSlot){
+        curSlot=m.i;
+        drawViz(voicings()); drawKbd(curSlot);
+        [...slotsEl.children].forEach((c,i)=>c.classList.toggle('cur',i===curSlot));
+      }
+    }
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+/* =====================================================================
+   EXTRAS
+   ===================================================================== */
+document.getElementById('randProg').onclick=()=>{
+  /* build a progression from moves that are known to work, not from noise */
+  const MOVES={0:[5,8,10,3],5:[0,10,7,3],8:[10,3,5,0],10:[0,3,8,5],3:[8,10,0,5],7:[0,8,5,10],2:[7,0,5,8]};
+  const QS={0:'min',5:'min',7:'min',2:'hdim',8:'maj',10:'maj',3:'maj'};
+  let cur=0; const out=[[0,'min','9',1]];
+  for(let i=0;i<3;i++){
+    const opts=MOVES[cur]||[5,8,10];
+    cur=opts[Math.floor(Math.random()*opts.length)];
+    const q=QS[cur]||'min';
+    const ext=Math.random()<.3?'9':'7';
+    out.push([cur,q,ext,1]);
+  }
+  S.slots=out.map(c=>({root:(S.key+c[0])%12,q:c[1],ext:c[2],bars:c[3],bass:null}));
+  renderSlots(); refresh();
+  nowEl.textContent='▸ suggested progression';
+  if(!S.playing) start();
+};
+document.getElementById('subBtn').onclick=()=>{
+  if(S.slots.length<2) return;
+  const s=S.slots[1];
+  const kinds=[];
+  if(s.q==='maj') kinds.push(()=>{s.root=((s.root-3)%12+12)%12;s.q='min';return 'relative minor';});
+  if(s.q==='min') kinds.push(()=>{s.root=(s.root+3)%12;s.q='maj';return 'relative major';});
+  if(s.q==='dom') kinds.push(()=>{s.root=(s.root+6)%12;return 'tritone substitution';});
+  kinds.push(()=>{s.q='sus4';s.ext=s.ext==='triad'?'triad':'7';return 'suspended';});
+  kinds.push(()=>{s.q=s.q==='min'?'dom':'min';return 'modal interchange';});
+  const what=kinds[Math.floor(Math.random()*kinds.length)]();
+  renderSlots(); refresh();
+  document.getElementById('moneyText').textContent='Chord 2 replaced using a '+what+'. Undo it by picking the original root and quality in the slot.';
+};
+
+/* ---------- MIDI export (type 1: tempo, chords, bass) ---------- */
+function varlen(n){const b=[n&0x7F];n>>=7;while(n>0){b.unshift((n&0x7F)|0x80);n>>=7;}return b;}
+function trackChunk(bytes){
+  const l=bytes.length;
+  return [0x4D,0x54,0x72,0x6B,(l>>24)&255,(l>>16)&255,(l>>8)&255,l&255,...bytes];
+}
+function eventsToTrack(ev,totalTicks,name){
+  ev.sort((a,b)=>a.t-b.t||a.type-b.type);
+  const t=[];
+  const nm=[...name].map(c=>c.charCodeAt(0));
+  t.push(0,0xFF,0x03,nm.length,...nm);
+  let last=0;
+  ev.forEach(e=>{varlen(e.t-last).forEach(b=>t.push(b));last=e.t;t.push(e.type|e.ch,e.note,e.vel);});
+  varlen(Math.max(0,totalTicks-last)).forEach(b=>t.push(b));
+  t.push(0xFF,0x2F,0x00);
+  return trackChunk(t);
+}
+document.getElementById('exportMidi').onclick=()=>{
+  const PPQ=96, tps=PPQ/4;
+  const vs=voicings();
+  const chordEv=[], bassEv=[];
+  let step=0;
+  S.slots.forEach((slot,i)=>{
+    const steps=slot.bars*16, v=vs[i], R=RHY[S.rhy];
+    const emit=(arr,notes,st,len,vel,ch)=>notes.forEach(n=>{
+      arr.push({t:Math.round((step+st)*tps),type:0x90,ch,note:n,vel});
+      arr.push({t:Math.round((step+st+len)*tps),type:0x80,ch,note:n,vel:0});
+    });
+    if(S.rhy==='pad'||S.rhy==='swell') emit(chordEv,v,0,steps*.96,96,0);
+    else if(R.arp){ for(let s=0;s<steps;s++) emit(chordEv,[v[s%v.length]],s,.9,s%4===0?112:84,0); }
+    else for(let b=0;b<slot.bars;b++) R.steps.forEach(st=>emit(chordEv,v,b*16+st,R.len,st%4===0?110:92,0));
+    const bpc=(slot.bass!==null&&slot.bass!==undefined)?slot.bass:slot.root;
+    const bn=33+((bpc-9)%12+12)%12;
+    for(let b=0;b<slot.bars;b++)[2,6,10,14].forEach(st=>emit(bassEv,[bn],b*16+st,1.5,105,1));
+    step+=steps;
+  });
+  const total=step*tps;
+  const upq=Math.round(60000000/S.bpm);
+  const meta=[0,0xFF,0x51,0x03,(upq>>16)&255,(upq>>8)&255,upq&255,
+              0,0xFF,0x58,0x04,4,2,24,8, 0,0xFF,0x2F,0x00];
+  const head=[0x4D,0x54,0x68,0x64,0,0,0,6,0,1,0,3,(PPQ>>8)&255,PPQ&255];
+  const bytes=new Uint8Array([...head,...trackChunk(meta),
+    ...eventsToTrack(chordEv,total,'Chords'),...eventsToTrack(bassEv,total,'Bass')]);
+  const blob=new Blob([bytes],{type:'audio/midi'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='progression-'+FLAT[S.key]+'m-'+S.bpm+'bpm.mid';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+};
+
+/* =====================================================================
+   LIBRARY + VOICING GALLERY
+   ===================================================================== */
+const lg=document.getElementById('libGrid');
+LIB.forEach((L,i)=>{
+  const syms=L.c.map(c=>symbol((9+c[0])%12,c[1],c[2])+(c[4]!==undefined?'/'+FLAT[(9+c[4])%12]:'')).join('  ·  ');
+  const rns=L.c.map(c=>roman((9+c[0])%12,9,c[1])).join('  ·  ');
+  const d=document.createElement('div'); d.className='gcard';
+  d.innerHTML=`<div class="gcard-top"><h3>${L.n}</h3><span class="tag">${L.g}</span></div>
+    <div class="chordline">${syms}</div><div class="rnline">${rns}</div>
+    <p>${L.d}</p><div class="sig">${L.s}</div>
+    <button class="gload" data-load="${i}">Load &amp; play →</button>`;
+  lg.appendChild(d);
+});
+lg.addEventListener('click',e=>{
+  const b=e.target.closest('[data-load]'); if(!b) return;
+  if(S.playing) stop();
+  loadProg(+b.dataset.load);
+  document.getElementById('lab').scrollIntoView({block:'start'});
+  setTimeout(start,140);
+});
+
+const VOICINGS=[
+ {n:'Root position',o:{inv:'0',style:'full',spread:'close'},p:'Every note in order from the root. Correct, teachable, and the reason most amateur productions sound like a keyboard demo.'},
+ {n:'First inversion',o:{inv:'1',style:'full',spread:'close'},p:'The third in the bass. Lighter and less settled than root position — good for a passing chord.'},
+ {n:'Second inversion',o:{inv:'2',style:'full',spread:'close'},p:'The fifth at the bottom. Unstable on its own, lovely in the middle of a sequence, and the classic "expensive" house voicing.'},
+ {n:'Drop 2',o:{inv:'0',style:'full',spread:'drop2'},p:'Take the second note from the top and move it an octave down. Opens a gap in the middle so the chord stops sounding like a block.'},
+ {n:'Open / spread',o:{inv:'0',style:'full',spread:'open'},p:'Notes distributed across more than an octave. Big and cinematic; needs space in the arrangement or it swallows everything.'},
+ {n:'Rootless',o:{inv:'auto',style:'rootless',spread:'close'},p:'No root at all — the bass has it. Frees a voice for the 9th and is the single most useful voicing in house music.'},
+ {n:'Shell (1-3-7)',o:{inv:'0',style:'shell',spread:'close'},p:'Root, third, seventh. Three notes carrying the entire identity of the chord. Perfect under a busy vocal or lead.'},
+ {n:'Quartal (4ths)',o:{inv:'0',style:'quartal',spread:'close'},p:'Stacked fourths instead of thirds. Modern, ambiguous, faintly Detroit — no clear major or minor at all.'}
+];
+const vg=document.getElementById('vgrid');
+VOICINGS.forEach((V,i)=>{
+  const slot={root:9,q:'min',ext:'9',bars:1,bass:null};
+  const v=buildVoicing(slot,{...V.o,voices:5,reg:4,trans:0},null);
+  const nn=v.map(n=>SHARP[((n%12)+12)%12]+(Math.floor(n/12)-1)).join(' – ');
+  const d=document.createElement('div'); d.className='vcard'; d.dataset.v=i;
+  d.innerHTML=`<h4>${V.n}</h4><div class="nn">${nn}</div><p>${V.p}</p>`;
+  vg.appendChild(d);
+});
+vg.addEventListener('click',e=>{
+  const c=e.target.closest('[data-v]'); if(!c) return;
+  audio();
+  const V=VOICINGS[+c.dataset.v];
+  const v=buildVoicing({root:9,q:'min',ext:'9'},{...V.o,voices:5,reg:4,trans:0},null);
+  const t=AC.currentTime+.02, Snd=SOUNDS.rhodes;
+  playBass(t,mtof(33),1.6,110);
+  v.forEach((n,k)=>playNote(t+k*.012,mtof(n),1.5,100,Snd));
+});
+
+window.addEventListener('resize',()=>drawViz(voicings()));
+
+/* boot */
+loadProg(1);
+syncV();
+</script>

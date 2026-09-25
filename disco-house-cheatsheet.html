@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Disco house — reference sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#120F16;
+  --panel:#1C1722;
+  --panel-2:#241E2C;
+  --line:#332B3D;
+  --text:#EDE6DC;
+  --dim:#9E93A6;
+  --gold:#E8A33D;
+  --gold-dim:#5C4423;
+  --hot:#D9558C;
+  --cool:#5BC8C0;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ink);color:var(--text);
+  font-family:var(--body);font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px 80px}
+
+/* header */
+header{padding:56px 0 28px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+h1{
+  font-family:var(--display);font-weight:800;font-size:clamp(42px,8vw,86px);
+  line-height:.92;letter-spacing:-.03em;margin:0;text-transform:uppercase;
+}
+h1 em{font-style:normal;color:var(--gold)}
+.sub{color:var(--dim);max-width:52ch;margin:18px 0 0}
+
+/* nav */
+nav{position:sticky;top:0;z-index:10;background:rgba(18,15,22,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);margin-bottom:44px}
+nav ul{display:flex;flex-wrap:wrap;gap:22px;list-style:none;margin:0;padding:14px 24px;max-width:980px;
+  margin-inline:auto;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+nav a{color:var(--dim);text-decoration:none;padding:2px 0;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus-visible{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* sections */
+section{margin:0 0 64px;scroll-margin-top:64px}
+h2{font-family:var(--display);font-weight:800;font-size:13px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text);margin:0 0 6px}
+.lede{color:var(--dim);font-size:14px;margin:0 0 22px;max-width:62ch}
+
+/* stat strip */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.stat{background:var(--panel);padding:20px 22px}
+.stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:0 0 6px}
+.stat .v{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.02em;margin:0;color:var(--gold)}
+.stat .n{font-size:12px;color:var(--dim);margin:4px 0 0;line-height:1.4}
+
+/* sequencer */
+.seq{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:22px;overflow-x:auto}
+.seqgrid{display:grid;grid-template-columns:120px repeat(16,1fr);gap:4px;min-width:640px}
+.seqgrid .lab{font-family:var(--mono);font-size:11px;color:var(--text);display:flex;align-items:center;
+  letter-spacing:.04em;padding-right:10px}
+.seqgrid .num{font-family:var(--mono);font-size:10px;color:#6B6274;text-align:center;padding-bottom:4px}
+.seqgrid .num.beat{color:var(--text)}
+.pad{height:26px;border-radius:3px;background:#171320;border:1px solid #2A2333}
+.pad.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(232,163,61,.28)}
+.pad.ghost{background:var(--gold-dim);border-color:#6E5430}
+.pad.dr{background:var(--hot);border-color:var(--hot);box-shadow:0 0 10px rgba(217,85,140,.3)}
+.legend{display:flex;flex-wrap:wrap;gap:20px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--dim);font-family:var(--mono)}
+.legend span{display:flex;align-items:center;gap:8px}
+.chip{width:14px;height:14px;border-radius:3px;flex:none}
+
+/* rows */
+.rows{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--panel)}
+.row{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:13px 20px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:none}
+.row:nth-child(even){background:var(--panel-2)}
+.row .rk{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);
+  padding-top:2px}
+.row .rv{font-size:14px}
+.row .rv code{font-family:var(--mono);font-size:13px;color:var(--cool);background:none}
+.row .rv .why{display:block;color:var(--dim);font-size:13px;margin-top:3px}
+
+/* chords */
+.chords{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.chord{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px 18px}
+.chord .cname{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:0 0 8px}
+.chord .cseq{font-family:var(--mono);font-size:16px;color:var(--gold);margin:0;letter-spacing:.02em}
+.chord .cnote{font-size:12px;color:var(--dim);margin:8px 0 0;line-height:1.5}
+
+/* timeline */
+.tl{border-left:2px solid var(--line);margin-left:8px;padding-left:0}
+.tlrow{display:grid;grid-template-columns:90px 74px 1fr;gap:16px;align-items:baseline;padding:12px 0 12px 22px;
+  position:relative}
+.tlrow::before{content:"";position:absolute;left:-6px;top:20px;width:10px;height:10px;border-radius:50%;
+  background:var(--ink);border:2px solid var(--gold)}
+.tlrow .t{font-family:var(--mono);font-size:13px;color:var(--gold)}
+.tlrow .b{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.tlrow .d{font-size:14px}
+
+.callout{border:1px solid var(--gold-dim);border-left:3px solid var(--gold);background:rgba(232,163,61,.05);
+  border-radius:0 4px 4px 0;padding:16px 20px;margin-top:22px}
+.callout p{margin:0;font-size:14px;color:var(--text)}
+.callout strong{color:var(--gold);font-weight:500}
+
+footer{border-top:1px solid var(--line);padding-top:24px;color:var(--dim);font-size:12px;font-family:var(--mono)}
+
+@media(max-width:620px){
+  .row{grid-template-columns:1fr;gap:4px}
+  .tlrow{grid-template-columns:1fr;gap:2px}
+  .seqgrid{min-width:560px}
+}
+@media print{
+  body{background:#fff;color:#000}
+  nav{display:none}
+  .seq,.rows,.chord,.stat{background:#fff;border-color:#ccc}
+  .pad.on{background:#000;border-color:#000;box-shadow:none}
+  .pad.ghost{background:#aaa;border-color:#aaa}
+  .pad.dr{background:#666;border-color:#666}
+  h1,.stat .v,.row .rk,.chord .cseq,.tlrow .t{color:#000}
+}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="index.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Production reference · Ableton Live 12</p>
+    <h1>Disco<br><em>House</em></h1>
+    <p class="sub">Everything you need in the first hour of a new project: the grid, the tempo, the chords, and the device chains. Keep this open on the second monitor.</p>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#start">Start</a></li>
+    <li><a href="#grid">Grid</a></li>
+    <li><a href="#drums">Drums</a></li>
+    <li><a href="#samples">Samples</a></li>
+    <li><a href="#chords">Chords</a></li>
+    <li><a href="#chains">Chains</a></li>
+    <li><a href="#arrange">Arrangement</a></li>
+  </ul>
+</nav>
+
+<div class="wrap">
+
+<section id="start">
+  <h2>Set these first</h2>
+  <p class="lede">Open a new set, type these four in, then start making noise. Don't deliberate.</p>
+  <div class="stats">
+    <div class="stat"><p class="k">Tempo</p><p class="v">122</p><p class="n">Genre range is 118–125. Faster reads as tech house.</p></div>
+    <div class="stat"><p class="k">Key</p><p class="v">A minor</p><p class="n">Or F minor. All white keys, easy sample matching.</p></div>
+    <div class="stat"><p class="k">Groove</p><p class="v">16%</p><p class="n">MPC 16 Swing from the groove pool.</p></div>
+    <div class="stat"><p class="k">Loop</p><p class="v">8 bars</p><p class="n">Build the whole idea before you arrange.</p></div>
+  </div>
+</section>
+
+<section id="grid">
+  <h2>The one-bar grid</h2>
+  <p class="lede">Sixteenth notes across one bar. Program this in a Drum Rack and you have the genre's skeleton. Everything else is decoration on top of it.</p>
+  <div class="seq">
+    <div class="seqgrid">
+      <div class="lab"></div>
+      <div class="num beat">1</div><div class="num">e</div><div class="num">&amp;</div><div class="num">a</div>
+      <div class="num beat">2</div><div class="num">e</div><div class="num">&amp;</div><div class="num">a</div>
+      <div class="num beat">3</div><div class="num">e</div><div class="num">&amp;</div><div class="num">a</div>
+      <div class="num beat">4</div><div class="num">e</div><div class="num">&amp;</div><div class="num">a</div>
+
+      <div class="lab">Kick</div>
+      <div class="pad on"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+      <div class="pad on"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+      <div class="pad on"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+      <div class="pad on"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+
+      <div class="lab">Clap / snare</div>
+      <div class="pad"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+      <div class="pad on"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+      <div class="pad"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+      <div class="pad on"></div><div class="pad"></div><div class="pad"></div><div class="pad ghost"></div>
+
+      <div class="lab">Open hat</div>
+      <div class="pad"></div><div class="pad"></div><div class="pad dr"></div><div class="pad"></div>
+      <div class="pad"></div><div class="pad"></div><div class="pad dr"></div><div class="pad"></div>
+      <div class="pad"></div><div class="pad"></div><div class="pad dr"></div><div class="pad"></div>
+      <div class="pad"></div><div class="pad"></div><div class="pad dr"></div><div class="pad"></div>
+
+      <div class="lab">Closed hat</div>
+      <div class="pad on"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+      <div class="pad on"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+      <div class="pad on"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+      <div class="pad on"></div><div class="pad"></div><div class="pad"></div><div class="pad"></div>
+
+      <div class="lab">Shaker</div>
+      <div class="pad on"></div><div class="pad ghost"></div><div class="pad on"></div><div class="pad ghost"></div>
+      <div class="pad on"></div><div class="pad ghost"></div><div class="pad on"></div><div class="pad ghost"></div>
+      <div class="pad on"></div><div class="pad ghost"></div><div class="pad on"></div><div class="pad ghost"></div>
+      <div class="pad on"></div><div class="pad ghost"></div><div class="pad on"></div><div class="pad ghost"></div>
+
+      <div class="lab">Conga / bongo</div>
+      <div class="pad"></div><div class="pad"></div><div class="pad"></div><div class="pad on"></div>
+      <div class="pad"></div><div class="pad"></div><div class="pad on"></div><div class="pad"></div>
+      <div class="pad"></div><div class="pad on"></div><div class="pad"></div><div class="pad"></div>
+      <div class="pad"></div><div class="pad"></div><div class="pad on"></div><div class="pad"></div>
+
+      <div class="lab">Tambourine</div>
+      <div class="pad"></div><div class="pad"></div><div class="pad ghost"></div><div class="pad"></div>
+      <div class="pad"></div><div class="pad"></div><div class="pad ghost"></div><div class="pad"></div>
+      <div class="pad"></div><div class="pad"></div><div class="pad ghost"></div><div class="pad"></div>
+      <div class="pad"></div><div class="pad"></div><div class="pad ghost"></div><div class="pad"></div>
+    </div>
+    <div class="legend">
+      <span><i class="chip" style="background:var(--gold)"></i> Full hit</span>
+      <span><i class="chip" style="background:var(--gold-dim)"></i> Ghost note, velocity 40–60</span>
+      <span><i class="chip" style="background:var(--hot)"></i> Offbeat open hat — the genre lives here</span>
+    </div>
+  </div>
+  <div class="callout">
+    <p><strong>If it sounds flat, check this first.</strong> Kick on every beat, open hat exactly between every beat. That tension is the whole feel. Nothing else you add will fix a missing offbeat hat.</p>
+  </div>
+</section>
+
+<section id="drums">
+  <h2>Drum layer rules</h2>
+  <p class="lede">Same grid, different sound choices — this is where disco house separates from techno.</p>
+  <div class="rows">
+    <div class="row"><div class="rk">Kick</div><div class="rv">Short and punchy, not a long sub.<span class="why">High-pass around 40 Hz. The bassline owns the sub, not the kick.</span></div></div>
+    <div class="row"><div class="rk">Clap</div><div class="rv">Layer two samples: one dry 909-style, one roomy real clap.<span class="why">Send only the roomy one to reverb. That's the disco width.</span></div></div>
+    <div class="row"><div class="rk">Open hat</div><div class="rv">Offbeat only, and let it ring into the next beat.<span class="why">Cut the decay short and it starts sounding like tech house.</span></div></div>
+    <div class="row"><div class="rk">Shaker</div><div class="rv">Straight 16ths, velocity randomized ±20.<span class="why">Flat velocity is the single most obvious tell of a beginner beat.</span></div></div>
+    <div class="row"><div class="rk">Percussion</div><div class="rv">Congas, bongos, tambourine — real recorded ones, not synthesized.<span class="why">Nudge a few hits off the grid by hand, 5–15 ms early or late.</span></div></div>
+    <div class="row"><div class="rk">Groove</div><div class="rv">Drag <code>MPC 16 Swing</code> onto hats and percussion clips.<span class="why">Leave the kick and clap dead straight. Swinging everything turns it to mud.</span></div></div>
+    <div class="row"><div class="rk">Fills</div><div class="rv">Reverse crash on the bar before a section change.<span class="why">One per 16 bars. More than that gets tiring fast.</span></div></div>
+  </div>
+</section>
+
+<section id="samples">
+  <h2>Working with a sampled loop</h2>
+  <p class="lede">Disco house is a sampling genre before it's a synthesis genre. The hook usually comes from a record, chopped and reassembled — not played in from scratch.</p>
+  <div class="rows">
+    <div class="row"><div class="rk">1 · Find</div><div class="rv">A 4–8 bar section of a 70s or 80s disco, funk, or soul record.<span class="why">Look for strings, a guitar stab, or a horn line. Avoid anything with a lead vocal over it.</span></div></div>
+    <div class="row"><div class="rk">2 · Warp</div><div class="rv">Drop into Arrangement, set warp mode <code>Complex Pro</code>, enter the original bpm, then pull to 122.<span class="why">Use Re-Pitch instead if you want the vintage tape-speed character.</span></div></div>
+    <div class="row"><div class="rk">3 · Chop</div><div class="rv">Right-click the clip → <code>Slice to New MIDI Track</code>.<span class="why">You get a Drum Rack with one slice per pad, playable from the piano roll.</span></div></div>
+    <div class="row"><div class="rk">4 · Pitch</div><div class="rv">Transpose the whole loop into your project key with Simpler's transpose or a Utility.<span class="why">Check against a single held Am note on another track. Trust your ear over the numbers.</span></div></div>
+    <div class="row"><div class="rk">5 · Filter</div><div class="rv">EQ Eight, high-pass at 200–400 Hz.<span class="why">Clears room for your kick and bass. Almost every sampled loop needs this.</span></div></div>
+    <div class="row"><div class="rk">6 · Rebuild</div><div class="rv">Play the slices back in a different order than the original.<span class="why">This is the entire craft of the genre in one step. Reordering is where your track stops being someone else's.</span></div></div>
+  </div>
+  <div class="callout">
+    <p><strong>Before you release anything.</strong> Recognizable samples need clearance. For learning, practice, and your personal library this is a non-issue — just know where the line sits before something goes public.</p>
+  </div>
+</section>
+
+<section id="chords">
+  <h2>Chords — sevenths, always</h2>
+  <p class="lede">Plain triads sound like pop house. The seventh is what makes it disco. If you only remember one thing: add the extra note.</p>
+  <div class="chords">
+    <div class="chord"><p class="cname">Two-chord vamp · easiest</p><p class="cseq">Am7 · Dm7</p><p class="cnote">Two bars each, loop forever. A huge number of records are only this.</p></div>
+    <div class="chord"><p class="cname">Classic loop</p><p class="cseq">Am7 · Dm7 · G7 · Cmaj7</p><p class="cnote">One bar each. The G7 pulls hard into the Cmaj7 — that's the lift.</p></div>
+    <div class="chord"><p class="cname">Bright and lifted</p><p class="cseq">Fmaj7 · Em7 · Dm7 · G7</p><p class="cnote">Descending, warm. Good under a vocal chop.</p></div>
+    <div class="chord"><p class="cname">Darker / late night</p><p class="cseq">Fm7 · B♭m7 · E♭7 · A♭maj7</p><p class="cnote">Same shape in F minor. Set the project key to F minor if you use this.</p></div>
+  </div>
+  <div class="rows" style="margin-top:16px">
+    <div class="row"><div class="rk">Voicing</div><div class="rv">Keep every chord between C3 and C5, and drop the root note.<span class="why">The bassline plays the root. Doubling it makes the mix muddy.</span></div></div>
+    <div class="row"><div class="rk">Rhythm</div><div class="rv">Stab on the offbeats, short notes around a 16th long.<span class="why">Landing chords on the downbeat fights the kick. Sit between the beats instead.</span></div></div>
+    <div class="row"><div class="rk">Bass</div><div class="rv">Root on the beat, octave jumps and passing notes between.<span class="why">Sidechain to the kick with a Compressor. Around 3–4 dB of duck is plenty.</span></div></div>
+  </div>
+</section>
+
+<section id="chains">
+  <h2>Device chains</h2>
+  <p class="lede">Starting points, in order. Add nothing else until you can hear a reason for it.</p>
+  <div class="rows">
+    <div class="row"><div class="rk">Drum bus</div><div class="rv"><code>Drum Rack → Glue Compressor → Saturator</code><span class="why">Glue at 4:1, slow attack, 2–3 dB of gain reduction. Saturator on Soft Sine, drive low.</span></div></div>
+    <div class="row"><div class="rk">Sampled loop</div><div class="rv"><code>Simpler → EQ Eight → Auto Filter → Reverb</code><span class="why">High-pass in the EQ, then automate the Auto Filter for transitions.</span></div></div>
+    <div class="row"><div class="rk">Chords</div><div class="rv"><code>Analog Lab V → Chorus-Ensemble → EQ Eight</code><span class="why">Reverb goes on a send, not inline. Keeps the chords sitting behind the drums.</span></div></div>
+    <div class="row"><div class="rk">Bass</div><div class="rv"><code>Operator → Saturator → Compressor</code><span class="why">Compressor in sidechain mode, keyed to the kick track.</span></div></div>
+    <div class="row"><div class="rk">Master</div><div class="rv"><code>EQ Eight → Glue Compressor → Limiter</code><span class="why">1–2 dB on the Glue. Ceiling at −1 dB. Do this last, not while writing.</span></div></div>
+    <div class="row"><div class="rk">Transitions</div><div class="rv">Automate Auto Filter cutoff upward over the 8 bars before every drop.<span class="why">This does more for energy than any element you could add. It is the arrangement.</span></div></div>
+  </div>
+</section>
+
+<section id="arrange">
+  <h2>Arrangement — count in eights</h2>
+  <p class="lede">Times assume 122 bpm. Sections change on multiples of 8 bars, without exception.</p>
+  <div class="tl">
+    <div class="tlrow"><span class="t">0:00</span><span class="b">16 bars</span><span class="d">Drums only. Filtered loop creeping in from far away.</span></div>
+    <div class="tlrow"><span class="t">0:32</span><span class="b">16 bars</span><span class="d">Bass enters, full drum kit. Groove is established.</span></div>
+    <div class="tlrow"><span class="t">1:04</span><span class="b">16 bars</span><span class="d">First drop. Filter opens, chords and vocal chop arrive.</span></div>
+    <div class="tlrow"><span class="t">1:36</span><span class="b">16 bars</span><span class="d">Break. Drums out, chords and reverb only. Let it breathe.</span></div>
+    <div class="tlrow"><span class="t">2:08</span><span class="b">32 bars</span><span class="d">Main drop. Everything in, plus one new top percussion layer.</span></div>
+    <div class="tlrow"><span class="t">3:12</span><span class="b">16 bars</span><span class="d">Outro. Strip back to drums so a DJ can mix out of it.</span></div>
+  </div>
+</section>
+
+<footer>
+  <div>Disco house reference sheet · Ableton Live 12 · press ⌘P / Ctrl+P for a printable version</div>
+</footer>
+
+</div>
+</body>
+</html>

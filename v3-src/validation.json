@@ -1,0 +1,858 @@
+{
+  "cases": 4140,
+  "artistCases": 2880,
+  "sameSeedIdenticalMotifs": {
+    "pairsWithNewPerspectives": "0/1692",
+    "originalPairs": "107/876"
+  },
+  "distinctSeeds": [
+    {
+      "style": "singable",
+      "count": 60
+    },
+    {
+      "style": "rave",
+      "count": 60
+    },
+    {
+      "style": "afterlife",
+      "count": 60
+    },
+    {
+      "style": "driving",
+      "count": 60
+    },
+    {
+      "style": "hypnotic",
+      "count": 60
+    },
+    {
+      "style": "minimaltech",
+      "count": 60
+    },
+    {
+      "style": "hardgroove",
+      "count": 60
+    },
+    {
+      "style": "industrial",
+      "count": 60
+    },
+    {
+      "style": "hardtech",
+      "count": 60
+    },
+    {
+      "style": "psytech",
+      "count": 60
+    },
+    {
+      "style": "acid",
+      "count": 60
+    },
+    {
+      "style": "schranz",
+      "count": 60
+    },
+    {
+      "style": "bleep",
+      "count": 60
+    },
+    {
+      "style": "tribal",
+      "count": 60
+    },
+    {
+      "style": "ambient",
+      "count": 60
+    },
+    {
+      "style": "detroit",
+      "count": 60
+    },
+    {
+      "style": "dub",
+      "count": 60
+    },
+    {
+      "style": "progressive",
+      "count": 60
+    },
+    {
+      "style": "melodic",
+      "count": 60
+    },
+    {
+      "style": "deep",
+      "count": 60
+    },
+    {
+      "style": "micro",
+      "count": 60
+    },
+    {
+      "style": "techhouse",
+      "count": 60
+    },
+    {
+      "style": "afro",
+      "count": 60
+    },
+    {
+      "style": "stutter",
+      "count": 60
+    },
+    {
+      "style": "disco",
+      "count": 60
+    },
+    {
+      "style": "indie",
+      "count": 60
+    },
+    {
+      "style": "italo",
+      "count": 60
+    },
+    {
+      "style": "trance",
+      "count": 60
+    },
+    {
+      "style": "hardtrance",
+      "count": 60
+    },
+    {
+      "style": "futurerave",
+      "count": 60
+    },
+    {
+      "style": "psy",
+      "count": 60
+    },
+    {
+      "style": "breaks",
+      "count": 60
+    },
+    {
+      "style": "garage",
+      "count": 60
+    },
+    {
+      "style": "electro",
+      "count": 60
+    },
+    {
+      "style": "dnb",
+      "count": 60
+    },
+    {
+      "style": "amapiano",
+      "count": 60
+    },
+    {
+      "style": "melodicseq",
+      "count": 60
+    },
+    {
+      "style": "acidtechno",
+      "count": 60
+    },
+    {
+      "style": "darkstab",
+      "count": 60
+    },
+    {
+      "style": "bigroomtechno",
+      "count": 60
+    },
+    {
+      "style": "loop",
+      "count": 60
+    },
+    {
+      "style": "birmingham",
+      "count": 60
+    },
+    {
+      "style": "ukbass",
+      "count": 60
+    },
+    {
+      "style": "groovetech",
+      "count": 60
+    },
+    {
+      "style": "modular",
+      "count": 60
+    },
+    {
+      "style": "deeptechno",
+      "count": 60
+    },
+    {
+      "style": "trancetechno",
+      "count": 60
+    },
+    {
+      "style": "eurobounce",
+      "count": 60
+    },
+    {
+      "style": "ghettotech",
+      "count": 60
+    },
+    {
+      "style": "gabber",
+      "count": 60
+    },
+    {
+      "style": "chicago",
+      "count": 60
+    },
+    {
+      "style": "acidhouse",
+      "count": 60
+    },
+    {
+      "style": "pianohouse",
+      "count": 60
+    },
+    {
+      "style": "soulful",
+      "count": 60
+    },
+    {
+      "style": "organhouse",
+      "count": 60
+    },
+    {
+      "style": "vocalhouse",
+      "count": 60
+    },
+    {
+      "style": "lofi",
+      "count": 60
+    },
+    {
+      "style": "deeptech",
+      "count": 60
+    },
+    {
+      "style": "rominimal",
+      "count": 60
+    },
+    {
+      "style": "basshouse",
+      "count": 60
+    },
+    {
+      "style": "speedgarage",
+      "count": 60
+    },
+    {
+      "style": "futurehouse",
+      "count": 60
+    },
+    {
+      "style": "electrohouse",
+      "count": 60
+    },
+    {
+      "style": "hardhouse",
+      "count": 60
+    },
+    {
+      "style": "organic",
+      "count": 60
+    },
+    {
+      "style": "afrotech",
+      "count": 60
+    },
+    {
+      "style": "progseq",
+      "count": 60
+    },
+    {
+      "style": "nudisco",
+      "count": 60
+    },
+    {
+      "style": "uplifting",
+      "count": 60
+    }
+  ],
+  "distinctArtistSeeds": [
+    {
+      "artist": "kolsch",
+      "count": 24
+    },
+    {
+      "artist": "kalkbrenner",
+      "count": 24
+    },
+    {
+      "artist": "ihm",
+      "count": 24
+    },
+    {
+      "artist": "hoffstadt",
+      "count": 24
+    },
+    {
+      "artist": "klang",
+      "count": 24
+    },
+    {
+      "artist": "innellea",
+      "count": 24
+    },
+    {
+      "artist": "devries",
+      "count": 24
+    },
+    {
+      "artist": "mindagainst",
+      "count": 24
+    },
+    {
+      "artist": "massano",
+      "count": 24
+    },
+    {
+      "artist": "beyer",
+      "count": 24
+    },
+    {
+      "artist": "karla",
+      "count": 24
+    },
+    {
+      "artist": "klock",
+      "count": 24
+    },
+    {
+      "artist": "rodhad",
+      "count": 24
+    },
+    {
+      "artist": "mulero",
+      "count": 24
+    },
+    {
+      "artist": "hawtin",
+      "count": 24
+    },
+    {
+      "artist": "sims",
+      "count": 24
+    },
+    {
+      "artist": "chlar",
+      "count": 24
+    },
+    {
+      "artist": "rush",
+      "count": 24
+    },
+    {
+      "artist": "perc",
+      "count": 24
+    },
+    {
+      "artist": "vtss",
+      "count": 24
+    },
+    {
+      "artist": "snts",
+      "count": 24
+    },
+    {
+      "artist": "indira",
+      "count": 24
+    },
+    {
+      "artist": "reinier",
+      "count": 24
+    },
+    {
+      "artist": "deadmau5",
+      "count": 24
+    },
+    {
+      "artist": "prydz",
+      "count": 24
+    },
+    {
+      "artist": "lane8",
+      "count": 24
+    },
+    {
+      "artist": "bohmer",
+      "count": 24
+    },
+    {
+      "artist": "tiesto",
+      "count": 24
+    },
+    {
+      "artist": "tiestoclub",
+      "count": 24
+    },
+    {
+      "artist": "pvd",
+      "count": 24
+    },
+    {
+      "artist": "chicane",
+      "count": 24
+    },
+    {
+      "artist": "bicep",
+      "count": 24
+    },
+    {
+      "artist": "bonobo",
+      "count": 24
+    },
+    {
+      "artist": "disclosure",
+      "count": 24
+    },
+    {
+      "artist": "fred",
+      "count": 24
+    },
+    {
+      "artist": "daft",
+      "count": 24
+    },
+    {
+      "artist": "peggy",
+      "count": 24
+    },
+    {
+      "artist": "kerri",
+      "count": 24
+    },
+    {
+      "artist": "blackcoffee",
+      "count": 24
+    },
+    {
+      "artist": "boris",
+      "count": 24
+    },
+    {
+      "artist": "bodzin",
+      "count": 24
+    },
+    {
+      "artist": "charlotte",
+      "count": 24
+    },
+    {
+      "artist": "astrix",
+      "count": 24
+    },
+    {
+      "artist": "amelie",
+      "count": 24
+    },
+    {
+      "artist": "emmanueltop",
+      "count": 24
+    },
+    {
+      "artist": "sangiuliano",
+      "count": 24
+    },
+    {
+      "artist": "dax",
+      "count": 24
+    },
+    {
+      "artist": "taleofus",
+      "count": 24
+    },
+    {
+      "artist": "anyma",
+      "count": 24
+    },
+    {
+      "artist": "artbat",
+      "count": 24
+    },
+    {
+      "artist": "mathame",
+      "count": 24
+    },
+    {
+      "artist": "colyn",
+      "count": 24
+    },
+    {
+      "artist": "dozzy",
+      "count": 24
+    },
+    {
+      "artist": "lucy",
+      "count": 24
+    },
+    {
+      "artist": "trym",
+      "count": 24
+    },
+    {
+      "artist": "spfdj",
+      "count": 24
+    },
+    {
+      "artist": "heartstring",
+      "count": 24
+    },
+    {
+      "artist": "godfather",
+      "count": 24
+    },
+    {
+      "artist": "sara",
+      "count": 24
+    },
+    {
+      "artist": "blawan",
+      "count": 24
+    },
+    {
+      "artist": "surgeon",
+      "count": 24
+    },
+    {
+      "artist": "regis",
+      "count": 24
+    },
+    {
+      "artist": "liebing",
+      "count": 24
+    },
+    {
+      "artist": "cari",
+      "count": 24
+    },
+    {
+      "artist": "joelmull",
+      "count": 24
+    },
+    {
+      "artist": "capriati",
+      "count": 24
+    },
+    {
+      "artist": "osuna",
+      "count": 24
+    },
+    {
+      "artist": "mills",
+      "count": 24
+    },
+    {
+      "artist": "derrickmay",
+      "count": 24
+    },
+    {
+      "artist": "carlcraig",
+      "count": 24
+    },
+    {
+      "artist": "hood",
+      "count": 24
+    },
+    {
+      "artist": "anfisa",
+      "count": 24
+    },
+    {
+      "artist": "adriatique",
+      "count": 24
+    },
+    {
+      "artist": "solomun",
+      "count": 24
+    },
+    {
+      "artist": "ame",
+      "count": 24
+    },
+    {
+      "artist": "joris",
+      "count": 24
+    },
+    {
+      "artist": "sasha",
+      "count": 24
+    },
+    {
+      "artist": "digweed",
+      "count": 24
+    },
+    {
+      "artist": "cattaneo",
+      "count": 24
+    },
+    {
+      "artist": "frankie",
+      "count": 24
+    },
+    {
+      "artist": "greenvelvet",
+      "count": 24
+    },
+    {
+      "artist": "marshall",
+      "count": 24
+    },
+    {
+      "artist": "djpierre",
+      "count": 24
+    },
+    {
+      "artist": "hardfloor",
+      "count": 24
+    },
+    {
+      "artist": "mau",
+      "count": 24
+    },
+    {
+      "artist": "larryheard",
+      "count": 24
+    },
+    {
+      "artist": "moodymann",
+      "count": 24
+    },
+    {
+      "artist": "toddterry",
+      "count": 24
+    },
+    {
+      "artist": "mk",
+      "count": 24
+    },
+    {
+      "artist": "honey",
+      "count": 24
+    },
+    {
+      "artist": "avh",
+      "count": 24
+    },
+    {
+      "artist": "toddedwards",
+      "count": 24
+    },
+    {
+      "artist": "chrislake",
+      "count": 24
+    },
+    {
+      "artist": "fisher",
+      "count": 24
+    },
+    {
+      "artist": "johnsummit",
+      "count": 24
+    },
+    {
+      "artist": "hotsince82",
+      "count": 24
+    },
+    {
+      "artist": "jamiejones",
+      "count": 24
+    },
+    {
+      "artist": "heldens",
+      "count": 24
+    },
+    {
+      "artist": "tchami",
+      "count": 24
+    },
+    {
+      "artist": "acslater",
+      "count": 24
+    },
+    {
+      "artist": "justice",
+      "count": 24
+    },
+    {
+      "artist": "boysnoize",
+      "count": 24
+    },
+    {
+      "artist": "seinfeld",
+      "count": 24
+    },
+    {
+      "artist": "rff",
+      "count": 24
+    },
+    {
+      "artist": "rhadoo",
+      "count": 24
+    },
+    {
+      "artist": "petre",
+      "count": 24
+    },
+    {
+      "artist": "villalobos",
+      "count": 24
+    },
+    {
+      "artist": "andme",
+      "count": 24
+    },
+    {
+      "artist": "rampa",
+      "count": 24
+    },
+    {
+      "artist": "adamport",
+      "count": 24
+    },
+    {
+      "artist": "caiiro",
+      "count": 24
+    },
+    {
+      "artist": "enoonapa",
+      "count": 24
+    },
+    {
+      "artist": "bedouin",
+      "count": 24
+    },
+    {
+      "artist": "monolink",
+      "count": 24
+    },
+    {
+      "artist": "bk",
+      "count": 24
+    },
+    {
+      "artist": "purpledisco",
+      "count": 24
+    },
+    {
+      "artist": "terje",
+      "count": 24
+    },
+    {
+      "artist": "lindstrom",
+      "count": 24
+    },
+    {
+      "artist": "armin",
+      "count": 24
+    },
+    {
+      "artist": "abgt",
+      "count": 24
+    }
+  ],
+  "byApproach": {
+    "hook": {
+      "motifs": 120,
+      "meanNotes": 7.42,
+      "meanRange": 5,
+      "meanAdjacentRepeatPercent": 38.7
+    },
+    "rave": {
+      "motifs": 360,
+      "meanNotes": 10.67,
+      "meanRange": 5.99,
+      "meanAdjacentRepeatPercent": 56.3
+    },
+    "cinematic": {
+      "motifs": 300,
+      "meanNotes": 6.43,
+      "meanRange": 5.96,
+      "meanAdjacentRepeatPercent": 36.9
+    },
+    "percussion": {
+      "motifs": 480,
+      "meanNotes": 8.38,
+      "meanRange": 4.88,
+      "meanAdjacentRepeatPercent": 60.4
+    },
+    "hypnotic": {
+      "motifs": 420,
+      "meanNotes": 6.37,
+      "meanRange": 3.12,
+      "meanAdjacentRepeatPercent": 72.5
+    },
+    "rolling": {
+      "motifs": 180,
+      "meanNotes": 13.6,
+      "meanRange": 4.47,
+      "meanAdjacentRepeatPercent": 70.5
+    },
+    "disco": {
+      "motifs": 300,
+      "meanNotes": 10.48,
+      "meanRange": 6.15,
+      "meanAdjacentRepeatPercent": 46.2
+    },
+    "broken": {
+      "motifs": 180,
+      "meanNotes": 7.72,
+      "meanRange": 5.33,
+      "meanAdjacentRepeatPercent": 41.9
+    },
+    "sequence": {
+      "motifs": 420,
+      "meanNotes": 12.55,
+      "meanRange": 11.74,
+      "meanAdjacentRepeatPercent": 20.1
+    },
+    "acid": {
+      "motifs": 120,
+      "meanNotes": 15.07,
+      "meanRange": 14.36,
+      "meanAdjacentRepeatPercent": 44.5
+    },
+    "stab": {
+      "motifs": 420,
+      "meanNotes": 7.2,
+      "meanRange": 4.86,
+      "meanAdjacentRepeatPercent": 58.4
+    },
+    "jack": {
+      "motifs": 360,
+      "meanNotes": 9.85,
+      "meanRange": 11.01,
+      "meanAdjacentRepeatPercent": 44.9
+    },
+    "vocal": {
+      "motifs": 300,
+      "meanNotes": 10.44,
+      "meanRange": 6.99,
+      "meanAdjacentRepeatPercent": 50.2
+    },
+    "piano": {
+      "motifs": 180,
+      "meanNotes": 9.16,
+      "meanRange": 7.72,
+      "meanAdjacentRepeatPercent": 37
+    }
+  },
+  "meanRange": 6.752657004830918,
+  "meanAdjacentRepeatPercent": 49.683816425120774,
+  "hookAndCinematicWithHolds": 420,
+  "note": "Structural diagnostics, not a musical quality score. No claim of actual Ableton audition."
+}

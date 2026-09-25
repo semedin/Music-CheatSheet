@@ -1,0 +1,834 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Move — 24 transformations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E2DED2;--panel:#F2EFE6;--panel-2:#EAE5D8;
+  --ink:#191713;--ink-2:#635C50;--ink-3:#8C8474;--line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32;--b2:#FF8A2B;--b3:#FFC531;--b4:#F2EDE0;--cy:#3FD0C9;--vi:#A78BFA;--gr:#5FBF52;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(46px,11.5vw,124px);line-height:.82;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:62ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+.warn{margin-top:18px;background:var(--ink);color:var(--b4);border-radius:5px;padding:12px 15px;
+  font-family:var(--mono);font-size:12px;line-height:1.65;max-width:74ch}
+.warn b{color:var(--b3)}
+.transport{position:sticky;top:0;z-index:95;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:11px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;background:var(--b1);color:#fff;
+  border:0;border-radius:3px;padding:9px 14px;cursor:pointer;white-space:nowrap}
+.tbtn.ghost{background:transparent;color:var(--b4);border:1px solid rgba(242,237,224,.35)}
+.tbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.tbtn:hover{filter:brightness(1.12)}
+.knob{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.66)}
+.knob input[type=range]{width:72px;accent-color:var(--b2)}
+.knob b{color:var(--b4);min-width:34px;display:inline-block}
+.abflag{margin-left:auto;font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.01em;
+  padding:3px 14px;border-radius:3px;background:rgba(242,237,224,.14);color:var(--b4);white-space:nowrap}
+.abflag.b{background:var(--b1);color:#fff}
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 0}
+.nav a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;
+  color:var(--ink-2);border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--panel)}
+.nav a:hover{border-color:var(--ink);color:var(--ink)}
+.sec{padding:48px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:20px}
+.sec-head h2{font-size:clamp(26px,4.4vw,42px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:68ch;margin-top:12px;color:var(--ink-2)}
+.lab{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:20px}
+
+/* stage */
+.stage-top{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:13px}
+.stage-top h3{font-size:24px;flex:1;min-width:200px}
+.stage-top p{font-size:14.5px;color:var(--ink-2);margin:6px 0 0;max-width:70ch}
+.tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.11em;padding:3px 7px;border-radius:2px;
+  background:var(--ink);color:var(--b4);text-transform:uppercase;white-space:nowrap}
+.tag.h{background:var(--cy);color:var(--ink)}
+.tag.r{background:var(--b2);color:var(--ink)}
+.abrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+@media(max-width:820px){.abrow{grid-template-columns:1fr}}
+.pane{background:var(--lane);border-radius:5px;overflow:hidden;position:relative}
+.pane canvas{display:block;width:100%;height:172px}
+.pane .lbl{position:absolute;top:7px;left:10px;font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.14em;color:rgba(242,237,224,.5);text-transform:uppercase;pointer-events:none}
+.pane.live{box-shadow:0 0 0 2px var(--b3)}
+.pane.live .lbl{color:var(--b3)}
+.deltas{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;font-family:var(--mono);font-size:10px;
+  color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
+.deltas b{color:var(--ink);font-size:14px;display:block;font-family:var(--display);font-weight:800;letter-spacing:0}
+.deltas b.up{color:var(--b1)} .deltas b.dn{color:var(--gr)}
+.usewhen{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:10px 12px;border-radius:0 3px 3px 0;margin:0 0 12px}
+.usewhen b{color:var(--b1)}
+.abctl{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.tool{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:8px 12px;cursor:pointer;color:var(--ink-2)}
+.tool:hover{border-color:var(--ink);color:var(--ink)}
+.tool[aria-pressed="true"]{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.tool.hi{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.tool.hi:hover{background:var(--b1);border-color:var(--b1);color:#fff}
+.parts{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
+.pt{font-family:var(--mono);font-size:9px;font-weight:700;border:1px solid var(--line);background:transparent;
+  border-radius:2px;padding:5px 8px;cursor:pointer;color:var(--ink-3);text-transform:uppercase}
+.pt[aria-pressed="true"]{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+
+/* move cards */
+.moves{display:grid;gap:11px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.mv{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:13px;display:flex;flex-direction:column;gap:8px;cursor:pointer}
+.mv:hover{border-color:var(--ink)}
+.mv[aria-pressed="true"]{border-color:var(--b1);box-shadow:0 0 0 2px rgba(255,75,50,.22)}
+.mv-top{display:flex;align-items:baseline;gap:8px}
+.mv h4{font-size:15.5px;flex:1;line-height:1.2}
+.mv p{font-size:13px;color:var(--ink-2);margin:0;line-height:1.45}
+.mv .d{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);letter-spacing:.05em}
+.mv .d b{color:var(--b1)}
+
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700}
+tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.note{font-size:14.5px;color:var(--ink-2);margin:13px 0 0;max-width:78ch}
+.note b{color:var(--ink)}
+.foot{border-top:2px solid var(--ink);margin-top:54px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:620px){.knob input[type=range]{width:56px}.abflag{font-size:17px}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="index.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Field guide 08 · twenty-four transformations · rhythm &amp; harmony</div>
+    <h1>One move.<br>Same eight<br><em>bars</em>.</h1>
+    <p class="sub">Every technique on this page is applied to <strong>identical material</strong> — one loop, one key, one tempo — so the only variable is the move itself. Press play and the page alternates <strong>four bars of the original, four bars of the transformation</strong>, forever, until you can hear exactly what changed and decide whether you want it.</p>
+    <div class="warn">⚠ <b>These work because they are rare.</b> Every one of them is a decision that reorients a listener, and a track wearing four of them is not four times as interesting — it is incoherent. The honest rule is <b>one per track</b>, placed at a moment that matters: a drop, a final chorus, the bar before a breakdown. If you cannot say which bar you would put it in, you do not need it yet.</div>
+  </div>
+</div>
+
+<div class="transport">
+  <div class="wrap">
+    <button class="tbtn" id="playBtn">▶ PLAY</button>
+    <button class="tbtn ghost" id="modeA">HOLD A</button>
+    <button class="tbtn ghost" id="modeAuto" aria-pressed="true">AUTO A/B</button>
+    <button class="tbtn ghost" id="modeB">HOLD B</button>
+    <label class="knob">BPM <input type="range" id="bpm" min="100" max="150" value="126"><b id="bpmv">126</b></label>
+    <label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="70"><b id="volv">70</b></label>
+    <span class="abflag" id="abFlag">A · original</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="index.html" class="nav-home">← Index</a>
+    <a href="#stage">1 · The stage</a>
+    <a href="#rhythm">2 · Rhythm moves</a>
+    <a href="#harmony">3 · Harmony moves</a>
+    <a href="#using">4 · Using them</a>
+  </nav>
+
+  <section class="sec" id="stage">
+    <div class="sec-head">
+      <div class="eyebrow">Section 01 · interactive</div>
+      <h2>The stage</h2>
+      <p>Two bars of A minor at 126: four-on-the-floor, offbeat bass, offbeat stabs on Am7 then Fmaj7, and a 16th lead figure. Deliberately ordinary. Pick a move below and it is applied to this and nothing else.</p>
+    </div>
+
+    <div class="lab">
+      <div class="stage-top">
+        <div style="flex:1;min-width:220px">
+          <h3 id="mvName">Beat displacement</h3>
+          <p id="mvWhy">—</p>
+        </div>
+        <span class="tag r" id="mvFam">Rhythm</span>
+      </div>
+
+      <div class="abrow">
+        <div class="pane" id="paneA"><canvas id="cvA"></canvas><span class="lbl">A · original</span></div>
+        <div class="pane" id="paneB"><canvas id="cvB"></canvas><span class="lbl">B · after the move</span></div>
+      </div>
+
+      <div class="deltas" id="deltas"></div>
+      <p class="usewhen" id="mvWhen">—</p>
+
+      <div class="abctl">
+        <button class="tool hi" id="midiA">⬇ MIDI · A</button>
+        <button class="tool hi" id="midiB">⬇ MIDI · B</button>
+        <button class="tool" id="prevMv">← Previous</button>
+        <button class="tool" id="nextMv">Next move →</button>
+        <span class="parts" id="parts"></span>
+      </div>
+
+      <p class="note"><b>Changed notes are outlined in white in pane B.</b> Everything else is identical to pane A — same notes, same velocities, same tempo. If a move looks like it barely changed anything on screen and still sounds completely different, that is the point of the entire page.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="rhythm">
+    <div class="sec-head">
+      <div class="eyebrow">Section 02 · twelve moves</div>
+      <h2>Rhythm</h2>
+      <p>These change what the listener believes is happening without changing the tempo. They are the most disorienting tools available to a producer and the least used, because a sequencer does not suggest them.</p>
+    </div>
+    <div class="moves" id="mv-rhythm"></div>
+  </section>
+
+  <section class="sec" id="harmony">
+    <div class="sec-head">
+      <div class="eyebrow">Section 03 · twelve moves</div>
+      <h2>Harmony</h2>
+      <p>The Voicing guide covers the vocabulary you use every day. These are the exceptions — chords that do not belong to the key, reflections, substitutions and modal shifts. One of them, once, in the right bar.</p>
+    </div>
+    <div class="moves" id="mv-harmony"></div>
+  </section>
+
+  <section class="sec" id="using">
+    <div class="sec-head">
+      <div class="eyebrow">Section 04</div>
+      <h2>Using them</h2>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>Where a move belongs</h3>
+        <ul>
+          <li><b>The final chorus or last main section.</b> By then the listener knows the material well enough that a change registers as a decision rather than confusion.</li>
+          <li><b>The last two bars before a drop.</b> Half-time, silence and displacement all work here because the return to normal is itself the payoff.</li>
+          <li><b>The breakdown.</b> Harmony moves belong here more than rhythm ones — with the drums gone there is room to hear a chord that does not belong.</li>
+          <li><b>Never in the first sixteen bars.</b> You cannot subvert an expectation you have not established.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>The reversal rule</h3>
+        <ul>
+          <li>Most of these are more effective <b>going back</b> than going out. Half-time for four bars is fine; the moment it returns to full time is the event.</li>
+          <li>So plan the exit before the entry. A displacement that never resolves just sounds like a mistake in the render.</li>
+          <li><b>Length matters more than the move.</b> Four bars is usually right; eight is bold; sixteen means it is now the track, not a move.</li>
+          <li>If you use one at the 3/4 point and undo it, you have a structure. Most producers get this by accident once and never work out what they did.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Rhythm moves specifically</h3>
+        <ul>
+          <li><b>Keep the kick as an anchor</b> for most of them. Displacement with the kick moving too is not a move, it is a different loop.</li>
+          <li><b>Metric modulation needs a long runway.</b> Establish the dotted-8th figure for eight bars before you let it become the pulse, or nobody follows.</li>
+          <li><b>Phasing needs patience.</b> The interest is in the middle of the drift, so it wants sixteen bars minimum.</li>
+          <li>Half-time is the one you can use in almost any genre and the one most likely to become a cliché. Once.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Harmony moves specifically</h3>
+        <ul>
+          <li><b>Change one chord, not all four.</b> A chromatic mediant landing on bar 4 of a progression is a moment; four of them is atonal.</li>
+          <li><b>Keep the bass still when the harmony gets strange.</b> A pedal point makes almost any chord above it sound intentional.</li>
+          <li><b>Negative harmony is a generator, not a rule.</b> Reflect a progression, keep the two chords you like, discard the rest.</li>
+          <li>A modal shift that changes one note is usually stronger than a substitution that changes three. Try Dorian before you try a tritone sub.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Move</th><th>Family</th><th>Reversible</th><th>Typical length</th></tr></thead>
+      <tbody id="moveTable"></tbody>
+    </table></div>
+  </section>
+
+  <div class="foot">
+    <p><strong>The discipline is the content.</strong> Twenty-four moves is not a menu to work through — it is a set you should mostly ignore. The producers who use these well use one of them per record, at a moment they chose in advance, and let the other twenty-three sit unused. That restraint is the actual technique; everything above is just the catalogue.</p>
+    <p style="color:var(--ink-3);font-size:13px">All audio synthesised live. Every move is a pure transformation of the same two-bar bed, so the deltas shown are exact rather than illustrative.</p>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   AUDIO
+   ===================================================================== */
+let AC=null,master=null,limiter=null,bus=null;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.7;
+    limiter=AC.createDynamicsCompressor();
+    limiter.threshold.value=-6;limiter.knee.value=4;limiter.ratio.value=12;
+    limiter.attack.value=.003;limiter.release.value=.12;
+    bus=AC.createGain(); bus.connect(limiter); limiter.connect(master); master.connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+let _nb=null;
+function noiseSrc(){
+  if(!_nb){const n=Math.floor(AC.sampleRate*.5);_nb=AC.createBuffer(1,n,AC.sampleRate);
+    const d=_nb.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;}
+  const s=AC.createBufferSource();s.buffer=_nb;s.loop=true;return s;
+}
+function shaper(k){const w=AC.createWaveShaper(),n=512,c=new Float32Array(n),a=1+k*22;
+  for(let i=0;i<n;i++){const x=i*2/n-1;c[i]=Math.tanh(a*x)/Math.tanh(a);}w.curve=c;return w;}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function eg(g,t,pk,a,d){g.setValueAtTime(0,t);g.linearRampToValueAtTime(pk,t+a);g.exponentialRampToValueAtTime(.0001,t+a+d);}
+function vKick(t){
+  const o=AC.createOscillator();o.type='sine';
+  o.frequency.setValueAtTime(158,t);o.frequency.exponentialRampToValueAtTime(52,t+.05);
+  const g=AC.createGain();eg(g.gain,t,.85,.002,.32);
+  const d=shaper(.3);o.connect(g);g.connect(d);d.connect(bus);o.start(t);o.stop(t+.4);
+}
+function vClap(t){
+  const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1300;bp.Q.value=1.1;bp.connect(bus);
+  [0,1,2].forEach(i=>{const n=noiseSrc(),g=AC.createGain(),tt=t+i*.011;
+    eg(g.gain,tt,.27,.001,.017);n.connect(g);g.connect(bp);n.start(tt);n.stop(tt+.06);});
+  const n=noiseSrc(),g=AC.createGain();eg(g.gain,t+.022,.18,.003,.2);
+  n.connect(g);g.connect(bp);n.start(t+.022);n.stop(t+.3);
+}
+function vHat(t,open,v){
+  const n=noiseSrc(),hp=AC.createBiquadFilter();hp.type='highpass';hp.frequency.value=8400;
+  const g=AC.createGain(),d=open?.14:.03;
+  eg(g.gain,t,.13*(v/127),.0008,d);n.connect(hp);hp.connect(g);g.connect(bus);n.start(t);n.stop(t+d+.06);
+}
+function vBass(t,f,dur,v){
+  const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f;
+  const s=AC.createOscillator();s.type='sine';s.frequency.value=f;
+  const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=5;
+  lp.frequency.setValueAtTime(1500,t);lp.frequency.exponentialRampToValueAtTime(330,t+.12);
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.30*(v/127),t+.004);
+  g.gain.setValueAtTime(.30*(v/127),t+Math.max(.02,dur-.03));
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur+.03);
+  const sg=AC.createGain();sg.gain.value=.55;
+  o.connect(lp);s.connect(sg);sg.connect(lp);lp.connect(g);g.connect(bus);
+  o.start(t);s.start(t);o.stop(t+dur+.1);s.stop(t+dur+.1);
+}
+function vChord(t,notes,dur,v){
+  notes.forEach(m=>{
+    const f=mtof(m);
+    const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f;
+    const o2=AC.createOscillator();o2.type='sawtooth';o2.frequency.value=f*1.006;
+    const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=3;
+    lp.frequency.setValueAtTime(1500,t);lp.frequency.exponentialRampToValueAtTime(620,t+.12);
+    const g=AC.createGain();
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.048*(v/127),t+.005);
+    g.gain.setValueAtTime(.048*(v/127),t+Math.max(.02,dur*.7));
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur+.09);
+    o.connect(lp);o2.connect(lp);lp.connect(g);g.connect(bus);
+    o.start(t);o2.start(t);o.stop(t+dur+.15);o2.stop(t+dur+.15);
+  });
+}
+function vLead(t,f,dur,v){
+  const o=AC.createOscillator();o.type='square';o.frequency.value=f;
+  const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=6;
+  lp.frequency.setValueAtTime(2900,t);lp.frequency.exponentialRampToValueAtTime(760,t+.1);
+  const g=AC.createGain();eg(g.gain,t,.075*(v/127),.003,Math.max(.05,dur));
+  o.connect(lp);lp.connect(g);g.connect(bus);o.start(t);o.stop(t+dur+.14);
+}
+
+/* =====================================================================
+   THE BED  ·  2 bars, A minor.  pitches are semitones from the key root
+   ===================================================================== */
+const KEY=45;                    /* A2 as the reference root */
+const BASE={
+  kick:[0,4,8,12,16,20,24,28],
+  clap:[4,12,20,28],
+  hatO:[2,6,10,14,18,22,26,30],
+  hatC:[0,4,8,12,16,20,24,28,1,5,9,13,17,21,25,29].sort((a,b)=>a-b),
+  bass:[2,6,10,14,18,22,26,30].map((s,i)=>({s,l:1.6,p:(s<16?0:-4),v:i%2?92:110})),
+  chord:[2,6,10,14,18,22,26,30].map((s,i)=>({s,l:1.3,
+    notes:(s<16?[12,15,19,22]:[8,12,15,19]),v:i%2?86:104})),
+  lead:[{s:0,l:.9,p:24,v:110},{s:2,l:.9,p:27,v:84},{s:3,l:.9,p:31,v:96},{s:6,l:1.8,p:27,v:104},
+        {s:8,l:.9,p:24,v:106},{s:10,l:.9,p:27,v:82},{s:11,l:.9,p:31,v:94},{s:14,l:1.8,p:34,v:112},
+        {s:16,l:.9,p:20,v:108},{s:18,l:.9,p:24,v:84},{s:19,l:.9,p:27,v:96},{s:22,l:1.8,p:24,v:102},
+        {s:24,l:.9,p:20,v:106},{s:26,l:.9,p:24,v:82},{s:27,l:.9,p:27,v:94},{s:30,l:1.8,p:19,v:110}]
+};
+const clone=b=>({kick:[...b.kick],clap:[...b.clap],hatO:[...b.hatO],hatC:[...b.hatC],
+  bass:b.bass.map(n=>({...n})),chord:b.chord.map(n=>({...n,notes:[...n.notes]})),
+  lead:b.lead.map(n=>({...n})),bars:b.bars||2,swingHats:b.swingHats||0});
+const wrap=(s,bars)=>((s%(bars*16))+(bars*16))%(bars*16);
+
+/* =====================================================================
+   MEASUREMENT
+   ===================================================================== */
+function metricW(step){
+  const s=((step%16)+16)%16;
+  if(Math.abs(s-Math.round(s))>1e-6) return 0;
+  if(s===0) return 4; if(s===8) return 3;
+  if(s===4||s===12) return 2; if(s%2===0) return 1; return 0;
+}
+function syncopation(notes,bars){
+  const total=bars*16;
+  const on=[...new Set(notes.map(n=>Math.round(n.s*2)/2))].sort((a,b)=>a-b);
+  let sc=0;
+  notes.forEach(n=>{
+    const s=Math.round(n.s*2)/2, ws=metricW(s);
+    const nx=on.find(o=>o>s+1e-9), end=(nx!==undefined)?nx:total;
+    let best=ws;
+    for(let k=s+.5;k<end-1e-9;k+=.5){const w=metricW(k); if(w>best) best=w;}
+    sc+=Math.max(0,best-ws);
+  });
+  return sc;
+}
+function allNotes(b){
+  return [...b.bass.map(n=>({...n,part:'bass'})),...b.lead.map(n=>({...n,part:'lead'})),
+    ...b.chord.flatMap(n=>n.notes.map(p=>({s:n.s,l:n.l,p,v:n.v,part:'chord'})))];
+}
+function pcSet(b){
+  const s=new Set();
+  b.chord.forEach(c=>c.notes.forEach(n=>s.add(((n%12)+12)%12)));
+  b.bass.forEach(n=>s.add(((n.p%12)+12)%12));
+  return s;
+}
+function deltas(A,B){
+  const na=allNotes(A), nb=allNotes(B);
+  const key=n=>n.part+':'+n.s.toFixed(2)+':'+n.p;
+  const setA=new Set(na.map(key)), setB=new Set(nb.map(key));
+  const added=nb.filter(n=>!setA.has(key(n))).length;
+  const removed=na.filter(n=>!setB.has(key(n))).length;
+  const changed=added+removed;
+  const dk=['kick','clap','hatO','hatC'].reduce((acc,k)=>{
+    const sa=new Set(A[k]), sb=new Set(B[k]);
+    return acc+B[k].filter(x=>!sa.has(x)).length+A[k].filter(x=>!sb.has(x)).length;},0);
+  const pa=pcSet(A), pb=pcSet(B);
+  const newPC=[...pb].filter(x=>!pa.has(x)).length;
+  return {
+    syncA:syncopation(na,A.bars), syncB:syncopation(nb,B.bars),
+    changed, added, removed, drumChanged:dk, swing:B.swingHats||0, total:nb.length, newPC,
+    hitsA:A.kick.length+A.clap.length, hitsB:B.kick.length+B.clap.length
+  };
+}
+
+/* =====================================================================
+   MOVES
+   ===================================================================== */
+const T=(arr,f)=>arr.map(f);
+const shiftNotes=(arr,d,bars)=>arr.map(n=>({...n,s:wrap(n.s+d,bars)}));
+/* negative harmony: reflect a pitch class about the axis between tonic and fifth */
+const NEGAX=7;   /* pitches are semitones from the tonic, so the axis sum is tonic(0)+fifth(7) */
+function negate(p){
+  const oct=Math.floor(p/12), pc=((p%12)+12)%12;
+  const r=((NEGAX-pc)%12+12)%12;
+  return oct*12+r;
+}
+const MOVES=[
+/* ---------------- RHYTHM ---------------- */
+{id:'displace',fam:'Rhythm',n:'Beat displacement',rev:'Yes',len:'4–8 bars',
+ w:'Everything except the kick moves one 16th later. The drums say beat one is here; every other part says it is a 16th later, and the ear cannot fully choose.',
+ when:'<b>Use at:</b> the last 4 bars before a drop, or the second half of a long main section. The return to alignment is the payoff, so always come back.',
+ f(b){b.bass=shiftNotes(b.bass,1,b.bars);b.chord=shiftNotes(b.chord,1,b.bars);
+      b.lead=shiftNotes(b.lead,1,b.bars);b.clap=b.clap.map(s=>wrap(s+1,b.bars));return b;}},
+{id:'metric',fam:'Rhythm',n:'Metric modulation',rev:'Yes',len:'8–16 bars',
+ w:'The lead and stabs are re-gridded to every three 16ths. A dotted-8th pulse becomes the apparent beat, so the track sounds like it slowed to three quarters of its tempo without the BPM moving at all.',
+ when:'<b>Use at:</b> a breakdown, with a long runway. Establish the 3/16 figure for eight bars first or nobody follows you across.',
+ f(b){const tot=b.bars*16;
+   b.lead=b.lead.map((n,i)=>({...n,s:(i*3)%tot,l:2.4}));
+   b.chord=b.chord.map((n,i)=>({...n,s:(i*6)%tot,l:2.6}));
+   b.lead.sort((x,y)=>x.s-y.s);b.chord.sort((x,y)=>x.s-y.s);return b;}},
+{id:'halftime',fam:'Rhythm',n:'Half-time feel',rev:'Yes',len:'4–8 bars',
+ w:'Kick on one and three only, clap moved to bar-centre, hats halved. The tempo is untouched but the perceived pulse halves, so the track appears to drop into slow motion.',
+ when:'<b>Use at:</b> the four bars before the final drop, or once in a breakdown. The most effective and most overused move here — genuinely once per track.',
+ f(b){b.kick=[0,8,16,24];b.clap=[8,24];b.hatO=[4,12,20,28];
+   b.hatC=b.hatC.filter(s=>s%4===0);
+   b.bass=b.bass.filter((n,i)=>i%2===0).map(n=>({...n,l:3.2}));return b;}},
+{id:'doubletime',fam:'Rhythm',n:'Double-time feel',rev:'Yes',len:'2–4 bars',
+ w:'The drums double: kick on every 8th, clap on every beat. Nothing melodic changes, so the same bassline suddenly reads as half-speed against a track that has doubled.',
+ when:'<b>Use at:</b> the last two bars of a build. Longer than four bars and it stops being a lift and becomes a different genre.',
+ f(b){b.kick=[];for(let s=0;s<b.bars*16;s+=2)b.kick.push(s);
+   b.clap=[];for(let s=4;s<b.bars*16;s+=8)b.clap.push(s);
+   b.hatC=[];for(let s=1;s<b.bars*16;s+=2)b.hatC.push(s);return b;}},
+{id:'hemiola',fam:'Rhythm',n:'Hemiola · 3 over 4',rev:'Yes',len:'4 bars',
+ w:'The lead is regrouped into threes across a four-beat bar, so a three-against-four cross-rhythm appears on top of an unchanged kick. The bar briefly feels like waltz time without leaving 4/4.',
+ when:'<b>Use at:</b> bars 5–8 of an eight-bar phrase, so the return in bar 9 lands. Works best on a single high element, never on the bass.',
+ f(b){const tot=b.bars*16, pit=[24,27,31,27];
+   b.lead=Array.from({length:Math.floor(tot/3)},(_,i)=>
+     ({s:i*3,l:2.4,p:pit[i%pit.length],v:i%2===0?110:84}));return b;}},
+{id:'phase',fam:'Rhythm',n:'Phasing',rev:'Slowly',len:'16+ bars',
+ w:'A second copy of the lead, one 32nd later. Over a long section the two drift in and out of unison and produce rhythms neither of them contains — the Steve Reich trick, transplanted.',
+ when:'<b>Use at:</b> a long hypnotic section, sixteen bars minimum. The interest is entirely in the middle of the drift, so a short version wastes it.',
+ f(b){const copy=b.lead.map(n=>({...n,s:wrap(n.s+.5,b.bars),v:Math.round(n.v*.72)}));
+   b.lead=[...b.lead,...copy].sort((x,y)=>x.s-y.s);return b;}},
+{id:'turnaround',fam:'Rhythm',n:'Turnaround shift',rev:'Yes',len:'8 bars',
+ w:'The entire loop is rotated by half a bar. Every relationship inside it is preserved; only its relationship to the bar line changes, and suddenly nobody can find beat one.',
+ when:'<b>Use at:</b> the start of a second main section, so the same material returns wearing a different orientation. Rotate back at the next boundary.',
+ f(b){const d=8;
+   ['kick','clap','hatO','hatC'].forEach(k=>b[k]=b[k].map(s=>wrap(s+d,b.bars)).sort((x,y)=>x-y));
+   b.bass=shiftNotes(b.bass,d,b.bars);b.chord=shiftNotes(b.chord,d,b.bars);
+   b.lead=shiftNotes(b.lead,d,b.bars);return b;}},
+{id:'backbeat',fam:'Rhythm',n:'Backbeat displacement',rev:'Yes',len:'4–8 bars',
+ w:'The clap alone moves a 16th late. One part, one step, and the entire bar leans backwards — this is where a lot of the swagger in broken house and garage actually comes from.',
+ when:'<b>Use at:</b> anywhere, and it is subtle enough to leave in. The smallest move on this page and one of the most useful.',
+ f(b){b.clap=b.clap.map(s=>wrap(s+1,b.bars));return b;}},
+{id:'isoswing',fam:'Rhythm',n:'Isolated swing',rev:'Yes',len:'any',
+ w:'Only the hats are swung, to a heavy 64%. Everything else stays rigid, so the tension is between the top of the kit and the rest of the track rather than inside a global groove setting.',
+ when:'<b>Use at:</b> a section that needs looseness without losing drive. Swinging everything is a genre choice; swinging one element is a move.',
+ f(b){b.swingHats=64;return b;}},
+{id:'kickdrop',fam:'Rhythm',n:'Kick omission',rev:'Yes',len:'1–2 bars',
+ w:'The kick disappears on beat three of the second bar. Nothing is added; the floor simply is not there for a quarter note, and every other part becomes momentarily audible.',
+ when:'<b>Use at:</b> the eighth bar of a sixteen-bar phrase. Costs nothing, needs no plugin, and does more than most risers.',
+ f(b){b.kick=b.kick.filter(s=>s!==24);return b;}},
+{id:'triplet',fam:'Rhythm',n:'Triplet conversion',rev:'Yes',len:'2–4 bars',
+ w:'The lead is rewritten as triplet 8ths — twelve notes per bar instead of sixteen. Three against four in the top register, against a kick that has not moved.',
+ when:'<b>Use at:</b> a two-bar fill, or a four-bar section in a shuffle-leaning track. Reads as a stumble, which is the intention.',
+ f(b){const pit=[24,27,31,27,24,20];
+   b.lead=Array.from({length:b.bars*12},(_,i)=>
+     ({s:i*(4/3),l:1.0,p:pit[i%pit.length],v:i%3===0?108:80}));return b;}},
+{id:'anticipate',fam:'Rhythm',n:'Anticipation',rev:'Yes',len:'phrase ends',
+ w:'The harmony for bar two arrives a 16th before the bar line. The chord change happens before the downbeat confirms it, which tilts the loop forward instead of letting it reset.',
+ when:'<b>Use at:</b> the 4-, 8- and 16-bar boundaries, never every bar. Overused, it stops reading as anticipation and starts reading as sloppy timing.',
+ f(b){const half=16;
+   b.chord=b.chord.map(n=>n.s===half?{...n,s:half-1,l:n.l+1}:n);
+   b.bass=b.bass.map(n=>n.s===18?{...n,s:15,l:2.6}:n);
+   b.chord.sort((x,y)=>x.s-y.s);b.bass.sort((x,y)=>x.s-y.s);return b;}},
+
+/* ---------------- HARMONY ---------------- */
+{id:'mediant',fam:'Harmony',n:'Chromatic mediant',rev:'Yes',len:'1 chord',
+ w:'Bar two moves from F major to F sharp major — a root a semitone away, a chord sharing one note with the key and belonging to no scale you are in. Cinematic, slightly wrong, immediately memorable.',
+ when:'<b>Use at:</b> the final chord of a four- or eight-bar progression, once. Two chromatic mediants in a row is not a move, it is atonality.',
+ f(b){b.chord=b.chord.map(n=>n.s>=16?{...n,notes:[9,13,16,21]}:n);   /* F# A# C# F# */
+   b.bass=b.bass.map(n=>n.s>=16?{...n,p:-3}:n);return b;}},
+{id:'negative',fam:'Harmony',n:'Negative harmony',rev:'No',len:'a section',
+ w:'Every pitch is reflected about the axis between the tonic and its fifth. A minor becomes A major, the bassline inverts its contour, and the progression keeps its shape while changing its emotional sign entirely.',
+ when:'<b>Use as:</b> a generator, not a rule. Reflect the progression, keep the two chords you like, throw the rest away. This is a writing tool that happens to be usable live.',
+ f(b){b.chord=b.chord.map(n=>({...n,notes:n.notes.map(negate)}));
+   b.bass=b.bass.map(n=>({...n,p:negate(n.p)}));
+   b.lead=b.lead.map(n=>({...n,p:negate(n.p)}));return b;}},
+{id:'tritone',fam:'Harmony',n:'Tritone substitution',rev:'Yes',len:'1 chord',
+ w:'Bar two becomes a B flat dominant seventh — the chord a tritone from E7, sharing its third and seventh. The bass drops a semitone into the tonic instead of a fifth, which is where most chromatic basslines come from.',
+ when:'<b>Use at:</b> a turnaround into a repeat. It is a jazz device, so it lands hardest in a track that is otherwise plain.',
+ f(b){b.chord=b.chord.map(n=>n.s>=16?{...n,notes:[13,17,20,23]}:n);   /* Bb D F Ab */
+   b.bass=b.bass.map(n=>n.s>=16?{...n,p:1}:n);return b;}},
+{id:'parallel',fam:'Harmony',n:'Parallel major',rev:'Yes',len:'4–8 bars',
+ w:'Same root, every third raised. A minor becomes A major without moving the bass at all — the least expensive mood change available, and one that a listener registers instantly without knowing why.',
+ when:'<b>Use at:</b> a final chorus or the last main section. Going back to minor afterwards is optional and usually devastating.',
+ f(b){const up=p=>{const pc=((p%12)+12)%12; return (pc===3||pc===8||pc===10)?p+1:p;};   /* b3,b6,b7 raised */
+   b.chord=b.chord.map(n=>({...n,notes:n.notes.map(up)}));
+   b.lead=b.lead.map(n=>({...n,p:up(n.p)}));return b;}},
+{id:'dorian',fam:'Harmony',n:'Dorian lift',rev:'Yes',len:'a section',
+ w:'One note changes: the sixth degree is raised, so F becomes F sharp. Minor but not sad — the same progression acquires a lift that no amount of production can fake.',
+ when:'<b>Use at:</b> the second half of a track, or as the default for anything deep-house leaning. The single highest ratio of effect to effort on this page.',
+ f(b){const d=p=>((((p%12)+12)%12)===8)?p+1:p;   /* b6 -> natural 6 */
+   b.chord=b.chord.map(n=>({...n,notes:n.notes.map(d)}));
+   b.lead=b.lead.map(n=>({...n,p:d(n.p)}));
+   b.bass=b.bass.map(n=>({...n,p:d(n.p)}));return b;}},
+{id:'phrygian',fam:'Harmony',n:'Phrygian drop',rev:'Yes',len:'a section',
+ w:'The second degree is flattened — B becomes B flat — and the chord above the tonic becomes a major chord a semitone up. Immediately menacing, which is why dark techno has lived here for thirty years.',
+ when:'<b>Use at:</b> a peak-time section, or to turn a house idea into a techno one without rewriting it.',
+ f(b){const d=p=>((((p%12)+12)%12)===2)?p-1:p;   /* 2 -> b2 */
+   b.chord=b.chord.map(n=>n.s>=16?{...n,notes:[1,5,8,12]}:{...n,notes:n.notes.map(d)});
+   b.lead=b.lead.map(n=>({...n,p:d(n.p)}));
+   b.bass=b.bass.map(n=>n.s>=16?{...n,p:-11}:n);return b;}},
+{id:'pedal',fam:'Harmony',n:'Pedal point reharmonisation',rev:'Yes',len:'4–8 bars',
+ w:'The bass refuses to move off A while the chords above it walk through Dm, G and Cmaj7. Every chord becomes a colour over one root rather than a change of key centre, and strange voicings sound intentional.',
+ when:'<b>Use at:</b> a breakdown, or under anything harmonically adventurous. A still bass licenses almost any chord above it.',
+ f(b){const prog=[[12,15,19,22],[17,20,24,27],[22,26,29,32],[15,19,22,26]];   /* Am7 Dm7 G7 Cmaj7 over A */
+   b.chord=b.chord.map((n,i)=>({...n,notes:prog[Math.floor(i/2)%prog.length]}));
+   b.bass=b.bass.map(n=>({...n,p:0}));return b;}},
+{id:'quartal',fam:'Harmony',n:'Quartal voicing',rev:'Yes',len:'a section',
+ w:'The chords are rebuilt as stacked fourths instead of thirds. The harmony becomes ambiguous — neither clearly major nor minor — which is why Detroit and modern melodic techno reach for it constantly.',
+ when:'<b>Use at:</b> any section where the chords keep fighting the bassline. Removing the third removes the argument.',
+ f(b){b.chord=b.chord.map(n=>{const r=n.notes[0];return {...n,notes:[r,r+5,r+10,r+15]};});return b;}},
+{id:'relative',fam:'Harmony',n:'Relative major pivot',rev:'Yes',len:'4 bars',
+ w:'Bar two becomes C major seventh, the relative major. It shares three notes with A minor, so the change is almost free — and yet the section reads as having opened up.',
+ when:'<b>Use at:</b> the second half of a breakdown, to lift without leaving the key. The safest move on this page.',
+ f(b){b.chord=b.chord.map(n=>n.s>=16?{...n,notes:[15,19,22,26]}:n);
+   b.bass=b.bass.map(n=>n.s>=16?{...n,p:3}:n);return b;}},
+{id:'suspend',fam:'Harmony',n:'Suspension chain',rev:'Yes',len:'2–4 bars',
+ w:'Every third is replaced by a fourth, and nothing resolves. The harmony still functions but refuses to say whether it is happy or sad, which keeps a section hanging exactly where you want a build to hang.',
+ when:'<b>Use at:</b> the last four bars of a build, resolving to the real chord on the drop. The resolution is the point; the suspension is just the wait.',
+ f(b){b.chord=b.chord.map(n=>{const r=n.notes[0];return {...n,notes:[r,r+5,r+7,r+12]};});return b;}},
+{id:'chromabass',fam:'Harmony',n:'Chromatic bass descent',rev:'Yes',len:'4 bars',
+ w:'The chord stays on A minor while the bass walks down A, G sharp, G, F sharp. Each step recolours the same chord — Am, Am/G sharp, Am/G, Am/F sharp — so four chords appear from one.',
+ when:'<b>Use at:</b> a four-bar breakdown or an intro. The oldest way to get harmonic movement without writing a progression.',
+ f(b){const walk=[0,-1,-2,-3];
+   b.bass=b.bass.map((n,i)=>({...n,p:walk[Math.floor(i/2)%4]}));
+   b.chord=b.chord.map(n=>({...n,notes:[12,15,19,22]}));return b;}},
+{id:'modalcycle',fam:'Harmony',n:'Modal cycle on a static root',rev:'Yes',len:'8–16 bars',
+ w:'One bass note throughout, and the notes above it change mode each bar — Aeolian, then Dorian, then Phrygian. The root never moves, so what you hear is pure colour change with no harmonic motion at all.',
+ when:'<b>Use at:</b> a long hypnotic section where a real progression would be too much event. Change one note per bar and let the listener notice slowly.',
+ f(b){b.bass=b.bass.map(n=>({...n,p:0}));
+   b.chord=b.chord.map((n,i)=>({...n,notes:(i<4)?[12,15,19,22]:[12,15,19,21]}));   /* Am7 -> Am6, the Dorian colour */
+   b.lead=b.lead.map(n=>{const pc=((n.p%12)+12)%12;
+     return (n.s>=16&&pc===8)?{...n,p:n.p+1}:n;});return b;}}
+];
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const S={bpm:126,playing:false,mode:'auto',cur:0,live:'A',
+  parts:{kick:true,clap:true,hats:true,bass:true,chord:true,lead:true}};
+const stepDur=()=>60/S.bpm/4;
+function bedA(){return clone({...BASE,bars:2});}
+function bedB(){return MOVES[S.cur].f(clone({...BASE,bars:2}));}
+
+/* =====================================================================
+   DRAWING
+   ===================================================================== */
+const PC={bass:'#FF4B32',chord:'#3FD0C9',lead:'#FFC531',drum:'rgba(242,237,224,.55)'};
+function drawBed(cv,b,ref,cur){
+  const h=172,dpr=window.devicePixelRatio||1,w=cv.clientWidth||500;
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  const steps=b.bars*16;
+  for(let s=0;s<steps*2;s++){
+    const x=s/(steps*2)*w;
+    c.fillStyle=(s%32===0)?'rgba(255,255,255,.30)':((s%8===0)?'rgba(255,255,255,.13)':
+      (s%2===0?'rgba(255,255,255,.05)':'rgba(255,255,255,.02)'));
+    c.fillRect(x,0,1,h);
+  }
+  const drumH=30, melH=h-drumH-6;
+  /* drums */
+  const rows=[['kick',0],['clap',1],['hatO',2]];
+  rows.forEach(([k,r])=>{
+    b[k].forEach(s=>{
+      c.fillStyle=k==='kick'?'#FF4B32':(k==='clap'?'#FF8A2B':'rgba(242,237,224,.5)');
+      c.fillRect(s/steps*w,r*9+2,Math.max(2.5,w/steps*.6),6);
+    });
+  });
+  /* melodic */
+  const mel=[...b.bass.map(n=>({...n,part:'bass'})),
+             ...b.chord.flatMap(n=>n.notes.map(p=>({s:n.s,l:n.l,p,v:n.v,part:'chord'}))),
+             ...b.lead.map(n=>({...n,part:'lead'}))];
+  if(!mel.length) return;
+  const ps=mel.map(n=>n.p), lo=Math.min(...ps), hi=Math.max(...ps);
+  const rowsN=Math.max(1,hi-lo+1), rh=melH/rowsN;
+  const refKeys=ref?new Set([...ref.bass.map(n=>'bass:'+n.s.toFixed(2)+':'+n.p),
+    ...ref.chord.flatMap(n=>n.notes.map(p=>'chord:'+n.s.toFixed(2)+':'+p)),
+    ...ref.lead.map(n=>'lead:'+n.s.toFixed(2)+':'+n.p)]):null;
+  mel.forEach(n=>{
+    const x=n.s/steps*w, bw=Math.max(2,n.l/steps*w-.8);
+    const y=drumH+6+(hi-n.p)*rh, bh=Math.max(2.2,rh-1);
+    c.fillStyle=PC[n.part];
+    c.globalAlpha=.4+.6*(n.v/127);
+    c.fillRect(x,y,bw,bh); c.globalAlpha=1;
+    if(refKeys&&!refKeys.has(n.part+':'+n.s.toFixed(2)+':'+n.p)){
+      c.strokeStyle='rgba(255,255,255,.95)';c.lineWidth=1;
+      c.strokeRect(x-.5,y-.5,bw+1,bh+1);
+    }
+  });
+  if(cur!==undefined&&cur>=0){c.fillStyle='rgba(255,255,255,.8)';c.fillRect(cur*w,0,2,h);}
+}
+
+/* =====================================================================
+   TRANSPORT
+   ===================================================================== */
+let timer=null,raf=null,nextT=0,loops=[],barIx=0;
+function stop(){
+  if(timer)clearTimeout(timer);timer=null;
+  if(raf)cancelAnimationFrame(raf);raf=null;
+  S.playing=false;loops=[];
+  document.getElementById('playBtn').textContent='▶ PLAY';
+  setFlag('A');
+  render();
+}
+function start(){
+  audio(); if(S.playing) return; S.playing=true;
+  document.getElementById('playBtn').textContent='■ STOP';
+  nextT=AC.currentTime+.1; loops=[]; barIx=0; schedule(); animate();
+}
+function whichSide(bar){
+  if(S.mode==='a') return 'A';
+  if(S.mode==='b') return 'B';
+  return (Math.floor(bar/4)%2===0)?'A':'B';
+}
+function schedule(){
+  while(nextT<AC.currentTime+.3){
+    const sd=stepDur(), side=whichSide(barIx);
+    const b=(side==='A')?bedA():bedB();
+    const lb=barIx%b.bars, base=nextT;
+    const swO=s=>(b.swingHats&&Math.round(s)%2===1)?sd*((b.swingHats-50)/50):0;
+    const inBar=s=>Math.floor(s/16)===lb;
+    if(S.parts.kick) b.kick.filter(inBar).forEach(s=>vKick(base+(s-lb*16)*sd));
+    if(S.parts.clap) b.clap.filter(inBar).forEach(s=>vClap(base+(s-lb*16)*sd));
+    if(S.parts.hats){
+      b.hatO.filter(inBar).forEach(s=>vHat(base+(s-lb*16)*sd+swO(s),true,92));
+      b.hatC.filter(inBar).forEach(s=>vHat(base+(s-lb*16)*sd+swO(s),false,58));
+    }
+    if(S.parts.bass) b.bass.filter(n=>inBar(n.s)).forEach(n=>
+      vBass(base+(n.s-lb*16)*sd,mtof(KEY+n.p),Math.max(.05,n.l*sd),n.v));
+    if(S.parts.chord) b.chord.filter(n=>inBar(n.s)).forEach(n=>
+      vChord(base+(n.s-lb*16)*sd,n.notes.map(p=>KEY+p),Math.max(.05,n.l*sd),n.v));
+    if(S.parts.lead) b.lead.filter(n=>inBar(n.s)).forEach(n=>
+      vLead(base+(n.s-lb*16)*sd,mtof(KEY+n.p),Math.max(.05,n.l*sd),n.v));
+    loops.push({start:base,dur:16*sd,bar:lb,bars:b.bars,side});
+    nextT+=16*sd; barIx++;
+  }
+  loops=loops.filter(l=>l.start+l.dur>AC.currentTime-.4);
+  timer=setTimeout(()=>{if(S.playing)schedule();},50);
+}
+function setFlag(side){
+  S.live=side;
+  const f=document.getElementById('abFlag');
+  f.textContent=side==='A'?'A · original':'B · '+MOVES[S.cur].n;
+  f.className='abflag'+(side==='B'?' b':'');
+  document.getElementById('paneA').classList.toggle('live',side==='A'&&S.playing);
+  document.getElementById('paneB').classList.toggle('live',side==='B'&&S.playing);
+}
+function animate(){
+  function frame(){
+    if(!S.playing){raf=null;return;}
+    const now=AC.currentTime;
+    const L=loops.find(l=>now>=l.start&&now<l.start+l.dur);
+    if(L){
+      if(L.side!==S.live) setFlag(L.side);
+      const pos=(L.bar+(now-L.start)/L.dur)/L.bars;
+      const A=bedA(), B=bedB();
+      drawBed(document.getElementById('cvA'),A,null,L.side==='A'?pos:-1);
+      drawBed(document.getElementById('cvB'),B,A,L.side==='B'?pos:-1);
+    }
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+document.getElementById('playBtn').onclick=()=>S.playing?stop():start();
+['modeA','modeAuto','modeB'].forEach(id=>{
+  document.getElementById(id).onclick=()=>{
+    S.mode={modeA:'a',modeAuto:'auto',modeB:'b'}[id];
+    ['modeA','modeAuto','modeB'].forEach(x=>document.getElementById(x).setAttribute('aria-pressed',x===id));
+    if(S.mode!=='auto') setFlag(S.mode==='a'?'A':'B');
+  };
+});
+document.getElementById('bpm').oninput=e=>{S.bpm=+e.target.value;document.getElementById('bpmv').textContent=S.bpm;};
+document.getElementById('vol').oninput=e=>{document.getElementById('volv').textContent=e.target.value;
+  if(master)master.gain.value=(+e.target.value/100)*.95;};
+document.addEventListener('keydown',e=>{
+  if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.code==='Space'){e.preventDefault();S.playing?stop():start();}
+  if(e.key==='a'||e.key==='A')document.getElementById('modeA').click();
+  if(e.key==='b'||e.key==='B')document.getElementById('modeB').click();
+  if(e.key==='ArrowRight'){e.preventDefault();pickMove(S.cur+1);}
+  if(e.key==='ArrowLeft'){e.preventDefault();pickMove(S.cur-1);}
+});
+
+/* part toggles */
+const partsEl=document.getElementById('parts');
+[['kick','Kick'],['clap','Clap'],['hats','Hats'],['bass','Bass'],['chord','Chords'],['lead','Lead']].forEach(([k,n])=>{
+  const b=document.createElement('button'); b.className='pt'; b.textContent=n;
+  b.setAttribute('aria-pressed','true');
+  b.onclick=()=>{S.parts[k]=!S.parts[k];b.setAttribute('aria-pressed',S.parts[k]);};
+  partsEl.appendChild(b);
+});
+
+/* =====================================================================
+   MIDI
+   ===================================================================== */
+function varlen(n){const b=[n&0x7F];n>>=7;while(n>0){b.unshift((n&0x7F)|0x80);n>>=7;}return b;}
+function chunkOf(by){const l=by.length;return[0x4D,0x54,0x72,0x6B,(l>>24)&255,(l>>16)&255,(l>>8)&255,l&255,...by];}
+function mkTrack(name,ev,total,tempo){
+  ev.sort((a,b)=>a.t-b.t||a.type-b.type);
+  const nm=[...name].map(c=>{const v=c.charCodeAt(0);return v<128?v:0x2D;});
+  const t=[0,0xFF,0x03,nm.length,...nm];
+  if(tempo){const u=Math.round(60000000/S.bpm);
+    t.push(0,0xFF,0x51,0x03,(u>>16)&255,(u>>8)&255,u&255,0,0xFF,0x58,0x04,4,2,24,8);}
+  let last=0;
+  ev.forEach(e=>{varlen(e.t-last).forEach(x=>t.push(x));last=e.t;t.push(e.type,e.note,e.vel);});
+  varlen(Math.max(0,total-last)).forEach(x=>t.push(x));
+  t.push(0xFF,0x2F,0x00);
+  return chunkOf(t);
+}
+function evs(list,rootOffset){
+  const tps=24, ev=[];
+  list.forEach(n=>{
+    const on=Math.round(n.s*tps), off=Math.max(on+6,Math.round((n.s+n.l)*tps));
+    (n.notes||[n.p]).forEach(p=>{
+      const note=Math.max(0,Math.min(127,KEY+p+(rootOffset||0)));
+      ev.push({t:on,type:0x90,note,vel:Math.max(1,Math.min(127,Math.round(n.v)))});
+      ev.push({t:off,type:0x80,note,vel:0});
+    });
+  });
+  return ev;
+}
+function drumEvs(b){
+  const tps=24, ev=[], map={kick:36,clap:39,hatO:46,hatC:42};
+  Object.entries(map).forEach(([k,note])=>b[k].forEach(s=>{
+    const on=Math.round(s*tps);
+    ev.push({t:on,type:0x90,note,vel:100});
+    ev.push({t:on+10,type:0x80,note,vel:0});
+  }));
+  return ev;
+}
+function exportBed(b,label){
+  const total=b.bars*16*24;
+  const tracks=[mkTrack('Tempo',[],total,true),
+    mkTrack('Drums',drumEvs(b),total,false),
+    mkTrack('Bass',evs(b.bass),total,false),
+    mkTrack('Chords',evs(b.chord),total,false),
+    mkTrack('Lead',evs(b.lead),total,false)];
+  const nt=tracks.length;
+  const head=[0x4D,0x54,0x68,0x64,0,0,0,6,0,1,(nt>>8)&255,nt&255,0,96];
+  const blob=new Blob([new Uint8Array([...head,...tracks.flat()])],{type:'audio/midi'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='the-move-'+label+'-'+S.bpm+'bpm.mid';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+document.getElementById('midiA').onclick=()=>exportBed(bedA(),'A-original');
+document.getElementById('midiB').onclick=()=>exportBed(bedB(),'B-'+MOVES[S.cur].id);
+
+/* =====================================================================
+   UI
+   ===================================================================== */
+function render(){
+  const M=MOVES[S.cur], A=bedA(), B=bedB();
+  document.getElementById('mvName').textContent=M.n;
+  document.getElementById('mvWhy').textContent=M.w;
+  document.getElementById('mvWhen').innerHTML=M.when;
+  const ft=document.getElementById('mvFam');
+  ft.textContent=M.fam; ft.className='tag '+(M.fam==='Harmony'?'h':'r');
+  drawBed(document.getElementById('cvA'),A,null);
+  drawBed(document.getElementById('cvB'),B,A);
+  const d=deltas(A,B);
+  const arrow=(a,b)=>b>a?'up':(b<a?'dn':'');
+  document.getElementById('deltas').innerHTML=
+    `<span>Syncopation<b class="${arrow(d.syncA,d.syncB)}">${d.syncA} → ${d.syncB}</b></span>
+     <span>Notes changed<b>${d.changed}${d.removed?' ('+d.added+' new, '+d.removed+' gone)':''}</b></span>
+     <span>Drum steps moved<b class="${d.drumChanged?'up':''}">${d.drumChanged}</b></span>
+     <span>New pitch classes<b class="${d.newPC?'up':''}">${d.newPC}</b></span>
+     <span>Drum hits<b class="${arrow(d.hitsA,d.hitsB)}">${d.hitsA} → ${d.hitsB}</b></span>`;
+  document.querySelectorAll('.mv').forEach(el=>el.setAttribute('aria-pressed',+el.dataset.i===S.cur));
+  if(!S.playing) setFlag(S.mode==='b'?'B':'A');
+}
+function pickMove(i){
+  S.cur=(i+MOVES.length)%MOVES.length;
+  render();
+  if(!S.playing) start();
+  document.getElementById('stage').scrollIntoView({block:'start'});
+}
+document.getElementById('nextMv').onclick=()=>pickMove(S.cur+1);
+document.getElementById('prevMv').onclick=()=>pickMove(S.cur-1);
+MOVES.forEach((M,i)=>{
+  const host=document.getElementById('mv-'+M.fam.toLowerCase()); if(!host) return;
+  const A=bedA(), B=M.f(clone({...BASE,bars:2}));
+  const d=deltas(A,B);
+  const el=document.createElement('div'); el.className='mv'; el.dataset.i=i;
+  el.setAttribute('aria-pressed',i===0);
+  el.innerHTML=`<div class="mv-top"><h4>${M.n}</h4><span class="tag ${M.fam==='Harmony'?'h':'r'}">${M.fam}</span></div>
+    <p>${M.w}</p>
+    <div class="d">${d.changed} notes changed · sync ${d.syncA}→${d.syncB}${d.newPC?' · '+d.newPC+' new pitch classes':''}</div>`;
+  el.onclick=()=>pickMove(i);
+  host.appendChild(el);
+});
+document.getElementById('moveTable').innerHTML=MOVES.map(M=>
+  `<tr><td><b>${M.n}</b></td><td>${M.fam}</td><td class="num">${M.rev}</td><td class="num">${M.len}</td></tr>`).join('');
+window.addEventListener('resize',render);
+render();
+</script>

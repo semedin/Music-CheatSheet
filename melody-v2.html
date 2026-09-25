@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An offline electronic music workbench: 1,760 MIDI recipes, 32 artist studies, 48 synthesizer sounds and 16 drum kits, with MIDI export for Ableton Live."><title>A motif with somewhere to go. · Fieldwork V2</title><style>:root{--paper:#ece8dd;--ink:#1d211f;--muted:#636960;--line:#c9cbbf;--panel:#171e22;--grid:#283237;--accent:#dc4e2e;--melody:#ffc96e;--bass:#a4d2ba;--chords:#a9b9ee;--arp:#ef9d87;--drums:#c5cbd0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--paper);font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button,a,input,select,summary{touch-action:manipulation}button,select,input{min-height:38px;border:1px solid var(--line);border-radius:4px;background:#f8f6ef;color:var(--ink);padding:8px 10px}button{cursor:pointer;font-weight:600}button:hover{border-color:var(--ink);background:#e5e6d9}button:disabled{opacity:.42;cursor:default}a{color:inherit;text-underline-offset:3px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,svg:focus-visible{outline:3px solid #d75430;outline-offset:3px}input[type=checkbox]{min-height:auto;accent-color:var(--accent)}input[type=range]{accent-color:var(--accent);padding:0;min-width:70px;width:100%;min-height:24px}input[type=number]{width:100%;min-width:65px}label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600}label.check{flex-direction:row;align-items:center;font-size:14px;font-weight:400}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(30px,3vw,46px);letter-spacing:-1.8px;line-height:1.05;margin-bottom:8px}h2{font-size:22px;letter-spacing:-.6px}h3{font-size:17px}p{line-height:1.55}small,.small{font-size:13px;line-height:1.5}.mono,.eyebrow,.tag,.stat{font-family:Consolas,'Courier New',monospace}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.5px}.muted{color:var(--muted)}.top{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 28px;border-bottom:1px solid var(--line);flex-wrap:wrap}.brand{text-decoration:none;font-size:18px;font-weight:800;letter-spacing:-.8px}.brand b{background:var(--accent);color:white;padding:3px 6px;font-size:12px;margin-left:8px;letter-spacing:0}.top nav{display:flex;gap:6px;flex-wrap:wrap}.top nav a{text-decoration:none;font-size:14px;padding:8px 12px;border-radius:3px}.top nav a[aria-current=page]{background:var(--ink);color:var(--paper)}.top nav a:hover{background:var(--line)}.intro{padding:25px 28px 22px;display:flex;justify-content:space-between;gap:24px;align-items:flex-end}.intro p{margin-bottom:0;max-width:650px;font-size:15px}.intro .eyebrow{margin-bottom:10px}.stats{display:flex;gap:26px;white-space:nowrap}.stat strong{display:block;font-size:28px;letter-spacing:-1px}.stat span{font-size:12px;color:var(--muted)}.shell{display:grid;grid-template-columns:300px minmax(0,1fr);border-top:1px solid var(--line);max-width:1800px;margin:auto}.library{padding:20px 18px;border-right:1px solid var(--line);min-width:0}.library h2{margin-bottom:5px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:16px 0}.wide{grid-column:1/-1}.filters input,.filters select{width:100%;min-width:0;font-size:13px}.library-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:16px 0 10px}.library-head span{font-size:12px}.catalog{display:grid;gap:8px;max-height:860px;overflow:auto;padding:3px}.preset{padding:11px;background:#f5f3eb;border:1px solid var(--line);border-radius:4px;position:relative}.preset.selected{border-color:var(--accent);box-shadow:inset 3px 0 var(--accent)}.preset .load{border:0;background:none;padding:0;display:block;text-align:left;width:calc(100% - 28px);min-height:0}.preset strong{display:block;font-size:14px;line-height:1.3;margin:5px 0}.preset .type{font:11px Consolas,monospace;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}.preset p{font-size:12px;margin:5px 0 0;color:var(--muted)}.preset .star{position:absolute;top:7px;right:5px;padding:3px;min-height:30px;background:none;border:0;font-size:19px}.star[aria-pressed=true]{color:#ac461b}.miniseq{display:flex;gap:2px;height:20px;align-items:flex-end;margin-top:8px}.miniseq i{width:7px;min-height:3px;background:#76857a;opacity:.7}.pagination{display:flex;justify-content:space-between;align-items:center;margin:12px 0;gap:6px}.pagination span{font-size:12px}.pagination button{min-height:30px;padding:5px 8px;font-size:12px}.library-export{width:100%;font-size:13px;margin:3px 0}.workspace{min-width:0;padding:20px 24px 30px}.session-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}.session-top h2{margin:0}.actions{display:flex;flex-wrap:wrap;gap:6px}.primary{background:var(--ink);color:#fff;border-color:var(--ink)}.primary:hover{background:#35433b;color:white}.accent{background:var(--accent);color:#fff;border-color:var(--accent)}.accent:hover{background:#b84025;color:#fff}.settings{display:grid;grid-template-columns:1.5fr .7fr 1.3fr .7fr .7fr 1fr;gap:10px}.settings select{width:100%;min-width:0}.harmony-strip{display:flex;gap:12px;align-items:center;margin:14px 0 18px;flex-wrap:wrap}.harmony-strip .progression{display:flex;gap:5px}.harmony-strip select{min-height:30px;padding:4px;font-size:13px;width:60px}.harmony-strip .chord-label{font-size:14px;font-weight:700}.subtle{font-size:13px;min-height:30px;padding:5px 9px}.tracks{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.track{padding:10px;background:#e0e2d7;border:1px solid #c3c7bb;border-radius:5px;min-width:0}.track.active{border-color:var(--ink);background:#d3d9cc}.track-head{display:flex;align-items:center;gap:7px}.track-head .swatch{width:9px;height:9px;background:var(--track);border:1px solid #0002}.track .select-track{padding:0;border:0;background:none;font-size:14px;min-height:22px;text-align:left}.track .track-name{font-size:11px;color:#4b554a;margin:6px 0 8px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.track .track-buttons{display:flex;gap:4px;flex-wrap:wrap}.track .track-buttons button{font-size:10px;min-height:25px;padding:4px 6px}.track .track-buttons button[aria-pressed=true]{background:var(--ink);color:white}.editor{background:var(--panel);color:#f1f0e8;border-radius:6px;margin-top:12px;overflow:hidden}.editor-head{padding:15px 17px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #394146}.editor-head h3{margin:0 0 5px;font-size:18px}.editor-head p{margin:0;font-size:12px;color:#adb9bc}.transport{display:flex;align-items:center;gap:9px}.transport button{background:#ffc96e;color:#20231b;border:0}.transport .time{font:12px Consolas,monospace;color:#bbc5c6;min-width:70px}.roll-wrap{position:relative;overflow:hidden;padding:0 10px}#roll{width:100%;height:310px;display:block;touch-action:none}#roll .note{cursor:pointer}#roll .selected-note{stroke:white;stroke-width:2}#playhead{pointer-events:none}.roll-help{display:flex;justify-content:space-between;gap:8px;padding:9px 16px;border-top:1px solid #394146;color:#afbabb;font-size:12px;flex-wrap:wrap}.note-tools{display:grid;grid-template-columns:1.4fr repeat(4,1fr) auto;align-items:end;gap:9px;padding:12px 16px;background:#222c2f}.note-tools label{color:#c5cecc;font-size:12px}.note-tools input,.note-tools select,.note-tools button{font-size:13px;min-height:32px;background:#303b3e;color:#f2f1e9;border-color:#536064;width:100%}.transforms{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.transforms button{font-size:12px;padding:6px 9px;min-height:32px}.sculpt{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:17px 0}.sculpt label span{display:flex;justify-content:space-between}.sculpt label output{font-family:Consolas,monospace;color:var(--muted)}.generation{padding:15px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:1.15fr 1.2fr 1fr auto;gap:10px;align-items:end}.generation select{width:100%;min-width:0}.exportbar{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--line)}.exportbar button{font-size:13px}.recipe{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:22px 0}.recipe h3{font-size:16px;margin-bottom:9px}.recipe p{font-size:14px;margin-bottom:8px}.recipe .eyebrow{margin-bottom:8px}.technique{display:inline-block;background:#d7dfd1;padding:3px 7px;font:12px Consolas,monospace}.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:0 28px 24px;padding-top:24px;border-top:1px solid var(--line)}.info-grid article{min-width:0}.info-grid h3{font-size:18px}.info-grid p,.info-grid li{font-size:14px;line-height:1.65}.info-grid ol{padding-left:19px}.info-grid table{border-collapse:collapse;width:100%;font-size:12px}.info-grid td{padding:6px;border-bottom:1px solid var(--line)}details{padding:16px 28px;border-top:1px solid var(--line)}summary{cursor:pointer;font-weight:700}.guides{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding-top:20px}.guides a{display:block;padding:14px;background:#e0e1d6;border:1px solid var(--line);text-decoration:none;border-radius:4px}.guides a:hover{border-color:var(--ink)}.guides b{display:block;font-size:15px}.guides span{display:block;font-size:12px;margin-top:4px;color:var(--muted)}.foot{padding:25px 28px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}.foot .actions button{font-size:12px;min-height:30px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#17231e;color:#f8f7ef;padding:12px 20px;border:1px solid #849387;border-radius:6px;z-index:30;box-shadow:0 6px 26px #0003;font-size:14px;max-width:90vw}.toast:empty{display:none}.empty{padding:25px 10px;font-size:14px;line-height:1.6}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.volume{display:flex;gap:5px;align-items:center;color:#abb7b8;font-size:11px}.volume input{width:65px;accent-color:#ffc96e}.notice{font-size:12px;color:var(--muted);margin:4px 0 12px}.lower-title{padding:0 28px;margin:20px 0 0}.balance{font-size:12px;color:var(--muted);margin-top:8px}.app-root{max-width:1800px;margin:auto}
+.artist-scene{display:flex;align-items:center;gap:22px;padding:13px 15px;margin-bottom:18px;background:#e1e3d6;border-left:3px solid var(--accent);border-radius:3px}.artist-scene label{flex:1;min-width:220px}.artist-scene p{flex:1;margin:0;font-size:13px;color:var(--muted)}.artist-scene select{width:100%;min-width:0}.track .track-sound{font-size:12px;padding:5px 2px;min-height:30px;display:block;width:100%;min-width:0;margin:0 0 9px;background:#f3f3e9}.sound-rack{border:1px solid var(--line);background:#e3e5d9;border-radius:5px;padding:13px 15px;margin:12px 0 17px}.sound-rack-head{display:flex;gap:15px;justify-content:space-between;align-items:center}.sound-rack h3{font-size:15px;margin:0 0 4px}.sound-rack-head p{font-size:12px;margin:0;color:var(--muted)}.sound-rack .notice{margin:10px 0 0}.sound-mix{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:13px}.sound-mix label span{display:flex;justify-content:space-between}.sound-mix output{font-family:Consolas,monospace;font-weight:400;color:var(--muted)}
+@media(min-width:1500px){.shell{grid-template-columns:330px minmax(0,1fr)}.workspace{padding:24px 30px}.catalog{max-height:1040px}#roll{height:355px}}
+@media(max-width:1100px){.artist-scene{gap:12px}.artist-scene p{font-size:12px}.track .track-sound{font-size:11px}.sound-mix{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px}}
+@media(max-width:780px){.artist-scene{flex-direction:column;align-items:stretch;gap:8px}.artist-scene label{min-width:0}.sound-rack-head{align-items:flex-start}.sound-rack-head button{font-size:11px}.sound-rack{padding:12px}}
+@media(max-width:1100px){.shell{grid-template-columns:250px minmax(0,1fr)}.workspace{padding:18px 15px}.settings{grid-template-columns:repeat(3,minmax(0,1fr))}.tracks{gap:4px}.track{padding:8px 5px}.track .select-track{font-size:12px}.track .track-buttons button{font-size:10px;padding:3px 4px}.generation{grid-template-columns:1fr 1fr}.note-tools{grid-template-columns:repeat(3,1fr)}.stats{gap:12px}.stat strong{font-size:24px}.sculpt{grid-template-columns:1fr 1fr}.info-grid{gap:15px}}
+@media(max-width:780px){.top,.intro{padding:16px}.top nav{gap:0}.top nav a{padding:6px 8px}.intro{align-items:flex-start}.stats{display:none}.shell{display:flex;flex-direction:column}.workspace{order:0;padding:16px}.library{order:1;border-right:0;border-top:1px solid var(--line);padding:20px 16px}.catalog{max-height:550px;grid-template-columns:1fr 1fr}.filters{grid-template-columns:repeat(4,1fr)}.filters .wide{grid-column:span 2}.library-export{width:auto}.info-grid{grid-template-columns:1fr;margin:0 16px 20px}.recipe{gap:15px}.guides{grid-template-columns:1fr 1fr}.foot,details{padding:18px 16px}#roll{height:275px}.intro p{font-size:14px}.top .brand{font-size:17px}.settings{gap:8px}.tracks{overflow:auto;grid-template-columns:repeat(5,minmax(90px,1fr))}.track .track-buttons{gap:3px}.harmony-strip{gap:7px}.session-top .actions button{font-size:12px}.generation{grid-template-columns:1fr 1fr}.exportbar button{flex:1 1 40%}.volume{display:none}}
+@media(max-width:440px){.catalog{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.recipe{grid-template-columns:1fr}.settings{grid-template-columns:1fr 1fr}.note-tools{grid-template-columns:1fr 1fr}.sculpt{gap:12px}.editor-head{padding:12px}.transport{width:100%;justify-content:space-between}.guides{grid-template-columns:1fr}.intro h1{font-size:32px}.harmony-strip .chord-label{width:100%}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+@media print{.library,.top nav,.actions,.transport,.note-tools,.transforms,.exportbar,.generation,.foot,.toast{display:none}.shell{display:block}.editor{break-inside:avoid}.info-grid{grid-template-columns:1fr 1fr}.workspace{padding:0}.intro{padding-left:0}.settings input,.settings select{border:0}}
+</style></head>
+<body><div class="app-root">
+<header class="top"><a class="brand" href="index.html">FIELDWORK <b>V2</b></a><nav aria-label="Tools"><a href="index.html" data-page="studio">Studio</a><a href="melody-v2.html" data-page="melody">Melody</a><a href="chords-v2.html" data-page="chords">Harmony</a><a href="bass-v2.html" data-page="bass">Bass</a><a href="fieldwork-v3.html"><b>V3 · Motif Studio ↗</b></a><a href="#field-guides">Field guides ↗</a></nav><span class="eyebrow">Electronic music / Ableton Live</span></header>
+<section class="intro"><div><div class="eyebrow">Melody lab / hooks · riffs · arpeggios</div><h1>A motif with somewhere to go.</h1><p>Emotional hooks, restless sequences and melodic answers. Shape the rhythm, then develop the phrase.</p></div><div class="stats"><div class="stat"><strong>1,760</strong><span>MIDI recipes</span></div><div class="stat"><strong>32</strong><span>artist profiles</span></div><div class="stat"><strong>64</strong><span>sounds & kits</span></div></div></section>
+<main class="shell">
+<aside class="library" aria-label="Preset library"><h2>The idea library</h2><p class="small muted">Original patterns. Find a starting point.</p>
+<div class="filters"><label class="wide">Search inspiration<input id="search" type="search" placeholder="deadmau5, Tiesto, Karla Blum…" autocomplete="off"></label><label>Library<select id="filterCollection"><option value="">Everything</option><option value="artists" selected>Artist studies</option><option value="genres">Genre recipes</option></select></label><label>Part<select id="filterRole"><option value="">All parts</option></select></label><label class="wide">Artist / direction<select id="filterArtist"><option value="">All artist profiles</option></select></label><label>Genre<select id="filterGenre"><option value="">All 24 genres</option></select></label><label>Emotion<select id="filterMood"><option value="">All emotions</option></select></label><label class="wide">Technique<select id="filterTechnique"><option value="">All techniques</option></select></label><label class="check wide"><input type="checkbox" id="onlyFavorites"> Favourites only</label></div>
+<div class="library-head"><span id="libraryCount" aria-live="polite"></span><button id="clearFilters" class="subtle">Reset filters</button></div><div class="catalog" id="catalog"></div><div class="pagination"><button id="prevPage">← Previous</button><span id="pageInfo"></span><button id="nextPage">Next →</button></div><button class="library-export" id="exportFiltered">Export matching recipes · ZIP</button><button class="library-export accent" id="exportArtists">Artist pack · 1,312 MIDI</button><button class="library-export primary" id="exportAll">Genre pack · 504 MIDI</button><p class="notice">Library packs use A in each recipe’s native mode and tempo, 8 bars. Studio exports use your current edits and settings.</p></aside>
+<section class="workspace" aria-label="Composition workbench">
+<div class="session-top"><h2>Your sketch</h2><div class="actions"><button id="undo" class="subtle">↶ Undo</button><button id="redo" class="subtle">Redo ↷</button><button id="saveSession" class="subtle">Save session</button><button id="loadSession" class="subtle">Open session</button><input id="sessionFile" type="file" accept=".json,application/json" hidden></div></div>
+<div class="artist-scene"><label>Start a complete artist study<select id="artistScene"><option value="">Choose an artist / direction…</option></select></label><p>Five original parts and a suggested sound palette. Choose Tiësto’s trance or club direction, or explore the other artist studies.</p></div>
+<div class="settings"><label>Style<select id="genre"></select></label><label>Key<select id="root"></select></label><label>Scale / mode<select id="mode"></select></label><label>Tempo<input id="bpm" type="number" min="60" max="200" value="123"></label><label>Bars<select id="bars"><option>4</option><option selected>8</option><option>16</option></select></label><label>Emotion<select id="mood"></select></label></div>
+<div class="harmony-strip"><span class="eyebrow">Harmony</span><div class="progression" id="progression"></div><span class="chord-label" id="chordLabel"></span><button id="alternateHarmony" class="subtle">Alternate path</button></div>
+<div id="tracks" class="tracks" aria-label="Parts"></div><p class="balance">Locks protect parts when generating variations. Key, scale, length and harmony changes rebuild every part. Style starts a matching five-part sketch; Undo recovers your previous sketch.</p>
+<section class="sound-rack" aria-label="Selected part sound"><div class="sound-rack-head"><div><h3 id="soundName"></h3><p id="soundDescription"></p></div><button id="suggestSounds" class="subtle">Suggested palette</button></div><div class="sound-mix"><label><span>Part level <output id="mix-level-out"></output></span><input id="mix-level" type="range" min="0" max="100" step="1"></label><label><span>Tone <output id="mix-tone-out"></output></span><input id="mix-tone" type="range" min="-24" max="24" step="1"></label><label><span>Delay space <output id="mix-space-out"></output></span><input id="mix-space" type="range" min="0" max="60" step="1"></label><label><span>Pan · L / R <output id="mix-pan-out"></output></span><input id="mix-pan" type="range" min="-100" max="100" step="1"></label></div><p class="notice">Choose an instrument on each track above. Change sounds while playing; notes stay intact. The 48 tonal sounds and 16 kits are synthesized previews, saved with your session.</p></section>
+<section class="editor" aria-label="Piano roll"><div class="editor-head"><div><h3 id="partTitle"></h3><p id="partMeta"></p></div><div class="transport"><button id="play" aria-label="Play sketch">▶ Play sketch</button><span class="time" id="position">1 . 1 . 1</span><label class="volume">Level<input id="volume" aria-label="Preview volume" type="range" min="0" max="100" value="55"></label></div></div><div class="roll-wrap"><svg id="roll" viewBox="0 0 1200 320" role="application" tabindex="0" aria-label="Editable piano roll. Click an empty cell to add a note, or a note to select it. Arrow keys change pitch and timing. Delete removes the selected note."></svg></div><div class="roll-help"><span>Click to add or select · drag to move · double-click to erase</span><span>Arrows: pitch / timing · Delete: erase · Space: play</span></div>
+<div class="note-tools"><label>Selected note<select id="noteSelect"></select></label><label>Pitch · MIDI<input id="notePitch" type="number" min="0" max="127"></label><label>Start · beats from 0<input id="noteTime" type="number" min="0" step="0.25"></label><label>Length · beats<input id="noteLength" type="number" min="0.01" step="0.25"></label><label>Velocity<input id="noteVelocity" type="number" min="1" max="127"></label><button id="deleteNote">Delete</button></div></section>
+<div class="transforms" aria-label="Transform selected part"><button data-transform="reverse">Reverse time</button><button data-transform="invert">Invert contour</button><button data-transform="rotate">Shift 1/16</button><button data-transform="answer">Call & response</button><button data-transform="thin">Remove a third</button><button data-transform="staccato">Shorten</button><button data-transform="up">Octave +</button><button data-transform="down">Octave −</button><button id="clearPart">Clear part</button></div>
+<div class="sculpt"><label><span>Density <output id="densityOut"></output></span><input id="density" type="range" min="30" max="150" value="100"></label><label><span>Gate <output id="gateOut"></output></span><input id="gate" type="range" min="20" max="150" value="80"></label><label><span>Swing <output id="swingOut"></output></span><input id="swing" type="range" min="0" max="60" value="0"></label><label><span>Humanise <output id="humanOut"></output></span><input id="human" type="range" min="0" max="30" value="5"></label></div>
+<div class="generation"><label>Phrase arc<select id="form"><option value="AABA">A A B A · statement / answer</option><option value="ABAC">A B A C · conversation</option><option value="lift">Build to a register lift</option><option value="breakdown">Open into a breakdown</option><option value="loop">Repeated motif</option></select></label><label>Chord voicing<select id="voicing"><option value="auto">Nearest inversion</option><option value="root">Root position</option><option value="open">Open voicing</option><option value="strum">Strummed</option></select></label><label>Variation seed<input id="seed" type="number" min="0" max="999999999" step="1"></label><button class="accent" id="generate">New variation ↗</button></div>
+<p class="notice">Density, gate, emotion and phrase controls regenerate unlocked parts. Use Undo to recover edits. Lock a part to keep it while exploring.</p>
+<div class="exportbar"><button class="primary" id="exportPart">Export selected MIDI</button><button class="primary" id="exportSketch">Export sketch · multitrack MIDI</button><button id="exportStems">Export separate parts · ZIP</button><button id="exportVariations">Make 32 variations · ZIP</button></div><p class="notice">Sketch exports include audible parts (mute / solo applies). Separate parts include all five, including muted parts. Variation packs use the selected recipe and current settings; hand edits are not included.</p>
+<div class="recipe"><article><div class="eyebrow">Inside the pattern</div><h3 id="recipeTitle"></h3><p id="recipeText"></p><span class="technique" id="technique"></span><p id="inspiration" class="small muted"></p></article><article><div class="eyebrow">Make it yours in Live</div><h3 id="soundTitle">Choose a sound, then commit</h3><p id="soundText"></p><p class="small muted" id="partAdvice"></p></article></div>
+</section></main>
+<section class="info-grid" aria-label="Production notes"><article><div class="eyebrow">01 / A useful constraint</div><h3>Give repetition a purpose</h3><p>A strong electronic hook survives a change of sound. Repeat its rhythm, move one interval, then leave an answer. AABA preserves the opening idea; ABAC introduces more dialogue.</p><p>Try this: solo the melody and drums. Remove a third of the notes, use Call & response, then raise just the last answer. Compare with Undo.</p></article><article><div class="eyebrow">02 / From browser to session</div><h3>Five minutes in Ableton</h3><ol><li>Export a clip or sketch. Drag the <b>.mid</b> file into Live.</li><li>Load an instrument on each MIDI track. MIDI contains notes, not sound.</li><li>Set your session tempo and check the clip’s loop bracket. Files end at the chosen bar length.</li><li>Map the drum notes, choose a bass patch, then automate one sound parameter across eight bars.</li></ol><p><a href="https://help.ableton.com/hc/en-us/articles/209068169-Understanding-MIDI-files" target="_blank" rel="noopener noreferrer">Ableton’s MIDI import guide ↗</a></p></article><article><div class="eyebrow">03 / What goes in the file</div><h3>Clean, editable MIDI</h3><table><tbody><tr><td>Individual clips</td><td>SMF0 · 480 PPQ</td></tr><tr><td>Complete sketches</td><td>SMF1 · separate named tracks</td></tr><tr><td>Included</td><td>Pitch, timing, length, velocity, tempo, 4/4</td></tr><tr><td>Drum notes</td><td>36 kick · 38 snare · 39 clap<br>42 closed hat · 46 open hat</td></tr><tr><td>Extra percussion</td><td>37 rim · 45 tom · 63/64 conga<br>70 shaker · 75 claves · 76 woodblock</td></tr><tr><td>Pitch labels</td><td>Live convention: MIDI 60 = C3</td></tr></tbody></table><p class="small">Glide, sidechain, effects and synth settings are sound-design steps in Live. Preview synthesis is a sketching aid.</p></article></section>
+<details id="field-guides"><summary>The original field guides · 16 standalone references</summary><div id="guides" class="guides"></div><p class="small muted">The V1 teaching labs remain available alongside these new workbenches. <a href="field-guides-v1.html">Open the V1 guide index ↗</a></p></details>
+<footer class="foot"><span>FIELDWORK / V2 · Runs offline, in one HTML file. No account, samples or external scripts.<br>Artist references are inspiration for original recipes, not song transcriptions or endorsements.</span><div class="actions"><button id="saveLocal">Save in this browser</button><button id="restoreLocal">Restore browser save</button></div></footer>
+<div id="toast" class="toast" role="status" aria-live="polite"></div></div>
+<script>const PAGE="melody";
+/* Original composition recipes. Degrees are zero-based; rhythms use sixteenth steps. */
+const ROLES = ['melody','bass','chords','arp','drums'];
+const ROLE_NAMES = {melody:'Melody',bass:'Bass',chords:'Chords',arp:'Arpeggio',drums:'Drums'};
+const NOTE_NAMES = ['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
+const MODES = {
+  minor:[0,2,3,5,7,8,10], major:[0,2,4,5,7,9,11], dorian:[0,2,3,5,7,9,10],
+  phrygian:[0,1,3,5,7,8,10], lydian:[0,2,4,6,7,9,11], mixolydian:[0,2,4,5,7,9,10],
+  harmonic:[0,2,3,5,7,8,11], melodic:[0,2,3,5,7,9,11]
+};
+const MODE_NAMES={minor:'Natural minor',major:'Major',dorian:'Dorian',phrygian:'Phrygian',lydian:'Lydian',mixolydian:'Mixolydian',harmonic:'Harmonic minor',melodic:'Melodic minor'};
+const MOODS = {
+  'Native':{density:1,gate:1,vel:0,lift:0},
+  'Euphoric':{density:1.1,gate:1.1,vel:7,lift:7},
+  'Melancholic':{density:.72,gate:1.5,vel:-10,lift:0},
+  'Hypnotic':{density:.9,gate:.85,vel:-3,lift:0},
+  'Dark':{density:.8,gate:1.2,vel:0,lift:-7},
+  'Playful':{density:1.15,gate:.65,vel:5,lift:0},
+  'Dreamy':{density:.6,gate:1.85,vel:-15,lift:7},
+  'Aggressive':{density:1.2,gate:.7,vel:14,lift:0},
+  'Soulful':{density:.85,gate:1.25,vel:-4,lift:0}
+};
+// Each genre supplies its own rhythm, pitch vocabulary, bass articulation and two harmonic paths.
+const GENRES = [
+ {id:'deep',name:'Deep house',bpm:122,mode:'dorian',mood:'Soulful',artist:'Kerri Chandler · Larry Heard',title:'Velvet room',rh:[0,3,6,10,14],mot:[2,4,6,4,1,2,0,6],bass:'funk',chord:'stab',arp:'updown',drum:'house',prog:[[0,3,0,4],[0,5,3,4]],ext:4,swing:18,tip:'Let the bass answer the chord stabs. Shorten the low notes before adding more sidechain.',sound:'Rounded organ or electric piano; low-pass the chord bus and leave the ninth audible.'},
+ {id:'disco',name:'Disco / French house',bpm:124,mode:'minor',mood:'Playful',artist:'Daft Punk · Alan Braxe',title:'Chrome avenue',rh:[0,2,5,7,10,13,15],mot:[0,2,4,7,6,4,2,1],bass:'disco',chord:'chop',arp:'up',drum:'disco',prog:[[5,4,3,0],[3,6,2,0]],ext:4,swing:12,tip:'Pair octave bass pickups with short, uneven chord chops. Keep one beat empty in the turnaround.',sound:'Dry picked bass, filtered saw chords and a small room. Automate filter opening over eight bars.'},
+ {id:'piano',name:'Piano house',bpm:126,mode:'major',mood:'Euphoric',artist:'MK · David Morales',title:'Open arms',rh:[0,3,6,8,11,14],mot:[4,4,2,0,1,2,4,7],bass:'offbeat',chord:'piano',arp:'updown',drum:'house',prog:[[0,4,5,3],[0,5,3,4]],ext:3,swing:8,tip:'Use a broad top-line over a restrained bass. The anticipation before beat four is the hook.',sound:'Bright piano with controlled release; high-pass its low octave to make space for the bass.'},
+ {id:'techhouse',name:'Tech house',bpm:128,mode:'minor',mood:'Playful',artist:'Chris Lake · FISHER',title:'Pocket pressure',rh:[2,5,6,11,14],mot:[0,0,2,0,4,3,0,7],bass:'skip',chord:'stab',arp:'pedal',drum:'house',prog:[[0,0,3,0],[0,6,0,4]],ext:3,swing:20,tip:'Repeat the short bass cell, then change its last two hits. Silence around the kick adds weight.',sound:'Mono saw bass with a fast filter envelope. Use an octave pluck as the melody response.'},
+ {id:'minimal',name:'Minimal / microhouse',bpm:125,mode:'dorian',mood:'Hypnotic',artist:'Ricardo Villalobos · Akufen',title:'Small machinery',rh:[1,6,9,15],mot:[0,3,1,4,2,6,1],bass:'sparse',chord:'sparse',arp:'fifths',drum:'minimal',prog:[[0,0,1,0],[0,3,0,6]],ext:4,swing:25,tip:'Use one surprising placement per bar. Change velocity and length before adding pitches.',sound:'Sine-based bass and a tiny percussive pluck. Keep delay return quieter than the dry hit.'},
+ {id:'afro',name:'Afro house',bpm:120,mode:'dorian',mood:'Soulful',artist:'Black Coffee · Keinemusik',title:'Copper sun',rh:[0,3,6,8,11,14],mot:[0,2,4,2,5,4,1,0],bass:'tresillo',chord:'sustain',arp:'euclid',drum:'afro',prog:[[0,3,4,3],[0,6,3,0]],ext:4,swing:10,tip:'Keep the melodic cell singable while percussion supplies the cross-rhythm. Try a 3–3–2 bass answer.',sound:'Mallet pluck over a warm sustained chord; use separate short and long reverbs.'},
+ {id:'organic',name:'Organic house',bpm:116,mode:'minor',mood:'Dreamy',artist:'Sébastien Léger · Tim Green',title:'Tidal garden',rh:[0,3,7,10,14],mot:[0,4,2,6,4,7,5,2],bass:'sustain',chord:'sustain',arp:'updown',drum:'afro',prog:[[0,5,2,6],[0,3,5,4]],ext:4,swing:14,tip:'Give the upper motif a two-bar breath. Move a single inner chord voice in the second half.',sound:'Soft mallet attack, long filtered ambience and a bass with very little upper-mid buzz.'},
+ {id:'melodic',name:'Melodic house',bpm:123,mode:'minor',mood:'Melancholic',artist:'Ben Böhmer · Lane 8',title:'Last light',rh:[0,2,6,8,11,14],mot:[2,4,7,6,4,2,1,0],bass:'offbeat',chord:'sustain',arp:'updown',drum:'house',prog:[[0,5,2,6],[5,6,0,3]],ext:4,swing:0,tip:'Keep the opening motif recognisable. Let the peak arrive in bar seven, then leave a tail.',sound:'Soft saw pluck with a slower filter decay; widen the lead above the mono bass.'},
+ {id:'progressive',name:'Progressive house',bpm:128,mode:'minor',mood:'Euphoric',artist:'deadmau5 · Eric Prydz',title:'Skyline circuit',rh:[0,3,6,9,12,14],mot:[0,4,7,4,2,6,4,1],bass:'rolling',chord:'pulse',arp:'dotted',drum:'house',prog:[[0,5,2,6],[3,5,0,6]],ext:3,swing:0,tip:'Let a repeating dotted rhythm cross the bar line. Expand the register only in the release section.',sound:'Layer a narrow pluck with a quiet octave; increase sustain and filter cutoff together.'},
+ {id:'melotech',name:'Melodic techno',bpm:126,mode:'harmonic',mood:'Dark',artist:'Anyma · Stephan Bodzin',title:'Black horizon',rh:[0,3,5,8,11,15],mot:[0,4,3,1,0,6,7,4],bass:'offbeat',chord:'pulse',arp:'down',drum:'techno',prog:[[0,5,3,4],[0,1,5,4]],ext:3,swing:0,tip:'Make one interval carry the tension. The raised seventh in harmonic minor creates a strong return.',sound:'Mono resonant lead with restrained glide; reserve stereo spread for reverb and upper layers.'},
+ {id:'detroit',name:'Detroit techno',bpm:132,mode:'dorian',mood:'Soulful',artist:'Jeff Mills · Robert Hood',title:'Future memory',rh:[0,2,5,8,10,13],mot:[0,4,1,5,2,6,3,7],bass:'motor',chord:'stab',arp:'fifths',drum:'techno',prog:[[0,3,0,6],[0,1,3,4]],ext:4,swing:6,tip:'Use the upper sequence as a counterweight to the motor bass. Hold the harmony for longer than the riff.',sound:'Dry FM pluck, warm minor-seventh stabs and a short, consistent bass envelope.'},
+ {id:'dub',name:'Dub techno',bpm:122,mode:'minor',mood:'Hypnotic',artist:'Basic Channel · Deepchord',title:'Submerged signal',rh:[0,6,11],mot:[2,4,6,4,1,0],bass:'sparse',chord:'dub',arp:'sparse',drum:'minimal',prog:[[0,0,2,0],[0,3,0,5]],ext:5,swing:10,tip:'A single chord can carry the loop. Send the offbeat stab into delay and automate the return tone.',sound:'Soft minor ninths into filtered feedback delay; keep the sub dry and almost static.'},
+ {id:'hardtech',name:'Hard / industrial techno',bpm:148,mode:'phrygian',mood:'Aggressive',artist:'Dax J · Paula Temple',title:'Iron teeth',rh:[0,1,4,6,8,9,12,15],mot:[0,1,0,4,0,1,7,4],bass:'motor',chord:'stab',arp:'pedal',drum:'hard',prog:[[0,1,0,1],[0,0,6,1]],ext:3,swing:0,tip:'The flat second supplies the abrasion. Leave the low octave simple when distortion becomes dense.',sound:'Short distorted bass and a narrow stab; shape the reverb tail separately from the kick.'},
+ {id:'acid',name:'Acid house / techno',bpm:134,mode:'minor',mood:'Hypnotic',artist:'Phuture · Josh Wink',title:'Liquid wire',rh:[0,1,3,6,7,9,12,14,15],mot:[0,7,0,2,4,0,6,4,1],bass:'acid',chord:'sparse',arp:'random',drum:'techno',prog:[[0,0,0,6],[0,3,0,4]],ext:3,swing:8,tip:'Contrast low repeated notes with octave jumps and accents. Add synth glide after importing the MIDI.',sound:'Mono saw, resonant low-pass and a snappy filter envelope. MIDI velocity supplies accent cues.'},
+ {id:'trance',name:'Uplifting trance',bpm:138,mode:'minor',mood:'Euphoric',artist:'Paul van Dyk · Ferry Corsten',title:'Northern bloom',rh:[0,2,4,6,8,10,12,14],mot:[0,4,7,6,4,2,4,1],bass:'offbeat',chord:'pulse',arp:'up',drum:'trance',prog:[[0,5,2,6],[5,6,0,4]],ext:3,swing:0,tip:'Repeat the first phrase before the octave lift. Keep the offbeat bass short so the kick breathes.',sound:'Supersaw lead with a clear central voice; high-pass the stereo layer and automate the filter.'},
+ {id:'psy',name:'Psytrance',bpm:145,mode:'phrygian',mood:'Hypnotic',artist:'Astrix · Infected Mushroom',title:'Fractal trail',rh:[0,1,3,5,6,9,11,13,15],mot:[0,1,4,0,3,1,7,4,0],bass:'psy',chord:'sparse',arp:'random',drum:'trance',prog:[[0,0,1,0],[0,3,1,0]],ext:3,swing:0,tip:'Keep the three bass hits after each kick precise. Let the upper sequence take the irregular phrasing.',sound:'Short saw bass with almost no release; automate lead resonance and formant colour in phrases.'},
+ {id:'ukg',name:'UK garage',bpm:132,mode:'minor',mood:'Playful',artist:'MJ Cole · Todd Edwards',title:'Night bus',rh:[1,3,6,9,11,14],mot:[2,0,4,2,6,4,1,0],bass:'garage',chord:'garage',arp:'skip',drum:'garage',prog:[[0,3,6,2],[0,5,3,4]],ext:4,swing:32,tip:'Separate the kick and bass pickups. Keep chord hits very short and let the swung hats connect them.',sound:'Sine sub with a soft second harmonic; bright organ stabs and a small, tight room.'},
+ {id:'basshouse',name:'Bass house',bpm:128,mode:'minor',mood:'Aggressive',artist:'JOYRYDE · Habstrakt',title:'Rubber voltage',rh:[0,3,6,7,10,14],mot:[0,0,7,4,3,0,2,0],bass:'wobble',chord:'stab',arp:'pedal',drum:'house',prog:[[0,0,5,4],[0,6,3,0]],ext:3,swing:12,tip:'Use short call-and-response blocks. Different envelopes on repeated notes create the bass conversation.',sound:'Split clean sub from a filtered mid-bass layer. Map velocity to filter depth for the accented hits.'},
+ {id:'breaks',name:'Breakbeat / electronica',bpm:132,mode:'minor',mood:'Melancholic',artist:'Bicep · Overmono',title:'Afterimage',rh:[0,3,6,8,10,13,15],mot:[0,4,2,6,7,4,2,1],bass:'breaks',chord:'sustain',arp:'dotted',drum:'breaks',prog:[[0,5,3,6],[5,2,0,6]],ext:4,swing:10,tip:'Let the melody float across the snare. Repeat the emotional interval while the bass stays grounded.',sound:'Soft detuned pluck, slowly opening pads and a rounded sub. Keep the break transient clear.'},
+ {id:'electro',name:'Electro',bpm:134,mode:'minor',mood:'Dark',artist:'Drexciya · Anthony Rother',title:'Neon trench',rh:[0,2,5,7,9,12,14],mot:[0,7,4,0,3,7,1,4],bass:'electro',chord:'stab',arp:'fifths',drum:'electro',prog:[[0,0,3,6],[0,5,0,4]],ext:3,swing:0,tip:'Make the bass rhythm converse with the broken kick. Use the octave as a punctuation mark.',sound:'Dry square-wave bass, metallic FM lead and short gated ambience.'},
+ {id:'liquid',name:'Liquid drum & bass',bpm:174,mode:'dorian',mood:'Soulful',artist:'Calibre · High Contrast',title:'Rain on glass',rh:[0,3,6,10,14],mot:[2,4,6,7,4,2,1,0],bass:'reese',chord:'sustain',arp:'sparse',drum:'dnb',prog:[[0,3,5,4],[0,6,2,3]],ext:5,swing:8,tip:'Long bass notes make space under the fast drums. Let the melodic answer occupy the second bar.',sound:'Warm filtered Reese, electric piano ninths and a soft lead. Keep bass unison out of the sub.'},
+ {id:'neuro',name:'Neurofunk',bpm:174,mode:'phrygian',mood:'Aggressive',artist:'Noisia · Mefjus',title:'Broken alloy',rh:[0,1,5,6,8,11,14,15],mot:[0,1,4,0,7,3,1,0],bass:'neuro',chord:'sparse',arp:'random',drum:'dnb',prog:[[0,1,0,3],[0,0,1,4]],ext:3,swing:0,tip:'Alternate a held bass growl with quick fragments. Resample different tones onto the same note rhythm.',sound:'Clean sub plus an FM or wavetable mid layer. The exported rhythm is a scaffold for sound design.'},
+ {id:'dubstep',name:'Dubstep / halftime',bpm:140,mode:'minor',mood:'Dark',artist:'Mala · Digital Mystikz',title:'Half-lit space',rh:[0,3,7,10,15],mot:[0,4,1,0,6,3,0,2],bass:'halftime',chord:'dub',arp:'sparse',drum:'halftime',prog:[[0,0,5,3],[0,6,0,4]],ext:3,swing:15,tip:'Treat the snare on beat three as the anchor. Let sub notes ring, then leave a full beat of air.',sound:'Sine sub, short filtered chord echoes and very sparse high percussion.'},
+ {id:'future',name:'Future bass',bpm:150,mode:'major',mood:'Dreamy',artist:'Flume · San Holo',title:'Paper satellites',rh:[0,3,6,9,10,14],mot:[4,7,6,2,4,1,2,0],bass:'halftime',chord:'future',arp:'skip',drum:'halftime',prog:[[3,0,5,4],[5,3,0,4]],ext:4,swing:18,tip:'Use chord retriggers as a rhythm instrument. Leave room for the melodic pickup before the next chord.',sound:'Wide saw chords with a fast amplitude envelope, a quiet pluck and an independent mono sub.'}
+];
+const TREATMENTS = [
+ {name:'Statement',emotion:null,desc:'A clear motif, stable bass and the native harmonic path.'},
+ {name:'Conversation',emotion:'Playful',desc:'A shorter answer, displaced pickups and an alternate harmonic path.'},
+ {name:'Release',emotion:'Euphoric',desc:'More activity, rising answers, open voicings and a final register lift.'},
+ {name:'After hours',emotion:'Dreamy',desc:'More space, lower velocities, longer tones and a restrained ending.'}
+];
+const BASS_RHYTHMS = {
+ funk:[0,3,6,10,12,15],disco:[0,2,4,6,8,10,12,14,15],offbeat:[2,6,10,14],skip:[0,3,6,7,11,14],sparse:[0,7,12],tresillo:[0,6,12],sustain:[0,8],rolling:[0,2,3,6,7,8,10,11,14,15],motor:[0,2,4,6,8,10,12,14],acid:[0,1,3,4,6,7,9,10,12,14,15],psy:[1,2,3,5,6,7,9,10,11,13,14,15],garage:[0,3,7,10,14],wobble:[0,3,6,8,11,14],breaks:[0,3,7,8,11,14],electro:[0,2,5,7,8,10,13,15],reese:[0,6,10],neuro:[0,2,5,6,8,11,13,15],halftime:[0,6,11]
+};
+const CHORD_RHYTHMS={stab:[0,6,11],chop:[0,3,6,8,11,14],piano:[0,3,6,10,14],sparse:[1],sustain:[0],pulse:[0,2,4,6,8,10,12,14],dub:[2,10],garage:[1,6,11,14],future:[0,3,6,9,12,14]};
+const ARP_ORDERS={up:[0,1,2,3],down:[3,2,1,0],updown:[0,1,2,3,2,1],pedal:[0,1,0,2,0,3],fifths:[0,2,1,3,2],euclid:[0,2,1,3,1,2,0],dotted:[0,1,3,2,1],random:[0,3,1,2,3,0,2],sparse:[0,2,3,1],skip:[0,2,1,3,2,0]};
+const DRUMS={
+ house:[[36,[0,4,8,12]],[38,[4,12]],[42,[0,2,4,6,8,10,12,14]],[46,[2,6,10,14]]],
+ disco:[[36,[0,4,8,12]],[39,[4,12]],[42,[0,2,3,4,6,8,10,11,12,14]],[46,[6,14]],[75,[3,10]]],
+ minimal:[[36,[0,4,8,12]],[37,[4,12]],[42,[2,5,6,10,13,14]],[76,[3,11]]],
+ afro:[[36,[0,4,8,12]],[39,[4,12]],[42,[2,6,10,14]],[64,[0,3,6,10,14]],[63,[2,8,11]],[75,[3,7,11,15]]],
+ techno:[[36,[0,4,8,12]],[39,[4,12]],[42,[0,2,4,6,8,10,12,14]],[46,[6,14]],[70,[3,7,11,15]]],
+ hard:[[36,[0,4,8,12]],[38,[4,12]],[42,[0,1,2,4,6,7,8,10,12,13,14]],[46,[2,6,10,14]],[45,[3,11,15]]],
+ trance:[[36,[0,4,8,12]],[39,[4,12]],[42,[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]],[46,[2,6,10,14]]],
+ garage:[[36,[0,7,10]],[38,[4,12]],[42,[0,2,3,6,8,10,11,14,15]],[46,[6,14]],[37,[9]]],
+ breaks:[[36,[0,6,8,11]],[38,[4,12]],[42,[0,2,3,6,8,10,14,15]],[46,[2,10]],[37,[7,15]]],
+ electro:[[36,[0,6,10]],[38,[4,12]],[42,[0,2,4,6,8,10,12,14]],[46,[3,11]],[75,[7,15]]],
+ dnb:[[36,[0,6,10]],[38,[4,12]],[42,[0,2,3,6,8,10,11,14]],[46,[2,10]],[37,[7,15]]],
+ halftime:[[36,[0,6,11]],[38,[8]],[42,[0,2,4,6,8,10,12,14]],[46,[6,14]],[37,[15]]]
+};
+const DRUM_NAMES={36:'Kick',37:'Rim',38:'Snare',39:'Clap',42:'Closed hat',45:'Low tom',46:'Open hat',63:'Conga',64:'High conga',70:'Shaker',75:'Claves',76:'Woodblock'};
+const PRESETS=GENRES.flatMap((g,gi)=>ROLES.flatMap((role,ri)=>TREATMENTS.map((v,variation)=>({
+ id:`${g.id}-${role}-${variation}`,genre:g.id,role,variation,name:`${g.title} / ${v.name}`,
+ mood:v.emotion||g.mood,seed:1009+gi*7919+ri*313+variation*97,
+ technique:role==='bass'?g.bass:role==='chords'?g.chord:role==='arp'?g.arp:role==='drums'?g.drum:variation===1?'call & response':variation===2?'rising phrase':variation===3?'spacious hook':'motif development'
+}))));
+const GUIDES_V2=[['groove-cheatsheet.html','Groove','Placement, length & velocity'],['groove-vol2.html','Pattern bank','66 rhythmic building blocks'],['drum-library.html','The kit','Drum sequencing & morphing'],['low-end.html','Low end','Kick, phase & sidechain'],['melody.html','Melody','Rhythm, contour & development'],['chords.html','Voicing','Harmony & voice leading'],['between.html','Between','Make two parts work together'],['arrangement.html','Arc','Arrange beyond the loop'],['buildorder.html','Build order','Choose your next move'],['the-move.html','Transformations','24 ways to develop an idea'],['keyboard.html','Keyboard','Play & practise'],['patch-lab.html','Patch lab','Build the sounds'],['serum-v2.html','Serum 2 V2','48 sound-design recipes'],['sampling.html','The cut','Chop & stretch'],['inkey.html','In key','Transpose with intention'],['disco-house-cheatsheet.html','Disco house','The original quick reference']];
+
+/* Listening-led composition studies, not transcriptions. Each profile owns all five parts. */
+const ARTIST_TREATMENTS=[
+ {name:'Core motion',emotion:null,desc:'Establish the profile’s motif, bass pocket, harmonic rhythm and drum conversation.'},
+ {name:'Offbeat dialogue',emotion:'Playful',desc:'Displace the answer, shorten the reply and give the bass a pickup.'},
+ {name:'Wide release',emotion:'Euphoric',desc:'Open the upper register, add activity and build toward a final lift.'},
+ {name:'Low lights',emotion:'Dreamy',desc:'Thin the attacks, soften the accents and let the harmony hang.'},
+ {name:'Broken mirror',emotion:'Dark',desc:'Reverse the melodic cell and break up the second half of the groove.'},
+ {name:'Pedal tension',emotion:'Hypnotic',desc:'Return to a pedal note while displaced upper voices add tension.'},
+ {name:'Climbing answer',emotion:'Euphoric',desc:'Sequence the response upward and use a more active turnaround.'},
+ {name:'Half-time space',emotion:'Melancholic',desc:'Stretch the gestures across a half-time drum frame and a sparse low end.'}
+];
+// mr/mn = melodic rhythm/degrees; br/bn = bass; cr = chords; ar/ao = arp rhythm/order.
+// All rhythm positions are sixteenths; note degrees are relative to the current chord root.
+const ARTISTS=[
+ {id:'deadmau5',name:'deadmau5',focus:'Progressive tension',genre:'progressive',bpm:126,mode:'minor',mood:'Hypnotic',title:'Slow orbit',mr:[0,3,6,9,12,15],mn:[0,4,2,6,4,1,7,6],br:[0,3,6,8,11,14],bn:[0,0,4,0,7,4],cr:[0,6,12],ar:[0,3,6,9,12,15],ao:[0,1,3,2,1,2],prog:[[0,5,3,6],[0,2,5,3]],ext:4,k:[0,4,8,12],sn:[4,12],hh:[2,6,10,14],perc:[3,11],patch:['analog-pluck','round-saw','slow-strings','glass-pluck','club-909'],traits:['A small resolving motif with a held-note reference.','A repeated low pulse with a short pickup.','Long harmonic patience with suspended colour.','A dotted cell that crosses the four-beat frame.','Stable kick and clap; restrained high-frequency movement.'],source:'https://www.masterclass.com/classes/deadmau5-teaches-electronic-music-production/chapters/developing-melodic-structures'},
+ {id:'tiesto-trance',name:'Tiësto',focus:'Classic trance',genre:'trance',bpm:138,mode:'minor',mood:'Euphoric',title:'Dawn signal',mr:[0,2,4,6,8,10,12,14],mn:[4,7,6,4,2,4,1,0],br:[2,6,10,14],bn:[0,0,4,0],cr:[0,4,8,12],ar:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],ao:[0,1,2,3,2,1,3,2],prog:[[0,5,2,6],[3,5,0,4]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[0,2,3,6,8,10,11,14],perc:[7,15],patch:['supersaw','offbeat-pluck','anthem-saws','crystal-bell','trance-909'],traits:['An eight-note phrase with a single high arrival.','Compact offbeat pulses beneath the kick.','Direct triads with a strong final return.','A continuous sixteenth ladder around chord tones.','Four-on-the-floor with bright open-hat answers.'],source:'https://www.blackholerecordings.com/artists/tiesto/'},
+ {id:'tiesto-club',name:'Tiësto',focus:'Modern club',genre:'basshouse',bpm:126,mode:'minor',mood:'Playful',title:'Night flare',mr:[0,3,6,8,11,14],mn:[0,0,4,7,4,2],br:[0,3,6,7,10,14],bn:[0,0,7,4,0,2],cr:[0,6,10,14],ar:[0,2,5,8,10,13],ao:[0,2,0,3,1,2],prog:[[0,5,6,3],[0,0,3,4]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[2,5,6,10,13,14],perc:[3,15],patch:['brass-stab','rubber-bass','bright-piano','digital-pluck','punchy-house'],traits:['A compact, repeated hook with an octave reply.','Syncopated bass fragments separated by clear gaps.','Short chord punches support a direct drop.','A bright answering figure rather than a continuous bed.','A tight club kick with percussion before the downbeat.'],source:'https://www.blackholerecordings.com/artists/tiesto/'},
+ {id:'karla-blum',name:'Karla Blum',focus:'Driving / rolling techno',genre:'melotech',bpm:134,mode:'phrygian',mood:'Dark',title:'Pressure bloom',mr:[0,1,4,7,8,11,14],mn:[0,1,4,0,7,3,1],br:[1,2,3,5,7,9,10,11,13,15],bn:[0,0,0,4,0,0,1,0],cr:[0,7,10],ar:[0,2,3,6,8,10,11,14],ao:[0,2,1,0,3,1,2],prog:[[0,0,1,3],[0,3,0,1]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[0,2,3,6,7,10,11,14],perc:[1,7,9,15],patch:['resonant-lead','acid-bass','dark-stab','acid-sequence','warehouse'],traits:['A tense semitone gesture against repeated root notes.','A rolling low sequence with controlled empty steps.','Sparse minor-colour stabs keep the low mids open.','Resonant motion alternates pedal and upper notes.','Driving kick, clipped hats and anticipatory percussion.'],source:'https://karlablum.bandcamp.com/album/never-be-the-same'},
+ {id:'eric-prydz',name:'Eric Prydz',focus:'Progressive lift',genre:'progressive',bpm:126,mode:'minor',mood:'Euphoric',title:'High window',mr:[0,3,6,8,11,14],mn:[0,2,4,7,6,4,2,6],br:[2,5,6,10,13,14],bn:[0,0,4,0,7,0],cr:[0,3,8,11],ar:[0,3,6,9,12,15],ao:[0,1,2,1,3,2,1],prog:[[0,5,3,6],[5,3,0,6]],ext:4,k:[0,4,8,12],sn:[4,12],hh:[2,6,10,14,15],perc:[3,10],patch:['wide-pluck','offbeat-pluck','anthem-saws','analog-pluck','club-909'],traits:['A repeating hook grows through one register lift.','An offbeat pulse with an occasional anticipatory hit.','Broad voicings move slowly beneath the hook.','A cross-bar pluck keeps the harmonic motion running.','Steady floor pattern with a light last-step pickup.']},
+ {id:'boris-brejcha',name:'Boris Brejcha',focus:'Minimal melodic play',genre:'minimal',bpm:125,mode:'minor',mood:'Playful',title:'Clockwork grin',mr:[0,3,5,9,11,14],mn:[0,7,2,6,1,4,7],br:[0,3,6,10,11,14],bn:[0,7,0,4,0,6],cr:[1,6,13],ar:[0,2,5,7,10,12,15],ao:[0,3,1,2,0,2,1],prog:[[0,0,5,4],[0,3,6,0]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[2,3,6,9,10,14],perc:[1,7,13],patch:['hollow-square','rubber-bass','organ-stab','marimba','minimal-click'],traits:['An angular, playful motif alternates registers.','Rubbery low notes answer the melody gaps.','Short chord stamps mark a lightly changing harmony.','Odd-length note orders keep the sequence turning.','Dry percussion details sit around a minimal floor.']},
+ {id:'charlotte-de-witte',name:'Charlotte de Witte',focus:'Acid pressure',genre:'acid',bpm:140,mode:'phrygian',mood:'Hypnotic',title:'Voltage line',mr:[0,1,3,6,8,10,13,15],mn:[0,0,1,4,0,7,1,3],br:[1,3,5,6,7,9,11,13,14,15],bn:[0,0,0,7,0,1,0],cr:[0,10],ar:[0,1,3,4,6,9,10,12,14,15],ao:[0,0,2,1,3,0,2],prog:[[0,0,1,0],[0,1,0,4]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[2,3,6,7,10,11,14,15],perc:[5,13],patch:['acid-sequence','acid-bass','dark-stab','resonant-lead','hard-909'],traits:['A repeated root punctuated by flat-second tension.','Relentless short notes with enough space for the kick.','Very sparse chord movement keeps the pressure focused.','A jagged, accented acid cell with octave punctuation.','Hard floor, closed-hat motion and narrow percussion.']},
+ {id:'amelie-lens',name:'Amelie Lens',focus:'Fast hypnotic drive',genre:'hardtech',bpm:144,mode:'minor',mood:'Aggressive',title:'Strobe channel',mr:[0,2,3,6,8,11,12,15],mn:[0,4,0,2,7,4,1,0],br:[0,2,3,6,7,8,10,11,14,15],bn:[0,0,4,0,0,7,0,2],cr:[0,6,14],ar:[0,2,4,5,8,10,12,13],ao:[0,2,0,1,3,1],prog:[[0,0,3,0],[0,6,0,4]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[0,2,3,4,6,8,10,11,12,14],perc:[3,7,11,15],patch:['detuned-saw','drive-bass','dark-stab','short-saw','hard-909'],traits:['A clipped hook reiterates its central interval.','A compact motor rhythm emphasises the root.','Wide spaces between tense chord hits.','An insistent sequence with displaced internal accents.','Fast floor rhythm and recurring metallic pickups.']},
+ {id:'adam-beyer',name:'Adam Beyer',focus:'Groove-driven techno',genre:'detroit',bpm:134,mode:'minor',mood:'Hypnotic',title:'Steel pocket',mr:[0,3,6,7,10,14],mn:[0,2,4,0,6,4,1],br:[0,3,6,8,11,12,14],bn:[0,0,4,0,2,0,7],cr:[0,5,11],ar:[0,2,3,6,8,10,12,15],ao:[0,1,0,2,3,2],prog:[[0,3,0,6],[0,0,5,4]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[2,5,6,10,13,14],perc:[3,7,11],patch:['brass-stab','round-saw','dark-stab','short-saw','warehouse'],traits:['A short interval hook sits inside the groove.','Root-led syncopation makes a rolling pocket.','Dry harmonic punctuation leaves room for percussion.','A small repeated cell provides background movement.','Kick and clap stay direct while percussion leans forward.']},
+ {id:'enrico-sangiuliano',name:'Enrico Sangiuliano',focus:'Cinematic techno',genre:'melotech',bpm:132,mode:'harmonic',mood:'Dark',title:'Deep architecture',mr:[0,3,6,9,11,14],mn:[0,6,4,2,1,4,7,6],br:[0,2,3,6,8,10,11,14],bn:[0,0,4,0,7,0,1],cr:[0,8],ar:[0,3,5,6,9,11,12,15],ao:[0,2,3,1,2,0,3],prog:[[0,5,1,4],[0,3,5,4]],ext:4,k:[0,4,8,12],sn:[4,12],hh:[2,3,6,10,11,14],perc:[5,7,13,15],patch:['resonant-lead','drive-bass','cinema-pad','fm-pluck','warehouse'],traits:['A dramatic descending answer resolves late.','Low repeated notes contrast with a high pickup.','Long voicings use the harmonic-minor pull.','Irregular clusters create movement above the bass.','Driving drums leave the main phrase exposed.']},
+ {id:'stephan-bodzin',name:'Stephan Bodzin',focus:'Expressive mono line',genre:'melotech',bpm:124,mode:'minor',mood:'Melancholic',title:'Bent horizon',mr:[0,3,7,8,11,15],mn:[0,4,6,7,4,2,1,0],br:[0,6,8,14],bn:[0,0,4,0],cr:[0],ar:[0,2,5,8,10,13],ao:[0,1,2,3,2,0],prog:[[0,5,3,6],[0,3,5,4]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[2,6,10,14],perc:[7,13],patch:['resonant-lead','round-saw','warm-pad','analog-pluck','deep-house'],traits:['A long expressive contour alternates holds and pickups.','Few low anchors let the lead breathe.','Sustained harmonic support stays behind the main line.','A quiet counter-pattern fills the lead’s rests.','A restrained rhythm frame supports sound modulation.']},
+ {id:'anyma',name:'Anyma',focus:'Melodic techno contrast',genre:'melotech',bpm:126,mode:'harmonic',mood:'Dark',title:'Silver apparition',mr:[0,3,5,8,11,14],mn:[0,7,6,4,1,3,4],br:[2,6,10,14],bn:[0,0,4,7],cr:[0,8,14],ar:[0,2,3,6,8,11,14],ao:[0,2,1,3,0,1],prog:[[0,5,3,4],[0,1,5,4]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[2,6,9,10,14],perc:[3,11,15],patch:['vowel-lead','offbeat-pluck','cinema-pad','digital-pluck','punchy-house'],traits:['A stark leap followed by a downward answer.','An offbeat low pulse anchors the dramatic lead.','Large harmonic blocks with an anticipatory final hit.','A small repeated figure alternates with the main hook.','Clear dance-floor drums frame the melodic contrasts.']},
+ {id:'tale-of-us',name:'Tale Of Us',focus:'Nocturnal melodic space',genre:'melotech',bpm:124,mode:'minor',mood:'Melancholic',title:'Night geometry',mr:[0,3,6,10,13],mn:[2,4,6,7,4,1,0],br:[2,6,10,13,14],bn:[0,0,4,0,7],cr:[0,10],ar:[0,3,6,9,12,15],ao:[0,2,1,3,2,1,0],prog:[[0,5,2,6],[5,3,0,4]],ext:4,k:[0,4,8,12],sn:[4,12],hh:[2,6,10,14],perc:[3,9,15],patch:['wide-pluck','soft-sub','slow-strings','glass-pluck','deep-house'],traits:['An upper-register motif leaves a long ending.','Soft offbeats give the harmony a foundation.','Slow voicings carry a melancholy top voice.','Dotted motion threads through the sustained chords.','Sparse drum detail preserves the nocturnal space.']},
+ {id:'artbat',name:'ARTBAT',focus:'Peak melodic drive',genre:'melotech',bpm:126,mode:'minor',mood:'Euphoric',title:'Beacon rush',mr:[0,2,6,8,10,14],mn:[0,4,7,6,4,2,6,1],br:[2,5,6,10,14],bn:[0,0,4,0,7],cr:[0,6,8,14],ar:[0,2,4,6,8,10,12,14],ao:[0,2,1,3,2,0],prog:[[0,5,6,3],[3,5,0,6]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[2,3,6,10,11,14],perc:[7,15],patch:['supersaw','round-saw','anthem-saws','wide-pluck','club-909'],traits:['An ascending interval gives the hook a clear crest.','Offbeat momentum with an extra pickup.','Repeated chord attacks reinforce the larger phrase.','A bright eighth-note pattern keeps the drop moving.','Punchy floor rhythm with brief turnaround details.']},
+ {id:'camelphat',name:'CamelPhat',focus:'Deep melodic club',genre:'melodic',bpm:124,mode:'minor',mood:'Hypnotic',title:'Velour circuit',mr:[0,3,6,9,14],mn:[0,2,4,2,6,4,1],br:[0,3,6,10,14,15],bn:[0,0,4,0,7,2],cr:[0,6,11],ar:[0,3,6,8,11,14],ao:[0,1,2,0,3,2],prog:[[0,5,3,6],[0,3,0,4]],ext:4,k:[0,4,8,12],sn:[4,12],hh:[2,6,10,13,14],perc:[3,7,11],patch:['hollow-square','organ-bass','organ-stab','analog-pluck','punchy-house'],traits:['A restrained melodic cell returns to its centre.','A low syncopated phrase drives the pocket.','Compact extended chords add darker warmth.','A plucked echo-pattern fills around the main line.','Deep house detail sits inside a direct club frame.']},
+ {id:'lane8',name:'Lane 8',focus:'Patient melodic warmth',genre:'melodic',bpm:122,mode:'major',mood:'Dreamy',title:'Soft distance',mr:[0,3,6,8,11,14],mn:[2,4,7,6,4,1,2,0],br:[0,6,10,14],bn:[0,0,4,0],cr:[0],ar:[0,2,5,8,10,13],ao:[0,1,2,3,1,2],prog:[[3,0,5,4],[0,5,3,4]],ext:4,k:[0,4,8,12],sn:[4,12],hh:[2,6,10,14],perc:[5,13],patch:['soft-pluck','soft-sub','warm-pad','glass-pluck','soft-organic'],traits:['A gentle stepwise answer follows one high note.','Few root tones keep the floor uncomplicated.','Long major-colour voicings support emotional movement.','A light pluck creates a flowing secondary rhythm.','Uncluttered drums leave space for the atmosphere.']},
+ {id:'ben-bohmer',name:'Ben Böhmer',focus:'Flowing melodic house',genre:'melodic',bpm:123,mode:'minor',mood:'Melancholic',title:'Pale current',mr:[0,2,5,8,11,14],mn:[0,4,2,6,7,4,2,1],br:[2,6,10,14],bn:[0,0,0,4],cr:[0,8],ar:[0,2,4,6,8,10,12,14],ao:[0,2,1,3,2,1],prog:[[0,5,2,6],[5,3,0,6]],ext:4,k:[0,4,8,12],sn:[4,12],hh:[2,6,10,14,15],perc:[3,11],patch:['soft-pluck','soft-sub','slow-strings','wide-pluck','soft-organic'],traits:['A falling answer gives the phrase a reflective finish.','Simple offbeats support the moving upper part.','Slow, softly voiced harmony avoids abrupt jumps.','A repeating rise-and-fall figure adds forward flow.','Light drum punctuation follows the four-beat pulse.']},
+ {id:'yotto',name:'Yotto',focus:'Progressive low-end pull',genre:'progressive',bpm:124,mode:'minor',mood:'Dark',title:'Amber undertow',mr:[0,3,6,8,12,14],mn:[0,2,6,4,7,4,1],br:[0,2,6,7,10,14],bn:[0,0,4,7,0,2],cr:[0,6,12],ar:[0,3,6,9,12,15],ao:[0,1,3,2,0,2],prog:[[0,3,5,6],[0,5,0,4]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[2,5,6,10,14],perc:[3,9,15],patch:['detuned-saw','round-saw','warm-pad','analog-pluck','deep-house'],traits:['A low-mid hook slowly opens into an upper answer.','A heavy repeated note is interrupted by a pickup.','A deliberate harmonic pace reinforces the low-end pull.','Dotted pluck motion sits behind the lead.','Solid kick and light syncopation preserve the groove.']},
+ {id:'bicep',name:'Bicep',focus:'Melancholic broken motion',genre:'breaks',bpm:132,mode:'minor',mood:'Melancholic',title:'Prism memory',mr:[0,3,6,8,10,13,15],mn:[0,4,2,6,7,4,1,2],br:[0,6,8,11,14],bn:[0,0,4,0,7],cr:[0,7,12],ar:[0,3,6,9,12,15],ao:[0,2,1,3,1,2,0],prog:[[0,5,3,6],[5,2,0,6]],ext:4,k:[0,6,8,11],sn:[4,12],hh:[0,2,3,6,8,10,14,15],perc:[7,13],patch:['wide-pluck','soft-sub','chorus-pad','glass-pluck','break-machine'],traits:['A reflective motif crosses the backbeat.','Long low notes answer broken kick placements.','Warm suspended-feeling blocks move under the riff.','A displaced cell provides a second rhythmic layer.','Broken kicks and ghost details contrast with a stable snare.']},
+ {id:'overmono',name:'Overmono',focus:'Broken club fragments',genre:'breaks',bpm:136,mode:'minor',mood:'Hypnotic',title:'Fragment relay',mr:[1,3,6,9,11,14],mn:[0,0,4,2,6,4,7,1],br:[0,3,7,8,11,14],bn:[0,0,4,7,0,2],cr:[1,6,10],ar:[0,2,5,7,10,13,15],ao:[0,2,0,3,1,2],prog:[[0,5,0,6],[0,3,6,2]],ext:4,k:[0,3,7,10],sn:[4,12],hh:[0,2,3,6,9,10,11,14],perc:[5,15],patch:['vocalish-pluck','deep-sine','organ-stab','digital-pluck','uk-garage'],traits:['Short repeated fragments become a melodic phrase.','Sub hits punctuate rather than duplicate the drum groove.','Brief chord slices frame the vocal-like motif.','A skipping sequence answers every other fragment.','Garage-leaning kicks and late hats produce a broken pocket.']},
+ {id:'fred-again',name:'Fred again..',focus:'Intimate club dialogue',genre:'ukg',bpm:132,mode:'major',mood:'Soulful',title:'Small hours',mr:[0,3,6,7,10,14],mn:[2,2,4,7,6,4,1,0],br:[0,7,10,14],bn:[0,4,0,7],cr:[0,6,11],ar:[0,3,6,8,11,15],ao:[0,1,2,0,3,1],prog:[[3,0,5,4],[5,3,0,4]],ext:4,k:[0,7,10],sn:[4,12],hh:[0,2,3,6,8,10,11,14],perc:[9,15],patch:['vocalish-pluck','deep-sine','felt-keys','kalimba','uk-garage'],traits:['A repeated-note opening suggests a conversational phrase.','Sparse low notes leave space around the vocal-like part.','Soft keys supply a direct emotional progression.','A small answering motif replaces a busy arpeggio bed.','Broken kick placement and hats support the intimate hook.']},
+ {id:'four-tet',name:'Four Tet',focus:'Organic sequence play',genre:'organic',bpm:126,mode:'dorian',mood:'Playful',title:'Woven light',mr:[0,3,5,8,11,13,15],mn:[0,4,1,6,2,5,7,3],br:[0,6,11,14],bn:[0,4,0,2],cr:[0,9],ar:[0,2,5,7,10,12,15],ao:[0,2,1,3,0,1,2],prog:[[0,3,1,4],[0,6,3,0]],ext:4,k:[0,6,8,12],sn:[4,12],hh:[1,3,6,7,10,13,14],perc:[0,3,7,11,15],patch:['kalimba','soft-sub','felt-keys','marimba','organic-percussion'],traits:['A light interlocking motif uses an uneven pitch order.','A minimal sub pattern lets small details be heard.','Sparse warm chords act as colour behind the sequence.','A seven-hit cell invites gradual phasing against the drums.','Percussion creates the movement around a simple backbone.'],source:'https://www.ableton.com/en/blog/four-tet-makes-track-10-minutes/'},
+ {id:'bonobo',name:'Bonobo',focus:'Organic harmonic detail',genre:'organic',bpm:118,mode:'dorian',mood:'Soulful',title:'Canopy room',mr:[0,3,6,10,12,15],mn:[2,4,6,4,1,2,5,0],br:[0,3,7,10,14],bn:[0,2,4,0,6],cr:[0,6,12],ar:[0,3,5,8,11,14],ao:[0,2,1,3,2,0],prog:[[0,3,5,4],[0,6,2,3]],ext:5,k:[0,6,10],sn:[4,12],hh:[0,2,3,6,8,10,14],perc:[1,5,9,11,15],patch:['marimba','plucked-bass','electric-keys','kalimba','organic-percussion'],traits:['A warm upper phrase favours small connecting steps.','A moving bass line links roots with chord tones.','Extended harmony creates colour without constant changes.','Mallet-like answers fit around the main melody.','Percussion and a broken kick give the loop a played feel.']},
+ {id:'disclosure',name:'Disclosure',focus:'Garage harmony',genre:'ukg',bpm:130,mode:'dorian',mood:'Playful',title:'Room service',mr:[0,3,6,9,11,14],mn:[0,2,4,6,4,1,7,2],br:[0,3,6,7,10,14,15],bn:[0,0,4,7,0,2,6],cr:[1,6,9,14],ar:[0,2,5,8,11,14],ao:[0,2,1,3,0,2],prog:[[0,3,6,2],[0,5,3,4]],ext:4,k:[0,7,8,10],sn:[4,12],hh:[0,2,3,6,8,10,11,14],perc:[5,13,15],patch:['organ-lead','organ-bass','organ-stab','fm-pluck','uk-garage'],traits:['A syncopated hook uses chord-tone colour.','A springy bass reply makes the two-bar pocket.','Seventh and ninth voicings land as short stabs.','Bright fragments echo the bassline’s gaps.','Swung hats and a broken kick leave a firm snare frame.']},
+ {id:'daft-punk',name:'Daft Punk',focus:'French-house loops',genre:'disco',bpm:123,mode:'minor',mood:'Playful',title:'Disco hardware',mr:[0,2,5,7,10,13,15],mn:[0,2,4,7,6,4,1,2],br:[0,2,4,6,8,10,12,14,15],bn:[0,7,0,4,0,7,2,4],cr:[0,3,6,8,11,14],ar:[0,2,4,7,8,10,12,15],ao:[0,1,2,3,1,2],prog:[[5,4,3,0],[3,6,2,0]],ext:4,k:[0,4,8,12],sn:[4,12],hh:[0,2,3,4,6,8,10,11,12,14],perc:[3,10,15],patch:['talkbox-lead','disco-bass','clav-keys','short-saw','disco-707'],traits:['A short rising cell loops into a descending reply.','Octave bass pulses with a final walking pickup.','Uneven chord chops create the phrase’s rhythmic identity.','A compact sequenced figure stays within the loop.','A disco-style hat engine supports the four-beat floor.']},
+ {id:'kerri-chandler',name:'Kerri Chandler',focus:'Deep house soul',genre:'deep',bpm:123,mode:'dorian',mood:'Soulful',title:'Basement warmth',mr:[0,3,6,10,14],mn:[2,4,6,4,1,0,2,5],br:[0,3,6,10,12,15],bn:[0,2,4,0,6,4],cr:[0,6,11,14],ar:[0,3,6,10,13],ao:[0,2,1,3,2],prog:[[0,3,0,4],[0,5,3,4]],ext:5,k:[0,4,8,12],sn:[4,12],hh:[2,5,6,10,13,14],perc:[3,9,15],patch:['organ-lead','organ-bass','electric-keys','fm-pluck','deep-house'],traits:['A soulful line resolves through a short stepwise tail.','A warm walking reply connects the chord roots.','Rich extensions are voiced as playable chord stabs.','A light organ figure adds colour in the gaps.','A heavy floor and swung inner percussion establish the pocket.']},
+ {id:'chris-lake',name:'Chris Lake',focus:'Bass-led club groove',genre:'techhouse',bpm:128,mode:'minor',mood:'Playful',title:'Pocket switch',mr:[2,5,6,11,14],mn:[0,0,4,2,7,0,1],br:[0,3,6,7,11,14],bn:[0,0,7,4,0,2],cr:[2,7,14],ar:[1,3,6,9,11,14],ao:[0,2,0,3,1],prog:[[0,0,3,0],[0,6,0,4]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[2,3,6,10,13,14],perc:[5,11,15],patch:['vocalish-pluck','rubber-bass','brass-stab','digital-pluck','punchy-house'],traits:['A tiny hook emphasises rhythm over pitch count.','A bass riff leaves deliberate gaps before kick hits.','Short stabs reinforce selected bass accents.','A sparse repeating answer stays out of the lead’s way.','Tight drum hits and off-grid-feeling pickups drive the loop.']},
+ {id:'fisher',name:'FISHER',focus:'Direct tech-house bounce',genre:'techhouse',bpm:128,mode:'minor',mood:'Playful',title:'Floor reflex',mr:[0,3,6,10,14],mn:[0,0,2,4,0,7],br:[0,2,3,6,8,11,14],bn:[0,0,4,0,7,0,2],cr:[0,6,14],ar:[0,3,6,8,11,14],ao:[0,0,2,1,3,0],prog:[[0,0,6,0],[0,3,0,4]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[2,5,6,10,14,15],perc:[3,7,13],patch:['hollow-square','donk-bass','organ-stab','short-saw','punchy-house'],traits:['A blunt repeated-note hook returns quickly to the root.','A bouncy riff places weight on the low repeated note.','A few chord stabs provide contrast to the bass.','A simple answer adds energy without harmonic clutter.','Direct kick and clap with small hat variations.']},
+ {id:'skrillex',name:'Skrillex',focus:'Broken bass conversation',genre:'basshouse',bpm:140,mode:'minor',mood:'Aggressive',title:'Elastic relay',mr:[0,3,6,7,10,14,15],mn:[0,7,0,3,4,1,7,2],br:[0,3,5,7,8,11,14,15],bn:[0,7,0,4,0,2,7,1],cr:[0,7,11],ar:[0,1,4,6,9,11,14],ao:[0,3,0,2,1,3,2],prog:[[0,0,5,3],[0,6,3,4]],ext:3,k:[0,3,7,10,14],sn:[4,12],hh:[0,2,3,6,7,10,11,14,15],perc:[1,5,9,13],patch:['digital-lead','fm-growl','brass-stab','fm-pluck','bass-breaks'],traits:['Sharp fragments answer across registers.','Contrasting sustained and clipped bass gestures form a conversation.','Chord punches separate the more active bass sections.','An irregular digital sequence supplies short fills.','Broken kicks and percussion make room for bass transients.']},
+ {id:'noisia',name:'Noisia',focus:'Neurofunk fragmentation',genre:'neuro',bpm:174,mode:'phrygian',mood:'Aggressive',title:'Alloy fracture',mr:[0,1,5,6,8,11,14,15],mn:[0,1,4,0,7,3,1,6],br:[0,2,5,6,8,11,13,15],bn:[0,0,1,7,0,4,3,1],cr:[0,11],ar:[0,1,4,6,7,10,12,15],ao:[0,3,1,2,0,2,3],prog:[[0,1,0,3],[0,0,1,4]],ext:3,k:[0,6,10],sn:[4,12],hh:[0,2,3,6,8,10,11,14],perc:[5,7,13,15],patch:['digital-lead','fm-growl','dark-stab','metal-bell','neuro-breaks'],traits:['An angular cell uses narrow tension and abrupt leaps.','Bass fragments alternate low anchors and upper growl cues.','Minimal harmony avoids crowding the midrange design.','A jagged upper pattern follows the bass conversation.','A fast broken frame includes quiet ghost-note responses.']},
+ {id:'astrix',name:'Astrix',focus:'Psychedelic rolling motion',genre:'psy',bpm:145,mode:'phrygian',mood:'Hypnotic',title:'Spiral canopy',mr:[0,1,3,5,6,9,11,13,15],mn:[0,1,4,0,3,1,7,4,6],br:[1,2,3,5,6,7,9,10,11,13,14,15],bn:[0,0,0,0,0,4,0,0,0],cr:[0,10],ar:[0,1,3,4,6,7,9,10,12,14,15],ao:[0,1,3,0,2,1,3],prog:[[0,0,1,0],[0,3,1,0]],ext:3,k:[0,4,8,12],sn:[4,12],hh:[0,2,3,6,7,10,11,14,15],perc:[3,5,9,15],patch:['acid-sequence','psy-bass','dark-stab','resonant-lead','psy-kit'],traits:['A fast irregular motif uses modal tension.','Three short bass hits follow each kick.','Sparse harmonic accents keep the bass pattern clean.','A busy, accented sequence moves independently of the kick.','Precise four-floor rhythm with rolling high percussion.']},
+ {id:'peggy-gou',name:'Peggy Gou',focus:'Bright house / electro',genre:'piano',bpm:124,mode:'mixolydian',mood:'Playful',title:'Colour radio',mr:[0,3,6,8,11,14],mn:[0,2,4,6,4,2,7,1],br:[0,3,6,8,10,14],bn:[0,7,0,4,0,6],cr:[0,3,8,11,14],ar:[0,2,5,8,10,13],ao:[0,2,1,3,0,1],prog:[[0,3,6,4],[0,5,3,6]],ext:4,k:[0,4,8,12],sn:[4,12],hh:[0,2,3,6,8,10,11,14],perc:[5,9,15],patch:['organ-lead','disco-bass','bright-piano','hollow-square','disco-707'],traits:['A bright hook uses small rises and an octave reply.','Octave-aware bass links a house pulse with electro bounce.','Colourful chord hits land on rhythmic anticipations.','A compact synthesizer sequence acts as a second hook.','Bright hats and a direct floor keep the loop light.']}
+];
+const GENRE_PRESETS=PRESETS.slice();
+const ARTIST_PRESETS=ARTISTS.flatMap((a,ai)=>ROLES.flatMap((role,ri)=>ARTIST_TREATMENTS.map((t,variation)=>({id:`artist-${a.id}-${role}-${variation}`,artist:a.id,genre:a.genre,role,variation,name:`${a.name} · ${a.title} / ${t.name}`,mood:t.emotion||a.mood,seed:100003+ai*10007+ri*719+variation*193,technique:['motif study','bass dialogue','harmonic rhythm','sequence study','drum pocket'][ri]}))));
+PRESETS.push(...ARTIST_PRESETS);
+const artistOf=p=>ARTISTS.find(a=>a.id===(typeof p==='string'?p:p.artist));
+const treatmentFor=p=>(p.artist?ARTIST_TREATMENTS:TREATMENTS)[p.variation];
+
+/* Offline preview patches: real synthesis parameters, no downloaded samples. */
+const SOUND_DEFAULTS={engine:'sub',wave:'sawtooth',voices:1,detune:0,attack:.008,decay:.18,sustain:.25,release:.12,cutoff:3200,resonance:.8,filterEnv:1.5,ratio:2,index:1.5,level:.9};
+const sound=(id,name,group,desc,parameters)=>({id,name,group,desc,...SOUND_DEFAULTS,...parameters});
+const SOUNDS=[
+ sound('analog-pluck','Analog pluck','Plucks & mallets','A rounded saw pluck with a quick filter fall.',{cutoff:2100,filterEnv:2.5,sustain:.12}),
+ sound('wide-pluck','Wide detuned pluck','Plucks & mallets','Three gently detuned saw voices with a longer tail.',{voices:3,detune:11,decay:.3,release:.35,cutoff:3600,sustain:.18}),
+ sound('soft-pluck','Soft triangle pluck','Plucks & mallets','A gentle triangle attack for quieter melodic lines.',{wave:'triangle',cutoff:2200,decay:.32,sustain:.08,release:.25}),
+ sound('glass-pluck','Glass pluck','Plucks & mallets','A clean FM attack with a slowly fading glass edge.',{engine:'fm',wave:'sine',ratio:2,index:1.8,decay:.4,sustain:.1,cutoff:6500,release:.32}),
+ sound('fm-pluck','FM tine pluck','Plucks & mallets','A bright ratio-three FM pluck with a short body.',{engine:'fm',wave:'sine',ratio:3,index:2.8,decay:.17,sustain:.04,cutoff:7000}),
+ sound('digital-pluck','Digital pin pluck','Plucks & mallets','A square pluck with a narrow resonant attack.',{wave:'square',cutoff:3300,resonance:2.5,decay:.1,sustain:.04,release:.07}),
+ sound('short-saw','Dry saw sequence','Plucks & mallets','Fast attack, short release and a dry saw edge.',{cutoff:4100,decay:.09,sustain:.3,release:.045,filterEnv:1.1}),
+ sound('kalimba','Kalimba-like tine','Plucks & mallets','Soft additive tines with a small upper inharmonic partial.',{engine:'additive',wave:'sine',partials:[[1,1],[2.76,.18],[5.4,.07]],attack:.003,decay:.22,sustain:.01,release:.18,cutoff:5000}),
+ sound('marimba','Marimba-like mallet','Plucks & mallets','A low fundamental and a quiet upper bar resonance.',{engine:'additive',wave:'sine',partials:[[1,1],[4,.2],[9,.06]],attack:.002,decay:.3,sustain:.015,release:.15,cutoff:5000}),
+ sound('crystal-bell','Crystal bell','Plucks & mallets','A high-ratio FM bell with a longer ringing release.',{engine:'fm',wave:'sine',ratio:3.5,index:2.5,attack:.003,decay:.7,sustain:.08,release:.8,cutoff:10500}),
+ sound('resonant-lead','Resonant mono-style lead','Leads','Saw lead with a pronounced filter envelope.',{cutoff:1700,resonance:5,filterEnv:3.2,decay:.3,sustain:.65,release:.18,level:.7}),
+ sound('supersaw','Three-voice supersaw','Leads','Three spread saw voices for broad melodic hooks.',{voices:3,detune:19,attack:.018,decay:.2,sustain:.8,release:.3,cutoff:6500,filterEnv:1.1,level:.7}),
+ sound('detuned-saw','Twin saw lead','Leads','A tighter detuned pair with a slightly darker filter.',{voices:2,detune:7,cutoff:3600,sustain:.7,release:.15}),
+ sound('hollow-square','Hollow square lead','Leads','Odd-harmonic body with a rounded attack.',{wave:'square',cutoff:1900,attack:.013,decay:.25,sustain:.55,release:.2}),
+ sound('brass-stab','Synthetic brass stab','Leads','A swelling saw attack that quickly narrows into the body.',{voices:2,detune:4,attack:.035,decay:.17,sustain:.45,release:.08,cutoff:1700,filterEnv:3}),
+ sound('vowel-lead','Vowel-shaped lead','Leads','Parallel formant filters give a saw a vocal colour.',{engine:'formant',formants:[650,1100,2500],cutoff:4500,attack:.018,sustain:.65,release:.17}),
+ sound('organ-lead','Drawbar lead','Leads','Sine harmonics at octave and fifth drawbar intervals.',{engine:'additive',wave:'sine',partials:[[1,1],[2,.5],[3,.24],[4,.15]],attack:.004,decay:.05,sustain:.9,release:.055,cutoff:6000}),
+ sound('vocalish-pluck','Vocal-colour pluck','Leads','A short formant-filtered synth, useful for chopped-note ideas.',{engine:'formant',formants:[350,1500,2800],wave:'square',attack:.009,decay:.12,sustain:.12,release:.1,cutoff:4500}),
+ sound('talkbox-lead','Talkbox-colour lead','Leads','A narrow nasal formant pair over a saw carrier.',{engine:'formant',formants:[450,850,2200],attack:.02,decay:.16,sustain:.75,release:.15,cutoff:3900}),
+ sound('digital-lead','Digital FM lead','Leads','A bright, slightly inharmonic FM tone for angular hooks.',{engine:'fm',wave:'sine',ratio:1.5,index:4,cutoff:8000,attack:.008,sustain:.65,release:.12}),
+ sound('acid-sequence','Acid sequence lead','Leads','A hollow resonant square with a fast accented envelope.',{wave:'square',cutoff:850,resonance:6,filterEnv:5,attack:.002,decay:.09,sustain:.2,release:.04,level:.55}),
+ sound('breathy-lead','Breathy triangle lead','Leads','A triangle body mixed with filtered noise and light vibrato.',{wave:'triangle',noise:.1,vibrato:5,attack:.06,decay:.2,sustain:.7,release:.25,cutoff:3300}),
+ sound('round-saw','Rounded saw bass','Bass','A full saw bass softened by a low-pass envelope.',{cutoff:550,filterEnv:3.5,decay:.13,sustain:.4,release:.07}),
+ sound('offbeat-pluck','Offbeat pluck bass','Bass','A short, weighty bass attack for the spaces between kicks.',{cutoff:600,filterEnv:4,decay:.1,sustain:.15,release:.04}),
+ sound('soft-sub','Soft triangle sub','Bass','A quiet triangle harmonic above the fundamental.',{wave:'triangle',cutoff:450,filterEnv:1.2,attack:.015,sustain:.8,release:.1}),
+ sound('deep-sine','Pure sine sub','Bass','A clean sine fundamental with a click-free envelope.',{wave:'sine',cutoff:400,filterEnv:1,attack:.009,decay:.1,sustain:.9,release:.065}),
+ sound('rubber-bass','Rubber bass','Bass','A square body with a springy resonant filter drop.',{wave:'square',cutoff:450,filterEnv:5,resonance:3.8,decay:.14,sustain:.2,release:.055,level:.65}),
+ sound('acid-bass','Acid bass','Bass','A resonant saw with a fast envelope and velocity accents.',{cutoff:650,filterEnv:5,resonance:7,decay:.11,sustain:.35,release:.05,level:.55}),
+ sound('drive-bass','Driven bass','Bass','A clipped saw signal with a dark low-pass finish.',{cutoff:1100,filterEnv:2,drive:2.8,attack:.003,decay:.1,sustain:.5,release:.06,level:.55}),
+ sound('organ-bass','Organ bass','Bass','Fundamental, octave and fifth sine drawbars.',{engine:'additive',wave:'sine',partials:[[1,1],[2,.4],[3,.14]],cutoff:1000,attack:.005,decay:.1,sustain:.65,release:.05}),
+ sound('plucked-bass','Plucked string bass','Bass','A triangle fundamental with brief upper string harmonics.',{engine:'additive',wave:'sine',partials:[[1,1],[2,.3],[3,.18],[5,.07]],cutoff:1200,attack:.003,decay:.2,sustain:.08,release:.08}),
+ sound('disco-bass','Picked disco bass','Bass','A bright, quick bass with a little pick-like noise.',{wave:'triangle',noise:.025,cutoff:1800,filterEnv:2,attack:.002,decay:.16,sustain:.22,release:.075}),
+ sound('donk-bass','FM donk bass','Bass','A short octave-ratio FM knock with a firm low body.',{engine:'fm',wave:'sine',ratio:2,index:4.5,cutoff:3800,attack:.003,decay:.095,sustain:.035,release:.04}),
+ sound('fm-growl','FM growl bass','Bass','An evolving FM edge over a low sine carrier.',{engine:'fm',wave:'sine',ratio:1,index:7,cutoff:2400,resonance:2,drive:1.6,attack:.005,decay:.3,sustain:.5,release:.08,level:.6}),
+ sound('psy-bass','Tight psy bass','Bass','Very fast saw attack, small filter movement and a short tail.',{cutoff:480,filterEnv:7,attack:.0015,decay:.055,sustain:.08,release:.018,level:.7}),
+ sound('reese-bass','Twin Reese bass','Bass','Two detuned saws through a dark filter.',{voices:2,detune:13,cutoff:850,filterEnv:1.2,attack:.025,decay:.15,sustain:.85,release:.15,level:.7}),
+ sound('slow-strings','Slow synthetic strings','Keys & pads','Three saw voices with a soft swell and long release.',{voices:3,detune:8,attack:.32,decay:.5,sustain:.75,release:1.1,cutoff:2200,filterEnv:1.15,level:.65}),
+ sound('anthem-saws','Anthem chord stack','Keys & pads','A bright three-voice saw stack with a quick pad envelope.',{voices:3,detune:16,attack:.04,decay:.2,sustain:.8,release:.4,cutoff:5200,level:.6}),
+ sound('dark-stab','Dark techno stab','Keys & pads','A short low-pass square stack with little sustain.',{wave:'square',voices:2,detune:4,attack:.006,decay:.14,sustain:.08,release:.12,cutoff:1000,filterEnv:3.5,level:.7}),
+ sound('organ-stab','House organ stab','Keys & pads','Drawbar harmonics with a quick percussive fade.',{engine:'additive',wave:'sine',partials:[[1,1],[2,.5],[4,.27],[6,.12]],attack:.003,decay:.2,sustain:.3,release:.07,cutoff:5000}),
+ sound('cinema-pad','Cinematic pad','Keys & pads','A slow, dark detuned pad with subtle vibrato.',{voices:3,detune:12,attack:.5,decay:.6,sustain:.8,release:1.6,cutoff:1300,filterEnv:1.3,vibrato:3,level:.6}),
+ sound('warm-pad','Warm triangle pad','Keys & pads','A softly attacked triangle pair for sustained harmony.',{wave:'triangle',voices:2,detune:5,attack:.2,decay:.4,sustain:.75,release:.9,cutoff:2600,level:.8}),
+ sound('chorus-pad','Detuned square pad','Keys & pads','A hollow, spread square texture with a long tail.',{wave:'square',voices:3,detune:9,attack:.18,decay:.35,sustain:.6,release:.8,cutoff:1600,filterEnv:1.2,level:.55}),
+ sound('felt-keys','Felt-like keys','Keys & pads','Soft sine partials with a muted hammer-like attack.',{engine:'additive',wave:'sine',partials:[[1,1],[2,.28],[3,.11]],attack:.012,decay:.45,sustain:.1,release:.3,cutoff:2400}),
+ sound('electric-keys','FM electric keys','Keys & pads','A rounded electric-key tine with velocity-sensitive FM.',{engine:'fm',wave:'sine',ratio:1,index:1.4,attack:.004,decay:.55,sustain:.12,release:.4,cutoff:6000}),
+ sound('bright-piano','Synthetic piano','Keys & pads','Six weighted harmonics with a quick attack and decaying body.',{engine:'additive',wave:'sine',partials:[[1,1],[2,.55],[3,.28],[4,.18],[5,.09],[6,.045]],attack:.002,decay:.5,sustain:.1,release:.24,cutoff:7500,filterEnv:1.2}),
+ sound('clav-keys','Clav-like keys','Keys & pads','Short square harmonics with a percussive, muted tail.',{wave:'square',cutoff:2200,filterEnv:2.5,attack:.002,decay:.075,sustain:.02,release:.04}),
+ sound('metal-bell','Metal FM bell','Keys & pads','An inharmonic bell with a slower high-frequency decay.',{engine:'fm',wave:'sine',ratio:2.71,index:5,attack:.002,decay:.9,sustain:.05,release:.85,cutoff:11000,level:.65})
+];
+const KIT_DEFAULTS={kick:52,kickDecay:.26,pitchDrop:3,snare:175,snareDecay:.13,hat:7200,hatDecay:.045,openDecay:.18,clap:.12,metal:0,drive:1,noise:1};
+const kit=(id,name,desc,p)=>({id,name,group:'Drum kits',desc,...KIT_DEFAULTS,...p});
+const DRUM_KITS=[
+ kit('club-909','Club 909 study','Firm short kick, bright hats and a tight snare.',{}),
+ kit('trance-909','Trance 909 study','A tighter kick and longer, brighter open hats.',{kick:55,kickDecay:.22,hat:8800,openDecay:.25,snare:195}),
+ kit('punchy-house','Punchy house','A deep short kick with a dry clap and crisp hats.',{kick:48,kickDecay:.2,pitchDrop:4,snare:210,snareDecay:.1,hat:8000,clap:.085}),
+ kit('warehouse','Warehouse','A deeper kick, longer snare and a rougher drum bus.',{kick:45,kickDecay:.36,drive:1.8,snare:155,snareDecay:.2,hat:5400,metal:.2}),
+ kit('minimal-click','Minimal clicks','Tiny dry drums with high, clipped percussion.',{kick:58,kickDecay:.14,snare:255,snareDecay:.065,hat:9300,hatDecay:.022,openDecay:.09,noise:.65}),
+ kit('hard-909','Hard 909 study','Clipped kick and snare with metallic upper percussion.',{kick:49,kickDecay:.28,pitchDrop:5,drive:2.8,snare:220,snareDecay:.16,hat:7900,metal:.5}),
+ kit('deep-house','Deep house','A warm low kick, soft snare and darker hats.',{kick:46,kickDecay:.3,snare:165,snareDecay:.12,hat:5700,noise:.8}),
+ kit('soft-organic','Soft organic','Rounded drums with quiet, papery high percussion.',{kick:54,kickDecay:.23,pitchDrop:2,snare:150,snareDecay:.09,hat:4600,hatDecay:.06,noise:.65}),
+ kit('break-machine','Break machine','Punchy broken-beat drums and longer snare colour.',{kick:57,kickDecay:.19,snare:205,snareDecay:.19,hat:6900,drive:1.25}),
+ kit('uk-garage','UK garage','Compact kick, clipped snare and short shuffling hats.',{kick:51,kickDecay:.18,snare:235,snareDecay:.095,hat:8400,hatDecay:.032,openDecay:.12}),
+ kit('organic-percussion','Organic percussion','Soft kick, woody rim and darker hand-percussion colour.',{kick:61,kickDecay:.16,pitchDrop:2,snare:145,snareDecay:.075,hat:4300,noise:.6}),
+ kit('disco-707','Disco 707 study','Higher kick, bright clap and a light hat engine.',{kick:63,kickDecay:.18,snare:225,snareDecay:.12,hat:8800,clap:.16,noise:1.1}),
+ kit('bass-breaks','Bass breaks','Deep punch, sharp snare and a lightly clipped edge.',{kick:44,kickDecay:.22,pitchDrop:4,snare:230,snareDecay:.15,hat:7600,drive:1.7}),
+ kit('neuro-breaks','Neuro breaks','Very short kick and snappy, high-pitched snare.',{kick:55,kickDecay:.14,pitchDrop:4,snare:260,snareDecay:.105,hat:9600,hatDecay:.028,drive:1.6}),
+ kit('psy-kit','Psy kit','Short clicky kick and narrow, fast high percussion.',{kick:48,kickDecay:.18,pitchDrop:5,snare:200,snareDecay:.085,hat:10300,hatDecay:.025,openDecay:.11,metal:.25}),
+ kit('long-808','Long 808 study','A sustained sine kick, soft snare and metallic hats.',{kick:43,kickDecay:.65,pitchDrop:2,snare:165,snareDecay:.15,hat:6900,metal:.75,openDecay:.3})
+];
+function soundOptions(role){return role==='drums'?DRUM_KITS:SOUNDS}
+function soundById(id,role){return soundOptions(role).find(s=>s.id===id)}
+function suggestedSound(p){const a=p.artist?artistOf(p):null;if(a)return a.patch[ROLES.indexOf(p.role)];const g=GENRES.find(g=>g.id===p.genre);return({melody:'analog-pluck',bass:g.bass==='acid'?'acid-bass':g.bass==='psy'?'psy-bass':g.bass==='reese'?'reese-bass':'round-saw',chords:g.chord==='sustain'?'warm-pad':'organ-stab',arp:'glass-pluck',drums:g.drum==='garage'?'uk-garage':g.drum==='dnb'?'break-machine':'club-909'})[p.role]}
+function defaultMix(role){return{level:role==='chords'?65:role==='arp'?65:80,tone:0,space:role==='drums'||role==='bass'?0:15,pan:0}}
+
+'use strict';
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const mod=(x,n)=>((x%n)+n)%n;
+const clone=x=>JSON.parse(JSON.stringify(x));
+function random32(seed){let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function degree(d,mode){const scale=MODES[mode]||MODES.minor;return Math.floor(d/7)*12+scale[mod(d,7)]}
+function nearestScale(p,root,mode){let best=p,dist=99;for(let n=Math.max(0,p-6);n<=Math.min(127,p+6);n++){if(MODES[mode].includes(mod(n-root,12))&&Math.abs(n-p)<dist){best=n;dist=Math.abs(n-p)}}return best}
+function noteName(n){return NOTE_NAMES[mod(n,12)]+(Math.floor(n/12)-2)} // Ableton: MIDI 60 = C3.
+function genreOf(p){return GENRES.find(g=>g.id===(typeof p==='string'?p:p.genre))||GENRES[0]}
+function factoryConfig(p){const base=genreOf(p),a=p.artist?artistOf(p):null,g=a?{...base,...a}:base;return{genre:p.genre,artist:a?.id||null,root:9,mode:g.mode,bpm:g.bpm,bars:8,progression:[...g.prog[p.variation%2]],mood:'Native',density:100,gate:80,swing:g.swing,human:5,seed:p.seed,form:'AABA',voicing:'auto'}}
+function chordPitches(rootDegree,c,count=4,previous=null,variation=0){
+ let ns=Array.from({length:count},(_,i)=>48+c.root+degree(rootDegree+2*i,c.mode));
+ if(c.voicing==='open'||variation===2){if(ns.length>3)ns[1]+=12;ns.sort((a,b)=>a-b)}
+ if(c.voicing==='root')return ns;
+ let candidates=[];
+ for(let shift=-1;shift<=1;shift++)for(let inv=0;inv<count;inv++){
+  let v=ns.map((n,i)=>n+12*shift+(i<inv?12:0)).sort((a,b)=>a-b);
+  if(v[0]>=45&&v.at(-1)<=88)candidates.push(v);
+ }
+ if(!candidates.length)return ns;
+ const target=previous||ns.map((_,i)=>54+c.root+i*3);
+ return candidates.sort((a,b)=>a.reduce((s,n,i)=>s+Math.abs(n-target[Math.min(i,target.length-1)]),0)-b.reduce((s,n,i)=>s+Math.abs(n-target[Math.min(i,target.length-1)]),0))[0];
+}
+function progressionLabel(c){return c.progression.map(d=>{
+ const ns=[0,2,4].map(i=>degree(d+i,c.mode)-degree(d,c.mode));
+ const quality=ns[1]===3?(ns[2]===6?'dim':'m'):ns[2]===8?'aug':'';
+ return NOTE_NAMES[mod(c.root+degree(d,c.mode),12)]+quality;
+}).join(' → ')}
+function tidyNotes(notes,beats){
+ const valid=notes.filter(n=>Number.isFinite(n.t)&&Number.isFinite(n.d)&&Number.isFinite(n.p)&&Number.isFinite(n.v)&&n.t>=0&&n.t<beats&&n.d>0).map(n=>({t:Math.round(n.t*480)/480,d:Math.max(1/480,Math.min(beats-n.t,Math.round(n.d*480)/480)),p:clamp(Math.round(n.p),0,127),v:clamp(Math.round(n.v),1,127)})).filter(n=>n.t<beats).sort((a,b)=>a.t-b.t||a.p-b.p);
+ const out=[],last=new Map();
+ for(const n of valid){n.d=Math.min(n.d,beats-n.t);const old=last.get(n.p);if(old){if(old.t===n.t){old.v=Math.max(old.v,n.v);old.d=Math.max(old.d,n.d);continue}old.d=Math.min(old.d,n.t-old.t)}out.push(n);last.set(n.p,n)}
+ return out;
+}
+function generate(p,c){
+ if(p.artist)return generateArtist(p,c);
+ const g=genreOf(p),r=random32((c.seed+p.seed)>>>0),v=p.variation,m=MOODS[c.mood]||MOODS.Native,notes=[],total=c.bars*4,mutation=Math.floor(c.seed/97)%7;
+ const rhythm=(role)=>role==='bass'?BASS_RHYTHMS[g.bass]:role==='chords'?CHORD_RHYTHMS[g.chord]:g.rh;
+ const push=(step,pitch,len,vel,anchor=false)=>{
+  if(!anchor&&r()>clamp(c.density/100*m.density,0.15,1))return;
+  let t=step/4+(Math.floor(step)%2?c.swing/100*.25:0)+(r()-.5)*c.human/100*.12;
+  t=clamp(t,0,total-1/480);
+  notes.push({t,p:pitch,d:clamp(len/4*c.gate/80*m.gate,.035,total-t),v:clamp(vel+m.vel+(v===3?-12:v===2?5:0)+(r()-.5)*c.human*1.2,25,124)});
+ };
+ let prev=null;
+ for(let bar=0;bar<c.bars;bar++){
+  const d=c.progression[bar%4],base=bar*16;
+  const isB=c.form==='AABA'&&Math.floor(bar/2)%4===2||c.form==='ABAC'&&Math.floor(bar/2)%2===1;
+  const ending=bar===c.bars-1;
+  let hits=[...rhythm(p.role)||g.rh];
+  if(v===1&&bar%2)hits=hits.filter((_,i)=>i%3!==1).map(s=>(s+1)%16).sort((a,b)=>a-b);
+  if(v===2&&p.role!=='chords')hits=[...new Set([...hits,5,13])].sort((a,b)=>a-b);
+  if(v===3)hits=hits.filter((_,i)=>i%2===0);
+  if(bar%2===1&&mutation>0&&hits.length>2&&p.role!=='chords')hits=[...new Set(hits.map((s,i)=>i===hits.length-1?mod(s+(mutation%3)-1,16):s))].sort((a,b)=>a-b);
+  if(c.form==='breakdown'&&bar>=c.bars/2&&p.role==='drums')hits=[];
+  if(p.role==='drums'){
+   const lanes=DRUMS[g.drum];
+   lanes.forEach(([pitch,steps])=>steps.forEach((s,i)=>{
+    if(c.form==='breakdown'&&bar>=c.bars/2&&pitch===36)return;
+    if(v===3&&pitch!==36&&pitch!==38&&pitch!==39&&i%2)return;
+    let st=s;
+    if(v===1&&bar%2&&pitch===36&&s!==0)st=mod(s+1,16);
+    push(base+st,pitch,pitch===46?1.5:.5,pitch===36?108:pitch===38||pitch===39?96:st%4===2?83:62,pitch===36||pitch===38||pitch===39);
+   }));
+   if(v===2&&bar%4===3)[13,14,15].forEach((s,i)=>push(base+s,38,.4,63+i*12,true));
+   if(v===1&&bar%2)[9,15].forEach(s=>push(base+s,37,.3,49));
+   if(v===3&&bar%4===3)push(base+15,75,.4,64,true);
+   if(mutation>1&&bar%2===1)push(base+[3,7,9,11,15][mutation%5],mutation%2?37:70,.3,45+mutation*3);
+   continue;
+  }
+  if(p.role==='chords'){
+   const count=v===3?Math.max(4,g.ext):g.ext,ns=chordPitches(d,c,count,prev,v);prev=ns;
+   hits.forEach((s,i)=>{
+    if(i>0&&r()>clamp(c.density/100*m.density,.15,1))return;
+    const length=g.chord==='sustain'?15.7:g.chord==='dub'?2.2:g.chord==='future'?1.2:v===3?4:1.5;
+    ns.forEach((pitch,k)=>push(base+s+(c.voicing==='strum'?k*.08:0),pitch+(mutation>3&&bar%2&&k===ns.length-1?12:0),length,78+(k===ns.length-1?9:0)+(i%2?-6:4),true));
+   });continue;
+  }
+  if(p.role==='arp'){
+   let order=ARP_ORDERS[g.arp];
+   const step=g.arp==='dotted'?3:g.arp==='sparse'?4:g.arp==='euclid'?1:2;
+   const start=g.arp==='dotted'?mod(-base,3):0;
+   hits=[];for(let s=start;s<16;s+=step){if(g.arp==='euclid'&&mod((base+s)*7,16)>=7)continue;hits.push(s)}
+   if(v===1)order=[...order].reverse();
+   if(v===3)hits=hits.filter((_,i)=>i%2===0);
+   const ns=chordPitches(d,{...c,voicing:'root'},4,null,0).map(n=>n+12);
+   hits.forEach((s,i)=>{
+    const k=g.arp==='random'?Math.floor(r()*4):order[(Math.floor((base+s)/step)+(v===2?bar:0))%order.length];
+    push(base+s,ns[k]+(v===2&&i%4===3?12:0),step*.65,76+(i%4===0?19:0),i===0);
+   });continue;
+  }
+  hits.forEach((s,i)=>{
+   if(p.role==='melody'&&ending&&s>12&&v!==2)return;
+   let len=Math.min((hits[i+1]??16)-s,v===3?5:2),pitch,vel=84+(i%3===0?13:-4);
+   if(p.role==='bass'){
+    const octaves=g.bass==='disco'||g.bass==='acid'||g.bass==='electro';
+    let off=octaves&&i%3===1?7:(['funk','garage','breaks','neuro','wobble','skip'].includes(g.bass)&&i%4===3?4:0);
+    if(v===1&&bar%2&&i===hits.length-1)off=6;
+    if(v===2&&i%4===2)off=7;
+    if(mutation&&bar%2===1&&i===hits.length-1&&g.bass!=='psy')off=[0,2,4,6,7,4,2][mutation];
+    pitch=36+c.root+degree(d+off,c.mode);
+    while(pitch>60)pitch-=12;
+    if(['sustain','reese','halftime'].includes(g.bass))len=Math.max(.5,(hits[i+1]??16)-s-.3);
+    if(g.bass==='psy')len=.7;
+    if(g.bass==='offbeat')len=1.4;
+    if(g.bass==='acid')len=i%3===0?1.6:.7;
+    vel=i%4===0?108:i%3===0?97:82;
+   }else{
+    let idx=(i+(bar%2)*3+(isB?2:0)+Math.floor(c.seed%7))%g.mot.length;
+    let motif=g.mot[idx];
+    if(v===1&&bar%2)motif=7-motif;
+    if(v===2&&bar>=c.bars/2)motif+=7;
+    if(v===3)motif=Math.min(motif,6);
+    if(c.mood==='Hypnotic')motif=g.mot[i%3];
+    if(c.mood==='Playful'&&i%3===1)motif+=7;
+    if(c.form==='lift'&&bar>=c.bars/2)motif+=7;
+    if(c.form==='loop')motif=g.mot[i%g.mot.length];
+    let relative=motif+(s%4===0?(mod(motif,2)?-1:0):0);
+    pitch=60+c.root+degree(d+relative+m.lift,c.mode);
+    if(v===3)len=Math.max(1,(hits[i+1]??16)-s-1);
+    if(ending&&i===hits.length-1)pitch=60+c.root+degree(d+4,c.mode);
+   }
+   push(base+s,pitch,len,vel,i===0);
+  });
+  // Higher density grows the rhythm with quiet scale/chord-tone responses.
+  if(c.density*m.density>105&&p.role!=='drums'&&p.role!=='chords'){
+   const free=[1,5,9,13].filter(s=>!hits.includes(s));
+   free.forEach(s=>{if(r()<(c.density*m.density-100)/70)push(base+s,(p.role==='bass'?36:60)+c.root+degree(d+2,c.mode),.65,64,true)});
+  }
+ }
+ return tidyNotes(notes,total);
+}
+function transformNotes(notes,kind,c,role){
+ let out=clone(notes),beats=c.bars*4;
+ if(kind==='reverse')out=out.map(n=>({...n,t:Math.max(0,beats-n.t-n.d)}));
+ if(kind==='rotate')out=out.map(n=>({...n,t:mod(n.t+.25,beats)}));
+ if(kind==='thin')out=out.filter((n,i)=>i%3!==2);
+ if(kind==='up'||kind==='down')out=out.map(n=>({...n,p:clamp(n.p+(kind==='up'?12:-12),0,127)}));
+ if(kind==='invert'&&role!=='drums'&&out.length){let center=out[0].p;out=out.map(n=>({...n,p:nearestScale(clamp(center*2-n.p,0,127),c.root,c.mode)}))}
+ if(kind==='answer')out=out.filter(n=>n.t<beats/2).flatMap((n,i)=>[n,...(i%3===2?[]:[{...n,t:n.t+beats/2,p:role==='drums'?n.p:nearestScale(clamp(n.p+(i%2?2:-2),0,127),c.root,c.mode),v:Math.max(1,n.v-10)}])]);
+ if(kind==='staccato')out=out.map(n=>({...n,d:Math.min(n.d,.18)}));
+ return tidyNotes(out,beats);
+}
+function vlq(n){n=Math.max(0,Math.round(n));let bytes=[n&127];while(n>>>=7)bytes.unshift((n&127)|128);return bytes}
+const utf8=s=>Array.from(new TextEncoder().encode(s));
+const be16=n=>[n>>>8&255,n&255];
+const be32=n=>[n>>>24&255,n>>>16&255,n>>>8&255,n&255];
+function midiBytes(tracks,c,title='Fieldwork V2'){
+ const ppq=480,end=c.bars*4*ppq,multi=tracks.length>1;
+ const tempo=Math.round(60000000/c.bpm);
+ const meta=[{t:0,order:0,d:[255,81,3,...be32(tempo).slice(1)]},{t:0,order:0,d:[255,88,4,4,2,24,8]}];
+ const text=`${NOTE_NAMES[c.root]} ${MODE_NAMES[c.mode]}; ${c.bpm} BPM; ${c.bars} bars; ${progressionLabel(c)}; MIDI notes only`;
+ meta.push({t:0,order:0,d:[255,1,...vlq(utf8(text).length),...utf8(text)]});
+ function chunk(events,name){
+  const nm=utf8(name);events.push({t:0,order:-1,d:[255,3,...vlq(nm.length),...nm]});
+  events.sort((a,b)=>a.t-b.t||a.order-b.order);
+  let bytes=[],last=0;
+  for(const e of events){bytes.push(...vlq(e.t-last),...e.d);last=e.t}
+  bytes.push(...vlq(Math.max(end,last)-last),255,47,0);
+  return [...utf8('MTrk'),...be32(bytes.length),...bytes];
+ }
+ let chunks=[];
+ if(multi)chunks.push(chunk(meta,title));
+ tracks.forEach((tr,i)=>{
+  const ch=tr.role==='drums'?9:i,events=multi?[]:clone(meta);
+  tidyNotes(tr.notes,c.bars*4).forEach(n=>{
+   const start=Math.round(n.t*ppq),finish=Math.min(end,Math.max(start+1,Math.round((n.t+n.d)*ppq)));
+   events.push({t:start,order:2,d:[144|ch,n.p,n.v]},{t:finish,order:1,d:[128|ch,n.p,0]});
+  });chunks.push(chunk(events,tr.name||ROLE_NAMES[tr.role]));
+ });
+ const parts=[new Uint8Array([...utf8('MThd'),...be32(6),...be16(multi?1:0),...be16(chunks.length),...be16(ppq)]),...chunks.map(x=>new Uint8Array(x))];
+ return concatBytes(parts);
+}
+function concatBytes(parts){const out=new Uint8Array(parts.reduce((s,p)=>s+p.length,0));let offset=0;parts.forEach(p=>{out.set(p,offset);offset+=p.length});return out}
+const CRC_TABLE=Array.from({length:256},(_,n)=>{for(let i=0;i<8;i++)n=n&1?0xedb88320^(n>>>1):n>>>1;return n>>>0});
+function crc32(bytes){let c=0xffffffff;for(const b of bytes)c=CRC_TABLE[(c^b)&255]^(c>>>8);return(c^0xffffffff)>>>0}
+const le16=n=>[n&255,n>>>8&255];
+const le32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
+function zipBytes(files){
+ let local=[],central=[],offset=0;
+ for(const file of files){const name=utf8(file.name),b=file.bytes,crc=crc32(b);
+  const header=new Uint8Array([80,75,3,4,...le16(20),...le16(2048),0,0,0,0,33,0,...le32(crc),...le32(b.length),...le32(b.length),...le16(name.length),0,0,...name]);
+  local.push(header,b);
+  central.push(new Uint8Array([80,75,1,2,...le16(20),...le16(20),...le16(2048),0,0,0,0,33,0,...le32(crc),...le32(b.length),...le32(b.length),...le16(name.length),0,0,0,0,0,0,0,0,0,0,0,0,...le32(offset),...name]));
+  offset+=header.length+b.length;
+ }
+ const directory=concatBytes(central),tail=new Uint8Array([80,75,5,6,0,0,0,0,...le16(files.length),...le16(files.length),...le32(directory.length),...le32(offset),0,0]);
+ return concatBytes([...local,directory,tail]);
+}
+function slug(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-|-$/g,'')}
+function packFiles(presets,includeSketches=false){
+ const files=[],manifest=[];
+ for(const p of presets){const c=factoryConfig(p),g=genreOf(p),a=p.artist?artistOf(p):null,name=`${a?'artists/'+a.id:g.id}/${p.role}/${p.id}_A-${c.mode}_${c.bpm}bpm_8bar.mid`;
+  files.push({name,bytes:midiBytes([{role:p.role,name:p.name,notes:generate(p,c)}],c,p.name)});
+  manifest.push({file:name,name:p.name,genre:g.name,role:p.role,mood:p.mood,technique:p.technique,bpm:c.bpm,key:'A '+c.mode,seed:c.seed,progression:progressionLabel(c),inspiration:a?a.name+' / '+a.focus:g.artist,...(a?{suggestedSound:a.patch[ROLES.indexOf(p.role)],study:a.traits[ROLES.indexOf(p.role)]}:{})});
+ }
+ if(includeSketches)GENRES.forEach(g=>{const p=PRESETS.find(p=>p.genre===g.id&&p.role==='melody'&&p.variation===0),c=factoryConfig(p);
+  files.push({name:`${g.id}/SKETCH_${g.id}_A-${c.mode}_${c.bpm}bpm.mid`,bytes:midiBytes(ROLES.map(role=>{const preset=PRESETS.find(p=>p.genre===g.id&&p.role===role&&p.variation===0);return{role,name:ROLE_NAMES[role],notes:generate(preset,c)}}),c,g.title)});
+ });
+ files.push({name:'catalog.json',bytes:new TextEncoder().encode(JSON.stringify(manifest,null,2))});
+ files.push({name:'START-HERE.txt',bytes:new TextEncoder().encode(`FIELDWORK / V2\n${presets.length} original recipe clips${includeSketches?' + 24 five-part sketches':''}. 8 bars, 4/4, A in each native mode, native genre tempo.\n\nDrag .mid files into Ableton Live MIDI tracks and load instruments. Individual clips use SMF0; sketches use SMF1 with separate melody, bass, chords, arpeggio and drums tracks. All files use 480 PPQ and end at exactly 8 bars, including trailing silence. Check the clip loop bracket after import. Set Live's tempo to the BPM in the filename if desired.\n\nMIDI carries notes, lengths and velocity, not audio, glide, automation or synth presets. Live does not assign General MIDI sounds automatically. Drum pitches: 36 kick, 37 rim, 38 snare, 39 clap, 42 closed hat, 45 low tom, 46 open hat, 63/64 conga, 70 shaker, 75 claves, 76 woodblock. MIDI 60 is labelled C3 in Live.\n\nArtist names are creative listening references, not transcriptions, endorsements or claims that these patterns occur in any recording. All motifs are original generated compositions. Use the HTML tools to edit, transpose, change phrase length, create variations, save sessions and export new packs.\n\nReference: https://help.ableton.com/hc/en-us/articles/209068169-Understanding-MIDI-files\n`)});
+ return files;
+}
+const Fieldwork={ROLES,ROLE_NAMES,GENRES,PRESETS,MODES,MODE_NAMES,MOODS,NOTE_NAMES,DRUM_NAMES,TREATMENTS,GUIDES_V2,clone,clamp,mod,degree,noteName,nearestScale,genreOf,factoryConfig,progressionLabel,generate,tidyNotes,transformNotes,midiBytes,zipBytes,crc32,packFiles,slug};
+if(typeof module!=='undefined')module.exports=Fieldwork;
+
+function generateArtist(p,c){
+ const a=artistOf(p),g=genreOf(p),v=p.variation,r=random32(c.seed+p.seed),m=MOODS[c.mood],total=c.bars*4,out=[];
+ const baseRh={melody:a.mr,bass:a.br,chords:a.cr,arp:a.ar};
+ const add=(step,pitch,len,velocity,anchor=false)=>{
+  if(!anchor&&r()>clamp(c.density/100*m.density,.1,1))return;
+  const swing=mod(Math.floor(step),2)?c.swing/100*.25:0;
+  const t=clamp(step/4+swing+(r()-.5)*c.human*.0012,0,total-1/480);
+  out.push({t,p:clamp(pitch,0,127),d:Math.max(.03,Math.min(total-t,len/4*c.gate/80*m.gate)),v:clamp(Math.round(velocity+m.vel+(r()-.5)*c.human+(v===3||v===7?-14:v===2?8:0)),24,124)});
+ };
+ let previous=null;
+ for(let bar=0;bar<c.bars;bar++){
+  const base=bar*16,d=c.progression[bar%4],answer=bar%2===1,phraseB=(c.form==='AABA'&&Math.floor(bar/2)%4===2)||(c.form==='ABAC'&&Math.floor(bar/2)%2===1);
+  let hits=p.role==='drums'?[]:[...baseRh[p.role]];
+  if(p.role==='arp'&&a.ar.every(s=>s%3===0))hits=Array.from({length:16},(_,s)=>s).filter(s=>mod(base+s,3)===0);
+  if(v===1&&answer)hits=hits.filter((_,i)=>i%3!==1).map(s=>mod(s+1,16));
+  if(v===2)hits=[...hits,...(p.role==='chords'?[14]:[5,13,15])];
+  if(v===3)hits=hits.filter((_,i)=>i%2===0);
+  if(v===4)hits=hits.map((s,i)=>mod(15-s+(i%2),16));
+  if(v===5)hits=p.role==='chords'?[2,9]:[0,3,5,8,10,13,15];
+  if(v===6&&answer)hits=[...hits,7,11,14,15];
+  if(v===7)hits=p.role==='chords'||p.role==='bass'?[0]:hits.filter((_,i)=>i%2===0).map(s=>mod(Math.floor(s/2)*2,16));
+  hits=[...new Set(hits)].sort((x,y)=>x-y);
+  if(p.role==='drums'){
+   let lanes=[[36,a.k],[38,a.sn],[42,a.hh],[46,[6,14]],[g.drum==='afro'?64:37,a.perc]];
+   if(v===1)lanes[0][1]=a.k.map((s,i)=>i>0&&answer?mod(s+1,16):s);
+   if(v===2)lanes.push([70,[1,3,5,7,9,11,13,15]]);
+   if(v===3)lanes=lanes.slice(0,3).map(([pitch,steps])=>[pitch,pitch===42?steps.filter((_,i)=>i%2===0):steps]);
+   if(v===4){lanes[0][1]=[0,3,7,10,14];lanes[1][1]=[4,11]}
+   if(v===5){lanes[2][1]=[0,3,6,9,12,15];lanes.push([75,[2,7,12]])}
+   if(v===6&&answer)lanes.push([45,[11,13,14,15]]);
+   if(v===7)lanes=[[36,[0,a.k.length>3?10:6]],[38,[8]],[42,a.hh.filter((_,i)=>i%2===0)],[37,a.perc.filter((_,i)=>i%2===0)]];
+   lanes.forEach(([pitch,steps])=>steps.forEach((s,i)=>{
+    if(c.form==='breakdown'&&bar>=c.bars/2&&pitch===36)return;
+    add(base+s,pitch,pitch===46?1.3:.45,pitch===36?108:pitch===38?97:65+(i%3)*7,pitch===36||pitch===38);
+   }));
+   if(bar%4===3&&v!==3&&v!==7)add(base+15,37,.3,43+Math.floor(r()*12));
+   continue;
+  }
+  if(p.role==='chords'){
+   const chordRoot=v===5?c.progression[0]:d;
+   let ns=chordPitches(chordRoot,c,a.ext,previous,v===2?2:0);previous=ns;
+   if(v===2)ns=ns.map((n,i)=>i===ns.length-1?n+12:n);
+   if(v===7)ns=ns.filter((_,i)=>i!==1);
+   if(v===4)ns=ns.map((n,i)=>i===1?n-12:n).sort((x,y)=>x-y);
+   if(v===6&&answer)ns=ns.map((n,i)=>i===ns.length-1?n+12:n);
+   const gate=v===3||v===7?12:a.cr.length===1?15:a.cr.length===2?5:1.6;
+   hits.forEach((s,i)=>{if(i&&r()>clamp(c.density/100*m.density,.1,1))return;ns.forEach((n,k)=>add(base+s+(c.voicing==='strum'?k*.08:0),n,gate,78+(k===ns.length-1?8:0),true))});
+   continue;
+  }
+  hits.forEach((s,i)=>{
+   const next=hits[i+1]??16;
+   let n,length=Math.min(next-s-.08,p.role==='bass'?g.bass==='psy'?.7:1.6:2.2);
+   if(p.role==='melody'){
+    const j=mod(i+(answer?3:0)+(phraseB?2:0)+Math.floor(c.seed/193)%a.mn.length,a.mn.length);
+    let degreeOffset=a.mn[v===4?a.mn.length-1-j:j];
+    if(v===1&&answer)degreeOffset=7-degreeOffset;
+    if(v===5)degreeOffset=i%2===0?0:a.mn[i%a.mn.length];
+    if(v===6&&answer)degreeOffset+=Math.floor(i/2);
+    if(v===2&&bar>=c.bars/2||c.form==='lift'&&bar>=c.bars/2)degreeOffset+=7;
+    if(c.form==='loop')degreeOffset=a.mn[i%a.mn.length];
+    if(c.mood==='Playful'&&i%4===2)degreeOffset+=7;
+    if(c.mood==='Hypnotic')degreeOffset=a.mn[i%3];
+    n=60+c.root+degree(d+degreeOffset+m.lift,c.mode);
+    if(v===3||v===7)length=Math.max(.6,next-s-.2);
+   }else if(p.role==='bass'){
+    let interval=a.bn[mod(i+(answer?Math.floor(c.seed/719)%3:0),a.bn.length)];
+    if(v===5)interval=i%3?0:4;
+    if(v===4)interval=a.bn[a.bn.length-1-(i%a.bn.length)];
+    if(v===6&&answer&&i>=hits.length-3)interval=[2,4,6][i%3];
+    if(v===1&&answer&&i===hits.length-1)interval=6;
+    if(v===2&&i%4===3)interval=7;
+    n=36+c.root+degree(d+interval,c.mode);while(n>60)n-=12;
+    if(v===7||v===3||['sustain','reese','halftime'].includes(g.bass))length=Math.max(.6,next-s-.25);
+   }else{
+    let order=v===4?[...a.ao].reverse():a.ao,index=order[mod(i+(answer?1:0),order.length)];
+    if(v===5)index=i%2===0?0:index;
+    const tones=[0,2,4,6];n=60+c.root+degree(d+tones[index],c.mode);
+    if(v===6&&answer||v===2&&i%4===3)n+=12;
+    if(v===7)length=Math.max(.6,next-s-.3);
+    else length=Math.min(1.1,next-s-.05);
+   }
+   add(base+s,n,length,84+(i%3===0?13:-5),i===0);
+  });
+ }
+ return tidyNotes(out,total);
+}
+function artistPackFiles(){
+ const files=packFiles(ARTIST_PRESETS,false);
+ for(const a of ARTISTS){const p=ARTIST_PRESETS.find(p=>p.artist===a.id&&p.role==='melody'&&p.variation===0),c=factoryConfig(p);
+  const tracks=ROLES.map(role=>{const recipe=ARTIST_PRESETS.find(p=>p.artist===a.id&&p.role===role&&p.variation===0);return{role,name:`${a.name} study / ${ROLE_NAMES[role]}`,notes:generate(recipe,c)}});
+  files.push({name:`artists/${a.id}/SKETCH_${a.id}_A-${c.mode}_${c.bpm}bpm.mid`,bytes:midiBytes(tracks,c,a.name+' / '+a.focus)});
+ }
+ files.push({name:'ARTIST-STUDIES.txt',bytes:new TextEncoder().encode(`FIELDWORK / ARTIST STUDIES\n1,280 original clips + 32 coordinated five-part sketches. 32 profiles covering 31 artist names; Tiësto has classic trance and modern club profiles. Eight treatments per part.\n\nThese are original composition studies using broad listening references, not exact artist presets or song transcriptions. Specific notes, rhythms, tempos and patch choices are our creative interpretation. No artist recordings or samples are included.\n\nAll files are 8 bars in A in the profile's native mode. Load your own sounds in Ableton. The suggested browser patch names are recorded in catalog.json and the profile guide below; MIDI itself does not carry these synthesizers.\n\n${ARTISTS.map(a=>`${a.name} / ${a.focus}\n${ROLES.map((role,i)=>`  ${ROLE_NAMES[role]}: ${a.traits[i]} Suggested sound: ${a.patch[i]}.`).join('\n')}${a.source?'\n  Listening reference: '+a.source:''}`).join('\n\n')}`)});
+ return files;
+}
+Object.assign(Fieldwork,{ARTISTS,ARTIST_PRESETS,GENRE_PRESETS,ARTIST_TREATMENTS,artistOf,treatmentFor,generateArtist,artistPackFiles});
+
+const noiseCache=new WeakMap(),driveCurves=new Map();
+function getNoise(ac){if(!noiseCache.has(ac)){const b=ac.createBuffer(1,ac.sampleRate,ac.sampleRate),data=b.getChannelData(0),r=random32(771);for(let i=0;i<data.length;i++)data[i]=r()*2-1;noiseCache.set(ac,b)}return noiseCache.get(ac)}
+function driveCurve(amount){if(!driveCurves.has(amount)){const curve=new Float32Array(2048),normal=Math.tanh(amount);for(let i=0;i<curve.length;i++)curve[i]=Math.tanh((i/(curve.length-1)*2-1)*amount)/normal;driveCurves.set(amount,curve)}return driveCurves.get(amount)}
+function createSoundEngine(ac,tracks,bpm,masterLevel=.55){
+ const master=ac.createGain(),compressor=ac.createDynamicsCompressor(),channels={},groups=new Set();let stopped=false;
+ master.gain.value=masterLevel*.55;compressor.threshold.value=-13;compressor.knee.value=14;compressor.ratio.value=5;compressor.attack.value=.004;compressor.release.value=.12;master.connect(compressor);compressor.connect(ac.destination);
+ for(const role of ROLES){
+  const input=ac.createGain(),gain=ac.createGain(),pan=ac.createStereoPanner(),delay=ac.createDelay(3),feedback=ac.createGain(),wet=ac.createGain(),lp=ac.createBiquadFilter();
+  input.connect(gain);gain.connect(pan);pan.connect(master);input.connect(delay);delay.connect(lp);lp.connect(wet);wet.connect(pan);lp.connect(feedback);feedback.connect(delay);
+  delay.delayTime.value=60/bpm*.75;feedback.gain.value=.24;lp.type='lowpass';lp.frequency.value=3200;
+  channels[role]={input,gain,pan,wet,nodes:[input,gain,pan,delay,feedback,wet,lp]};
+ }
+ function update(role,mix){const ch=channels[role],now=ac.currentTime;ch.gain.gain.setTargetAtTime(mix.level/100,now,.02);ch.wet.gain.setTargetAtTime(mix.space/100*.7*mix.level/100,now,.03);ch.pan.pan.setTargetAtTime(mix.pan/100,now,.02)}
+ for(const role of ROLES)update(role,tracks[role].mix||defaultMix(role));
+ function group(t,end){
+  if(groups.size>=160)groups.values().next().value.dispose();
+  const nodes=[],sources=[];let remaining=0,disposed=false;
+  const g={nodes,sources,dispose(){if(disposed)return;disposed=true;for(const s of sources){try{s.stop()}catch{}}for(const n of nodes){try{n.disconnect()}catch{}}groups.delete(g)}};
+  groups.add(g);
+  g.node=n=>{nodes.push(n);return n};
+  g.start=(s)=>{sources.push(s);nodes.push(s);remaining++;s.onended=()=>{remaining--;if(remaining===0)g.dispose()};s.start(t);s.stop(end);return s};
+  return g;
+ }
+ function envelope(param,t,d,p,level){
+  const attack=Math.min(p.attack,d*.45),decay=Math.min(p.decay,Math.max(.001,d-attack)*.8),sustain=Math.max(.0001,level*p.sustain);
+  param.setValueAtTime(.0001,t);param.exponentialRampToValueAtTime(Math.max(.0002,level),t+Math.max(.001,attack));param.exponentialRampToValueAtTime(sustain,t+Math.max(.002,attack+decay));param.setValueAtTime(sustain,t+d);param.exponentialRampToValueAtTime(.0001,t+d+p.release);
+ }
+ function tonal(role,n,t,beatSeconds,track){
+  const p=soundById(track.sound,role)||soundById(suggestedSound({role,genre:'melodic'}),role),mix=track.mix||defaultMix(role),d=Math.max(.025,n.d*beatSeconds),end=t+d+p.release+.03,g=group(t,end),gain=g.node(ac.createGain()),filter=g.node(ac.createBiquadFilter()),sum=g.node(ac.createGain()),freq=440*Math.pow(2,(n.p-69)/12),vel=n.v/127;
+  const base=role==='bass'?.25:role==='chords'?.068:role==='arp'?.1:.14;
+  envelope(gain.gain,t,d,p,base*p.level*vel);
+  filter.type='lowpass';filter.Q.value=p.resonance;
+  const cutoff=clamp(p.cutoff*Math.pow(2,mix.tone/12),60,ac.sampleRate*.43);
+  filter.frequency.setValueAtTime(clamp(cutoff*p.filterEnv*(.6+.4*vel),60,ac.sampleRate*.44),t);
+  filter.frequency.exponentialRampToValueAtTime(cutoff,t+Math.max(.025,Math.min(d,p.decay)));
+  sum.connect(filter);let tail=filter;
+  if(p.drive){const shaper=g.node(ac.createWaveShaper());shaper.curve=driveCurve(p.drive);shaper.oversample='2x';tail.connect(shaper);tail=shaper}
+  if(p.engine==='formant'){
+   const formantSum=g.node(ac.createGain());formantSum.gain.value=.6;
+   p.formants.forEach(hz=>{const f=g.node(ac.createBiquadFilter());f.type='bandpass';f.frequency.value=clamp(hz*Math.pow(2,mix.tone/48),100,10000);f.Q.value=5;tail.connect(f);f.connect(formantSum)});tail=formantSum;
+  }
+  tail.connect(gain);gain.connect(channels[role].input);
+  const oscillator=(frequency,wave,weight,detune=0)=>{const osc=ac.createOscillator(),v=g.node(ac.createGain());osc.type=wave;osc.frequency.value=clamp(frequency,1,ac.sampleRate*.44);osc.detune.value=detune;v.gain.value=weight;osc.connect(v);v.connect(sum);return osc};
+  if(p.engine==='additive'){
+   const weights=p.partials.reduce((s,x)=>s+x[1],0);for(const [ratio,weight] of p.partials)if(freq*ratio<ac.sampleRate*.44)g.start(oscillator(freq*ratio,'sine',weight/weights));
+  }else if(p.engine==='fm'){
+   const carrier=oscillator(freq,'sine',1),modulator=ac.createOscillator(),depth=g.node(ac.createGain());modulator.type='sine';modulator.frequency.value=Math.min(ac.sampleRate*.4,freq*p.ratio);depth.gain.setValueAtTime(freq*p.index*(.3+.7*vel),t);depth.gain.exponentialRampToValueAtTime(Math.max(.1,freq*p.index*.1),t+Math.max(.04,Math.min(d,p.decay)));modulator.connect(depth);depth.connect(carrier.frequency);g.start(carrier);g.start(modulator);
+  }else{
+   for(let i=0;i<p.voices;i++){const detune=p.voices===1?0:(i/(p.voices-1)*2-1)*p.detune,osc=oscillator(freq,p.wave,1/p.voices,detune);
+    if(p.vibrato){const lfo=ac.createOscillator(),depth=g.node(ac.createGain());lfo.frequency.value=5.2;depth.gain.value=p.vibrato;lfo.connect(depth);depth.connect(osc.detune);g.start(lfo)}g.start(osc);
+   }
+  }
+  if(p.noise){const source=ac.createBufferSource(),v=g.node(ac.createGain());source.buffer=getNoise(ac);source.loop=true;v.gain.value=p.noise;source.connect(v);v.connect(sum);g.start(source)}
+ }
+ function drum(n,t,track){
+  const p=soundById(track.sound,'drums')||DRUM_KITS[0],mix=track.mix||defaultMix('drums'),vel=n.v/127,scale=Math.pow(2,mix.tone/36);
+  let duration=n.p===36?p.kickDecay:n.p===46?p.openDecay:n.p===38?p.snareDecay:n.p===39?p.clap:n.p===42||n.p===70?p.hatDecay:.12;
+  const g=group(t,t+duration+.05),sum=g.node(ac.createGain()),gain=g.node(ac.createGain()),filter=g.node(ac.createBiquadFilter());
+  filter.type='lowpass';filter.frequency.value=clamp(16000*scale,1500,ac.sampleRate*.44);sum.connect(filter);let tail=filter;
+  if(p.drive>1){const shape=g.node(ac.createWaveShaper());shape.curve=driveCurve(p.drive);shape.oversample='2x';tail.connect(shape);tail=shape}
+  tail.connect(gain);gain.connect(channels.drums.input);
+  const level=vel*(n.p===36?.32:n.p===38||n.p===39?.18:.085);gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(level,t+.002);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
+  const tone=(hz,weight,type='sine',fall=null)=>{const osc=ac.createOscillator(),amp=g.node(ac.createGain());osc.type=type;osc.frequency.setValueAtTime(hz,t);if(fall)osc.frequency.exponentialRampToValueAtTime(fall,t+Math.min(.12,duration*.7));amp.gain.value=weight;osc.connect(amp);amp.connect(sum);g.start(osc)};
+  const noise=(hz,type,weight)=>{const s=ac.createBufferSource(),f=g.node(ac.createBiquadFilter()),amp=g.node(ac.createGain());s.buffer=getNoise(ac);f.type=type;f.frequency.value=clamp(hz*scale,100,ac.sampleRate*.44);f.Q.value=.8;amp.gain.value=weight;s.connect(f);f.connect(amp);amp.connect(sum);g.start(s)};
+  if(n.p===36){tone(p.kick*p.pitchDrop,1,'sine',p.kick);noise(5500,'highpass',.035)}
+  else if(n.p===38){tone(p.snare,.35,'triangle',p.snare*.8);noise(1900,'bandpass',p.noise)}
+  else if(n.p===39){noise(1500,'bandpass',p.noise);gain.gain.cancelScheduledValues(t);gain.gain.setValueAtTime(.0001,t);for(let i=0;i<3;i++){gain.gain.linearRampToValueAtTime(level,t+i*.012+.002);gain.gain.exponentialRampToValueAtTime(.0001,t+i*.012+.011)}gain.gain.setValueAtTime(level*.65,t+.038);gain.gain.exponentialRampToValueAtTime(.0001,t+Math.max(.05,duration))}
+  else if([42,46,70].includes(n.p)){noise(p.hat,'highpass',p.noise*(1-p.metal*.6));if(p.metal)for(const ratio of [1,1.34,1.83,2.41])tone(3200*ratio,p.metal*.055,'square')}
+  else if([45,63,64].includes(n.p)){const hz=n.p===45?125:n.p===63?230:310;tone(hz*1.8,1,'sine',hz);noise(2500,'bandpass',.05)}
+  else{tone(n.p===75?1800:n.p===76?850:1000,.55,'triangle');tone(n.p===75?2400:1650,.22);noise(2900,'bandpass',.15)}
+ }
+ return{
+  note(role,n,t,beatSeconds,track){if(stopped)return;if(role==='drums')drum(n,t,track);else tonal(role,n,t,beatSeconds,track)},
+  update,level(value){master.gain.setTargetAtTime(value*.55,ac.currentTime,.025)},
+  stop(){if(stopped)return;stopped=true;for(const g of [...groups])g.dispose();for(const ch of Object.values(channels))ch.nodes.forEach(n=>n.disconnect());master.disconnect();compressor.disconnect()},
+  activeVoices(){return groups.size}
+ };
+}
+Object.assign(Fieldwork,{SOUNDS,DRUM_KITS,soundOptions,soundById,suggestedSound,defaultMix,createSoundEngine});
+
+const $=id=>document.getElementById(id);
+const escapeHTML=s=>String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+let selectedNote=-1,libraryPage=0,history=[],future=[],toastTimer,drag=null;
+let favorites=new Set();try{const f=JSON.parse(localStorage.getItem('fieldwork-v2-favorites')||'[]');if(Array.isArray(f))favorites=new Set(f.filter(id=>PRESETS.some(p=>p.id===id)))}catch{}
+const initial=PRESETS.find(p=>p.genre==='melodic'&&p.role===(PAGE==='studio'?'melody':PAGE)&&p.variation===0);
+let S={version:2,config:factoryConfig(initial),active:initial.role,tracks:{}};
+function setTrack(role,p){S.tracks[role]={preset:p.id,notes:generate(p,S.config),locked:false,mute:false,solo:false,sound:suggestedSound(p),mix:defaultMix(role)}}
+ROLES.forEach(role=>setTrack(role,PRESETS.find(p=>p.genre==='melodic'&&p.role===role&&p.variation===0)));
+function presetFor(role=S.active){return PRESETS.find(p=>p.id===S.tracks[role].preset)}
+function toast(message){$('toast').textContent=message;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').textContent='',5500)}
+function remember(){history.push(clone(S));if(history.length>40)history.shift();future=[]}
+function change(fn){stopAudio();remember();fn();selectedNote=-1;render()}
+function regenerate(all=false){ROLES.forEach(role=>{if(all||!S.tracks[role].locked)S.tracks[role].notes=generate(presetFor(role),S.config)})}
+function renderControls(){
+ for(const id of ['genre','root','mode','bpm','bars','mood','density','gate','swing','human','seed','form','voicing'])$(id).value=S.config[id];
+ $('artistScene').value=S.config.artist||'';
+ ['density','gate','swing','human'].forEach(id=>$(id+'Out').textContent=S.config[id]+'%');
+ $('progression').innerHTML=S.config.progression.map((d,i)=>`<select aria-label="Chord ${i+1} scale degree" data-chord="${i}">${Array.from({length:7},(_,j)=>`<option value="${j}" ${j===d?'selected':''}>${['1','2','3','4','5','6','7'][j]}</option>`).join('')}</select>`).join('');
+ $('chordLabel').textContent=progressionLabel(S.config);
+ $('undo').disabled=!history.length;$('redo').disabled=!future.length;
+}
+function renderTracks(){
+ $('tracks').innerHTML=ROLES.map(role=>{const t=S.tracks[role],p=presetFor(role);return `<div class="track ${S.active===role?'active':''}" style="--track:var(--${role})"><div class="track-head"><span class="swatch"></span><button class="select-track" data-role="${role}" aria-pressed="${S.active===role}">${ROLE_NAMES[role]}</button></div><p class="track-name" title="${escapeHTML(p.name)}">${escapeHTML(p.name.split(' / ')[0])} · ${t.notes.length}</p><select class="track-sound" data-sound-role="${role}" aria-label="${ROLE_NAMES[role]} instrument">${soundSelectOptions(role,t.sound)}</select><div class="track-buttons"><button data-role="${role}" data-toggle="mute" aria-label="Mute ${role}" aria-pressed="${t.mute}">M</button><button data-role="${role}" data-toggle="solo" aria-label="Solo ${role}" aria-pressed="${t.solo}">S</button><button data-role="${role}" data-toggle="locked" aria-label="Lock ${role}" aria-pressed="${t.locked}">${t.locked?'Locked':'Lock'}</button></div></div>`}).join('');
+}
+function soundSelectOptions(role,selected){const list=soundOptions(role);return [...new Set(list.map(s=>s.group))].map(group=>`<optgroup label="${escapeHTML(group)}">${list.filter(s=>s.group===group).map(s=>`<option value="${s.id}" ${s.id===selected?'selected':''}>${escapeHTML(s.name)}</option>`).join('')}</optgroup>`).join('')}
+function renderSound(){const t=S.tracks[S.active],patch=soundById(t.sound,S.active);$('soundName').textContent=ROLE_NAMES[S.active]+' / '+patch.name;$('soundDescription').textContent=patch.desc;for(const key of ['level','tone','space','pan']){$('mix-'+key).value=t.mix[key];$('mix-'+key+'-out').textContent=t.mix[key]+(key==='tone'?' st':key==='pan'?'':'%')}}
+function changeSound(role,id){if(!soundById(id,role))return;remember();S.tracks[role].sound=id;S.active=role;selectedNote=-1;render();toast(soundById(id,role).name+' selected. MIDI notes are unchanged.')}
+let rollGeometry;
+function drawRoll(){
+ const ns=S.tracks[S.active].notes,drums=S.active==='drums',W=Math.max(280,$('roll').clientWidth||1200),H=320,left=58,top=25,bottom=23,total=S.config.bars*4;
+ $('roll').setAttribute('viewBox',`0 0 ${W} ${H}`);
+ let rows;
+ if(drag?.rows)rows=drag.rows;
+ else if(drums)rows=Array.from(new Set([...Object.keys(DRUM_NAMES).map(Number),...ns.map(n=>n.p)])).sort((a,b)=>b-a);
+ else{const min=ns.length?Math.min(...ns.map(n=>n.p)):60,max=ns.length?Math.max(...ns.map(n=>n.p)):72;let low=Math.max(0,min-2),high=Math.min(127,Math.max(max+2,low+18));if(high-low>48){low=min;high=max}rows=Array.from({length:high-low+1},(_,i)=>high-i)}
+ const rh=(H-top-bottom)/rows.length,bw=(W-left)/total;
+ rollGeometry={rows,rh,bw,left,top,total,W,H};
+ let svg=`<rect width="${W}" height="320" fill="#171e22"/>`;
+ rows.forEach((p,i)=>{const y=top+i*rh,inScale=MODES[S.config.mode].includes(mod(p-S.config.root,12)),root=mod(p-S.config.root,12)===0;
+  svg+=`<rect x="${left}" y="${y}" width="${W-left}" height="${rh}" fill="${drums?(i%2?'#202a2e':'#1a2327'):root?'#303d37':inScale?'#202a2e':'#192125'}"/><line x1="${left}" y1="${y+rh}" x2="${W}" y2="${y+rh}" stroke="#2b3438" stroke-width=".5"/>`;
+  if(drums||rh>12||root)svg+=`<text x="${left-7}" y="${y+rh*.72}" fill="${root?'#c0d3bd':'#94a4a8'}" text-anchor="end" font-size="${drums?10:11}" font-family="Consolas,monospace">${drums?(DRUM_NAMES[p]||p):noteName(p)}</text>`;
+ });
+ for(let step=0;step<=total*4;step++){const x=left+step/4*bw;svg+=`<line x1="${x}" y1="${top}" x2="${x}" y2="${H-bottom}" stroke="${step%16===0?'#65706e':step%4===0?'#3e4a4c':'#2a3438'}" stroke-width="${step%16===0?1.4:.65}"/>`;if(step%16===0&&step<total*4)svg+=`<text x="${x+5}" y="16" fill="#b6c1bd" font-size="12" font-family="Consolas,monospace">${step/16+1}</text>`}
+ const color={melody:'#ffc96e',bass:'#a4d2ba',chords:'#a9b9ee',arp:'#ef9d87',drums:'#c5cbd0'}[S.active];
+ ns.forEach((n,i)=>{const row=rows.indexOf(n.p),x=left+n.t*bw,y=top+row*rh;svg+=`<rect data-note="${i}" class="note ${selectedNote===i?'selected-note':''}" x="${x+.5}" y="${y+1}" width="${Math.max(3,Math.min(n.d*bw-1,W-x-1))}" height="${Math.max(2,rh-2)}" rx="1.6" fill="${color}" fill-opacity="${.4+n.v/127*.6}"><title>${noteName(n.p)} · beat ${n.t.toFixed(2)} · ${n.d.toFixed(2)} beats · velocity ${n.v}</title></rect>`});
+ svg+=`<line id="playhead" x1="${left}" x2="${left}" y1="${top}" y2="${H-bottom}" stroke="#f2f2e4" stroke-width="2" opacity="0"/>`;
+ $('roll').innerHTML=svg;
+}
+function renderNoteTools(){
+ const ns=S.tracks[S.active].notes;selectedNote=selectedNote>=ns.length?-1:selectedNote;
+ $('noteSelect').innerHTML='<option value="-1">Select a note…</option>'+ns.map((n,i)=>`<option value="${i}">${i+1}. ${S.active==='drums'?(DRUM_NAMES[n.p]||noteName(n.p)):noteName(n.p)} · ${(n.t+1).toFixed(2)}</option>`).join('');$('noteSelect').value=selectedNote;
+ const n=ns[selectedNote];
+ for(const [id,key] of [['notePitch','p'],['noteTime','t'],['noteLength','d'],['noteVelocity','v']]){$(id).value=n?+(n[key].toFixed(3)):'';$(id).disabled=!n}
+ $('deleteNote').disabled=!n;$('noteTime').max=S.config.bars*4-.01;$('noteLength').max=n?S.config.bars*4-n.t:S.config.bars*4;
+}
+function renderRecipe(){
+ const p=presetFor(),g=genreOf(p),a=p.artist?artistOf(p):null,ns=S.tracks[S.active].notes,variation=treatmentFor(p);
+ $('partTitle').textContent=ROLE_NAMES[S.active]+' / '+p.name.split(' / ')[0];
+ $('partMeta').textContent=`${NOTE_NAMES[S.config.root]} ${MODE_NAMES[S.config.mode]} · ${S.config.bars} bars · ${ns.length} notes · ${variation.name}`;
+ $('recipeTitle').textContent=(a?a.name+' / '+a.focus:g.name)+' · '+variation.name;
+ $('recipeText').textContent=variation.desc+' '+(a?a.traits[ROLES.indexOf(S.active)]:g.tip);
+ $('technique').textContent=p.technique+' / '+p.mood;
+ $('inspiration').textContent=a?'Original study inspired by '+a.name+'. Each part has its own rhythmic and harmonic recipe.':'Listening references: '+g.artist+'. Original recipe; no song notes copied.';
+ if(a?.source)$('inspiration').innerHTML+=` <a href="${escapeHTML(a.source)}" target="_blank" rel="noopener noreferrer">Reference ↗</a>`;
+ $('soundText').textContent=g.sound;
+ $('partAdvice').textContent={melody:'Try removing every third note, then change only the final two notes of your phrase. The rests are part of the melody.',bass:'Keep the fundamental mono. Match bass release to the space before the next kick. Add glide in the instrument, where it belongs.',chords:'Compare root position with nearest inversion. Keep the top voice intentional; ninths add colour, but density should suit the patch.',arp:'An arpeggio is the motion layer. Try muting the melody while the arp speaks, then trade roles halfway through the phrase.',drums:'Map exported pitches to Drum Rack pads. Mute extra percussion until the kick, snare and hats already move.'}[S.active];
+ document.querySelectorAll('[data-transform="invert"],[data-transform="up"],[data-transform="down"]').forEach(b=>b.disabled=S.active==='drums');
+}
+const searchText=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+function filteredPresets(){const query=searchText($('search').value);return PRESETS.filter(p=>{
+ const g=genreOf(p),a=p.artist?artistOf(p):null;return(!$('filterCollection').value||($('filterCollection').value==='artists'?!!p.artist:!p.artist))&&(!$('filterArtist').value||p.artist===$('filterArtist').value)&&(!$('filterGenre').value||p.genre===$('filterGenre').value)&&(!$('filterRole').value||p.role===$('filterRole').value)&&(!$('filterMood').value||p.mood===$('filterMood').value)&&(!$('filterTechnique').value||p.technique===$('filterTechnique').value)&&(!$('onlyFavorites').checked||favorites.has(p.id))&&(!query||searchText(`${p.name} ${g.name} ${a?a.name+' '+a.focus:g.artist} ${p.technique} ${p.mood} ${p.role}`).includes(query));
+})}
+const miniatureCache=new Map();
+function miniature(p){if(!miniatureCache.has(p.id)){
+ const notes=generate(p,factoryConfig(p)).filter(n=>n.t<8),bins=Array(32).fill(0);
+ notes.forEach(n=>{const i=clamp(Math.round(n.t*4),0,31);bins[i]=Math.max(bins[i],n.v)});
+ miniatureCache.set(p.id,bins.map(v=>`<i style="height:${v?Math.round(v/127*20):2}px;opacity:${v?.8:.12}"></i>`).join(''));
+ }return miniatureCache.get(p.id)}
+function renderLibrary(){
+ const all=filteredPresets(),size=16,pages=Math.max(1,Math.ceil(all.length/size));libraryPage=clamp(libraryPage,0,pages-1);
+ $('libraryCount').textContent=all.length+' recipes';$('pageInfo').textContent=`${libraryPage+1} / ${pages}`;$('prevPage').disabled=libraryPage===0;$('nextPage').disabled=libraryPage===pages-1;$('exportFiltered').disabled=!all.length;
+ $('catalog').innerHTML=all.slice(libraryPage*size,(libraryPage+1)*size).map(p=>{const g=genreOf(p),a=p.artist?artistOf(p):null;return `<article class="preset ${S.tracks[p.role].preset===p.id?'selected':''}"><button class="load" data-preset="${p.id}" aria-label="Load ${escapeHTML(p.name)} ${p.role} into current sketch"><span class="type">${escapeHTML(a?a.focus:g.name)} / ${ROLE_NAMES[p.role]}</span><strong>${escapeHTML(p.name)}</strong></button><button class="star" data-favorite="${p.id}" aria-pressed="${favorites.has(p.id)}" aria-label="Favourite ${escapeHTML(p.name)} ${p.role}">${favorites.has(p.id)?'★':'☆'}</button><div class="miniseq" aria-hidden="true">${miniature(p)}</div><p>${p.mood} · ${a?.bpm||g.bpm} BPM · ${p.technique}</p></article>`}).join('')||'<div class="empty">No recipes match. Try another emotion or reset the filters.</div>';
+}
+function render(){renderControls();renderTracks();renderSound();drawRoll();renderNoteTools();renderRecipe();renderLibrary()}
+function loadPreset(id){const p=PRESETS.find(p=>p.id===id);if(S.tracks[p.role].locked){toast(`Unlock ${ROLE_NAMES[p.role]} before replacing its recipe.`);return}change(()=>{S.active=p.role;const flags=S.tracks[p.role];S.tracks[p.role]={...flags,preset:p.id,notes:generate(p,S.config)}});toast(`${ROLE_NAMES[p.role]} loaded in your current key and harmony.`)}
+function audibleRoles(){const solo=ROLES.some(r=>S.tracks[r].solo);return ROLES.filter(r=>!S.tracks[r].mute&&(!solo||S.tracks[r].solo))}
+function exportTracks(roles){return roles.map(role=>({role,name:ROLE_NAMES[role]+' / '+presetFor(role).name,notes:S.tracks[role].notes}))}
+function download(bytes,name,type){const url=URL.createObjectURL(new Blob([bytes],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);toast('Downloaded '+name)}
+function filename(label){return `Fieldwork_${slug(label)}_${slug(NOTE_NAMES[S.config.root])}-${S.config.mode}_${S.config.bpm}bpm_${S.config.bars}bar`}
+async function exportPack(kind){const presets=kind==='genres'?GENRE_PRESETS:kind==='artists'?ARTIST_PRESETS:filteredPresets();if(!presets.length)return;const button=$(kind==='genres'?'exportAll':kind==='artists'?'exportArtists':'exportFiltered');button.disabled=true;toast(`Preparing ${presets.length} recipes…`);await new Promise(resolve=>setTimeout(resolve,40));try{const files=kind==='artists'?artistPackFiles():packFiles(presets,kind==='genres');download(zipBytes(files),kind==='genres'?'Fieldwork-V2-504-MIDI-Library.zip':kind==='artists'?'Fieldwork-V2-Artist-Studies-1312-MIDI.zip':`Fieldwork-V2-${presets.length}-recipes.zip`,'application/zip')}catch(err){toast('Could not create the pack: '+err.message)}finally{button.disabled=false}}
+function sessionText(){return JSON.stringify(S,null,2)}
+function validateSession(value){
+ if(!value||value.version!==2||!value.config||!value.tracks||!ROLES.includes(value.active))throw Error('This is not a Fieldwork V2 session.');
+ const c=value.config;
+ const bounded=(key,a,b,integer=false)=>{if(typeof c[key]!=='number'||!Number.isFinite(c[key])||c[key]<a||c[key]>b||(integer&&!Number.isInteger(c[key])))throw Error('Invalid session setting: '+key)};
+ bounded('root',0,11,true);bounded('bpm',60,200);bounded('seed',0,999999999,true);bounded('density',30,150);bounded('gate',20,150);bounded('swing',0,60);bounded('human',0,30);
+ if(![4,8,16].includes(c.bars)||!Object.hasOwn(MODES,c.mode)||!Object.hasOwn(MOODS,c.mood)||!GENRES.some(g=>g.id===c.genre)||!['AABA','ABAC','lift','breakdown','loop'].includes(c.form)||!['auto','root','open','strum'].includes(c.voicing)||!Array.isArray(c.progression)||c.progression.length!==4||c.progression.some(d=>!Number.isInteger(d)||d<0||d>6))throw Error('Invalid key, harmony or phrase settings.');
+ const clean={version:2,active:value.active,config:{},tracks:{}};
+ for(const key of ['genre','root','mode','bpm','bars','progression','mood','density','gate','swing','human','seed','form','voicing'])clean.config[key]=clone(c[key]);
+ if(c.artist!=null&&!ARTISTS.some(a=>a.id===c.artist))throw Error('Invalid artist study.');
+ clean.config.artist=c.artist||null;
+ for(const role of ROLES){const t=value.tracks[role];if(!t||!PRESETS.some(p=>p.id===t.preset&&p.role===role)||!Array.isArray(t.notes)||t.notes.length>20000)throw Error('Invalid '+role+' track.');
+  for(const n of t.notes)if(!n||!['t','d','p','v'].every(k=>typeof n[k]==='number'&&Number.isFinite(n[k]))||n.t<0||n.t>=c.bars*4||n.d<=0||n.t+n.d>c.bars*4+.002||!Number.isInteger(n.p)||n.p<0||n.p>127||!Number.isInteger(n.v)||n.v<1||n.v>127)throw Error('Invalid note in '+role+'.');
+  const preset=PRESETS.find(p=>p.id===t.preset),soundId=t.sound??suggestedSound(preset),mix=t.mix??defaultMix(role);
+  if(!soundById(soundId,role))throw Error('Invalid instrument on '+role+'.');
+  const safeMix={};for(const [key,min,max] of [['level',0,100],['tone',-24,24],['space',0,60],['pan',-100,100]]){if(typeof mix[key]!=='number'||!Number.isFinite(mix[key])||mix[key]<min||mix[key]>max)throw Error('Invalid mixer setting.');safeMix[key]=mix[key]}
+  clean.tracks[role]={preset:t.preset,notes:tidyNotes(t.notes,c.bars*4),locked:t.locked===true,mute:t.mute===true,solo:t.solo===true,sound:soundId,mix:safeMix};
+ }return clean;
+}
+function importSession(text){const next=validateSession(JSON.parse(text));change(()=>S=next);toast('Session restored, including edited notes and track locks.')}
+// Web Audio: lookahead scheduling, an isolated gain bus per playback, immediate stop and cleanup.
+let audioContext,previewEngine,audioTimer,audioFrame,audioToken=0,playing=false,playStart=0,scheduleIndex=0,scheduleCycle=0,scheduledEvents=[];
+function soundNote(role,n,t,beatSeconds){previewEngine.note(role,n,t,beatSeconds,S.tracks[role])}
+function scheduleAudio(){if(!playing)return;const beatSeconds=60/S.config.bpm,total=S.config.bars*4;while(scheduledEvents.length){const e=scheduledEvents[scheduleIndex],t=playStart+(scheduleCycle*total+e.n.t)*beatSeconds;if(t>audioContext.currentTime+.13)break;if(t>=audioContext.currentTime-.02)soundNote(e.role,e.n,Math.max(t,audioContext.currentTime),beatSeconds);scheduleIndex++;if(scheduleIndex>=scheduledEvents.length){scheduleIndex=0;scheduleCycle++}}}
+function animateAudio(){if(!playing)return;const beat=mod((audioContext.currentTime-playStart)*S.config.bpm/60,S.config.bars*4),step=Math.floor(beat*4);$('position').textContent=`${Math.floor(beat/4)+1} . ${Math.floor(beat%4)+1} . ${step%4+1}`;const line=$('playhead');if(line&&rollGeometry){const x=rollGeometry.left+beat*rollGeometry.bw;line.setAttribute('x1',x);line.setAttribute('x2',x);line.setAttribute('opacity','1')}audioFrame=requestAnimationFrame(animateAudio)}
+function stopAudio(){audioToken++;playing=false;clearInterval(audioTimer);cancelAnimationFrame(audioFrame);previewEngine?.stop();previewEngine=null;$('play').textContent='▶ Play sketch';$('play').setAttribute('aria-label','Play sketch');$('position').textContent='1 . 1 . 1';$('playhead')?.setAttribute('opacity','0')}
+async function playAudio(){if(playing){stopAudio();return}const token=++audioToken;try{
+ const AudioCtor=window.AudioContext||window.webkitAudioContext;if(!AudioCtor)throw Error('Web Audio is unavailable in this browser.');
+ if(!audioContext)audioContext=new AudioCtor();await audioContext.resume();if(token!==audioToken)return;
+ scheduledEvents=audibleRoles().flatMap(role=>S.tracks[role].notes.map(n=>({role,n}))).sort((a,b)=>a.n.t-b.n.t);if(!scheduledEvents.length){toast('No audible notes. Unmute a part or add some notes.');return}
+ previewEngine=createSoundEngine(audioContext,S.tracks,S.config.bpm,+$('volume').value/100);
+ playing=true;playStart=audioContext.currentTime+.06;scheduleIndex=0;scheduleCycle=0;$('play').textContent='■ Stop';$('play').setAttribute('aria-label','Stop playback');scheduleAudio();audioTimer=setInterval(scheduleAudio,25);animateAudio();
+ }catch(err){stopAudio();toast('Preview unavailable: '+err.message)}}
+function pointInRoll(event){const point=$('roll').createSVGPoint();point.x=event.clientX;point.y=event.clientY;return point.matrixTransform($('roll').getScreenCTM().inverse())}
+function editSelected(fn){if(selectedNote<0)return;const index=selectedNote;stopAudio();remember();fn(S.tracks[S.active].notes[index]);S.tracks[S.active].notes=tidyNotes(S.tracks[S.active].notes,S.config.bars*4);selectedNote=clamp(index,-1,S.tracks[S.active].notes.length-1);render()}
+function deleteSelected(){if(selectedNote<0)return;const i=selectedNote;change(()=>S.tracks[S.active].notes.splice(i,1))}
+function initialize(){
+ document.querySelector(`[data-page="${PAGE}"]`)?.setAttribute('aria-current','page');
+ const opts=(items)=>items.map(([v,n])=>`<option value="${v}">${escapeHTML(n)}</option>`).join('');
+ $('genre').innerHTML=opts(GENRES.map(g=>[g.id,g.name]));$('filterGenre').innerHTML+=opts(GENRES.map(g=>[g.id,g.name]));
+ const artistOptions=opts(ARTISTS.map(a=>[a.id,a.name+' / '+a.focus]));$('filterArtist').innerHTML+=artistOptions;$('artistScene').innerHTML+=artistOptions;
+ $('root').innerHTML=opts(NOTE_NAMES.map((n,i)=>[i,n]));$('mode').innerHTML=opts(Object.entries(MODE_NAMES));$('mood').innerHTML=opts(Object.keys(MOODS).map(n=>[n,n]));
+ $('filterRole').innerHTML+=opts(ROLES.map(r=>[r,ROLE_NAMES[r]]));$('filterMood').innerHTML+=opts([...new Set(PRESETS.map(p=>p.mood))].sort().map(n=>[n,n]));$('filterTechnique').innerHTML+=opts([...new Set(PRESETS.map(p=>p.technique))].sort().map(n=>[n,n]));
+ $('filterRole').value=PAGE==='studio'?'':PAGE;
+ $('filterCollection').value='artists';
+ $('guides').innerHTML=GUIDES_V2.map(([file,name,desc])=>`<a href="${file}"><b>${name}</b><span>${desc}</span></a>`).join('');
+ for(const id of ['search','filterCollection','filterArtist','filterGenre','filterRole','filterMood','filterTechnique','onlyFavorites'])$(id).addEventListener(id==='search'?'input':'change',()=>{libraryPage=0;renderLibrary()});
+ $('clearFilters').onclick=()=>{for(const id of ['search','filterCollection','filterArtist','filterGenre','filterRole','filterMood','filterTechnique'])$(id).value='';$('onlyFavorites').checked=false;libraryPage=0;renderLibrary()};
+ $('prevPage').onclick=()=>{libraryPage--;renderLibrary();$('catalog').scrollTop=0};$('nextPage').onclick=()=>{libraryPage++;renderLibrary();$('catalog').scrollTop=0};
+ $('catalog').onclick=e=>{const star=e.target.closest('[data-favorite]'),load=e.target.closest('[data-preset]');if(star){const id=star.dataset.favorite;favorites.has(id)?favorites.delete(id):favorites.add(id);try{localStorage.setItem('fieldwork-v2-favorites',JSON.stringify([...favorites]))}catch{toast('Favourites work here, but browser storage is unavailable.')}renderLibrary()}else if(load)loadPreset(load.dataset.preset)};
+ $('tracks').onclick=e=>{const b=e.target.closest('button');if(!b)return;const role=b.dataset.role;if(b.dataset.toggle){change(()=>S.tracks[role][b.dataset.toggle]=!S.tracks[role][b.dataset.toggle])}else{S.active=role;selectedNote=-1;render()}};
+ $('tracks').onchange=e=>{const role=e.target.dataset.soundRole;if(role)changeSound(role,e.target.value)};
+ for(const key of ['level','tone','space','pan']){$('mix-'+key).oninput=()=>{const value=+$('mix-'+key).value;$('mix-'+key+'-out').textContent=value+(key==='tone'?' st':key==='pan'?'':'%');if(previewEngine)previewEngine.update(S.active,{...S.tracks[S.active].mix,[key]:value})};$('mix-'+key).onchange=()=>{remember();S.tracks[S.active].mix[key]=+$('mix-'+key).value;previewEngine?.update(S.active,S.tracks[S.active].mix);renderControls();renderSound()}};
+ $('suggestSounds').onclick=()=>{remember();ROLES.forEach(role=>S.tracks[role].sound=suggestedSound(presetFor(role)));render();toast('Suggested instruments loaded for the five current recipes.')};
+ $('genre').onchange=()=>{const id=$('genre').value;change(()=>{const g=genreOf(id);S.config.genre=id;S.config.artist=null;S.config.bpm=g.bpm;S.config.mode=g.mode;S.config.swing=g.swing;S.config.progression=[...g.prog[0]];ROLES.forEach(role=>setTrack(role,GENRE_PRESETS.find(p=>p.genre===id&&p.role===role&&p.variation===0)))});toast('Loaded a coordinated '+genreOf(id).name+' sketch. Previous edits are in Undo.')};
+ $('artistScene').onchange=()=>{const id=$('artistScene').value;if(!id)return;const a=artistOf(id);change(()=>{const root=S.config.root,bars=S.config.bars,p=ARTIST_PRESETS.find(p=>p.artist===id&&p.role==='melody'&&p.variation===0);S.config={...factoryConfig(p),root,bars};ROLES.forEach(role=>setTrack(role,ARTIST_PRESETS.find(p=>p.artist===id&&p.role===role&&p.variation===0)))});toast(a.name+' / '+a.focus+' loaded with five matching parts and suggested sounds.')};
+ for(const id of ['root','mode','bars','mood','bpm','form','voicing','seed'])$(id).onchange=()=>{let value=$(id).value;if(['root','bars','bpm','seed'].includes(id)){value=Number(value);if(!Number.isFinite(value)){renderControls();return}if(id==='bpm')value=clamp(value,60,200);if(id==='seed')value=Math.round(clamp(value,0,999999999))}change(()=>{S.config[id]=value;if(id!=='bpm')regenerate(['root','mode','bars'].includes(id))})};
+ for(const id of ['density','gate','swing','human']){$(id).oninput=()=>$(id+'Out').textContent=$(id).value+'%';$(id).onchange=()=>{const value=+$(id).value;change(()=>{S.config[id]=value;regenerate()})}};
+ $('progression').onchange=e=>{if(e.target.dataset.chord===undefined)return;const i=+e.target.dataset.chord,d=+e.target.value;change(()=>{S.config.progression[i]=d;regenerate(true)})};
+ $('alternateHarmony').onclick=()=>change(()=>{const g=S.config.artist?artistOf(S.config.artist):genreOf(S.config.genre);S.config.progression=[...(JSON.stringify(S.config.progression)===JSON.stringify(g.prog[0])?g.prog[1]:g.prog[0])];regenerate(true)});
+ $('generate').onclick=()=>{if(ROLES.every(r=>S.tracks[r].locked)){toast('All parts are locked. Unlock one to generate a variation.');return}change(()=>{S.config.seed=(S.config.seed+7919)%1000000000;regenerate()})};
+ $('undo').onclick=()=>{if(!history.length)return;stopAudio();future.push(clone(S));S=history.pop();selectedNote=-1;render()};$('redo').onclick=()=>{if(!future.length)return;stopAudio();history.push(clone(S));S=future.pop();selectedNote=-1;render()};
+ document.querySelectorAll('[data-transform]').forEach(b=>b.onclick=()=>change(()=>S.tracks[S.active].notes=transformNotes(S.tracks[S.active].notes,b.dataset.transform,S.config,S.active)));
+ $('clearPart').onclick=()=>change(()=>S.tracks[S.active].notes=[]);
+ $('noteSelect').onchange=()=>{selectedNote=+$('noteSelect').value;drawRoll();renderNoteTools()};
+ for(const [id,key] of [['notePitch','p'],['noteTime','t'],['noteLength','d'],['noteVelocity','v']])$(id).onchange=()=>{let value=Number($(id).value);if(!Number.isFinite(value)){renderNoteTools();return}editSelected(n=>{if(key==='p')value=clamp(Math.round(value),0,127);if(key==='v')value=clamp(Math.round(value),1,127);if(key==='t')value=clamp(value,0,S.config.bars*4-.01);if(key==='d')value=clamp(value,.01,S.config.bars*4-n.t);n[key]=value;n.d=Math.min(n.d,S.config.bars*4-n.t)})};
+ $('deleteNote').onclick=deleteSelected;
+ $('roll').addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;const hit=e.target.closest('[data-note]'),pos=pointInRoll(e),geo=rollGeometry;
+  $('roll').focus();
+  if(hit){selectedNote=+hit.dataset.note;drag={id:e.pointerId,x:pos.x,y:pos.y,index:selectedNote,rows:[...geo.rows],n:{...S.tracks[S.active].notes[selectedNote]},changed:false};$('roll').setPointerCapture(e.pointerId);drawRoll();renderNoteTools();return}
+  if(pos.x<geo.left||pos.y<geo.top||pos.y>=297)return;
+  const t=clamp(Math.floor((pos.x-geo.left)/geo.bw*4)/4,0,geo.total-.25),p=geo.rows[clamp(Math.floor((pos.y-geo.top)/geo.rh),0,geo.rows.length-1)];
+  change(()=>S.tracks[S.active].notes.push({t,p,d:S.active==='drums'?.15:.25,v:96}));selectedNote=S.tracks[S.active].notes.length-1;drawRoll();renderNoteTools();
+ });
+ $('roll').addEventListener('pointermove',e=>{if(!drag)return;const pos=pointInRoll(e),geo=rollGeometry,dt=Math.round((pos.x-drag.x)/geo.bw*4)/4,dr=Math.round((pos.y-drag.y)/geo.rh);if(!drag.changed&&!dt&&!dr)return;if(!drag.changed){stopAudio();remember();drag.changed=true}const n=S.tracks[S.active].notes[drag.index];n.t=clamp(drag.n.t+dt,0,geo.total-.01);n.d=Math.min(drag.n.d,geo.total-n.t);const row=geo.rows.indexOf(drag.n.p);n.p=geo.rows[clamp(row+dr,0,geo.rows.length-1)];drawRoll()});
+ function endDrag(){if(!drag)return;const changed=drag.changed;drag=null;if(changed){S.tracks[S.active].notes=tidyNotes(S.tracks[S.active].notes,S.config.bars*4);selectedNote=-1;render()}}
+ $('roll').addEventListener('pointerup',endDrag);$('roll').addEventListener('pointercancel',endDrag);
+ $('roll').addEventListener('dblclick',e=>{const hit=e.target.closest('[data-note]');if(hit){selectedNote=+hit.dataset.note;deleteSelected()}});
+ $('roll').addEventListener('keydown',e=>{if(['Delete','Backspace'].includes(e.key)){e.preventDefault();deleteSelected()}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();editSelected(n=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight')n.t=clamp(n.t+(e.key==='ArrowRight'?.25:-.25),0,S.config.bars*4-.01);else n.p=clamp(n.p+(e.key==='ArrowUp'?1:-1)*(e.shiftKey?12:1),0,127);n.d=Math.min(n.d,S.config.bars*4-n.t)})}});
+ $('play').onclick=playAudio;$('volume').oninput=()=>previewEngine?.level(+$('volume').value/100);
+ document.addEventListener('keydown',e=>{const editing=/INPUT|SELECT|TEXTAREA|BUTTON/.test(e.target.tagName);if(e.code==='Space'&&!editing){e.preventDefault();playAudio()}if(e.key==='Escape'){stopAudio()}if(e.key==='/'&&!editing){e.preventDefault();$('search').focus()}});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAudio()});window.addEventListener('pagehide',stopAudio);
+ $('exportPart').onclick=()=>download(midiBytes(exportTracks([S.active]),S.config),filename(S.active)+'.mid','audio/midi');
+ $('exportSketch').onclick=()=>{const roles=audibleRoles();if(!roles.length){toast('Unmute a part before exporting the sketch.');return}download(midiBytes(exportTracks(roles),S.config),filename('sketch')+'.mid','audio/midi')};
+ $('exportStems').onclick=()=>download(zipBytes(ROLES.map(role=>({name:filename(role)+'.mid',bytes:midiBytes(exportTracks([role]),S.config)}))),filename('separate-parts')+'.zip','application/zip');
+ $('exportVariations').onclick=()=>{const p=presetFor(),files=[],treatmentCount=p.artist?8:4;for(let i=0;i<32;i++){const c={...S.config,seed:(S.config.seed+i*7919)%1000000000},recipe={...p,variation:i%treatmentCount};let notes=generate(recipe,c);const shift=Math.floor(i/treatmentCount)*.25;notes=tidyNotes(notes.map(n=>({...n,t:mod(n.t+shift,c.bars*4)})),c.bars*4);files.push({name:filename(`${S.active}-variation-${String(i+1).padStart(2,'0')}`)+'.mid',bytes:midiBytes([{role:S.active,name:`${p.name} / variation ${i+1}`,notes}],c)})}download(zipBytes(files),filename('32-'+S.active+'-variations')+'.zip','application/zip')};
+ $('exportAll').onclick=()=>exportPack('genres');$('exportArtists').onclick=()=>exportPack('artists');$('exportFiltered').onclick=()=>exportPack('filtered');
+ $('saveSession').onclick=()=>download(sessionText(),filename('session')+'.json','application/json');$('loadSession').onclick=()=>$('sessionFile').click();
+ $('sessionFile').onchange=async()=>{const file=$('sessionFile').files[0];try{if(!file)return;if(file.size>4000000)throw Error('Session file is too large (maximum 4 MB).');importSession(await file.text())}catch(err){toast('Could not open session: '+err.message)}finally{$('sessionFile').value=''}};
+ $('saveLocal').onclick=()=>{try{localStorage.setItem('fieldwork-v2-session',sessionText());toast('Saved in this browser. Save a session file to move it between pages or devices.')}catch{toast('Browser storage is unavailable. Use Save session to download a file.')}};
+ $('restoreLocal').onclick=()=>{try{const text=localStorage.getItem('fieldwork-v2-session');if(!text){toast('No browser save found on this page. Open a saved session file instead.');return}importSession(text)}catch(err){toast('Could not restore: '+err.message)}};
+ if(typeof ResizeObserver!=='undefined'){const observer=new ResizeObserver(()=>drawRoll());observer.observe($('roll'))}
+ render();
+}
+initialize();
+
+</script></body></html>

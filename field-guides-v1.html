@@ -1,0 +1,443 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Field Guides — production reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E2DED2;--panel:#F2EFE6;--panel-2:#EAE5D8;
+  --ink:#191713;--ink-2:#635C50;--ink-3:#8C8474;--line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32;--b2:#FF8A2B;--b3:#FFC531;--b4:#F2EDE0;--cy:#3FD0C9;--vi:#A78BFA;--gr:#5FBF52;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+a{color:inherit}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+
+.hero{padding:56px 0 28px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(48px,12vw,132px);line-height:.82;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:62ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+.strip{display:flex;gap:3px;margin:26px 0 6px;height:26px}
+.strip i{flex:1;border-radius:2px}
+.striplab{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.1em}
+
+.bar{position:sticky;top:0;z-index:80;background:var(--ink);border-bottom:2px solid var(--ink)}
+.bar .wrap{display:flex;align-items:center;gap:12px;padding:11px 20px;flex-wrap:wrap}
+.bar input{flex:1;min-width:200px;font-family:var(--mono);font-size:13px;background:#2A2723;color:var(--b4);
+  border:1px solid rgba(242,237,224,.28);border-radius:4px;padding:9px 13px}
+.bar input::placeholder{color:rgba(242,237,224,.4)}
+.bar .count{font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.5);letter-spacing:.08em;white-space:nowrap}
+.fchip{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  background:transparent;border:1px solid rgba(242,237,224,.3);border-radius:99px;padding:6px 12px;cursor:pointer;color:var(--b4)}
+.fchip[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.fchip:hover{border-color:var(--b3)}
+
+.sec{padding:46px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:20px}
+.sec-head h2{font-size:clamp(24px,4vw,38px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:66ch;margin-top:11px;color:var(--ink-2)}
+
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(370px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:0;overflow:hidden;
+  display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:border-color .12s,transform .12s}
+.card:hover{border-color:var(--ink);transform:translateY(-2px)}
+.card .top{display:flex;align-items:flex-start;gap:12px;padding:15px 16px 0}
+.num{font-family:var(--display);font-size:34px;font-weight:800;line-height:.85;color:var(--b1);min-width:44px}
+.card h3{font-size:21px;line-height:1.1}
+.card .tagline{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-top:5px}
+.card .body{padding:12px 16px 0;flex:1}
+.card p{font-size:14.5px;color:var(--ink-2);margin:0 0 10px}
+.card ul{margin:0 0 10px;padding-left:16px;font-size:13.5px;color:var(--ink-2)}
+.card li{margin-bottom:4px}
+.card li b{color:var(--ink)}
+.first{font-family:var(--mono);font-size:11.5px;line-height:1.6;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:9px 11px;margin:0 16px 12px;border-radius:0 3px 3px 0}
+.first b{color:var(--b1)}
+.card .foot{display:flex;align-items:center;gap:8px;padding:11px 16px;border-top:1px solid var(--line);
+  background:var(--panel-2);flex-wrap:wrap}
+.tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;padding:3px 7px;border-radius:2px;
+  background:var(--line);color:var(--ink);text-transform:uppercase}
+.tag.midi{background:var(--ink);color:var(--b4)}
+.tag.audio{background:var(--cy);color:var(--ink)}
+.go{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--b1)}
+.card:hover .go{color:var(--ink)}
+.card.dim{display:none}
+.fam{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin:34px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.fam:first-of-type{margin-top:0}
+
+table{width:100%;border-collapse:collapse;font-size:14px;background:var(--panel)}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  background:var(--panel-2);border-bottom:1px solid var(--ink)}
+tr:hover td{background:var(--panel-2)}
+td a{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--b1);text-decoration:none;white-space:nowrap}
+td a:hover{text-decoration:underline}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(400px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+.tcard code{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);padding:2px 6px;border-radius:3px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:11px 13px;border-radius:0 3px 3px 0;margin:14px 0 0}
+.callout b{color:var(--b1)}
+.empty{font-family:var(--mono);font-size:13px;color:var(--ink-3);padding:30px 0;text-align:center;display:none}
+.foot-note{border-top:2px solid var(--ink);margin-top:52px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot-note strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:620px){.num{font-size:26px;min-width:34px}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="index.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Sixteen interactive field guides · house · techno · trance · garage</div>
+    <h1>Field<br><em>guides</em></h1>
+    <p class="sub">Sixteen self-contained pages covering the production chain end to end — <strong>groove, low end, drums, synthesis, harmony, arrangement, transitions, ear training</strong> — plus a pattern bank, a sampling lab, a transformation catalogue, a Serum 2 sound-design manual, a guide to how parts relate, a melody sheet and a from-zero course for the MIDI keyboard itself. Everything plays live in the browser, most of it exports MIDI, and none of it needs an internet connection once downloaded.</p>
+    <div class="strip">
+      <i style="background:#FF4B32"></i><i style="background:#FF8A2B"></i><i style="background:#FFC531"></i>
+      <i style="background:#5FBF52"></i><i style="background:#3FD0C9"></i><i style="background:#A78BFA"></i>
+      <i style="background:#8C8474"></i><i style="background:#191713"></i>
+    </div>
+    <div class="striplab"><span>Parts</span><span>Relationships</span><span>Structure</span><span>Skill</span></div>
+  </div>
+</div>
+
+<div class="bar">
+  <div class="wrap">
+    <input id="q" type="search" placeholder="Search — try &quot;swing&quot;, &quot;sidechain&quot;, &quot;serum&quot;, &quot;piano&quot;, &quot;muddy&quot;…" autocomplete="off">
+    <button class="fchip" data-f="all" aria-pressed="true">All</button>
+    <button class="fchip" data-f="midi">Exports MIDI</button>
+    <button class="fchip" data-f="lab">Has a lab</button>
+    <span class="count" id="count">16 guides</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="sec" id="guides">
+    <div class="sec-head">
+      <div class="eyebrow">The set</div>
+      <h2>Sixteen guides</h2>
+      <p>Roughly in the order they were built, and roughly the order to read them if you are starting from scratch. Each one is a single HTML file — bookmark this page and route from here.</p>
+    </div>
+    <div id="cards"></div>
+    <div class="empty" id="empty">Nothing matches that search.</div>
+  </section>
+
+  <section class="sec" id="router">
+    <div class="sec-head">
+      <div class="eyebrow">Routing</div>
+      <h2>I have a problem</h2>
+      <p>The fastest way to use this set. Find the symptom, open the page.</p>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Symptom</th><th>Where to look</th><th>Open</th></tr></thead>
+      <tbody id="router-rows"></tbody>
+    </table></div>
+  </section>
+
+  <section class="sec" id="paths">
+    <div class="sec-head">
+      <div class="eyebrow">Three routes</div>
+      <h2>Where to start</h2>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>If you are starting a track</h3>
+        <ul>
+          <li><b>1.</b> <a href="groove-vol2.html">Pattern Bank</a> — pick a bass block and a sequence block that disagree, in the melting pot.</li>
+          <li><b>2.</b> <a href="chords.html">Chords</a> — find a progression, press <b>Make it expensive</b>, export the MIDI.</li>
+          <li><b>3.</b> <a href="drum-library.html">Drums</a> — load the genre pattern, export it, drag both into Live.</li>
+          <li><b>4.</b> <a href="arrangement.html">Arrangement</a> — load a template and export the arrangement skeleton as a scaffold.</li>
+          <li>Four downloads and you have a project with structure before you have made a sound of your own.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>If you are stuck in loop hell</h3>
+        <ul>
+          <li><b>1.</b> <a href="arrangement.html">Arrangement</a> — press <b>Tour</b> and hear a whole seven-minute shape in ninety seconds. Usually the problem is that nothing ever leaves.</li>
+          <li><b>2.</b> <a href="the-move.html">Transformations</a> — pick one transformation, apply it at one bar you choose in advance.</li>
+          <li><b>3.</b> <a href="between.html">Melody &amp; Harmony</a> — reharmonise the loop you already have. Same notes, new track.</li>
+          <li>Loop hell is almost always a decision problem rather than a creativity problem.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>If you want to get better rather than finish something</h3>
+        <ul>
+          <li><b>Ten minutes a day in <a href="keyboard.html">Keyboard</a></b>, most days. Start with the note-finding drills and then play along with a progression.</li>
+          <li>If you own a MIDI keyboard and have never had a lesson, <a href="keyboard.html">Keyboard</a> before anything else. Plug it in, run the drills, and the Chords guide stops being theory.</li>
+          <li>Then the swing and microtiming drills, which test exactly what <a href="groove-cheatsheet.html">Groove</a> teaches.</li>
+          <li>Read <a href="between.html">Melody &amp; Harmony</a> properly. It is the only guide about relationships rather than parts, and relationships are where the craft is.</li>
+          <li>Build one patch from scratch in <a href="serum.html">Serum 2</a> or <a href="patch-lab.html">Synthesis</a> every time you would otherwise load a preset.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Housekeeping</h3>
+        <ul>
+          <li><b>Keep all sixteen files in one folder</b> — this page links to the others by filename, so moving or renaming one breaks its link.</li>
+          <li>Everything runs offline. Fonts load from the web when available and fall back to system fonts when not.</li>
+          <li><b>Use headphones or monitors</b>, especially for <a href="low-end.html">Kick &amp; Bass</a>. Laptop speakers reproduce almost nothing below 150 Hz and two of its labs will look broken.</li>
+          <li>Scores and edits are held in memory only — nothing is saved and nothing is sent anywhere. Reloading starts fresh.</li>
+          <li>Press <code>space</code> to play or stop on almost every page.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="whats">
+    <div class="sec-head">
+      <div class="eyebrow">At a glance</div>
+      <h2>What each one does</h2>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Guide</th><th>The one thing it measures</th><th>MIDI</th><th>File</th></tr></thead>
+      <tbody id="measures"></tbody>
+    </table></div>
+    <p class="callout"><b>Why so many of these have a number in them.</b> Production advice is usually asserted — "voice-lead your chords", "don't let parts collide", "swing the hats". Every guide in this set tries to measure the thing it is arguing for instead, so you can check the claim rather than take it on faith. Several of the pages contradicted my own first draft when I measured them, and the text was changed to match the data rather than the other way round.</p>
+  </section>
+
+  <div class="foot-note">
+    <p><strong>Use them as references, not as a course.</strong> Nobody needs to read ten guides. Open the one that matches the problem in front of you, use the lab, close it. Return to <a href="keyboard.html">Keyboard</a> regularly to practise playing the ideas you find here.</p>
+  </div>
+</div>
+
+<script>
+const GUIDES=[
+{n:1,file:'groove-cheatsheet.html',t:'Groove',orig:'Groove',
+ tag:'Placement, length &amp; velocity',fam:'Make the parts',midi:true,lab:true,
+ d:'Why a loop bounces or sits there. Twenty-five playable patterns covering where notes land, how long they last and how hard they hit — plus an editable workbench at 32nd-note resolution and a syncopation measurement.',
+ li:['<b>Workbench</b> — build and edit patterns, export as MIDI','<b>FLATTEN</b> — strip the performance and hear what survives','Polymeter spacings, gate lengths, accent maps, hooks'],
+ first:'<b>Start with:</b> the 2.5-step spacing card in Placement. It scores 52 on the syncopation meter where straight 16ths score 0, and it takes five bars to come home.',
+ kw:'groove swing shuffle bounce placement velocity gate note length syncopation polymeter hook melody workbench boring stiff midi'},
+
+{n:2,file:'groove-vol2.html',t:'Pattern Bank',orig:'Groove II',
+ tag:'66 building blocks, 29 genres',fam:'Make the parts',midi:true,lab:true,
+ d:'The parts bin. Sixty-six blocks across bass, sequences, stabs, energy shapes and fills — filterable by genre and by the kind of motion they produce. Stack four in the melting pot and export as multi-track MIDI.',
+ li:['<b>Melting pot</b> — four slots, multi-track MIDI export','<b>Three generators</b> — phasing, Euclidean, additive','Trance, psytrance, garage, amapiano, breaks, Afro'],
+ first:'<b>Start with:</b> Preset · trance, then press <b>Surprise me</b> a few times. It deliberately picks four blocks with four different motion types.',
+ kw:'bass bank trance psytrance garage amapiano afro breaks euclidean polymeter additive tresillo generator melting pot energy fill arp sequence stab ideas starting point midi'},
+
+{n:3,file:'drum-library.html',t:'Drums',orig:'The Kit',
+ tag:'Drum programming, 18 genres',fam:'Make the parts',midi:true,lab:true,
+ d:'A genre encyclopedia with a real editable sequencer. Thirty-two steps, twelve drums, three kits, all synthesised — plus a morph lab that computes every cell where two genres disagree and applies them one at a time.',
+ li:['<b>Morph lab</b> — with a structure/texture boundary','18 genres from disco house to jungle','909, 808 and 707 kits; Euclidean fills; swing per lane'],
+ first:'<b>Start with:</b> the morph lab. Classic house to hypnotic techno is four structural cells — delete the clap.',
+ kw:'drums kick clap hat snare percussion sequencer genre house techno garage breaks disco afro latin swing shuffle euclidean morph midi 909 808 707'},
+
+{n:4,file:'low-end.html',t:'Kick &amp; Bass',orig:'Low End',
+ tag:'The low end as one instrument',fam:'Make the parts',midi:false,lab:true,
+ d:'The hardest problem in house and techno, and the one where a wrong answer is fatal. Kick synthesis, tuning, ten bass archetypes, sidechain shaping, and a phase lab that measures cancellation rather than describing it.',
+ li:['<b>Kick lab</b> — six live parameters, eight genre presets','<b>Phase lab</b> — watch the peak meter drop 6–10 dB','<b>Tuning lab</b> — hear a kick beat against the bass'],
+ first:'<b>Start with:</b> the Phase lab. Kick and sub both on 55 Hz, sweep to 180°, and watch the level fall with nothing added or removed.',
+ kw:'kick bass sub sidechain phase cancellation tuning mono low end mud muddy mix mixing 808 909 reese acid rumble headroom'},
+
+{n:05,file:'patch-lab.html',t:'Synthesis',orig:'Patch',
+ tag:'Sound design from scratch',fam:'Make the parts',midi:false,lab:true,
+ d:'A real subtractive and FM synth with twenty-seven parameters, three live displays, and ten patches that build themselves one stage at a time while the controls move — so you see the decisions instead of arriving at a preset.',
+ li:['<b>Build It</b> — the patch assembles itself, one stage per bar','Rolling bass, acid, disco stab, supersaw, hoover, kick','<b>Ableton translation</b> — the current patch as instructions'],
+ first:'<b>Start with:</b> Rolling techno bass, press Build It. An ugly raw saw becomes a bass in six moves, and the stage that does the work is the filter envelope.',
+ kw:'synthesis synth oscillator filter envelope lfo fm sound design patch preset wavetable operator saw square supersaw acid hoover reese pluck harsh thin'},
+
+{n:6,file:'serum.html',t:'Serum 2',orig:'The Sixth Decision',
+ tag:'Sound design · the 90% path',fam:'Make the parts',midi:false,lab:true,
+ d:'The Synthesis guide argued every sound is five decisions; Serum 2 adds a sixth in front — which of its five engines to be. A module map, a fixed six-move build order, twenty-two recipes with exact settings, and six A/B demos that isolate the moves one at a time.',
+ li:['<b>22 recipes</b> — bass, stabs, leads, pads, drums &amp; FX as exact settings','<b>Six A/B demos</b> — unison, the pluck, FM bark, noise click, drift, fake sidechain','Modulation cookbook, diagnosis table, wavetable &amp; warp theory'],
+ first:'<b>Start with:</b> the six moves in section 2, then build the rolling techno bass recipe twice — once reading the card, once from memory. The second build is the one that teaches.',
+ kw:'serum serum2 xfer wavetable granular spectral sample multisample warp fm sync unison detune macro mod matrix lfo chaos recipe preset sound design bass reese hoover supersaw rumble pluck growl stab riser'},
+
+{n:7,file:'sampling.html',t:'Sampling',orig:'The Cut',
+ tag:'Chopping, warping &amp; slicing',fam:'Make the parts',midi:true,lab:true,
+ d:'The page renders its own source loops into memory and then performs real digital signal processing on them — genuine onset detection, playback-rate changes, a working granular stretcher and true bit reduction. The sources are synthesised; the sampling is not.',
+ li:['<b>Chop lab</b> — transient detection, re-sequencer, Simpler-layout MIDI','<b>Four ways to change tempo</b>, and why each warp mode exists','<b>One slice, whole loop</b> — eight bars from a single hit'],
+ first:'<b>Start with:</b> load the record, then set the pitch/time method to Granular and drag grain size from 15 ms to 200 ms. That single control is the whole reason Live has separate warp modes.',
+ kw:'sampling sample chop chopping slice slicing transient onset warp warp modes beats tones texture repitch complex pro granular stretch time stretch pitch shift formant bitcrush lo-fi vinyl break resample simpler sampler midi'},
+
+{n:8,file:'inkey.html',t:'Keys &amp; Transposing',orig:'In Key',
+ tag:'Is it +3 or −9?',fam:'Put them together',midi:false,lab:true,
+ d:'You bought a vocal in F♯ minor and your track is in A minor. This works out the number for Ableton’s Transpose field — and asks the better question first, which is whether the sample needs transposing at all. Often it does not.',
+ li:['<b>The answer</b> — with a hear-it-wrong-then-right demo','<b>Clash meter</b> — how many notes fall outside your key','Camelot wheel, 12×12 lookup grid, key-finder drones'],
+ first:'<b>Start with:</b> set the sample to C major and your track to A minor. The answer is zero — same seven notes. Half the transposing people do is unnecessary.',
+ kw:'key transpose transposing semitones pitch repitch camelot harmonic mixing relative major minor mode dorian phrygian splice sample key detection wheel circle of fifths formant chipmunk tempo bpm clash'},
+
+{n:9,file:'chords.html',t:'Chords',orig:'Voicing',
+ tag:'Progressions &amp; voice leading',fam:'Put them together',midi:true,lab:true,
+ d:'Almost nobody’s progression is wrong — what sounds amateur is voicing. Sixteen progressions, a full chord editor, and a measurement of how far the voices travel, in semitones.',
+ li:['<b>Cheap vs Expensive</b> — 68 semitones against 12','Voice-leading diagram with per-voice movement lines','One chord, eight ways; extension rules; twelve keys'],
+ first:'<b>Start with:</b> Make it cheap, then Make it expensive. Same four chords, same rhythm, and the number tells you why one sounds like a demo.',
+ kw:'chords progression voicing inversion voice leading extension ninth eleventh rootless drop2 quartal modes dorian phrygian harmony cheap expensive midi'},
+
+{n:10,file:'between.html',t:'Melody &amp; Harmony',orig:'Between',
+ tag:'How two parts relate',fam:'Put them together',midi:true,lab:true,
+ d:'The other guides teach parts. This one teaches the space between them — because when a track fails it is rarely because a part was bad. Four relationships, four measurements, and a reharmonisation lab that is worth the page on its own.',
+ li:['<b>Reharmonisation</b> — one melody, twelve harmonies, live function labels','Collision counting, motion classification','Register and the low-interval limit'],
+ first:'<b>Start with:</b> the first lab. Play it, then click through the harmonies — every melody note is labelled with what it becomes, and the labels change under your eyes.',
+ kw:'reharmonisation reharm melody harmony function chord tone extension avoid note collision clutter interlocking counterpoint contrary motion register low interval limit mud muddy spacing midi'},
+
+{n:11,file:'buildorder.html',t:'Build Order',orig:'Build Order',
+ tag:'What to touch first, and why',fam:'Shape the track',midi:true,lab:true,
+ d:'Every other guide teaches a part. This one is about the sequence — the same eight elements, reordered, produce a track that sounds intentional or a pile of loops that sounds like nothing. Built from one producer’s workflow notes, with the established technique separated from personal opinion throughout.',
+ li:['<b>Build order simulator</b> — reorder eight elements, hear them assemble','Measured labs: ghost kicks, warmth, automation vs. new parts, drums vs. melody','Session timer, reference-track worksheet, a constraint spinner for finding your voice'],
+ first:'<b>Start with:</b> the build order simulator. Load “Melody first (bad order)” and listen — same eight parts as the other two presets, and it is audibly the weakest of the three.',
+ kw:'workflow process order of operations build order arrangement discipline mute ghost kick warmth automation reference track worksheet session timer finish fast voice identity low end first atmosphere first house techno workflow habits'},
+
+{n:12,file:'arrangement.html',t:'Arrangement',orig:'Arc',
+ tag:'Structure &amp; transitions',fam:'Shape the track',midi:true,lab:true,
+ d:'A track is a shape over time. Build that shape on a grid, hear any point in it instantly, fire transitions in time, and export the whole map as a multi-track MIDI scaffold you can drag into Live.',
+ li:['<b>Tour</b> — hear a seven-minute arc in ninety seconds','Twelve transitions that fire on the next bar line','Eight templates from a 3:37 radio edit to 8:31 melodic techno'],
+ first:'<b>Start with:</b> press Tour. Four bars from every section in order — the whole shape of a track, fast enough to judge.',
+ kw:'arrangement structure sections intro breakdown drop build outro energy curve transition riser impact filter sweep tape stop delay throw silence template loop hell finish midi'},
+
+{n:13,file:'the-move.html',t:'Transformations',orig:'The Move',
+ tag:'24 single decisions, A/B',fam:'Shape the track',midi:true,lab:true,
+ d:'Twenty-four single decisions applied to identical material, so the only variable is the move itself. Four bars of the original, four bars of the transformation, forever — until you can hear exactly what changed.',
+ li:['Twelve rhythm moves: displacement, metric modulation, phasing','Twelve harmony moves: negative harmony, chromatic mediant, modal shifts','Exact deltas — same bed, so the numbers are real'],
+ first:'<b>Start with:</b> Beat displacement or Dorian lift. Both change almost nothing on screen and everything in the ear.',
+ kw:'transformation move displacement metric modulation hemiola phasing half time double time turnaround negative harmony tritone substitution chromatic mediant parallel major dorian phrygian pedal point quartal suspension boring unusual midi'},
+
+{n:14,file:'disco-house-cheatsheet.html',t:'Disco house',orig:'Disco',tag:'The original quick reference',fam:'Make the parts',midi:false,lab:false,d:'A compact production reference for disco house: rhythm, sampling, bass, harmony and arrangement.',li:['Disco and house vocabulary','A quick production checklist','Standalone reference sheet'],first:'<b>Start with:</b> the groove and bass relationship.',kw:'disco house french sampling groove bass reference'},
+
+{n:15,file:'keyboard.html',t:'Keyboard',orig:'Hands',
+ tag:'Play the thing · from zero',fam:'Sharpen yourself',midi:true,lab:true,
+ d:'For anyone with a two-octave controller and no lessons. Where C is, the one hand shape that makes every chord in a key, thirty loops you can play tonight, and a freestyle bed that listens to your controller over Web MIDI and scores what you play against three rules.',
+ li:['<b>Plug in the controller</b> — live chord naming, in-key flagging, scored drills','<b>Voicing switch</b> — root position vs nearest inversion, travel measured in semitones','Two-hands-on-25-keys fit checker; five timed drills; Ableton setup'],
+ first:'<b>Start with:</b> Connect MIDI, names off, and the Find-the-key drill until C and F are reflex. Then the Progressions loop with voicing set to Auto — watch total travel drop from 47 semitones to 7.',
+ kw:'piano keyboard midi controller keys learn beginner chord shapes triads inversions white keys a minor c major scale freestyle improvise noodle drills practice web midi two hands octave fingering hand shape 25 keys 49 keys zero theory lessons'},
+
+{n:16,file:'melody.html',t:'Melody &amp; Syncopation',orig:'Melody',
+ tag:'Rhythm, contour &amp; development',fam:'Make the parts',midi:true,lab:true,
+ d:'Most weak melodies are not wrong notes — they are notes landing on the wrong sixteenths. This splits the line into separate jobs: pick a rhythm cell, pour a contour into it, snap to a scale, then develop one motif across eight bars. Every lab plays over a kick so you hear the syncopation, and every lab exports MIDI.',
+ li:['<b>Rhythm lab</b> — the sixteenth grid with a syncopation-weight readout','<b>Melody &amp; Transform labs</b> — pour a contour in, then mutate rather than rewrite','<b>Phrase builder</b> — one 2-bar motif expanded to a full 8-bar phrase, MIDI out'],
+ first:'<b>Start with:</b> the Rhythm lab. Build a one-note pattern you like before you touch a single pitch — that rhythm is already 60% of the hook.',
+ kw:'melody lead line topline hook motif phrase contour shape rhythm cell sixteenth grid syncopation off-beat push develop development variation inversion octave lift call response scale snap chord tone colour tone ringtone straight eighths era preset progressive peak time midi'}
+];
+
+const ROUTES=[
+['My loop is boring and I don’t know why','Check the syncopation figure, then try one energy shape or one transformation.','groove-cheatsheet.html','Groove'],
+['I have a loop but no track','Load an arrangement template and use the exported MIDI as a scaffold.','arrangement.html','Arrangement'],
+['The low end is muddy','Two things are sustaining in the same band. Check phase before you touch EQ.','low-end.html','Kick &amp; Bass'],
+['The kick and bass fight','Run the polarity test, then check the kick’s note against the bass root.','low-end.html','Kick &amp; Bass'],
+['My chords sound cheap','Root position. Switch inversion to Auto before changing anything else.','chords.html','Chords'],
+['My melody sounds ordinary','It is probably landing on chord tones. Reharmonise it rather than rewriting it.','between.html','Melody &amp; Harmony'],
+['My lead has the right notes but no groove','Lock the rhythm cell first — pitch is the last 40%, not the first.','melody.html','Melody &amp; Syncopation'],
+['My melody is one long scale run','Pour a contour into a sixteenth-grid cell instead of drawing left to right.','melody.html','Melody &amp; Syncopation'],
+['It sounds cluttered but nothing is loud','Count the collisions between your two busiest parts.','between.html','Melody &amp; Harmony'],
+['The bass and lead sound like one part','Parallel motion. Invert one contour.','between.html','Melody &amp; Harmony'],
+['My drums feel stiff','Swing the hats only, and write an accent map instead of randomising velocity.','drum-library.html','Drums'],
+['My drums sound like the wrong genre','The fix is in the kick or the backbeat, never the hats.','drum-library.html','Drums'],
+['I always reach for presets','Build the patch from scratch once, watching each stage.','patch-lab.html','Synthesis'],
+['My Serum patches take hours and end up sounding like presets','Follow the six-move path in order, and leave the rest of the synth off.','serum.html','Serum 2'],
+['I own Serum 2 and use a tenth of it','The map says what each module is for — and what to ignore until it asks for you.','serum.html','Serum 2'],
+['A preset impresses me and I can’t hear why','The sixty-second matrix read, then the six A/B demos.','serum.html','Serum 2'],
+['My drop isn’t big','The build was already at full energy. Cut the eight bars before it.','arrangement.html','Arrangement'],
+['I need a starting point, any starting point','Pick four blocks that disagree and export them.','groove-vol2.html','Pattern Bank'],
+['I want something unusual but not stupid','One transformation, at one bar you choose in advance.','the-move.html','Transformations'],
+['My sample is in the wrong key','Work out the shift — and check whether you need one at all.','inkey.html','Keys &amp; Transposing'],
+['I have parts but no song','Try the Build Order simulator with a preset you don’t normally use.','buildorder.html','Build Order'],
+['I keep abandoning tracks half-finished','Try the session timer — pick a length and finish that draft, however rough.','buildorder.html','Build Order'],
+['I don’t know what key my sample is in','Loop it and click through the chromatic drones until one sits.','inkey.html','Keys &amp; Transposing'],
+['My sample sounds metallic after warping','Granular artifacts. Longer grains, or Beats mode if it is drums.','sampling.html','Sampling'],
+['I don’t know which warp mode to use','Match the algorithm to the material, not to the tempo change.','sampling.html','Sampling'],
+['My track works at home and vanishes in the club','Stereo content below 120 Hz cancelling in mono.','low-end.html','Kick &amp; Bass'],
+['I have a MIDI keyboard and can’t play it','Seven shapes and three rules. Start on white keys; the drills do the rest.','keyboard.html','Keyboard'],
+['My chords jump all over the keyboard','Inversions. Flip the voicing switch to Auto and read the travel number.','keyboard.html','Keyboard'],
+['I can’t improvise over my own loop','Stay on the lit keys, chord tones on the kick, say it twice. The bed scores all three.','keyboard.html','Keyboard']
+];
+
+const MEASURES=[
+['Groove','Syncopation, in weighted metric units','Yes','groove-cheatsheet.html'],
+['Pattern Bank','Cycle length and motion contrast across slots','Yes','groove-vol2.html'],
+['Kick & Bass','Summed peak level as phase changes','No','low-end.html'],
+['Drums','Cells of disagreement between two genres','Yes','drum-library.html'],
+['Synthesis','Nothing — it shows rather than measures','No','patch-lab.html'],
+['Serum 2','Nothing — six A/B demos isolate one move each','No','serum.html'],
+['Keys & Transposing','Notes of the sample that fall outside your key','No','inkey.html'],
+['Chords','Total voice movement, in semitones','Yes','chords.html'],
+['Melody & Harmony','Chord tones vs colour vs clash; collisions; motion type; interval limits','Yes','between.html'],
+['Melody & Syncopation','Syncopation weight; chord-tone vs colour-tone placement across the bar','Yes','melody.html'],
+['Arrangement','Energy across the timeline, and where the peak falls','Yes','arrangement.html'],
+['Transformations','Exact deltas against an identical bed','Yes','the-move.html'],
+['Sampling','Slice lengths, and the tempo-to-semitone conversion','Yes','sampling.html'],
+['Keyboard','Voice travel in semitones; in-key, chord-tone and timing scores of what you actually play','Yes','keyboard.html']
+];
+
+/* ---- render cards, grouped by family ---- */
+const host=document.getElementById('cards');
+const FAMS=['Make the parts','Put them together','Shape the track','Sharpen yourself'];
+FAMS.forEach(f=>{
+  const h=document.createElement('div'); h.className='fam'; h.textContent=f; h.dataset.fam=f;
+  host.appendChild(h);
+  const g=document.createElement('div'); g.className='grid'; g.dataset.grid=f;
+  GUIDES.filter(x=>x.fam===f).forEach(G=>{
+    const a=document.createElement('a'); a.className='card'; a.href=G.file;
+    a.dataset.kw=(G.t+' '+G.tag+' '+G.d+' '+G.kw).toLowerCase();
+    a.dataset.midi=String(G.midi); a.dataset.lab=String(G.lab);
+    a.innerHTML=`<div class="top"><span class="num">${String(G.n).padStart(2,'0')}</span>
+        <div><h3>${G.t}</h3><div class="tagline">${G.tag} · opens &ldquo;${G.orig}&rdquo;</div></div></div>
+      <div class="body"><p>${G.d}</p><ul>${G.li.map(x=>'<li>'+x+'</li>').join('')}</ul></div>
+      <div class="first">${G.first}</div>
+      <div class="foot">
+        ${G.midi?'<span class="tag midi">MIDI export</span>':''}
+        <span class="tag audio">Plays live</span>
+        <span class="tag">${G.file}</span>
+        <span class="go">Open →</span></div>`;
+    g.appendChild(a);
+  });
+  host.appendChild(g);
+});
+
+document.getElementById('router-rows').innerHTML=ROUTES.map(([s,w,f,n])=>
+  `<tr><td><b>${s}</b></td><td>${w}</td><td><a href="${f}">${n} →</a></td></tr>`).join('');
+document.getElementById('measures').innerHTML=MEASURES.map(([g,m,mi,f])=>
+  `<tr><td><b>${g}</b></td><td>${m}</td><td>${mi}</td><td><a href="${f}">${f}</a></td></tr>`).join('');
+
+/* ---- filter ---- */
+let filter='all', query='';
+function apply(){
+  let shown=0;
+  document.querySelectorAll('.card').forEach(c=>{
+    const okF=filter==='all'||(filter==='midi'&&c.dataset.midi==='true')||(filter==='lab'&&c.dataset.lab==='true');
+    const okQ=!query||c.dataset.kw.includes(query);
+    const ok=okF&&okQ;
+    c.classList.toggle('dim',!ok);
+    if(ok) shown++;
+  });
+  FAMS.forEach(f=>{
+    const g=document.querySelector(`[data-grid="${f}"]`);
+    const any=[...g.children].some(c=>!c.classList.contains('dim'));
+    g.style.display=any?'':'none';
+    document.querySelector(`[data-fam="${f}"]`).style.display=any?'':'none';
+  });
+  document.getElementById('count').textContent=shown+(shown===1?' guide':' guides');
+  document.getElementById('empty').style.display=shown?'none':'block';
+}
+document.getElementById('q').addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();apply();});
+document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{
+  filter=b.dataset.f;
+  document.querySelectorAll('[data-f]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  apply();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)){e.preventDefault();document.getElementById('q').focus();}
+  if(e.key==='Escape'){document.getElementById('q').value='';query='';apply();document.getElementById('q').blur();}
+});
+apply();
+</script>

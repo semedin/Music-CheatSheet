@@ -1,0 +1,5 @@
+[12056:12240:0913/174453.170:ERROR:components\os_crypt\async\browser\os_crypt_win.cc:63] Failed to encrypt: Määritettyä tiedostoa ei löydy. (0x2)
+[12056:12488:0913/174453.191:ERROR:chrome\installer\util\google_update_settings_win.cc:270] Failed opening key Software\Google\Update\ClientStateMedium\{8A69D345-D564-463c-AFF1-A69D9E530F96} to set usagestats; result: 5
+[12056:20556:0913/174453.254:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
+[12056:19424:0913/174453.262:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
+11619 bytes written to file C:\Users\jonat\OneDrive\Tiedostot\Music CheatSheet\sound-design-src\qa\desktop-rumble.png

@@ -1,0 +1,1090 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Serum 2 — the ninety per cent path</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#E2DED2; --panel:#F2EFE6; --panel-2:#EAE5D8;
+  --ink:#191713; --ink-2:#635C50; --ink-3:#8C8474; --line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32; --b2:#FF8A2B; --b3:#FFC531; --b4:#F2EDE0; --cy:#3FD0C9; --vi:#A78BFA; --gr:#5FBF52;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1220px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(46px,11vw,120px);line-height:.84;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:62ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+
+.transport{position:sticky;top:0;z-index:80;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:13px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.09em;background:var(--b1);color:#fff;
+  border:0;border-radius:3px;padding:9px 15px;cursor:pointer;white-space:nowrap}
+.tbtn.ghost{background:transparent;color:var(--b4);border:1px solid rgba(242,237,224,.35)}
+.tbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.tbtn:hover{filter:brightness(1.12)}
+.knob{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.07em;color:rgba(242,237,224,.68)}
+.knob input[type=range]{width:84px;accent-color:var(--b2)}
+.knob b{color:var(--b4);min-width:34px;display:inline-block}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:32ch}
+
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 0}
+.nav a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  text-decoration:none;color:var(--ink-2);border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--panel)}
+.nav a:hover{border-color:var(--ink);color:var(--ink)}
+
+.sec{padding:50px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:22px}
+.sec-head h2{font-size:clamp(26px,4.4vw,42px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:68ch;margin-top:12px;color:var(--ink-2)}
+.sec-head p b{color:var(--ink)}
+
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.grid3{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(310px,1fr))}
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard .eyebrow{margin-bottom:7px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+.tcard p{font-size:14.5px;color:var(--ink-2)}
+.tcard code{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);padding:2px 6px;border-radius:3px}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700;white-space:nowrap}
+td b{color:var(--ink)}
+tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:10px 12px;border-radius:0 3px 3px 0;margin:14px 0 0}
+.callout b{color:var(--b1)}
+.note{font-size:14.5px;color:var(--ink-2);margin:13px 0 0;max-width:78ch}
+.note b{color:var(--ink)}
+
+/* ---- signal-flow map ---- */
+.flow{background:var(--lane);border-radius:6px;padding:18px;margin-bottom:18px;overflow-x:auto}
+.flowrow{display:flex;gap:8px;align-items:stretch;min-width:760px}
+.fbox{flex:1;background:#2A2723;border:1px solid rgba(242,237,224,.18);border-radius:4px;padding:10px 11px;min-width:104px}
+.fbox h4{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--b3);margin-bottom:6px}
+.fbox p{font-family:var(--mono);font-size:10px;line-height:1.6;color:rgba(242,237,224,.62);margin:0}
+.farrow{align-self:center;color:var(--b1);font-family:var(--mono);font-weight:700;font-size:15px}
+.fmod{margin-top:10px;border-top:1px dashed rgba(242,237,224,.2);padding-top:9px;display:flex;gap:8px;min-width:760px}
+.fmod .fbox{background:transparent;border-style:dashed}
+.fmod .fbox h4{color:var(--cy)}
+
+/* ---- the six moves ---- */
+.moves{counter-reset:mv;display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.move{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:15px 16px;position:relative}
+.move::before{counter-increment:mv;content:counter(mv,decimal-leading-zero);position:absolute;top:12px;right:14px;
+  font-family:var(--display);font-size:34px;font-weight:800;color:var(--b1);line-height:.85}
+.move h3{font-size:17px;margin-bottom:8px;padding-right:52px}
+.move p{font-size:14px;color:var(--ink-2);margin-bottom:8px}
+.move p b{color:var(--ink)}
+.move .in{font-family:var(--mono);font-size:11px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:8px 10px;border-radius:0 3px 3px 0}
+.move .in b{color:var(--b1)}
+
+/* ---- demo lab ---- */
+.lab{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:20px}
+.demos{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.demo{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:13px 14px}
+.demo h3{font-size:16px;margin-bottom:6px}
+.demo .what{font-size:13.5px;color:var(--ink-2);margin-bottom:10px;min-height:0}
+.demo .row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:9px}
+.dbtn{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.07em;background:var(--ink);color:var(--b4);
+  border:0;border-radius:3px;padding:8px 13px;cursor:pointer}
+.dbtn:hover{background:var(--b1)}
+.dbtn.playing{background:var(--b1)}
+.ab{display:flex;border:1px solid var(--ink);border-radius:3px;overflow:hidden}
+.ab button{font-family:var(--mono);font-size:11px;font-weight:700;padding:8px 14px;border:0;background:var(--panel);cursor:pointer;color:var(--ink-2)}
+.ab button[aria-pressed="true"]{background:var(--ink);color:var(--b4)}
+.dctl{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+.dctl input[type=range]{flex:1;accent-color:var(--b1);height:16px}
+.dctl b{color:var(--ink);font-size:10.5px;min-width:52px;text-align:right}
+.demo .serum{font-family:var(--mono);font-size:10.5px;line-height:1.65;background:var(--panel);border-left:3px solid var(--cy);
+  padding:7px 9px;border-radius:0 3px 3px 0;margin-top:4px;color:var(--ink-2)}
+.demo .serum b{color:var(--ink)}
+
+/* ---- recipes ---- */
+.rbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.rbar input{flex:1;min-width:180px;font-family:var(--mono);font-size:13px;background:var(--panel);color:var(--ink);
+  border:1px solid var(--line);border-radius:4px;padding:9px 13px}
+.fchip{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer;color:var(--ink-2)}
+.fchip[aria-pressed="true"]{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.fchip:hover{border-color:var(--ink)}
+.rcount{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.08em;white-space:nowrap}
+.rgrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(430px,1fr))}
+@media(max-width:940px){.rgrid{grid-template-columns:1fr}}
+.rcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.rcard.dim{display:none}
+.rtop{display:flex;align-items:flex-start;gap:10px;padding:14px 15px 10px;border-bottom:1px solid var(--line)}
+.rtop h3{font-size:19px;line-height:1.1;flex:1}
+.rtag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;padding:3px 7px;border-radius:2px;text-transform:uppercase;white-space:nowrap}
+.rtag.bass{background:var(--b1);color:#fff}.rtag.chord{background:var(--b3);color:var(--ink)}
+.rtag.lead{background:var(--cy);color:var(--ink)}.rtag.pad{background:var(--vi);color:var(--ink)}
+.rtag.fx{background:var(--ink);color:var(--b4)}
+.rgoal{padding:10px 15px 0;font-size:13.5px;color:var(--ink-2)}
+.rgoal b{color:var(--ink)}
+.rset{font-family:var(--mono);font-size:11px;line-height:1.7;background:var(--lane);color:var(--b4);
+  margin:11px 15px 0;border-radius:4px;padding:11px 13px;white-space:pre-wrap}
+.rset b{color:var(--b3);font-weight:700}
+.rmove{font-family:var(--mono);font-size:11px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b1);
+  padding:8px 10px;margin:11px 15px 0;border-radius:0 3px 3px 0}
+.rmove b{color:var(--b1)}
+.rsteps{padding:10px 15px 13px;font-size:13px;color:var(--ink-2)}
+.rsteps b{color:var(--ink)}
+.rsteps ol{margin:5px 0 0;padding-left:19px}
+.rsteps li{margin-bottom:3px}
+.rfoot{margin-top:auto;display:flex;gap:8px;align-items:center;padding:10px 15px;border-top:1px solid var(--line);background:var(--panel-2);flex-wrap:wrap}
+.rfoot .eng{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid var(--line);border-radius:2px;padding:3px 6px;color:var(--ink-2);background:var(--panel)}
+.rempty{font-family:var(--mono);font-size:13px;color:var(--ink-3);padding:30px 0;text-align:center;display:none}
+
+.foot{border-top:2px solid var(--ink);margin-top:54px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="index.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Field guide 14 · Serum 2 · sound design for house &amp; techno</div>
+    <h1>The sixth<br><em>decision</em></h1>
+    <p class="sub">The synthesis guide argued that every sound is five decisions — waveform, filter, filter envelope, amp envelope, one moving thing. Serum 2 doesn't change that. It adds a decision in front: <strong>which of five synths to be</strong> — wavetable, sample, multisample, granular or spectral. Everything dangerous about Serum 2 lives in that first choice, because the other four invite you to skip the five that matter. This guide is the ninety-per-cent path: the module map, the fixed build order, twenty-two recipes with exact settings, and the discipline of leaving most of the synth <strong>off</strong>.</p>
+  </div>
+</div>
+
+<div class="transport">
+  <div class="wrap">
+    <button class="tbtn" id="stopAll">■ STOP AUDIO</button>
+    <label class="knob">BPM <input type="range" id="bpm" min="110" max="140" value="126"><b id="bpmv">126</b></label>
+    <label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="70"><b id="volv">70</b></label>
+    <span class="tnow" id="nowPlaying">—</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="nav"><a href="serum-v2.html">New: Sound Design V2 →</a>
+    <a href="index.html" class="nav-home">← Index</a>
+    <a href="#map">1 · The map</a>
+    <a href="#path">2 · The 90% path</a>
+    <a href="#demos">3 · Hear it</a>
+    <a href="#recipes">4 · 22 recipes</a>
+    <a href="#theory">5 · Wavetables &amp; warp</a>
+    <a href="#modcook">6 · Modulation cookbook</a>
+    <a href="#doctor">7 · Diagnosis</a>
+    <a href="#house">8 · Housekeeping</a>
+  </nav>
+
+  <!-- ============ 1 · THE MAP ============ -->
+  <section class="sec" id="map">
+    <div class="sec-head">
+      <div class="eyebrow">Section 01</div>
+      <h2>The map</h2>
+      <p>Serum 2 is three oscillators (each one of <b>five engines</b>), a sub, a noise oscillator, two filters, a mixer with flexible routing, four envelopes, up to ten LFOs, eight macros, a modulation matrix, an effects rack with splitters, an arpeggiator and a clip sequencer. That sounds like a lot because it is a lot. The map below is the signal path; the tables after it are what each module is <em>for</em> and what to ignore.</p>
+    </div>
+
+    <div class="flow">
+      <div class="flowrow">
+        <div class="fbox"><h4>OSC A · B · C</h4><p>Each is one of 5 engines: Wavetable · Sample · Multisample · Granular · Spectral. Plus warp, unison, tuning modes.</p></div>
+        <span class="farrow">→</span>
+        <div class="fbox"><h4>SUB + NOISE</h4><p>Dedicated sub osc (keep it 1 voice) and a noise osc with its own pitch &amp; envelope.</p></div>
+        <span class="farrow">→</span>
+        <div class="fbox"><h4>MIXER</h4><p>Per-osc channels: level, pan, route to Filter 1, Filter 2, both, or direct out.</p></div>
+        <span class="farrow">→</span>
+        <div class="fbox"><h4>FILTER 1 · 2</h4><p>Dual filters, series or parallel. Analog models, Clean mode drive, drag the curve directly.</p></div>
+        <span class="farrow">→</span>
+        <div class="fbox"><h4>FX RACK</h4><p>13 effects + L/H, L/M/H, M/S splitters. Order is a decision. FX buses in the mixer.</p></div>
+        <span class="farrow">→</span>
+        <div class="fbox"><h4>OUT</h4><p>Master. Watch it — unison and drive push it hot long before your DAW fader can help.</p></div>
+      </div>
+      <div class="fmod">
+        <div class="fbox"><h4>ENV 1–4</h4><p>Env 1 is hard-wired to amp. Env 2 → filter cutoff is the most important assignment in the synth.</p></div>
+        <div class="fbox"><h4>LFO 1–10</h4><p>Drawable shapes, chaos modes (Lorenz/Rossler), path mode, up to 1000 Hz. One or two, rarely more.</p></div>
+        <div class="fbox"><h4>MACROS 1–8</h4><p>Performance layer. Wire the patch's whole gesture to Macro 1 and automate that in Live.</p></div>
+        <div class="fbox"><h4>MOD MATRIX</h4><p>Every arrow in the synth, with aux curves and per-slot bypass. Read it top-to-bottom to deconstruct any preset.</p></div>
+        <div class="fbox"><h4>ARP + CLIP</h4><p>Arpeggiator (12 slots, chance, MIDI out) and a piano-roll clip sequencer. Sketch here, sequence in Live.</p></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="tcard">
+        <h3>The five engines, and when each one earns its place</h3>
+        <ul>
+          <li><b>Wavetable</b> — the default, and the right answer for roughly eight recipes in ten. Basses, leads, plucks, stabs, pads. If you cannot say why you need another engine, you need this one.</li>
+          <li><b>Sample</b> — one-shots and loops with set points, slicing and FM/PM warp. Use it for kicks, vocal chops, and resampling your own patches back in for a second pass.</li>
+          <li><b>Multisample</b> — SFZ instruments across zones and velocity layers. Pianos, real basses, mallets. In house it mostly plays chords you then filter like any other oscillator.</li>
+          <li><b>Granular</b> — up to 256 grains of any sample. Texture pads, shimmering drones, broken vocal atmospheres. The engine where "wrong" settings are often the good ones.</li>
+          <li><b>Spectral</b> — plays the spectrum of a sound rather than the sound. Frozen vocal drones, evolving pads, resynthesised chords that never loop audibly. The most breakdown-shaped engine in the synth.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>What to ignore until it asks for you</h3>
+        <ul>
+          <li><b>Osc C.</b> Two oscillators plus sub cover almost every recipe below. A third oscillator is for layered pads and hybrids, not for basses.</li>
+          <li><b>Eight of the ten LFOs.</b> One LFO doing one clear job beats five doing vague ones. The set's rule stands: one moving thing.</li>
+          <li><b>The clip sequencer, while designing.</b> It is excellent for sketching, but a patch auditioned through its own sequence hides its flaws. Design on your actual part, sequence in Live.</li>
+          <li><b>Filter 2, at first.</b> Series high-pass after a low-pass is the main reason it exists in this genre — cleaning the floor under stabs and pads. Add it when mud appears, not before.</li>
+          <li><b>Hybridize in the browser.</b> Fun, occasionally brilliant, and a slot machine. Use it to break a creative jam, never to learn.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tablewrap"><table>
+      <thead><tr><th>Module</th><th>What it is for in house &amp; techno</th><th>The mistake people make with it</th></tr></thead>
+      <tbody>
+        <tr><td><b>Oscillators A/B/C</b></td><td>Raw material. In this genre: a saw-family wavetable, something an octave up or down, and a warp mode doing one audible thing.</td><td>Scrolling wavetables for an hour. Pick within three tables; character comes from the filter and envelopes.</td></tr>
+        <tr><td><b>Sub oscillator</b></td><td>Weight below the character oscillator. Sine or triangle, one voice, often routed direct out past the filter.</td><td>Detuning it, or filtering it with a modulated cutoff so the low end pumps unpredictably.</td></tr>
+        <tr><td><b>Noise oscillator</b></td><td>Transient click on plucks and keys, air on pads, hats, risers. Has its own pitch — tune it.</td><td>Leaving it looping and loud. One-shot mode, short envelope, −20 dB is usually the job.</td></tr>
+        <tr><td><b>Dual filters</b></td><td>Filter 1 low-pass makes the instrument; Filter 2 high-pass in series cleans it. Parallel is for formant/comb colour.</td><td>Using neither drive nor resonance, then wondering why the patch sounds like a spreadsheet.</td></tr>
+        <tr><td><b>Mixer &amp; routing</b></td><td>Deciding what gets filtered and what doesn't. Sub direct-out while the saws get filtered is the classic bass move.</td><td>Never opening it, so every oscillator hits every filter and the low end swims.</td></tr>
+        <tr><td><b>Envelopes 1–4</b></td><td>Env 1 = amp. Env 2 = filter cutoff. Env 3 = wavetable position or FM amount. Env 4 = spare.</td><td>Shaping loudness (Env 1) when the sound needed shape in timbre (Env 2). Same mistake as every synth.</td></tr>
+        <tr><td><b>LFOs 1–10</b></td><td>Movement: cutoff drift on pads, fake sidechain on volume, pitch wobble, wavetable scan.</td><td>Assigning three LFOs before deciding what the sound's one movement is.</td></tr>
+        <tr><td><b>Mod matrix</b></td><td>The wiring closet. Aux curves let velocity or a macro scale another modulation — that is where expressive patches live.</td><td>Treating it as write-only. Reading it top-to-bottom is how you learn from any preset in a minute.</td></tr>
+        <tr><td><b>Macros 1–8</b></td><td>The performance layer. Macro 1 = the patch's one gesture (open/close, clean/dirty). Automate macros in Live, not raw params.</td><td>Wiring all eight, labelling none, and never touching them again.</td></tr>
+        <tr><td><b>FX rack</b></td><td>Half the sound. Order matters: shape → dirt → space is the default. Splitters make dirt mono-safe (distort the mids, not the sub).</td><td>Reverb on a bass without an M/S or L/H splitter in front of it.</td></tr>
+        <tr><td><b>Arp &amp; clip sequencer</b></td><td>Sketching motion and auditioning patches musically; chance and transpose patterns for hypnotic techno sequences.</td><td>Shipping the arp as the part. Drag the clip to Live as MIDI and edit it like you mean it.</td></tr>
+      </tbody>
+    </table></div>
+
+    <p class="callout"><b>Serum 2 vs the previous guide's synth.</b> Everything the Synthesis field guide's lab does maps one-to-one: its two oscillators are Osc A/B in Wavetable mode on "Basic Shapes", its filter is Filter 1, its filter envelope is Env 2 routed to cutoff, its LFO is LFO 1, its drive is the Distortion effect. Build any of that page's ten patches in Serum 2 first — they all work — then come back here for what only Serum 2 can do.</p>
+  </section>
+
+  <!-- ============ 2 · THE 90% PATH ============ -->
+  <section class="sec" id="path">
+    <div class="sec-head">
+      <div class="eyebrow">Section 02</div>
+      <h2>The 90% path</h2>
+      <p>Six moves, in a fixed order, take any Serum 2 patch to ninety per cent. The last ten per cent is taste — but the first ninety is procedure, and doing the moves out of order is why patches take three hours instead of fifteen minutes. Every recipe in section 4 follows exactly this order.</p>
+    </div>
+
+    <div class="moves">
+      <div class="move">
+        <h3>Choose the engine, then the material</h3>
+        <p>Ask one question: <b>does this sound come from a note or from a sound?</b> Notes → Wavetable. Sounds → Sample, Granular or Spectral. Then pick the raw material with the filter wide open and unison off, so you hear what you actually have. Ugly is fine; static is fine; wrong engine is not recoverable later.</p>
+        <div class="in"><b>In Serum 2:</b> Osc A on, engine menu top-left of the oscillator. Start on Basic Shapes or Analog-family tables for anything you plan to filter.</div>
+      </div>
+      <div class="move">
+        <h3>One timbre device per oscillator</h3>
+        <p>Give the oscillator <b>one</b> thing that changes its tone: a warp mode, a wavetable position, FM from another oscillator, or grain settings. Not all four. This is the Serum-specific decision — the previous guide's synth had nothing here, and most Serum presets have too much.</p>
+        <div class="in"><b>In Serum 2:</b> Warp menu (Sync, Bend, PWM, FM, RM…) with the Warp knob, or WT Pos. If you used a warp, leave WT Pos alone, and vice versa.</div>
+      </div>
+      <div class="move">
+        <h3>Unison and the octave below</h3>
+        <p>Width and weight, decided together. Voices and Detune on the character oscillator; a <b>single-voice sub</b> underneath it, because detune cancels itself below 100 Hz. If the patch is a bass, route the sub direct out in the mixer so the filter never touches it.</p>
+        <div class="in"><b>In Serum 2:</b> Unison 1–16 per osc. 5–7 voices / 15–25¢ for width; 1 voice for anything that carries low end. Sub osc → Mixer → route Direct Out.</div>
+      </div>
+      <div class="move">
+        <h3>Filter, then envelope the filter</h3>
+        <p>Find the cutoff by ear with no envelope. Then assign <b>Env 2 → cutoff</b> and shape it: fast attack, 60–200 ms decay, low sustain is the plucked-bass shape that runs half of house. This is still where the instrument appears — nothing in the new engines replaces it.</p>
+        <div class="in"><b>In Serum 2:</b> drag Env 2's handle onto Cutoff (or matrix: Env 2 → Fil 1 Cutoff, 2–4 octaves). Try MG Low 24 with Drive at 15–30% before reaching for EQ.</div>
+      </div>
+      <div class="move">
+        <h3>Amp envelope and one movement</h3>
+        <p>Env 1 sets length and gate — usually shorter than you think, sustain lower than you think. Then one moving thing, chosen deliberately: an LFO on cutoff, an envelope on WT position, chaos-LFO drift on pitch at 2–4¢. <b>One.</b> If the patch is boring, fix Env 2 before adding movement.</p>
+        <div class="in"><b>In Serum 2:</b> Env 1 A/H/D/S/R on the main panel. LFO 1 drag-assign to the target; BPM-sync for rhythmic jobs, Hz for drift.</div>
+      </div>
+      <div class="move">
+        <h3>FX in shape → dirt → space order, then a macro</h3>
+        <p>Default chain: <b>EQ/Filter → Distortion → Chorus/Hyper → Delay → Reverb → Compressor</b>. Splitter before the dirt if the patch has low end. Then wire the patch's single gesture to Macro 1 — cutoff plus one FX mix — and stop. Resist the second gesture; that is what Macro 2 is for on the day the track asks.</p>
+        <div class="in"><b>In Serum 2:</b> FX tab, drag to reorder. Splitter L/H at ~200 Hz, distortion on the H path only. Right-click any knob → assign Macro 1.</div>
+      </div>
+    </div>
+
+    <p class="callout"><b>Fifteen minutes, then resample.</b> If a patch is not at ninety per cent in fifteen minutes, the engine choice or the material was wrong — start again rather than adding modules. And when a patch is done, bounce it to audio and put the audio in a Sample oscillator or Simpler: Serum 2's own Sample engine makes resampling a first-class citizen, and committed audio is what finishes tracks. The Build Order guide's argument applies inside the synth too.</p>
+  </section>
+
+  <!-- ============ 3 · HEAR IT ============ -->
+  <section class="sec" id="demos">
+    <div class="sec-head">
+      <div class="eyebrow">Section 03 · interactive</div>
+      <h2>Hear it</h2>
+      <p>Serum 2 cannot run in a browser, so these six demos rebuild its core moves with a live synth engine — the same one the Synthesis guide uses. Each demo is an A/B: <b>A is the patch without the move, B is the patch with it.</b> The settings under each demo are the real Serum 2 instructions. Headphones recommended; two demos live below 150 Hz.</p>
+    </div>
+    <div class="lab">
+      <div class="demos" id="demoHost"></div>
+      <p class="callout"><b>What these prove.</b> Every one of these six moves is audible in isolation — which means when a preset impresses you, you can name which of the six is doing it. That is the whole skill of preset deconstruction: not "how was this made" but "which move is carrying it".</p>
+    </div>
+  </section>
+
+  <!-- ============ 4 · RECIPES ============ -->
+  <section class="sec" id="recipes">
+    <div class="sec-head">
+      <div class="eyebrow">Section 04</div>
+      <h2>Twenty-two recipes</h2>
+      <p>Every staple sound in house and techno, as exact Serum 2 settings. Each card is written in the six-move order: engine &amp; material, timbre device, unison &amp; sub, filter &amp; Env 2, amp &amp; movement, FX &amp; macro. The <b>red line is the move that carries the sound</b> — if you only do one thing on the card, do that one. Values are starting points, not scripture: ±30% on any number is still the same recipe.</p>
+    </div>
+    <div class="rbar">
+      <input id="rq" type="search" placeholder="Search — try &quot;reese&quot;, &quot;granular&quot;, &quot;rumble&quot;, &quot;trance&quot;…" autocomplete="off">
+      <button class="fchip" data-rf="all" aria-pressed="true">All</button>
+      <button class="fchip" data-rf="bass">Bass</button>
+      <button class="fchip" data-rf="chord">Chords &amp; stabs</button>
+      <button class="fchip" data-rf="lead">Leads &amp; plucks</button>
+      <button class="fchip" data-rf="pad">Pads &amp; texture</button>
+      <button class="fchip" data-rf="fx">Drums &amp; FX</button>
+      <span class="rcount" id="rcount">22 recipes</span>
+    </div>
+    <div class="rgrid" id="rhost"></div>
+    <div class="rempty" id="rempty">Nothing matches that search.</div>
+    <p class="callout" style="margin-top:18px"><b>How to practise with these.</b> One recipe per session, built twice: once reading the card, once from memory an hour later. The second build is the one that teaches. After ten recipes you will notice they are all the same six moves wearing different numbers — at which point you have stopped needing recipes, which was the point.</p>
+  </section>
+
+  <!-- ============ 5 · THEORY ============ -->
+  <section class="sec" id="theory">
+    <div class="sec-head">
+      <div class="eyebrow">Section 05</div>
+      <h2>Wavetables, warp &amp; unison</h2>
+      <p>The mental model behind the knobs — enough theory to predict what a control will do before touching it, and no more.</p>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>What a wavetable actually is</h3>
+        <ul>
+          <li>A wavetable is a <b>stack of single-cycle waveforms</b> (frames). WT Pos chooses the frame; modulating WT Pos plays the stack like a flipbook. That is the entire trick.</li>
+          <li>Serum 2's smooth interpolation crossfades between frames continuously, so a table scans like morphing rather than clicking through snapshots. Old tables sound new with it on.</li>
+          <li>A table is only as good as the <b>difference between its first and last frame</b>. A table that goes dull→bright duplicates your filter; a table that goes sine→formant→metal gives you something the filter cannot do.</li>
+          <li>Modulate WT Pos with Env 3 for attack character (bright frame at the hit, plain frame after) — this is the wavetable equivalent of a filter envelope, and stacking both is the classic Serum bass.</li>
+          <li>Import: any audio, or a PNG into the Spectral engine. Your own voice as a wavetable is a renewable source of hooks nobody else owns.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Warp modes worth knowing by name</h3>
+        <ul>
+          <li><b>Sync</b> — classic hard-sync scream; aggressive leads, rave stabs. Envelope the warp amount, not just the cutoff.</li>
+          <li><b>Bend + / Bend −</b> — squashes the waveform toward its edges; subtle harmonic tilt. The polite warp for basses.</li>
+          <li><b>PWM</b> — pulse-width on anything, not just squares. Slow LFO on warp = instant vintage string/organ movement.</li>
+          <li><b>Mirror</b> — folds the wave on itself; cheap wavefolder-style buzz, good for techno rumble tops.</li>
+          <li><b>Quantize / Crush</b> — bit-reduces the waveform itself. Lo-fi electro flavour before any FX are touched.</li>
+          <li><b>FM (true FM in Serum 2) / RM</b> — Osc B modulates A's frequency/amplitude. The tech-house growl lives here; envelope FM amount with Env 3 so it barks and settles.</li>
+          <li>Rule of thumb: <b>one warp, audibly used, or none.</b> Warp at 15% "for interest" is how patches turn to soup.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Unison numbers</h3>
+        <ul>
+          <li><b>1 voice</b> — anything below 100 Hz, all subs, most FM growls. Mono-safe by construction.</li>
+          <li><b>2–3 voices, 6–12¢</b> — thickening that still reads as one instrument. Deep house chords, garage bass tops.</li>
+          <li><b>5–7 voices, 15–25¢</b> — the classic wide stab/lead. Check mono: if it vanishes, the detune is doing the width your panning should be doing.</li>
+          <li><b>9–16 voices, 25–50¢</b> — supersaw territory. Costs CPU linearly; sounds best with the filter taking the top fizz off.</li>
+          <li>Detune curve, Blend and Stack (octave/fifth stacks) reshape how the voices spread — Stack "+12" is a free octave layer without touching Osc B.</li>
+          <li>Width comes <b>after</b> weight: set the single-voice sub first, then widen the top until just before the low end goes hollow.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>The other engines in one paragraph each</h3>
+        <ul>
+          <li><b>Sample:</b> set points and crossfade define the loop; slicing maps hits across keys; FM/PM warp lets a sample modulate like an oscillator. Think "Simpler that lives inside the mod matrix".</li>
+          <li><b>Multisample:</b> SFZ zones and velocity layers. Load a real bass or keys, then treat it exactly like a wavetable: filter, Env 2, done. Its job is realism entering a synth workflow, not replacing it.</li>
+          <li><b>Granular:</b> grain size sets texture (short = grit, long = smear), density sets thickness, scan rate is your playhead — modulate scan position with a slow LFO and any sample becomes a pad. Window amount rounds the grains when they click.</li>
+          <li><b>Spectral:</b> plays frequency content over time; scan freezes and stretches without granular's texture. Timbre shift moves harmonic character independent of pitch — the "vocal drone from one syllable" machine.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6 · MODULATION COOKBOOK ============ -->
+  <section class="sec" id="modcook">
+    <div class="sec-head">
+      <div class="eyebrow">Section 06</div>
+      <h2>Modulation cookbook</h2>
+      <p>Ten routings that do most of the work in this genre. Each is one matrix row plus a sentence of why. The format is <b>source → destination, amount</b>.</p>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Routing</th><th>Settings</th><th>What it does &amp; where it belongs</th></tr></thead>
+      <tbody>
+        <tr><td><b>The pluck</b></td><td class="num">Env 2 → Fil 1 Cutoff · +2 to +4 oct · D 60–200 ms · S 0–15%</td><td>The single most valuable row in the synth. Plucked attack on any material. Every bass, stab and pluck recipe uses it.</td></tr>
+        <tr><td><b>The bark</b></td><td class="num">Env 3 → Warp (FM/Sync) amount · 40–80% · D 50–120 ms</td><td>Timbre attack independent of the filter: growls that bite then sit down. Tech house bass, electro leads.</td></tr>
+        <tr><td><b>Fake sidechain</b></td><td class="num">LFO (saw, falling, 1/4 sync) → Osc level or FX Mix · 30–60%</td><td>Pumping without a compressor, phase-locked to the bar. On pads and rumble tails it is cleaner than real sidechain. Draw the LFO with a flat notch at the start so the kick's transient window is silent.</td></tr>
+        <tr><td><b>Analog drift</b></td><td class="num">Chaos LFO (Lorenz, ~0.2 Hz) → Fine tune · 2–4¢, and → Cutoff · 3–6%</td><td>The "hardware" smell: nothing repeats, nothing is audible as movement. On everything sustained.</td></tr>
+        <tr><td><b>Velocity means it</b></td><td class="num">Velocity → Cutoff · 20–40% <span style="color:var(--ink-3)">and</span> Velocity → Env 2 amount (aux) · 30%</td><td>Ghost notes go dark and soft like a real instrument. This row is why the Groove guide's velocity maps translate into synth parts.</td></tr>
+        <tr><td><b>The riser inside the patch</b></td><td class="num">Macro 1 → Cutoff +, Reverb Mix +, Delay Mix +, Fine −5¢</td><td>One knob that performs the transition. Automate Macro 1 across 8 bars in Live instead of four separate lanes.</td></tr>
+        <tr><td><b>Note-position colour</b></td><td class="num">Note (keytrack) → WT Pos or Warp · 20–50%</td><td>High notes get a different frame, not just a higher pitch. Keeps 16th-note sequences alive across octaves. Hypnotic techno's secret.</td></tr>
+        <tr><td><b>Humanised repeats</b></td><td class="num">Rand (per note) → WT Pos · 5–15% · and → Cutoff · 5%</td><td>Every 16th is minutely different. The machine stops sounding like a machine at amounts you cannot consciously hear.</td></tr>
+        <tr><td><b>Wobble that breathes</b></td><td class="num">LFO 1 (sine, 1/8 dot) → Cutoff · 40% · LFO 2 (slow) → LFO 1 rate</td><td>An LFO modulating another LFO's rate — motion whose speed itself moves. Dub techno chords, bass music crossovers.</td></tr>
+        <tr><td><b>Aux-curve expression</b></td><td class="num">Any row → Aux source: Macro 2, curve exp</td><td>Macro 2 scales how much another modulation applies — e.g. mod-wheel decides how hard velocity drives cutoff. This is the difference between a patch and an instrument.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><b>Reading order for any preset:</b> open the matrix, sort by destination, find the row with the biggest amount — that is the sound's engine room. Then look at what touches WT Pos and Warp, then the FX rack order. Sixty seconds, and you know how it was made. The mod matrix in Serum 2 shows live previews per row, which makes this faster than in any other synth.</p>
+  </section>
+
+  <!-- ============ 7 · DIAGNOSIS ============ -->
+  <section class="sec" id="doctor">
+    <div class="sec-head">
+      <div class="eyebrow">Section 07</div>
+      <h2>Diagnosis</h2>
+      <p>Symptom → cause → the fix, in the order to try them. The first column is the word you would use out loud.</p>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>It sounds…</th><th>Usual cause in Serum 2</th><th>Fix, in order</th></tr></thead>
+      <tbody>
+        <tr><td><b>Thin</b></td><td>No sub, or unison detune cancelling the fundamental.</td><td>Sub osc on, 1 voice, sine, −6 dB under the mix. Then check character osc: if it carries low end, drop its unison to 1 and re-widen an octave up.</td></tr>
+        <tr><td><b>Muddy</b></td><td>Long release, everything routed through one low-passed filter, or two oscillators in the same octave.</td><td>Shorten Env 1 release. Route sub direct-out. High-pass Filter 2 in series at 150–250 Hz for everything that is not the bass.</td></tr>
+        <tr><td><b>Harsh</b></td><td>Resonance + drive peaking at 2–5 kHz, or unison fizz.</td><td>Cutoff down or resonance down 20%. EQ effect: wide −2 dB at 3 kHz. Hyper/unison blend down. Only then reach for the DAW EQ.</td></tr>
+        <tr><td><b>Static / lifeless</b></td><td>Env 2 doing nothing; no drift.</td><td>The pluck row (cookbook #1). Then Lorenz drift (#4). If still flat, the material is flat — change frame or table, not the mod count.</td></tr>
+        <tr><td><b>Huge in phones, gone in the club</b></td><td>Width made of detune and stereo FX below 120 Hz.</td><td>Mono-check. Sub 1 voice direct out. M/S splitter: keep sides high-passed at ~150 Hz. Dimension/Hyper after the splitter, not before.</td></tr>
+        <tr><td><b>Loud but small</b></td><td>Internal levels clipping the FX chain; compressor doing nothing but padding.</td><td>Mixer: osc levels to ~70%. Drive at the filter instead of level into distortion. Multiband compressor last, gentle, or off.</td></tr>
+        <tr><td><b>Like a preset</b></td><td>Every module on, nothing decided.</td><td>Bypass the FX rack entirely. If the dry patch has no identity, rebuild from move 1 — FX were carrying it. If it does, re-add FX one at a time and stop early.</td></tr>
+        <tr><td><b>Expensive (CPU)</b></td><td>Unison × 3 oscillators, HQ chorus/reverb, 1000 Hz LFOs.</td><td>Unison only on one osc. Convolve → algorithmic Reverb. Freeze/flatten in Live, or bounce to the Sample engine and play the bounce.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============ 8 · HOUSEKEEPING ============ -->
+  <section class="sec" id="house">
+    <div class="sec-head">
+      <div class="eyebrow">Section 08</div>
+      <h2>Housekeeping</h2>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>Serum 2 inside a Live set</h3>
+        <ul>
+          <li><b>One instance, one job.</b> A bass instance and a pad instance, not one instance being both on different channels of the clip sequencer.</li>
+          <li><b>Automate macros, not raw parameters.</b> Macros survive preset tweaks; a lane automating "Fil 1 Cutoff" breaks the day you redesign the patch.</li>
+          <li><b>Sidechain properly in Live</b> (Compressor on the Serum track, kick as the input, per the Kick &amp; Bass guide) — and use fake-sidechain LFO inside the patch only when you want the pump as part of the sound design.</li>
+          <li><b>Freeze early.</b> A frozen Serum 2 track costs nothing and commits you the way the Build Order guide keeps arguing you should be committed.</li>
+          <li>The arp's MIDI out can drive other Live instruments — sketch in Serum, send the notes to Operator or a sampler when the part outgrows the patch.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Gain staging inside the synth</h3>
+        <ul>
+          <li>Oscillator levels around <b>70%</b>, master around <b>−6 dB</b>: leave room for unison summing and filter drive, which both add level you did not ask for.</li>
+          <li>Resonance above ~50% with drive is a level bomb — the acid recipes below do it on purpose; nothing else should do it by accident.</li>
+          <li>The FX rack is pre-fader from your DAW's point of view. If the limiter in your master chain is working hard, the fix is inside Serum's mixer, not on the fader.</li>
+          <li>A/B at matched loudness: toggle the FX rack while riding output down to compensate. Louder always sounds better, and the rack always makes it louder.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>A preset library that teaches instead of accumulating</h3>
+        <ul>
+          <li>Save your own patches with the <b>move that carries them in the name</b>: "Bass — FM bark 2:1", not "Bass 47 final".</li>
+          <li>Rate ruthlessly in the browser; five one-star sounds you know beat five hundred unrated ones.</li>
+          <li>Deconstruct one factory preset per session with the sixty-second matrix read (section 6). The factory library is a synthesis course nobody opens.</li>
+          <li>Hybridize two of your own saved patches, not two factory ones — the collisions land closer to your taste.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Versions and honesty</h3>
+        <ul>
+          <li>This guide describes <b>Serum 2</b> as of 2026 — five oscillator engines, dual filters, ten LFOs, four envelopes, eight macros, thirteen effects plus splitters, arp and clip sequencer. Xfer ships updates steadily (Linux beta arrived mid-2026); knob names may drift, the six moves will not.</li>
+          <li>Numbers on the recipe cards are starting points at 124–128 BPM in A minor-ish keys. Faster tempos want shorter decays; lower keys want less resonance.</li>
+          <li>Everything here works on the audible principle, not the brand: the same recipes translate to Vital, Phase Plant or Wavetable with different knob names — which is the real test that you learned the sound and not the screenshot.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <p><strong>The argument, one last time.</strong> Serum 2 is five synths and a small modular system in one window, and the update cycle keeps adding rooms to the house. The producers who get world-class sounds out of it are not the ones who visit every room — they are the ones who make the same six decisions, in the same order, and leave everything else off until the sound asks for it. The synth got bigger; the craft did not.</p>
+    <p style="color:var(--ink-3);font-size:13px">Audio demos are synthesised live in the browser with a subtractive/FM engine — they demonstrate the moves accurately and will not replace Serum 2. Settings on the cards are field-tested starting points, not factory documentation.</p>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   RECIPES
+   ========================================================== */
+const REC=[
+/* ---------------- BASS ---------------- */
+{name:'Rolling techno bass',fam:'bass',eng:['Wavetable'],
+goal:'The 126–132 BPM engine-room bass: dark, plucked, identical-but-alive on every offbeat.',
+set:`<b>OSC A</b>   Wavetable · Analog / Basic Shapes saw · 1 voice
+<b>SUB</b>     Sine · −12 st · level 60% · Mixer: route DIRECT OUT
+<b>FILTER 1</b> MG Low 24 · cutoff 220 Hz · res 15% · drive 25%
+<b>ENV 2</b>   → cutoff +2.5 oct · A 1 ms · D 110 ms · S 8%
+<b>ENV 1</b>   A 1 ms · H 0 · D 130 ms · S 0 · R 40 ms
+<b>MOD</b>     Lorenz LFO → fine ±3¢ · Velocity → cutoff 25%
+<b>FX</b>      Distortion (Overdrive) 20% mix → EQ: −2 dB @ 350 Hz`,
+move:'<b>The move:</b> Env 2 → cutoff with sub routed past the filter. The saw plucks and rolls; the sine underneath never moves. Two jobs, two paths through the mixer.',
+steps:['Saw wavetable, filter wide open — confirm the raw material','Sub on, direct out in the mixer','Cutoff down to ~220 Hz by ear','Env 2 → cutoff, +2.5 oct, decay ~110 ms','Env 1 gate short, sustain 0','Drive 25%, Lorenz drift, save as "Bass — rolling pluck"'],
+kw:'rolling techno bass offbeat pluck sub direct out mg low 24'},
+
+{name:'Deep house sub bass',fam:'bass',eng:['Wavetable'],
+goal:'Warm, round, almost invisible — felt on a system, barely present on laptop speakers, so saturation carries it there.',
+set:`<b>OSC A</b>   Wavetable · Basic Shapes triangle→saw frame 2 · 1 voice
+<b>SUB</b>     off (Osc A is the sub here)
+<b>FILTER 1</b> Low 12 dB · cutoff 350 Hz · res 5% · drive 15%
+<b>ENV 2</b>   → cutoff +1.5 oct · D 180 ms · S 20%
+<b>ENV 1</b>   A 3 ms · D 250 ms · S 35% · R 60 ms
+<b>MOD</b>     Velocity → Env 2 amount (aux) 40%
+<b>FX</b>      Distortion (Tube/Overdrive) 25% → Splitter L/H 150 Hz, dirt on H only`,
+move:'<b>The move:</b> saturation above 150 Hz via the splitter. The harmonics it adds are the only part a small speaker will ever reproduce — the splitter keeps the real sub clean underneath.',
+steps:['Triangle-ish frame, one voice, no unison ever','Filter low, gentle 12 dB slope','Small Env 2 amount — a nudge, not a pluck','Medium gate: this bass breathes, it does not bounce','Velocity via aux curve so ghost notes go soft AND dark','Split at 150 Hz, saturate the top path only'],
+kw:'deep house sub bass warm round saturation splitter ghost notes'},
+
+{name:'Reese',fam:'bass',eng:['Wavetable'],
+goal:'Two saws beating against each other into a slow interference growl — the darker and wider, the more it needs the mono insurance below.',
+set:`<b>OSC A</b>   Wavetable · saw · 1 voice · 0¢
+<b>OSC B</b>   Wavetable · same saw · 1 voice · +18¢ (the whole sound)
+<b>SUB</b>     Sine −12 st · 55% · DIRECT OUT
+<b>FILTER 1</b> Low 24 · cutoff 400 Hz · res 10% · drive 20%
+<b>ENV 1</b>   A 5 ms · D — · S 100% · R 80 ms  (sustained!)
+<b>MOD</b>     LFO 1 sine 0.1 Hz → Osc B fine ±6¢ (beat rate itself drifts)
+<b>FX</b>      Splitter M/S → sides: Chorus 20% · mids: dry → Distortion 15%`,
+move:'<b>The move:</b> Osc B at +18¢, nothing else. The growl is the beating frequency between two detuned saws — filter and FX only decide how much of it you see.',
+steps:['Two identical saws, Osc B +18¢ — listen to the beat cycle','Sub direct out; the beating saws carry no real low end','Low-pass to taste: darker = more menacing','Full sustain — a reese is a drone, not a pluck','Slow LFO on B\'s fine tune so the beat rate breathes','M/S split: width on sides only, mids stay mono-safe'],
+kw:'reese bass dnb halftime detune beating dark growl mono'},
+
+{name:'Acid 303',fam:'bass',eng:['Wavetable'],
+goal:'One saw, one screaming filter. The Serum 2 version of the previous guide\'s acid recipe, with the resonance doing the singing.',
+set:`<b>OSC A</b>   Wavetable · Basic Shapes saw (or square frame) · 1 voice
+<b>FILTER 1</b> MG Low 24 · cutoff 300 Hz · res 65% · drive 30%
+<b>ENV 2</b>   → cutoff +3 oct · A 1 ms · D 200 ms · S 5%
+<b>ENV 1</b>   A 1 ms · D 300 ms · S 40% · R 30 ms
+<b>GLIDE</b>   Mono + Legato · portamento 60 ms (slides on overlapped notes)
+<b>MOD</b>     Velocity → cutoff 40% · accent notes = velocity 127
+<b>FX</b>      Distortion (Overdrive) 40% → Delay 1/8 dot, 20% mix`,
+move:'<b>The move:</b> resonance ≥ 60% so the filter rings as its own tone, plus mono-legato glide. Sequence overlapping notes in Live for slides; velocity is your accent switch.',
+steps:['One saw. Resist everything else','Cutoff low, resonance up until the filter sings','Env 2 hard: +3 oct, 200 ms decay — the squelch','Mono + legato + 60 ms glide','Write the part: overlaps slide, velocity 127 = accent','Overdrive 40% — a clean 303 is a demo 303'],
+kw:'acid 303 squelch resonance glide slide accent techno'},
+
+{name:'FM growl (tech house)',fam:'bass',eng:['Wavetable'],
+goal:'A sine that barks metallic for 60 ms and then sits down into a clean low end. True-FM warp does what no filter can.',
+set:`<b>OSC A</b>   Wavetable · sine · Warp: FM (from B) · warp 0% at rest
+<b>OSC B</b>   sine · +12 st (2:1 ratio) · level 0% (modulator only)
+<b>SUB</b>     off (the sine carrier IS the sub)
+<b>ENV 3</b>   → Warp/FM amount +55% · A 1 ms · D 90 ms · S 10%
+<b>FILTER 1</b> Low 24 · cutoff 1.2 kHz · res 10% (tames FM fizz)
+<b>ENV 1</b>   A 1 ms · D 140 ms · S 0 · R 40 ms
+<b>FX</b>      Distortion 20% → EQ −2 dB @ 3 kHz`,
+move:'<b>The move:</b> Env 3 → FM warp amount. The modulation itself is enveloped — bark, then purity. Try ratio 3:1 (Osc B +19 st) for a nastier, clangy bark.',
+steps:['Sine carrier — confirm it is a clean sub first','Osc B as silent modulator, +12 st, FM warp on A','Env 3 on the warp amount: the bark','Low-pass at ~1.2 kHz to keep the fizz off the hats','Short gate, zero sustain — it is a rhythm part','Light drive to glue; keep it 1 voice, mono, always'],
+kw:'fm growl tech house bass warp bark ratio metallic'},
+
+{name:'UKG / garage wobble bass',fam:'bass',eng:['Wavetable'],
+goal:'The swung, talking bass under 2-step and speed garage — square-ish, mid-forward, with an LFO wobble that locks to the shuffle.',
+set:`<b>OSC A</b>   Wavetable · square/pulse table · 2 voices · 8¢
+<b>SUB</b>     Sine −12 st · 50% · DIRECT OUT
+<b>FILTER 1</b> Low 24 · cutoff 500 Hz · res 25% · drive 20%
+<b>LFO 1</b>   sine · sync 1/8 (swing follow ON) → cutoff 35%
+<b>ENV 1</b>   A 1 ms · D 200 ms · S 60% · R 50 ms
+<b>MOD</b>     Note gate: retrig LFO on each note (env mode)
+<b>FX</b>      Distortion 25% → Phaser 15% mix (the "talk")`,
+move:'<b>The move:</b> LFO in envelope/retrig mode with swing-follow, so the wobble restarts on every note and leans with the shuffle instead of fighting it.',
+steps:['Square-family table, slight 2-voice thickness','Sub direct out — the wobble must not touch the low end','Cutoff mid, resonance 25% so the wobble has a vowel','LFO 1/8 sync, retrig per note, swing follow on','Medium sustain: notes long enough to hear one wobble cycle','Phaser after distortion for the vocal formant smear'],
+kw:'garage ukg 2-step speed garage wobble bass square shuffle swing'},
+
+{name:'Techno rumble',fam:'bass',eng:['Sample','Wavetable'],
+goal:'The sustained low boil under hypnotic techno — technically a kick tail, built here as a playable patch you sidechain against the real kick.',
+set:`<b>OSC A</b>   Sample · any boomy kick one-shot · loop ON · root ~F1
+<b>OSC B</b>   Wavetable saw · −12 st · level 30% (dirt layer)
+<b>FILTER 1</b> Low 24 · cutoff 150 Hz · res 20% · drive 40%
+<b>ENV 1</b>   A 30 ms · S 100% · R 200 ms (a drone, held for bars)
+<b>LFO 1</b>   saw falling · sync 1/4 → master level 45% (fake sidechain,
+         drawn with a silent notch at the start of each beat)
+<b>FX</b>      Distortion 35% → Reverb (Basin) 25% → Splitter: sides HP 150 Hz`,
+move:'<b>The move:</b> a looped kick sample as an oscillator, distorted and reverbed into a boil, with the 1/4-note duck LFO carving space for the real kick on top.',
+steps:['Kick one-shot into the Sample osc, loop points around the tail','Hold a low F/G — it is a drone instrument now','Drive it: the rumble is distortion, not level','Reverb inside the patch, then high-pass its sides','Fake-sidechain LFO at 1/4 so the real kick owns the transient','In Live: layer under the kick guide\'s tuned kick, low-cut at 30 Hz'],
+kw:'rumble techno kick tail drone boil sidechain hypnotic berlin'},
+
+/* ---------------- CHORDS & STABS ---------------- */
+{name:'Disco / French filter stab',fam:'chord',eng:['Wavetable'],
+goal:'The filtered-disco chord hit: bright for 80 ms, gone by the offbeat. Designed to be swept 400 Hz–4 kHz across 8 bars.',
+set:`<b>OSC A</b>   Wavetable · saw · 5 voices · 15¢
+<b>OSC B</b>   saw · +12 st · level 45% · 3 voices · 10¢
+<b>FILTER 1</b> Low 24 · cutoff 700 Hz · res 30% · drive 15%
+<b>ENV 2</b>   → cutoff +2.5 oct · D 85 ms · S 10%
+<b>ENV 1</b>   A 1 ms · D 90 ms · S 0 · R 90 ms
+<b>MACRO 1</b> → cutoff +3 oct, res +15% (the DJ sweep knob)
+<b>FX</b>      Compressor 4:1 fast → Chorus 20% → Reverb plate 12%`,
+move:'<b>The move:</b> both envelopes under 100 ms AND Macro 1 owning the sweep. The stab is a rhythmic event; the eight-bar filter ride is the arrangement doing its job.',
+steps:['Two saws an octave apart, moderate unison','Play a m7 or m9 voicing from the Chords guide','Cutoff mid, resonance 30% for the disco vowel','Env 2 fast and bright, Env 1 equally short','Wire Macro 1: cutoff + resonance together','Compressor first in the rack — the pump is period-correct'],
+kw:'disco house french filter stab chord m7 sweep macro daft'},
+
+{name:'Deep house organ chord',fam:'chord',eng:['Wavetable'],
+goal:'The M1-adjacent organ: hollow, instant, faintly cheap in the right way. Serum 2 version stacks square octaves like drawbars.',
+set:`<b>OSC A</b>   Wavetable · square · 3 voices · 8¢
+<b>OSC B</b>   square · +12 st · level 40% · 1 voice
+<b>SUB</b>     Sine 0 st · 25% (root weight, filtered with the rest)
+<b>FILTER 1</b> Low 12 · cutoff 1.8 kHz · res 8%
+<b>ENV 1</b>   A 4 ms · D 60 ms · S 85% · R 350 ms
+<b>ENV 2</b>   barely: → cutoff +0.5 oct · D 50 ms (key click)
+<b>FX</b>      Chorus 25% → EQ +1.5 dB @ 900 Hz → Reverb room 10%`,
+move:'<b>The move:</b> organ = no envelope story. Nearly-flat envelopes, octave-stacked squares, chorus. All expression comes from when you play it — swing the MIDI, not the patch.',
+steps:['Square table, light 3-voice chorus-y unison','Second square an octave up, quieter — a drawbar','Filter just dulls it into the mix, nothing more','Flat fast envelopes; long-ish release for the skank','Tiny Env 2 click so chords have a knuckle','Chorus on, then go program offbeat 9th chords'],
+kw:'deep house organ m1 chord square drawbar skank offbeat'},
+
+{name:'Rave hoover',fam:'chord',eng:['Wavetable'],
+goal:'The Alpha-Juno menace: detuned wall, pitch-swoop into every note, resonant sweep opening across the chord.',
+set:`<b>OSC A</b>   Wavetable · saw/PWM table · 7 voices · 30¢
+<b>OSC B</b>   saw · −12 st · level 55% · 3 voices · 15¢
+<b>FILTER 1</b> Low 24 · cutoff 350 Hz · res 40% · drive 25%
+<b>ENV 2</b>   → cutoff +2.5 oct · A 15 ms · D 500 ms · S 55%
+<b>PITCH</b>   Env 3 → master pitch −6 st at note start, decay 180 ms
+         (set −6 and invert: swoop UP into the note)
+<b>LFO 1</b>   5.5 Hz sine → pitch 8¢ (nervous vibrato)
+<b>FX</b>      Distortion 45% → Chorus 30% → Reverb 15%`,
+move:'<b>The move:</b> the pitch envelope swooping into each note. Everything else is just a big detuned saw — the swoop is the entire cultural memory of the sound.',
+steps:['Wall of saws: 7 voices, 30¢, octave layer below','Env 3 → pitch: −6 st decaying over ~180 ms','Resonant filter opening slowly across the note','Vibrato LFO, slightly too fast for comfort','Distort until slightly wrong, then chorus the wrong','Play minor triads with the 5th on top; regret nothing'],
+kw:'hoover rave alpha juno mentasm pitch swoop 90s hardcore'},
+
+{name:'Trance supersaw',fam:'chord',eng:['Wavetable'],
+goal:'The JP-8000 inheritance: enormous, glassy, sad. Works as stabs at 138 or held pads at 132 — same patch, different envelope.',
+set:`<b>OSC A</b>   Wavetable · saw · 7 voices · 28¢ · blend 70%
+<b>OSC B</b>   saw · +12 st · level 35% · 7 voices · 20¢
+<b>SUB</b>     Sine −12 st · 30% · 1 voice · DIRECT OUT
+<b>FILTER 1</b> Low 24 · cutoff 4 kHz · res 5%
+<b>FILTER 2</b> High 12 (series) · 180 Hz (clears the floor)
+<b>ENV 1</b>   stab: A 2 ms D 220 ms S 0  ·  pad: A 250 ms S 80% R 900 ms
+<b>LFO 1</b>   0.25 Hz → cutoff 15% (the slow shimmer)
+<b>FX</b>      Hyper 30% → EQ −2 dB @ 3.5 kHz → Reverb (Nitrous) 25%`,
+move:'<b>The move:</b> Filter 2 as a series high-pass at 180 Hz. The supersaw\'s size comes from NOT letting it reach the low end — the single-voice sub direct-out does that job alone.',
+steps:['Seven-voice saw, wide but blended back','Octave-up layer for glass, octave-down sine for floor','High-pass the saws at 180 Hz; sub bypasses everything','Choose the envelope: stab or pad, nothing between','One slow LFO so eight bars never quite repeat','Hyper for width, EQ dip at 3.5 kHz, big clean reverb'],
+kw:'trance supersaw jp8000 uplifting stab pad 138 hyper wide'},
+
+/* ---------------- LEADS & PLUCKS ---------------- */
+{name:'Pluck arp',fam:'lead',eng:['Wavetable'],
+goal:'The 16th-note engine of melodic house: short, glassy, velocity-alive. Designed to run for 32 bars without fatiguing.',
+set:`<b>OSC A</b>   Wavetable · bright table (Digital/Bell family) frame ~40%
+<b>OSC B</b>   saw · level 30% · 3 voices · 10¢
+<b>FILTER 1</b> Low 24 · cutoff 900 Hz · res 20% · keytrack 60%
+<b>ENV 2</b>   → cutoff +2.5 oct · D 70 ms · S 3%
+<b>ENV 1</b>   A 1 ms · D 100 ms · S 0 · R 120 ms
+<b>MOD</b>     Velocity → cutoff 35% · Rand → WT Pos 8% (each hit differs)
+<b>FX</b>      Delay ping-pong 3/16 · 25% mix · HP 400 Hz in delay path
+         → Reverb 12%`,
+move:'<b>The move:</b> keytrack 60% + Rand→WT Pos. High notes stay bright, and no two 16ths are identical — the two ingredients that keep a long arp from going wallpaper.',
+steps:['Bright-ish table, a saw whisper behind it','Fast Env 2, near-zero sustain: the pluck','Keytrack the filter so the top octave survives','Velocity → cutoff, then write a real velocity map','Rand → WT Pos at amounts you can\'t consciously hear','3/16 ping-pong delay IS the groove — high-pass its returns'],
+kw:'pluck arp 16th melodic house anjuna glassy delay keytrack'},
+
+{name:'Melodic techno lead',fam:'lead',eng:['Wavetable'],
+goal:'The Afterlife-adjacent lead: dark, vocal, portamento phrases over minor chords. More filter than note.',
+set:`<b>OSC A</b>   Wavetable · vocal/formant table · frame ≈ 30% · 3 voices 12¢
+<b>OSC B</b>   saw −12 st · level 40% · 1 voice
+<b>FILTER 1</b> Low 24 · cutoff 800 Hz · res 35% · drive 20%
+<b>ENV 2</b>   → cutoff +1.5 oct · A 40 ms · D 400 ms · S 45%
+<b>ENV 3</b>   → WT Pos +25% · D 300 ms (the vowel moves per note)
+<b>GLIDE</b>   Mono · 90 ms · legato
+<b>LFO 1</b>   4.5 Hz → pitch 5¢, delayed 300 ms (late vibrato)
+<b>FX</b>      Distortion 25% → Delay 1/4 20% → Reverb (Basin) 30%`,
+move:'<b>The move:</b> Env 3 scanning the formant frame on every note — the patch says a slightly different vowel each time, which is why it reads as a voice and not a synth.',
+steps:['Formant/vocal wavetable — audition frames, park on a vowel','Saw an octave down glues it to the track\'s key','Resonant filter, moderate: the second vowel','Env 3 → WT Pos so the vowel opens per note','Mono + 90 ms glide; write phrases, not riffs','Delayed vibrato + big dark reverb; play less than you want to'],
+kw:'melodic techno lead afterlife vocal formant portamento dark'},
+
+{name:'Hypnotic techno blip',fam:'lead',eng:['Wavetable'],
+goal:'The tiny sequenced dot that hypnotic techno loops for six minutes. Almost nothing — which is why every modulation you can\'t hear matters.',
+set:`<b>OSC A</b>   Wavetable · sine→square-ish frame · 1 voice
+<b>FILTER 1</b> Band 12 · cutoff 1.2 kHz · res 40%
+<b>ENV 2</b>   → cutoff +2 oct · D 45 ms · S 0
+<b>ENV 1</b>   A 0.5 ms · D 60 ms · S 0 · R 30 ms
+<b>MOD</b>     Note → WT Pos 35% · Rand → cutoff 6% · Rand → level 5%
+<b>ARP</b>     use Serum's arp to find the pattern (chance 15% on 2 steps),
+         then drag the clip out as MIDI and commit it in Live
+<b>FX</b>      Delay 1/8 dot 30%, feedback 45%, HP 500 Hz → Reverb 8%`,
+move:'<b>The move:</b> three Rand routings at 5–8%. The blip itself is trivial; six minutes of hypnosis is micro-variation plus a dotted delay doing the composing.',
+steps:['Near-sine material, band-pass gives it a "location"','Everything under 60 ms — it is a dot, not a note','Note-position → WT Pos: each pitch its own colour','Rand → cutoff and level, amounts below perception','Arp with chance to discover the pattern, then commit','Dotted delay high-passed: the answer phrase for free'],
+kw:'hypnotic techno blip sequence arp chance rand dotted delay minimal'},
+
+{name:'Electro / sync lead',fam:'lead',eng:['Wavetable'],
+goal:'The aggressive hard-sync scream for electro and rave tools — the warp knob as the performance surface.',
+set:`<b>OSC A</b>   Wavetable · saw · Warp: SYNC · warp 35% at rest · 3 voices 10¢
+<b>ENV 3</b>   → Warp (Sync) +45% · A 1 ms · D 150 ms · S 20%
+<b>FILTER 1</b> Low 24 · cutoff 2.5 kHz · res 15% · drive 30%
+<b>ENV 1</b>   A 1 ms · D 200 ms · S 55% · R 60 ms
+<b>MACRO 1</b> → Warp +40% (ride it live: the scream knob)
+<b>LFO 1</b>   8 Hz square → pitch 0/+12 st at 20% mix — optional octave trill
+<b>FX</b>      Distortion 35% → Phaser 20% → Delay 1/16 15%`,
+move:'<b>The move:</b> enveloping and macro-riding SYNC warp instead of cutoff. The scream lives in the warp knob; the filter just keeps it street-legal.',
+steps:['Saw with Sync warp — sweep it by hand first, learn its range','Env 3 gives every note a sync-sweep attack','Filter high and driven; this patch is midrange by design','Macro 1 on warp for fills and builds','Optional square-LFO octave trill for the rave quote','Distortion → phaser: the classic electro finish'],
+kw:'electro sync lead scream warp aggressive rave stab acid'},
+
+/* ---------------- PADS & TEXTURE ---------------- */
+{name:'Warm analog pad',fam:'pad',eng:['Wavetable'],
+goal:'The default breakdown pad: slow, wide, dark enough to sit behind everything from the Chords guide.',
+set:`<b>OSC A</b>   Wavetable · Analog saw table frame ~20% · 5 voices · 18¢
+<b>OSC B</b>   saw · +7 st (a fifth!) · level 25% · 3 voices · 12¢
+<b>FILTER 1</b> Low 12 · cutoff 900 Hz · res 10%
+<b>FILTER 2</b> High 12 series · 140 Hz
+<b>ENV 1</b>   A 600 ms · D 1 s · S 70% · R 1.5 s
+<b>LFO 1</b>   0.15 Hz → cutoff 20% · LFO 2 Lorenz → fine 3¢
+<b>FX</b>      Chorus 30% → Reverb (Basin) 35% · predelay 40 ms`,
+move:'<b>The move:</b> Osc B a fifth up at whisper level. It reads as "expensive analog" rather than "interval" — the trick behind half the classic pad presets you have loved.',
+steps:['Dull saw frame, wide-ish unison, slow attack','The secret fifth, 25% level — feel it, don\'t hear it','Band-limit both ends: LP 900 Hz, HP 140 Hz','Envelope so slow the chord changes do the rhythm','Two inaudible movements: cutoff drift + Lorenz tune','Chorus into long predelayed reverb; park it −12 dB in the mix'],
+kw:'warm analog pad breakdown fifth juno slow wide dark'},
+
+{name:'Granular texture pad',fam:'pad',eng:['Granular'],
+goal:'A pad made from any sample you own — vocal, field recording, one piano chord — smeared into weather.',
+set:`<b>OSC A</b>   Granular · load any sustained sample
+         grain size 120 ms · density 8–12 · window 70%
+         scan rate ~0 (frozen) · random position 15%
+<b>MOD</b>     LFO 1 0.08 Hz → scan position ±20% (the playhead breathes)
+<b>FILTER 1</b> Low 12 · cutoff 1.5 kHz · res 5%
+<b>ENV 1</b>   A 800 ms · S 100% · R 2 s
+<b>MOD</b>     Rand → grain size 10% · velocity → density 30%
+<b>FX</b>      EQ: HP 200 Hz → Chorus 20% → Reverb (Convolve, long IR) 40%`,
+move:'<b>The move:</b> scan rate at zero with an LFO wandering the position. The sample never plays — the patch grazes on it. Long grains smear pitch into texture; short grains turn it to rain.',
+steps:['Any sustained source into the Granular osc','Freeze the scan; let an LFO wander the playhead','Grain size sets the weather: 120 ms = mist, 30 ms = rain','Random position 15% erases the loop point','High-pass at 200 Hz — granular stacks up low mud fast','Convolution reverb last; the IR is half the character'],
+kw:'granular pad texture grain scan freeze ambient field recording'},
+
+{name:'Spectral vocal drone',fam:'pad',eng:['Spectral'],
+goal:'One sung syllable frozen into an endless choir — the breakdown drone that never audibly loops.',
+set:`<b>OSC A</b>   Spectral · one vocal note/syllable, 1–3 s
+         scan rate 5% (near-frozen) · transient detect ON
+<b>TIMBRE</b>  shift +0.2 (choir) or −0.3 (ghost) — to taste
+<b>MOD</b>     LFO 1 0.05 Hz → scan position slow crawl
+         LFO 2 0.3 Hz → timbre shift ±5%
+<b>FILTER 1</b> Low 12 · 2 kHz — just seats it
+<b>ENV 1</b>   A 1.2 s · S 100% · R 2.5 s
+<b>FX</b>      EQ HP 180 Hz → Reverb (Nitrous) 45% → Compressor gentle`,
+move:'<b>The move:</b> spectral scan near zero. Unlike granular there is no grain texture — the spectrum itself holds still, so it sounds sung forever rather than looped. Timbre shift is the "who is singing" knob.',
+steps:['Record or bounce one clean sung note into the osc','Scan rate near zero: the syllable becomes a place','Timbre shift until it stops being you','Two very slow LFOs so the choir breathes','Low-pass gently; spectral highs can glass-cut','Huge reverb, then leave it alone for 16 bars'],
+kw:'spectral drone vocal choir freeze breakdown resynthesis'},
+
+{name:'Dub techno chord',fam:'pad',eng:['Wavetable'],
+goal:'The Basic Channel hit: a minor chord dark as tape, swimming in filtered delay. The patch is 40% synth, 60% effects rack.',
+set:`<b>OSC A</b>   Wavetable · saw · 3 voices · 10¢
+<b>FILTER 1</b> Low 24 · cutoff 600 Hz · res 45% · drive 20%
+<b>ENV 2</b>   → cutoff +1.2 oct · D 140 ms · S 0
+<b>ENV 1</b>   A 2 ms · D 350 ms · S 0 · R 200 ms
+<b>LFO 1</b>   0.2 Hz → cutoff 10% (each hit lands slightly different)
+<b>FX</b>      Distortion (tape-ish, 20%) → Phaser 25% slow
+         → Delay 3/8 feedback 60%, HP 300 Hz LP 2.5 kHz in loop
+         → Reverb 25% → Compressor 3:1 pumping gently`,
+move:'<b>The move:</b> the delay\'s in-loop filters. Each repeat gets darker and narrower — the echo decays like dub tape, and that decay IS the genre.',
+steps:['Play one minor chord, resonant filter half-closed','Pluck-ish envelopes: the chord is a percussion hit','Slow LFO so no two hits match','Stack the rack in order: dirt → phaser → delay → verb','Filter inside the delay loop: repeats die like tape','Hit the chord on offbeats and let the rack compose'],
+kw:'dub techno chord basic channel delay tape dark stab'},
+
+/* ---------------- DRUMS & FX ---------------- */
+{name:'Kick from scratch',fam:'fx',eng:['Wavetable'],
+goal:'A tuned kick you own outright: sine drop, click layer, drive. Build once, resample forever.',
+set:`<b>OSC A</b>   Wavetable · sine · 1 voice
+<b>PITCH</b>   Env 3 → Osc A pitch +26 st · D 45 ms (the drop)
+<b>NOISE</b>   one-shot · short · level 20% · pitch to taste (the click)
+<b>ENV 1</b>   A 0.5 ms · D 320 ms · S 0 · R 20 ms
+<b>FILTER 1</b> Low 24 · 4 kHz (shapes click + drive fizz only)
+<b>FX</b>      Distortion (Overdrive) 35% → EQ +2 dB @ 60 Hz, −3 dB @ 400 Hz
+<b>PLAY</b>    root = your track's key (see Kick &amp; Bass guide on tuning)`,
+move:'<b>The move:</b> the pitch envelope: +26 st falling over 45 ms. Decay time is the genre dial — 30 ms is techno, 60 ms is house, 120 ms is a tom.',
+steps:['Sine, one voice — a test tone','Env 3 pitch drop: the entire kick in one routing','Amp decay ~320 ms, zero sustain','Noise osc one-shot for the click; tune it','Drive for the harmonics a club system reads as punch','Bounce to audio, then play the audio — never the patch live'],
+kw:'kick drum sine pitch drop click tuned resample'},
+
+{name:'Noise riser & downlifter',fam:'fx',eng:['Wavetable'],
+goal:'The transition set: a two-bar riser and its falling twin, from the noise oscillator and two slow envelopes.',
+set:`<b>NOISE</b>  looping · level 100% (only sound source; oscs off)
+<b>FILTER 1</b> Band 12 · cutoff 600 Hz · res 45%
+<b>RISER</b>   Env 2 → cutoff +3 oct · A 3.5 s · S 100%
+         LFO 1 6 Hz → cutoff 10% (shimmer inside the sweep)
+         Env 1: A 2 s · S 100% (fades itself in)
+<b>DOWN</b>    invert: cutoff starts high, Env 2 amount negative −3 oct
+         + Env 3 → pitch −12 st over 2 s
+<b>FX</b>      Hyper 40% → Delay 1/4 30% → Reverb 35% (tail = free outro)`,
+move:'<b>The move:</b> the amp envelope\'s 2-second attack. A riser you can hear begin began too loud — it should be inaudible at the start and unavoidable at the drop.',
+steps:['Noise only; band-pass gives the hiss a pitch to ride','Env 2 opens the band over 3.5 s — the rise','Slow amp fade-in so the start is secret','Fast shallow LFO: shimmer, not wobble','Clone the patch, invert amounts: the downlifter','Print both to audio; risers are arrangement, not instruments'],
+kw:'riser downlifter uplifter noise sweep transition build white'},
+
+{name:'Hats & shaker from noise',fam:'fx',eng:['Wavetable'],
+goal:'A playable hat/shaker instrument: tuned metallic noise with velocity doing the open/closed work.',
+set:`<b>NOISE</b>  one-shot · pitch +15 st (tune the metal) · level 100%
+<b>OSC A</b>   optional: square · +24 st · Warp RM · level 15% (bell ring)
+<b>FILTER 1</b> High 24 · cutoff 6 kHz · res 20%
+<b>ENV 1</b>   A 0.5 ms · D 55 ms · S 0 · R 25 ms
+<b>MOD</b>     Velocity → Env 1 decay +80% (hard hit = open hat)
+         Rand → decay 8% · Rand → cutoff 5% (human shaker)
+<b>FX</b>      EQ −2 dB @ 3 kHz → Reverb 6% tiny room`,
+move:'<b>The move:</b> velocity → amp decay. One patch plays closed and open hats from the same key — your velocity map from the Groove guide becomes the hat pattern\'s whole personality.',
+steps:['Noise one-shot, pitched until it turns metallic','High-pass steep: everything below 6 kHz belongs to others','55 ms decay = closed hat at rest','Velocity stretches decay: accents open the hat','Rand on decay/cutoff so 16ths shimmer like a shaker','Sequence with the Drums guide\'s velocity maps'],
+kw:'hats shaker noise percussion velocity open closed 16ths'}
+];
+
+/* ---- render recipe cards ---- */
+const rhost=document.getElementById('rhost');
+const FAMLABEL={bass:'Bass',chord:'Chords',lead:'Leads',pad:'Pads',fx:'Drums & FX'};
+REC.forEach(r=>{
+  const c=document.createElement('div'); c.className='rcard';
+  c.dataset.fam=r.fam;
+  c.dataset.kw=(r.name+' '+r.goal+' '+r.kw+' '+r.eng.join(' ')).toLowerCase();
+  c.innerHTML=`<div class="rtop"><h3>${r.name}</h3><span class="rtag ${r.fam}">${FAMLABEL[r.fam]}</span></div>
+    <div class="rgoal">${r.goal}</div>
+    <div class="rset">${r.set}</div>
+    <div class="rmove">${r.move}</div>
+    <div class="rsteps"><b>The six moves, in order:</b><ol>${r.steps.map(s=>'<li>'+s+'</li>').join('')}</ol></div>
+    <div class="rfoot">${r.eng.map(e=>'<span class="eng">'+e+'</span>').join('')}<span class="eng" style="margin-left:auto">${FAMLABEL[r.fam]}</span></div>`;
+  rhost.appendChild(c);
+});
+/* ---- recipe filter ---- */
+let rFilter='all', rQuery='';
+function rApply(){
+  let shown=0;
+  document.querySelectorAll('.rcard').forEach(c=>{
+    const ok=(rFilter==='all'||c.dataset.fam===rFilter)&&(!rQuery||c.dataset.kw.includes(rQuery));
+    c.classList.toggle('dim',!ok); if(ok)shown++;
+  });
+  document.getElementById('rcount').textContent=shown+(shown===1?' recipe':' recipes');
+  document.getElementById('rempty').style.display=shown?'none':'block';
+}
+document.getElementById('rq').addEventListener('input',e=>{rQuery=e.target.value.trim().toLowerCase();rApply();});
+document.querySelectorAll('[data-rf]').forEach(b=>b.onclick=()=>{
+  rFilter=b.dataset.rf;
+  document.querySelectorAll('[data-rf]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  rApply();
+});
+rApply();
+</script>
+<script>
+/* ==========================================================
+   AUDIO ENGINE (shared by the six demos)
+   ========================================================== */
+let AC=null,master=null,limiter=null;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.7;
+    limiter=AC.createDynamicsCompressor();
+    limiter.threshold.value=-6; limiter.knee.value=4; limiter.ratio.value=12;
+    limiter.attack.value=.003; limiter.release.value=.12;
+    limiter.connect(master); master.connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+let _nb=null;
+function noiseSrc(){
+  if(!_nb){const n=Math.floor(AC.sampleRate*.7);_nb=AC.createBuffer(1,n,AC.sampleRate);
+    const d=_nb.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;}
+  const s=AC.createBufferSource(); s.buffer=_nb; s.loop=true; return s;
+}
+function shaper(amt){
+  const ws=AC.createWaveShaper(),n=1024,c=new Float32Array(n),k=1+amt*30;
+  for(let i=0;i<n;i++){const x=i*2/n-1;c[i]=Math.tanh(k*x)/Math.tanh(k);}
+  ws.curve=c; ws.oversample='2x'; return ws;
+}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+
+/* one voice, patch passed explicitly */
+function vNote(t,freq,dur,vel,P,bus){
+  const out=AC.createGain();
+  const filt=AC.createBiquadFilter(); filt.type=P.fType||'lowpass'; filt.Q.value=P.res||0;
+  const drv=shaper(P.drive||0);
+  filt.connect(drv); drv.connect(out); out.connect(bus);
+  const peak=Math.max(.0001,(P.vol||.5)*(vel/127));
+  const sus=Math.max(.0001,peak*(P.aS!=null?P.aS:1));
+  const aA=P.aA||.003,aD=P.aD||.2,aR=P.aR||.08;
+  const decEnd=t+aA+aD, relStart=Math.max(t+Math.max(dur,aA+.01),decEnd+.001);
+  const g=out.gain;
+  g.setValueAtTime(0,t); g.linearRampToValueAtTime(peak,t+aA);
+  g.exponentialRampToValueAtTime(sus,decEnd);
+  g.setValueAtTime(sus,relStart);
+  g.exponentialRampToValueAtTime(.0001,relStart+Math.max(.01,aR));
+  const end=relStart+Math.max(.01,aR)+.05;
+  /* filter env */
+  const base=Math.min(18000,Math.max(30,P.cut||18000));
+  const top=Math.min(19000,Math.max(30,base*Math.pow(2,(P.fEnv||0))));
+  const susF=Math.min(19000,Math.max(30,base+(top-base)*(P.fS!=null?P.fS:0)));
+  filt.frequency.setValueAtTime(base,t);
+  filt.frequency.linearRampToValueAtTime(top,t+.002);
+  filt.frequency.exponentialRampToValueAtTime(Math.max(31,susF),t+.002+Math.max(.005,P.fD||.1));
+  /* oscillators */
+  const n=Math.max(1,Math.round(P.uni||1));
+  const og=AC.createGain(); og.gain.value=(P.oLvl!=null?P.oLvl:.8)/Math.sqrt(n); og.connect(filt);
+  const oscs=[];
+  for(let u=0;u<n;u++){
+    const o=AC.createOscillator(); o.type=P.wave||'sawtooth';
+    o.frequency.setValueAtTime(freq,t);
+    o.detune.value=n===1?0:(P.spread||0)*(u/(n-1)-.5)*2;
+    o.connect(og); o.start(t); o.stop(end); oscs.push(o);
+    if(P.fm>0&&u===0){
+      const m=AC.createOscillator(); m.type='sine';
+      m.frequency.setValueAtTime(freq*(P.fmRatio||2),t);
+      const mg=AC.createGain();
+      const depth=P.fm*freq*10;
+      mg.gain.setValueAtTime(depth,t);
+      mg.gain.exponentialRampToValueAtTime(Math.max(1,depth*.05),t+Math.max(.01,P.fmDec||.09));
+      m.connect(mg); mg.connect(o.frequency); m.start(t); m.stop(end);
+    }
+  }
+  if(P.sub>0){
+    const s=AC.createOscillator(); s.type='sine'; s.frequency.setValueAtTime(freq/2,t);
+    const sg=AC.createGain(); sg.gain.value=P.sub; s.connect(sg);
+    sg.connect(P.subDirect?out:filt);
+    s.start(t); s.stop(end);
+  }
+  if(P.noise>0){
+    const ns=noiseSrc(); const ng=AC.createGain();
+    ng.gain.setValueAtTime(P.noise,t);
+    ng.gain.exponentialRampToValueAtTime(.0001,t+Math.max(.01,P.nDec||.04));
+    const hp=AC.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=3000;
+    ns.connect(hp); hp.connect(ng); ng.connect(out);
+    ns.start(t); ns.stop(t+(P.nDec||.04)+.1);
+  }
+  if(P.lfoAmt>0){
+    const lfo=AC.createOscillator(); lfo.type=P.lfoWave||'sine'; lfo.frequency.value=P.lfoRate||1;
+    const la=AC.createGain(); la.gain.value=base*P.lfoAmt*1.4;
+    lfo.connect(la); la.connect(filt.frequency);
+    lfo.start(t); lfo.stop(end);
+  }
+  if(P.drift>0){
+    const dl=AC.createOscillator(); dl.type='sine'; dl.frequency.value=.35;
+    const dg=AC.createGain(); dg.gain.value=P.drift;
+    dl.connect(dg); oscs.forEach(o=>dg.connect(o.detune));
+    dl.start(t); dl.stop(end);
+  }
+  return end;
+}
+function bd(t,bus){
+  const o=AC.createOscillator();o.type='sine';
+  o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(50,t+.05);
+  const g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.85,t+.002);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.32);
+  o.connect(g);g.connect(bus);o.start(t);o.stop(t+.4);
+}
+
+/* ==========================================================
+   DEMOS
+   ========================================================== */
+const A1=33,A2=45,A3=57;
+const PT={
+  stab:{root:A2,len:16,chord:[0,3,7,10],notes:[2,6,10,14].map(s=>({s,l:1.4,p:0,v:106}))},
+  bass:{root:A1,len:16,notes:[2,6,10,14].map((s,i)=>({s,l:1.6,p:[0,0,-2,-2][i],v:i%2?96:114}))},
+  arp:{root:A3,len:16,notes:Array.from({length:16},(_,i)=>({s:i,l:.85,p:[0,3,7,12,7,3][i%6],v:i%4===0?116:80}))},
+  hold:{root:A2,len:32,chord:[0,3,7,10],notes:[{s:0,l:31,p:0,v:100}]},
+  pad:{root:A2,len:16,chord:[0,3,7],notes:[{s:0,l:15.5,p:0,v:100}]}
+};
+const DEMOS=[
+{id:'uni',t:'Unison & detune',pat:'stab',
+ what:'A: one voice per oscillator. B: seven voices spread 25¢. Same chord, same filter — the size is free, and so is the mono risk it brings.',
+ serum:'<b>In Serum 2:</b> Osc A → Unison 7, Detune 0.25. Keep anything below 100 Hz at 1 voice. Check mono before you fall in love.',
+ A:{wave:'sawtooth',uni:1,cut:2500,res:3,fEnv:1.2,fD:.12,fS:.1,aA:.002,aD:.25,aS:0,aR:.12,vol:.5},
+ B:{wave:'sawtooth',uni:7,spread:25,cut:2500,res:3,fEnv:1.2,fD:.12,fS:.1,aA:.002,aD:.25,aS:0,aR:.12,vol:.5},
+ ctl:[['uni','Voices',1,9,1,v=>v+'×'],['spread','Detune',0,50,1,v=>v+'¢']]},
+{id:'pluck',t:'The pluck (Env 2 → cutoff)',pat:'bass',
+ what:'A: static filter — a flat drone in bass clothing. B: the filter envelope opens and shuts on every note. This one routing is most of house bass.',
+ serum:'<b>In Serum 2:</b> drag Env 2 onto Fil 1 Cutoff, +2–3 octaves, decay ≈ 110 ms, sustain near 0.',
+ A:{wave:'sawtooth',uni:1,sub:.7,subDirect:true,cut:900,res:4,fEnv:0,fD:.11,fS:1,aA:.002,aD:.14,aS:0,aR:.05,drive:.3,vol:.55},
+ B:{wave:'sawtooth',uni:1,sub:.7,subDirect:true,cut:200,res:4,fEnv:2.5,fD:.11,fS:.08,aA:.002,aD:.14,aS:0,aR:.05,drive:.3,vol:.55},
+ ctl:[['fEnv','Env amt',0,4,.1,v=>'+'+v.toFixed(1)+' oct'],['fD','Decay',.03,.5,.005,v=>Math.round(v*1000)+' ms']]},
+{id:'fm',t:'FM warp bark',pat:'bass',
+ what:'A: a clean sine bass — pure but characterless. B: a second sine FM-modulates it, enveloped to bark for 90 ms then sit down. Harmonics no filter could add.',
+ serum:'<b>In Serum 2:</b> Osc A sine, Warp = FM (from B), Osc B sine +12 st at level 0. Env 3 → warp amount ~55%, decay 90 ms.',
+ A:{wave:'sine',uni:1,oLvl:1,cut:4000,res:0,fEnv:0,fD:.1,fS:1,aA:.002,aD:.16,aS:0,aR:.05,vol:.6},
+ B:{wave:'sine',uni:1,oLvl:1,fm:.5,fmRatio:2,fmDec:.09,cut:1400,res:2,fEnv:0,fD:.1,fS:1,aA:.002,aD:.16,aS:0,aR:.05,drive:.25,vol:.6},
+ ctl:[['fm','FM amount',0,1,.01,v=>Math.round(v*100)+'%'],['fmRatio','Ratio',1,4,1,v=>v+':1']]},
+{id:'noise',t:'The noise-osc click',pat:'arp',
+ what:'A: a pluck arp with no transient — notes blur into the delay of your imagination. B: 40 ms of filtered noise glued to each attack. The pattern snaps into focus.',
+ serum:'<b>In Serum 2:</b> Noise osc, one-shot mode, short decay, level ~20%, pitched to taste. The click is a layer, not an effect.',
+ A:{wave:'sawtooth',uni:2,spread:8,cut:700,res:5,fEnv:2.2,fD:.06,fS:.05,aA:.002,aD:.1,aS:0,aR:.07,vol:.45},
+ B:{wave:'sawtooth',uni:2,spread:8,noise:.35,nDec:.035,cut:700,res:5,fEnv:2.2,fD:.06,fS:.05,aA:.002,aD:.1,aS:0,aR:.07,vol:.45},
+ ctl:[['noise','Click level',0,.8,.01,v=>Math.round(v*125)+'%'],['nDec','Click decay',.01,.12,.005,v=>Math.round(v*1000)+' ms']]},
+{id:'lfo',t:'One slow moving thing',pat:'hold',
+ what:'A: a held chord, frozen — dead by bar two. B: an LFO at 0.2 Hz on cutoff plus 3¢ of tuning drift. Nothing you can point at, and it never dies.',
+ serum:'<b>In Serum 2:</b> LFO 1 sine 0.2 Hz → cutoff ~15%. LFO 2 Chaos (Lorenz) → fine tune 3¢. Both below the level of "an effect".',
+ A:{wave:'sawtooth',uni:3,spread:10,cut:1100,res:2,fEnv:0,fD:.2,fS:1,aA:.4,aD:.5,aS:.8,aR:.8,vol:.4},
+ B:{wave:'sawtooth',uni:3,spread:10,cut:1100,res:2,fEnv:0,fD:.2,fS:1,aA:.4,aD:.5,aS:.8,aR:.8,lfoAmt:.35,lfoRate:.2,drift:6,vol:.4},
+ ctl:[['lfoRate','LFO rate',.05,4,.05,v=>v.toFixed(2)+' Hz'],['lfoAmt','LFO depth',0,.8,.01,v=>Math.round(v*100)+'%']]},
+{id:'duck',t:'Fake sidechain (LFO on level)',pat:'pad',kick:true,
+ what:'A: pad and kick fight for the same air. B: a falling-saw LFO ducks the pad every quarter note, phase-locked to the bar. The kick wins without a compressor in sight.',
+ serum:'<b>In Serum 2:</b> LFO saw (falling), sync 1/4 → Mixer level or Amp, 30–60%. Draw a flat notch at the LFO start so the kick transient window is fully clear.',
+ A:{wave:'sawtooth',uni:5,spread:16,cut:1400,res:2,fEnv:0,fD:.2,fS:1,aA:.05,aD:.3,aS:.9,aR:.3,vol:.4},
+ B:{wave:'sawtooth',uni:5,spread:16,cut:1400,res:2,fEnv:0,fD:.2,fS:1,aA:.05,aD:.3,aS:.9,aR:.3,vol:.4,duck:.75},
+ ctl:[['duck','Duck depth',0,1,.01,v=>Math.round(v*100)+'%']]}
+];
+
+/* ---- render demos ---- */
+const dh=document.getElementById('demoHost');
+const dState={}; /* per-demo: {mode:'B', over:{}} */
+DEMOS.forEach(D=>{
+  dState[D.id]={mode:'B',over:{}};
+  const el=document.createElement('div'); el.className='demo'; el.id='demo-'+D.id;
+  el.innerHTML=`<h3>${D.t}</h3><div class="what">${D.what}</div>
+    <div class="row">
+      <button class="dbtn" data-play="${D.id}">▶ PLAY</button>
+      <div class="ab" role="group">
+        <button data-ab="A" data-d="${D.id}" aria-pressed="false">A · without</button>
+        <button data-ab="B" data-d="${D.id}" aria-pressed="true">B · with</button>
+      </div>
+    </div>
+    ${D.ctl.map(c=>`<label class="dctl">${c[1]}
+      <input type="range" data-d="${D.id}" data-k="${c[0]}" min="${c[2]}" max="${c[3]}" step="${c[4]}" value="${D.B[c[0]]!=null?D.B[c[0]]:c[2]}">
+      <b data-v="${D.id}-${c[0]}">${c[5](D.B[c[0]]!=null?D.B[c[0]]:c[2])}</b></label>`).join('')}
+    <div class="serum">${D.serum}</div>`;
+  dh.appendChild(el);
+});
+dh.addEventListener('input',e=>{
+  const d=e.target.dataset.d,k=e.target.dataset.k; if(!d||!k)return;
+  const D=DEMOS.find(x=>x.id===d), c=D.ctl.find(x=>x[0]===k);
+  dState[d].over[k]=+e.target.value;
+  document.querySelector(`[data-v="${d}-${k}"]`).textContent=c[5](+e.target.value);
+});
+dh.addEventListener('click',e=>{
+  const p=e.target.dataset.play, ab=e.target.dataset.ab;
+  if(p){ cur===p&&playing?stopAll():startDemo(p); }
+  if(ab){ const d=e.target.dataset.d; dState[d].mode=ab;
+    document.querySelectorAll(`[data-d="${d}"][data-ab]`).forEach(b=>b.setAttribute('aria-pressed',b.dataset.ab===ab)); }
+});
+
+/* ---- transport / scheduler ---- */
+let playing=false,cur=null,timer=null,nextT=0,BPM=126,demoBus=null;
+document.getElementById('bpm').oninput=e=>{BPM=+e.target.value;document.getElementById('bpmv').textContent=BPM;};
+document.getElementById('vol').oninput=e=>{document.getElementById('volv').textContent=e.target.value;
+  if(master)master.gain.value=(+e.target.value/100)*.95;};
+document.getElementById('stopAll').onclick=stopAll;
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)){e.preventDefault();playing?stopAll():null;}
+});
+function startDemo(id){
+  audio(); stopAll(true);
+  cur=id; playing=true; nextT=AC.currentTime+.08;
+  demoBus=AC.createGain(); demoBus.connect(limiter);
+  const D=DEMOS.find(x=>x.id===id);
+  document.querySelectorAll('[data-play]').forEach(b=>{
+    const on=b.dataset.play===id;
+    b.classList.toggle('playing',on); b.textContent=on?'■ STOP':'▶ PLAY';
+  });
+  document.getElementById('nowPlaying').textContent='▸ '+D.t;
+  schedule();
+}
+function stopAll(soft){
+  if(timer)clearTimeout(timer); timer=null;
+  if(demoBus){ try{demoBus.gain.setTargetAtTime(0,AC.currentTime,.03);}catch(e){}
+    const b=demoBus; setTimeout(()=>{try{b.disconnect()}catch(e){}},400); demoBus=null; }
+  playing=false; cur=null;
+  document.querySelectorAll('[data-play]').forEach(b=>{b.classList.remove('playing');b.textContent='▶ PLAY';});
+  if(!soft)document.getElementById('nowPlaying').textContent='—';
+}
+function schedule(){
+  if(!playing)return;
+  const D=DEMOS.find(x=>x.id===cur), S=dState[cur];
+  while(nextT<AC.currentTime+.18){
+    const pat=PT[D.pat], len=pat.len||16, sd=60/BPM/4, dur=len*sd, base=nextT;
+    const P={...(S.mode==='A'?D.A:D.B)};
+    if(S.mode==='B') Object.assign(P,S.over);
+    pat.notes.forEach(n=>{
+      const f=mtof(pat.root+(n.p||0)), t=base+n.s*sd, d=n.l*sd;
+      if(pat.chord) pat.chord.forEach(iv=>vNote(t,f*Math.pow(2,iv/12),d,n.v,P,demoBus));
+      else vNote(t,f,d,n.v,P,demoBus);
+    });
+    if(D.kick) for(let s=0;s<len;s+=4) bd(base+s*sd,limiter);
+    if(P.duck>0&&demoBus){
+      const g=demoBus.gain, beat=sd*4;
+      for(let s=0;s<len;s+=4){
+        const t0=base+s*sd;
+        g.setValueAtTime(1-P.duck,t0);
+        g.linearRampToValueAtTime(1-P.duck,t0+beat*.12);
+        g.linearRampToValueAtTime(1,t0+beat*.85);
+      }
+    }
+    nextT+=dur;
+  }
+  timer=setTimeout(schedule,30);
+}
+</script>

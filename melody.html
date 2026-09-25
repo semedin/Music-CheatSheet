@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Melody — rhythm, contour, development</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E2DED2;--panel:#F2EFE6;--panel-2:#EAE5D8;
+  --ink:#191713;--ink-2:#635C50;--ink-3:#8C8474;--line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32;--b2:#FF8A2B;--b3:#FFC531;--b4:#F2EDE0;--cy:#3FD0C9;--vi:#A78BFA;--gr:#5FBF52;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(44px,10.5vw,116px);line-height:.84;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:62ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+.hero .map{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:22px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.hero .map a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:1px}
+.hero .map a:hover{color:var(--b1);border-color:var(--b1)}
+
+/* transport */
+.transport{position:sticky;top:0;z-index:95;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:10px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--b1);color:#fff;border:0;border-radius:4px;padding:9px 16px;cursor:pointer}
+.tbtn.stop{background:var(--b4);color:var(--ink)}
+.tbtn:hover{filter:brightness(1.08)}
+.knob{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#A9A08C}
+.knob b{color:var(--b4);font-size:12px;min-width:44px}
+.knob input[type=range]{width:90px;accent-color:var(--b1)}
+.knob select,.transport select{font-family:var(--mono);font-size:12px;background:#2A2723;color:var(--b4);border:1px solid #4A453C;border-radius:4px;padding:6px 8px}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:#A9A08C}
+.tnow b{color:var(--b3)}
+.tog{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;border:1px solid #4A453C;color:#A9A08C;background:transparent;border-radius:4px;padding:7px 9px;cursor:pointer}
+.tog.on{border-color:var(--b3);color:var(--b3)}
+.lit{display:flex;gap:3px}
+.lit i{width:9px;height:9px;border-radius:2px;background:#3A362F}
+.lit i.on{background:var(--b1)}.lit i.beat{background:#5A554B}
+
+/* sections */
+.sec{padding:48px 0 8px;border-bottom:1px solid var(--line)}
+.sechead{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:end;margin-bottom:20px}
+.sechead .n{font-family:var(--display);font-weight:800;font-size:clamp(50px,7vw,86px);line-height:.8;color:var(--b1)}
+.sechead h2{font-size:clamp(26px,3.6vw,44px)}
+.sechead p{color:var(--ink-2);margin:8px 0 0;max-width:70ch;font-size:15.5px}
+.sechead p b{color:var(--ink);font-weight:600}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:18px}
+.panel h3{font-size:19px;margin-bottom:8px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.btn{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--b4);border:1px solid var(--ink);border-radius:4px;padding:8px 13px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.hot{background:var(--b1);border-color:var(--b1);color:#fff}
+.btn:hover{filter:brightness(1.12)}
+.btn.sm{padding:6px 9px;font-size:10px}
+.ctrl{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);display:block}
+.ctrl .r{display:flex;align-items:center;gap:7px;margin-top:3px}
+.ctrl input[type=range]{flex:1;min-width:60px;accent-color:var(--b1)}
+.ctrl b{color:var(--ink);font-size:10.5px;min-width:44px;text-align:right}
+.ctrl select{font-family:var(--mono);font-size:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:6px 8px;color:var(--ink)}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:10px 0 12px}
+
+/* step grid */
+.grid{display:grid;grid-template-columns:repeat(32,1fr);gap:3px;margin:8px 0}
+.grid button{aspect-ratio:1;border:1px solid var(--line);background:var(--panel-2);border-radius:3px;cursor:pointer;padding:0;position:relative}
+.grid button.beat{background:#DDD7C8}
+.grid button.on{background:var(--ink);border-color:var(--ink)}
+.grid button.on.beat{background:var(--ink)}
+.grid button.on.off8{background:var(--b2);border-color:var(--b2)}
+.grid button.on.off16{background:var(--b1);border-color:var(--b1)}
+.grid button.now{outline:2px solid var(--b3);outline-offset:1px}
+.gridlbl{display:grid;grid-template-columns:repeat(32,1fr);gap:3px;font-family:var(--mono);font-size:9px;color:var(--ink-3);text-align:center}
+.weights{display:grid;grid-template-columns:repeat(16,1fr);gap:3px;align-items:end;height:54px;margin:8px 0 4px}
+.weights i{display:block;background:var(--ink);border-radius:2px 2px 0 0;opacity:.85}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-top:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:5px}
+
+/* cell library */
+.cells{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px;margin:10px 0 6px}
+.cell{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:9px 10px;cursor:pointer;text-align:left}
+.cell:hover{border-color:var(--ink)}
+.cell.on{border-color:var(--b1);box-shadow:inset 0 0 0 1px var(--b1)}
+.cell h4{font-size:14px}
+.cell .pat{display:grid;grid-template-columns:repeat(16,1fr);gap:2px;margin:6px 0 5px}
+.cell .pat i{height:8px;border-radius:1px;background:#D3CDBD}
+.cell .pat i.x{background:var(--ink)}.cell .pat i.x.o8{background:var(--b2)}.cell .pat i.x.o16{background:var(--b1)}
+.cell p{font-size:12px;color:var(--ink-2);margin:0;line-height:1.4}
+.cell .m{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase;margin-top:4px}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.filters button{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);border-radius:999px;padding:6px 11px;cursor:pointer}
+.filters button.on{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+
+/* piano roll */
+.roll{display:block;width:100%;height:220px;background:var(--lane);border-radius:6px;border:1px solid var(--ink)}
+.roll.tall{height:300px}
+.rollwrap{position:relative;margin:8px 0}
+.rollwrap .tag{position:absolute;top:8px;left:10px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8C8474;pointer-events:none}
+
+/* score cards */
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.sc{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:10px 11px}
+.sc .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.sc .v{font-family:var(--display);font-weight:800;font-size:26px;line-height:1.1;margin-top:2px}
+.sc .v.good{color:var(--gr)}.sc .v.warn{color:var(--b2)}.sc .v.bad{color:var(--b1)}
+.sc .s{font-size:11.5px;color:var(--ink-2);margin-top:3px;line-height:1.35}
+
+/* contour picker */
+.shapes{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:8px 0}
+.shape{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:8px;cursor:pointer;text-align:left}
+.shape:hover{border-color:var(--ink)}
+.shape.on{border-color:var(--b1);box-shadow:inset 0 0 0 1px var(--b1)}
+.shape svg{display:block;width:100%;height:36px}
+.shape h4{font-size:12.5px;margin-top:5px}
+.shape p{font-size:11px;color:var(--ink-2);margin:2px 0 0;line-height:1.35}
+
+/* presets */
+.progs{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:11px;margin-top:6px}
+.pg{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:11px 12px;cursor:pointer;display:flex;flex-direction:column;gap:5px;text-align:left}
+.pg:hover{border-color:var(--ink)}
+.pg.on{border-color:var(--b1);box-shadow:inset 0 0 0 1px var(--b1)}
+.pg h4{font-size:15px}
+.pg .rn{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--b1);letter-spacing:.05em}
+.pg p{font-size:13px;color:var(--ink-2);margin:0;line-height:1.45}
+.pg .meta{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
+
+/* transforms */
+.tx{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin:8px 0}
+.tx label{display:flex;gap:9px;align-items:flex-start;background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:9px 10px;cursor:pointer;font-size:13px}
+.tx label input{margin-top:3px;accent-color:var(--b1)}
+.tx label b{display:block;font-family:var(--display);font-size:14px}
+.tx label span{color:var(--ink-2);font-size:12px;line-height:1.35}
+
+/* phrase */
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.slot{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:9px}
+.slot .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.slot select{width:100%;margin-top:5px;font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:6px}
+.slot p{font-size:11.5px;color:var(--ink-2);margin:5px 0 0;line-height:1.35}
+.arcs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+
+/* tables + prose */
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700}
+td .p{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--b1)}
+tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);padding:10px 12px;border-radius:0 3px 3px 0;margin:14px 0 0}
+.callout b{color:var(--b1)}
+.note{font-size:14.5px;color:var(--ink-2);margin:13px 0 0;max-width:78ch}
+.note b{color:var(--ink)}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:18px}
+.rule{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;border-top:4px solid var(--b1)}
+.rule:nth-child(2){border-top-color:var(--b2)}.rule:nth-child(3){border-top-color:var(--b3)}.rule:nth-child(4){border-top-color:var(--cy)}
+.rule .n{font-family:var(--display);font-weight:800;font-size:38px;line-height:.9;color:var(--b1)}
+.rule:nth-child(2) .n{color:var(--b2)}.rule:nth-child(3) .n{color:#B08A1F}.rule:nth-child(4) .n{color:#239E98}
+.rule h3{font-size:18px;margin:8px 0 6px}
+.rule p{font-size:14px;color:var(--ink-2);margin:0}
+.recipes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.rc{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px}
+.rc h4{font-size:16px;margin-bottom:6px}
+.rc ol{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+.rc li{margin-bottom:4px}
+.rc code{font-family:var(--mono);font-size:12px;background:var(--panel-2);padding:1px 5px;border-radius:3px;color:var(--ink)}
+.foot{border-top:2px solid var(--ink);margin-top:54px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:720px){.knob input[type=range]{width:56px}.tnow{display:none}.grid{gap:2px}.slots{grid-template-columns:repeat(2,1fr)}.sechead{grid-template-columns:1fr}.roll{height:170px}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="melody-v2.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+</head>
+<body>
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Field guide 16 · melody &amp; syncopation · from 2008 progressive to 2026 peak-time</div>
+    <h1>Every melody<br>is a rhythm<br><em>wearing</em> pitches</h1>
+    <p class="sub">Most weak melodies are not wrong notes — they are notes landing on the wrong sixteenths. This sheet separates the two jobs: <strong>pick a rhythm cell, pour a contour into it, snap to a scale, then develop it over eight bars</strong>. Every lab plays live with a kick underneath so you hear the syncopation, and every lab exports MIDI straight into Ableton.</p>
+    <div class="map">
+      <a href="#s1">1 Three jobs</a><a href="#s2">2 Rhythm lab</a><a href="#s3">3 Melody lab</a><a href="#s4">4 Era presets</a><a href="#s5">5 Syncopation cookbook</a><a href="#s6">6 Transform lab</a><a href="#s7">7 Phrase builder</a><a href="#s8">8 Numbers</a><a href="#s9">9 Ableton</a>
+    </div>
+  </div>
+</div>
+
+<div class="transport">
+  <div class="wrap">
+    <button class="tbtn" id="tPlay">▶ Play</button>
+    <div class="lit" id="lit"></div>
+    <label class="knob">BPM<input type="range" id="bpm" min="100" max="160" value="130"><b id="bpmV">130</b></label>
+    <label class="knob">Root<select id="root"></select></label>
+    <label class="knob">Scale<select id="scale"></select></label>
+    <label class="knob">Swing<input type="range" id="swing" min="0" max="60" value="0"><b id="swingV">0%</b></label>
+    <label class="knob">Voice<select id="voice"><option value="pluck">Pluck</option><option value="supersaw">Supersaw</option><option value="stab">Stab</option><option value="bell">Bell</option><option value="sub">Sub</option></select></label>
+    <button class="tog on" id="tKick">Kick</button>
+    <button class="tog on" id="tHat">Hat</button>
+    <button class="tog" id="tEcho">Echo ⅛·</button>
+    <div class="tnow">now: <b id="tNow">—</b></div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section class="sec" id="s1">
+  <div class="sechead"><div class="n">1</div><div><h2>A melody has three separate jobs</h2>
+  <p>Producers who "can't write melodies" are usually trying to do all three at once on a piano roll. Do them one at a time and each one is easy. The labs below are laid out in exactly this order.</p></div></div>
+  <div class="rules">
+    <div class="rule"><div class="n">R</div><h3>Rhythm — where the notes land</h3><p>Sixteen slots per bar. Which ones you use decides whether the line pushes, drags, rolls or stomps. This is 60% of the character. A one-note melody with a great rhythm is a techno hook; a perfect scale run on straight eighths is a ringtone.</p></div>
+    <div class="rule"><div class="n">C</div><h3>Contour — the shape of the line</h3><p>Up, down, arch, zigzag, pedal-and-ping. Listeners remember shape, not pitches. Sing any famous lead: what comes back is a gesture. Contour is what you copy from an era, not the notes.</p></div>
+    <div class="rule"><div class="n">H</div><h3>Harmony — which pitches are legal</h3><p>A scale plus a rule about strong beats: chord tones on the downbeats, colour tones (2, 4, 6, ♭2) on the off-sixteenths. Snap to this and almost any contour sounds intentional.</p></div>
+    <div class="rule"><div class="n">D</div><h3>Development — what happens over 8 bars</h3><p>A 2-bar motif is an idea; a phrase is what you do with it. Repeat, vary the tail, invert, lift an octave, leave a hole. Section 7 builds the whole eight bars from one motif.</p></div>
+  </div>
+  <div class="callout"><b>Working order:</b> lock a rhythm cell (section 2) → generate a contour in a scale (section 3) → steal an era feel (section 4) → mutate (section 6) → develop into a phrase (section 7) → export → finish the sound design in Ableton. Never start from a blank piano roll.</div>
+</section>
+
+<section class="sec" id="s2">
+  <div class="sechead"><div class="n">2</div><div><h2>Rhythm lab — the sixteenth grid</h2>
+  <p>Two bars, 32 sixteenths. Click steps or load a cell. The colour of a step tells you how syncopated it is: <b>black</b> on the beat, <b>orange</b> on an off-eighth, <b>red</b> on a true off-sixteenth. Play it against the kick and hat and feel the difference before you add a single pitch.</p></div></div>
+
+  <div class="panel">
+    <h3>Metric weight — why some steps feel "wrong"</h3>
+    <p class="note" style="margin-top:0">The bar has a hierarchy. Beat 1 is heaviest, beat 3 next, then 2 and 4, then the off-eighths, then the off-sixteenths. A syncopated note is one that lands on a light slot and <b>isn't followed by a note on the next heavier slot</b> — the silence after it is what makes the ear feel the push.</p>
+    <div class="weights" id="weights"></div>
+    <div class="gridlbl" style="grid-template-columns:repeat(16,1fr)">
+      <span>1</span><span>e</span><span>&amp;</span><span>a</span><span>2</span><span>e</span><span>&amp;</span><span>a</span><span>3</span><span>e</span><span>&amp;</span><span>a</span><span>4</span><span>e</span><span>&amp;</span><span>a</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Cell library</h3>
+    <div class="filters" id="cellFilters"></div>
+    <div class="cells" id="cells"></div>
+    <div class="row">
+      <label class="ctrl">Euclidean E(k,16)<div class="r"><input type="range" id="eucK" min="1" max="15" value="5"><b id="eucKV">5</b></div></label>
+      <label class="ctrl">Rotate<div class="r"><input type="range" id="eucR" min="0" max="15" value="0"><b id="eucRV">0</b></div></label>
+      <button class="btn ghost" id="eucApply">Load Euclidean</button>
+      <button class="btn ghost" id="polyApply">Load 5-step polymeter</button>
+      <button class="btn ghost" id="poly7Apply">Load 7-step polymeter</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Your rhythm</h3>
+    <div class="grid" id="rgrid"></div>
+    <div class="gridlbl" id="rlbl"></div>
+    <div class="legend"><span><i style="background:var(--ink)"></i>on the beat</span><span><i style="background:var(--b2)"></i>off-eighth</span><span><i style="background:var(--b1)"></i>off-sixteenth</span><span><i style="background:#DDD7C8"></i>downbeat slot</span></div>
+    <div class="row">
+      <button class="btn hot" id="rPlay">▶ Play rhythm</button>
+      <button class="btn ghost" id="rShift">Displace →</button>
+      <button class="btn ghost" id="rShiftL">← Displace</button>
+      <button class="btn ghost" id="rInv">Invert (rests ↔ hits)</button>
+      <button class="btn ghost" id="rMirror">Mirror bar 2</button>
+      <button class="btn ghost" id="rClear">Clear</button>
+      <button class="btn" id="rMidi">↓ MIDI (one note)</button>
+    </div>
+    <div class="score" id="rScore"></div>
+  </div>
+</section>
+
+<section class="sec" id="s3">
+  <div class="sechead"><div class="n">3</div><div><h2>Melody lab — pour a contour into the rhythm</h2>
+  <p>The rhythm above is the mould. Choose a shape, a range and how strictly downbeats snap to chord tones, then generate. Reroll keeps the rhythm and the shape and only changes the dice. <b>Ninety percent of usable lines come out in under ten rerolls.</b></p></div></div>
+
+  <div class="panel">
+    <h3>Contour</h3>
+    <div class="shapes" id="shapes"></div>
+    <div class="ctrls">
+      <label class="ctrl">Range<div class="r"><input type="range" id="range" min="5" max="24" value="12"><b id="rangeV">12 st</b></div></label>
+      <label class="ctrl">Chord-tone snap on beats<div class="r"><input type="range" id="snap" min="0" max="100" value="70"><b id="snapV">70%</b></div></label>
+      <label class="ctrl">Gate (note length)<div class="r"><input type="range" id="gate" min="10" max="100" value="55"><b id="gateV">55%</b></div></label>
+      <label class="ctrl">Chaos (random deviation)<div class="r"><input type="range" id="chaos" min="0" max="100" value="15"><b id="chaosV">15%</b></div></label>
+      <label class="ctrl">Register<div class="r"><select id="oct"><option value="48">C3 (low lead)</option><option value="60" selected>C4 (lead)</option><option value="72">C5 (pluck / arp)</option><option value="36">C2 (bassline)</option></select></div></label>
+      <label class="ctrl">Velocity accent<div class="r"><select id="accent"><option value="beat">Beats loud</option><option value="off">Offbeats loud</option><option value="flat">Flat</option><option value="rise">Rise over 2 bars</option></select></div></label>
+    </div>
+    <div class="row">
+      <button class="btn hot" id="mGen">Generate</button>
+      <button class="btn" id="mReroll">Reroll pitches</button>
+      <button class="btn ghost" id="mRerollR">Reroll rhythm too</button>
+      <button class="btn hot" id="mPlay">▶ Play melody</button>
+      <button class="btn" id="mMidi">↓ MIDI melody</button>
+    </div>
+    <div class="rollwrap"><canvas class="roll" id="mRoll"></canvas><div class="tag">2 bars · click a note to nudge it up a scale degree · right-click down</div></div>
+    <div class="score" id="mScore"></div>
+    <div class="callout" id="mText"></div>
+  </div>
+</section>
+<section class="sec" id="s4">
+  <div class="sechead"><div class="n">4</div><div><h2>Era presets — feel, not notes</h2>
+  <p>Each card sets rhythm cell, contour, scale, register, gate, voice, swing and tempo to the <b>parameters</b> that characterise an era or artist — then rolls new pitches. Nothing here quotes a record; it recreates the recipe so the line you get is yours.</p></div></div>
+  <div class="filters" id="pgFilters"></div>
+  <div class="progs" id="presets"></div>
+</section>
+
+<section class="sec" id="s5">
+  <div class="sechead"><div class="n">5</div><div><h2>Syncopation cookbook</h2>
+  <p>Fourteen moves that convert a straight line into a groove. Each has a button that applies it to the melody in section 3 so you can A/B by ear.</p></div></div>
+  <div class="tablewrap"><table id="cook">
+    <thead><tr><th style="width:190px">Move</th><th>How</th><th>Where you hear it</th><th style="width:110px"></th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+</section>
+
+<section class="sec" id="s6">
+  <div class="sechead"><div class="n">6</div><div><h2>Transform lab — mutate, don't rewrite</h2>
+  <p>Composers develop material by transforming it; producers usually just draw something new and lose the family resemblance. Stack transforms in order on the current melody. <b>Original stays on top, result underneath.</b></p></div></div>
+  <div class="panel">
+    <div class="tx" id="tx"></div>
+    <div class="ctrls">
+      <label class="ctrl">Transpose (scale degrees)<div class="r"><input type="range" id="txT" min="-7" max="7" value="0"><b id="txTV">0</b></div></label>
+      <label class="ctrl">Displace (sixteenths)<div class="r"><input type="range" id="txD" min="-4" max="4" value="0"><b id="txDV">0</b></div></label>
+    </div>
+    <div class="row">
+      <button class="btn hot" id="xPlay">▶ Play result</button>
+      <button class="btn ghost" id="xPlayA">▶ Play original</button>
+      <button class="btn" id="xCommit">Make result the new melody</button>
+      <button class="btn" id="xMidi">↓ MIDI both</button>
+    </div>
+    <div class="rollwrap"><canvas class="roll" id="xRollA"></canvas><div class="tag">original</div></div>
+    <div class="rollwrap"><canvas class="roll" id="xRollB"></canvas><div class="tag">transformed</div></div>
+  </div>
+</section>
+
+<section class="sec" id="s7">
+  <div class="sechead"><div class="n">7</div><div><h2>Phrase builder — from 2 bars to 8</h2>
+  <p>The motif from section 3 becomes slot A. Choose what happens in each 2-bar slot. The classic pop/trance answer is <b>A · A′ · A · B</b> (statement, small change, statement, contrast); techno lives on <b>A · A · A · hole</b>. Pick an archetype or set slots by hand.</p></div></div>
+  <div class="panel">
+    <div class="arcs" id="arcs"></div>
+    <div class="slots" id="slots"></div>
+    <div class="row">
+      <button class="btn hot" id="pPlay">▶ Play 8 bars</button>
+      <button class="btn" id="pMidi">↓ MIDI phrase</button>
+      <label class="ctrl" style="margin-left:auto">Loop<div class="r"><select id="pLoop"><option value="1">8 bars once</option><option value="2">16 bars (repeat)</option></select></div></label>
+    </div>
+    <div class="rollwrap"><canvas class="roll tall" id="pRoll"></canvas><div class="tag">8 bars · 4 slots</div></div>
+  </div>
+</section>
+
+<section class="sec" id="s8">
+  <div class="sechead"><div class="n">8</div><div><h2>Numbers</h2>
+  <p>Everything below follows the transport BPM.</p></div></div>
+  <div class="recipes">
+    <div class="rc"><h4>Note lengths &amp; delay times</h4>
+      <div class="tablewrap" style="margin:0"><table id="lens"><thead><tr><th>Value</th><th>ms</th><th>Use</th></tr></thead><tbody></tbody></table></div></div>
+    <div class="rc"><h4>Interval feel (above the root)</h4>
+      <div class="tablewrap" style="margin:0"><table><thead><tr><th>Interval</th><th>Semis</th><th>Feel in a lead</th></tr></thead><tbody>
+        <tr><td>Minor 2nd</td><td class="num">1</td><td>Tension, Phrygian menace, hard-techno grind</td></tr>
+        <tr><td>Major 2nd</td><td class="num">2</td><td>Neutral step, the workhorse of runs</td></tr>
+        <tr><td>Minor 3rd</td><td class="num">3</td><td>Melancholy; the mau5 / melodic-techno colour</td></tr>
+        <tr><td>Perfect 4th</td><td class="num">5</td><td>Open, anthemic, slightly suspended</td></tr>
+        <tr><td>Tritone</td><td class="num">6</td><td>Unstable; one per phrase, on an offbeat</td></tr>
+        <tr><td>Perfect 5th</td><td class="num">7</td><td>Power, trance 1-5-8 arps, stab roots</td></tr>
+        <tr><td>Minor 6th</td><td class="num">8</td><td>Yearning; the "Strobe" leap</td></tr>
+        <tr><td>Minor 7th</td><td class="num">10</td><td>Cool, dorian, deep-house pluck</td></tr>
+        <tr><td>Octave</td><td class="num">12</td><td>Energy without harmony change — the safest big jump</td></tr>
+      </tbody></table></div></div>
+    <div class="rc"><h4>Rules of thumb</h4><ol>
+      <li><b>Leap then step back.</b> After any jump ≥ 5 semitones, move by step in the opposite direction.</li>
+      <li><b>One climax per phrase.</b> Highest note appears once, usually bar 6–7 of 8.</li>
+      <li><b>Downbeat of bar 1 = chord tone.</b> Everything else is negotiable.</li>
+      <li><b>Density budget:</b> peak-time techno 3–6 notes/bar, progressive 8–12, trance arp 12–16.</li>
+      <li><b>Leave the hole.</b> Bar 8 (or bar 4 in techno) with 2+ beats of silence resets the ear.</li>
+      <li><b>Pedal first, melody second.</b> If unsure, a repeated root note on an offbeat cell is already a hook.</li>
+    </ol></div>
+  </div>
+</section>
+
+<section class="sec" id="s9">
+  <div class="sechead"><div class="n">9</div><div><h2>Ableton — from exported MIDI to finished line</h2></div></div>
+  <div class="recipes">
+    <div class="rc"><h4>Import &amp; lock to key</h4><ol>
+      <li>Drag the exported <code>.mid</code> onto a MIDI track. Clip is already at the sheet's BPM.</li>
+      <li>Add <code>MIDI Effects → Scale</code>, set the same root and scale as the transport. Any nudging you do now stays legal.</li>
+      <li>Set clip <code>Groove</code> to <code>Swing 16 – 57%</code> for house, none for techno, <code>MPC 16 – 58</code> for garage.</li>
+    </ol></div>
+    <div class="rc"><h4>Instant trance arp from a 4-note cell</h4><ol>
+      <li>Export a 4-note melody with a sparse cell, hold notes long (gate 100%).</li>
+      <li><code>MIDI Effects → Arpeggiator</code>: Style <code>Up</code>, Rate <code>1/16</code>, Gate <code>60%</code>, Steps <code>2</code>, Distance <code>+12</code>.</li>
+      <li>Add <code>Velocity</code> device, Random <code>20</code>, then sidechain the synth to the kick — done.</li>
+    </ol></div>
+    <div class="rc"><h4>Humanise without losing the grid</h4><ol>
+      <li>Select all notes → <code>Cmd/Ctrl+U</code> to quantise 100% first (you want deliberate offsets, not accidents).</li>
+      <li>Move only the off-sixteenth notes late by <code>8–15 ms</code>: they are the pushes; late pushes feel lazy-funky, early pushes feel urgent.</li>
+      <li>Velocity: beats 1 and 3 at <code>110</code>, off-sixteenths at <code>70–85</code>. Then invert that for a French-house feel.</li>
+    </ol></div>
+    <div class="rc"><h4>Develop with Follow Actions</h4><ol>
+      <li>Export the four slot variants from section 7 as separate clips (A, A′, B, hole).</li>
+      <li>In Session view, Follow Action on A: <code>Play again ×3 → Next</code>. On B: <code>First</code>.</li>
+      <li>Record the Session clips into Arrangement — you get organic 16-bar phrases without drawing.</li>
+    </ol></div>
+    <div class="rc"><h4>Sound-design order for a lead</h4><ol>
+      <li>Get the rhythm cell right at one pitch with a dull sound.</li>
+      <li>Add pitches. If it stops grooving, the contour is fighting the cell — widen the range or reduce chaos.</li>
+      <li>Only now: unison, filter env, dotted-eighth delay (<code>¼· / ⅛·</code> times from section 8), reverb pre-delay ≈ one 32nd.</li>
+    </ol></div>
+    <div class="rc"><h4>Bassline from the same tool</h4><ol>
+      <li>Register <code>C2</code>, range <code>5–7</code>, snap <code>100%</code>, contour <code>Pedal</code> or <code>Octave</code>.</li>
+      <li>Cell: <code>Off-eighths</code> for house, <code>Tresillo</code> for tech-house, <code>Sixteenth roll</code> for psy/hard.</li>
+      <li>Export, then use section 6 <code>Thin</code> to leave holes for the kick.</li>
+    </ol></div>
+  </div>
+</section>
+
+</main>
+<div class="foot"><div class="wrap"><strong>Field guide 16 of 16.</strong> Audio is synthesised in the browser and will sound like a sketch — that is the point. The rhythm, contour and development decisions transfer; the sound does not. Export, then finish it in the DAW.</div></div>
+<script>
+/* ============ DATA ============ */
+const NOTES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const SCALES={
+  minor:{n:'Natural minor',s:[0,2,3,5,7,8,10]},
+  dorian:{n:'Dorian',s:[0,2,3,5,7,9,10]},
+  phrygian:{n:'Phrygian',s:[0,1,3,5,7,8,10]},
+  harm:{n:'Harmonic minor',s:[0,2,3,5,7,8,11]},
+  phrydom:{n:'Phrygian dominant',s:[0,1,4,5,7,8,10]},
+  minpent:{n:'Minor pentatonic',s:[0,3,5,7,10]},
+  major:{n:'Major',s:[0,2,4,5,7,9,11]},
+  mixo:{n:'Mixolydian',s:[0,2,4,5,7,9,10]},
+  majpent:{n:'Major pentatonic',s:[0,2,4,7,9]},
+};
+const CHORD_DEG={7:[0,2,4],5:[0,2,3]}; // indexes of chord tones in a 7 / 5 note scale
+const WEIGHT=[1,.15,.45,.15,.65,.15,.45,.15,.85,.15,.45,.15,.65,.15,.45,.15];
+
+const CELLS=[
+ {id:'four',f:'Anchors',n:'Four to the floor',p:'x...x...x...x...',d:'Zero syncopation. The reference. Great for a pedal-tone lead over a busy bass.',m:'techno stab · organ'},
+ {id:'off8',f:'Anchors',n:'Off-eighths',p:'..x...x...x...x.',d:'The house bassline and the offbeat techno stab. Every hit dodges the kick.',m:'house · hard techno'},
+ {id:'eighths',f:'Anchors',n:'Straight eighths',p:'x.x.x.x.x.x.x.x.',d:'Motor rhythm. Boring alone, perfect as an arp bed under a sparse hook.',m:'trance bed · disco'},
+ {id:'roll16',f:'Anchors',n:'Sixteenth roll',p:'xxxxxxxxxxxxxxxx',d:'Full grid. Melody comes only from contour and accents. Psy, hard trance, hypertechno.',m:'psy · hardgroove'},
+ {id:'tresillo',f:'Latin',n:'Tresillo 3-3-2',p:'x..x..x.x..x..x.',d:'The most-used syncopation on earth. Tech-house basslines, reggaeton, Afro house leads.',m:'tech house · afro'},
+ {id:'cinq',f:'Latin',n:'Cinquillo',p:'x.xx.xx.x.xx.xx.',d:'Tresillo with the gaps filled by upbeats. Busier, bouncier.',m:'latin house'},
+ {id:'son',f:'Latin',n:'Son clave 3-2',p:'x..x..x...x.x...',d:'Two-bar feel compressed to one. Leaves a big hole on beat 3 that the kick owns.',m:'afro house · tribal'},
+ {id:'rumba',f:'Latin',n:'Rumba clave',p:'x..x...x..x.x...',d:'Son clave with the third hit delayed a sixteenth. Looser, more rolling.',m:'organic house'},
+ {id:'dembow',f:'Latin',n:'Dembow',p:'x..xx..xx..x..x.',d:'Kick-and-snare skeleton of reggaeton; as a melodic cell it stomps.',m:'2026 crossover'},
+ {id:'mau5',f:'Progressive',n:'Anticipated push',p:'x..x.x..x..x.x..',d:'Hits a sixteenth early into beats 2 and 4. The progressive-house "lean-forward" feel.',m:'deadmau5 · prydz'},
+ {id:'gallop',f:'Progressive',n:'Gallop',p:'x.xxx.xxx.xxx.xx',d:'Rest on every "e". Reads as a fast triplet even though it is straight sixteenths.',m:'big room · trance'},
+ {id:'broken',f:'Progressive',n:'Broken eighths',p:'x.x..x.x.x..x.x.',d:'Eighths with the "&" of 2 and 4 removed. Feels like it stumbles forward.',m:'prog · melodic techno'},
+ {id:'dot8',f:'Polymeter',n:'Dotted-eighth (3 over 4)',p:'x..x..x..x..x..x..x..x..x..x..x.',d:'Every three sixteenths across two bars. Realigns with the kick every 3 beats — hypnotic.',m:'melodic techno · delay-style'},
+ {id:'five',f:'Polymeter',n:'Five-step',p:'x....x....x....x....x....x....x.',d:'Every five sixteenths. Takes 5 bars to resolve; the line seems to drift over the kick.',m:'hypnotic techno'},
+ {id:'seven',f:'Polymeter',n:'Seven-step',p:'x......x......x......x......x...',d:'Every seven. Even slower drift; use with a pedal tone so harmony stays put.',m:'rominimal · dub techno'},
+ {id:'twostep',f:'Garage',n:'2-step skip',p:'x.....x...x...x.',d:'Kick on 1, push into 2, snare-ish 3. The UKG kick pattern as a melody cell.',m:'UKG · 2026 garage revival'},
+ {id:'skipbass',f:'Garage',n:'Skipping bass',p:'x..x....x..x.x..',d:'Long-short-long. Speed-garage and bassline house.',m:'speed garage'},
+ {id:'stab',f:'Techno',n:'Delayed stab',p:'..x....x..x....x',d:'Off-eighth on 1 then an off-sixteenth on 2. The 2020s peak-time stab rhythm.',m:'peak-time · hard groove'},
+ {id:'onenote',f:'Techno',n:'One-note hook',p:'x..x.x.....x.x..',d:'Front-loaded burst, then a hole. Meant for a single repeated pitch.',m:'hard techno · schranz'},
+ {id:'callresp',f:'Techno',n:'Call &amp; hole',p:'x.x.x..x........x.x.x..x..x.x...',d:'Bar 1 speaks, bar 2 answers shorter. Built-in phrase structure.',m:'melodic techno'},
+ {id:'rests',f:'Techno',n:'Rests as rhythm',p:'x.x.....x.x.....',d:'Two hits, then silence. The kick and bass fill the gap; the ear waits for the return.',m:'dub techno · minimal'},
+ {id:'trancearp',f:'Trance',n:'Rolling trance',p:'x.x.xxx.x.x.xxx.',d:'Eighths that speed into a sixteenth flurry at the end of each beat pair.',m:'uplifting · 2026 trance revival'},
+ {id:'psy',f:'Trance',n:'Psy gallop',p:'.xxx.xxx.xxx.xxx',d:'Rest on the beat, three sixteenths after. Kick owns the downbeat completely.',m:'psytrance'},
+ {id:'hyper',f:'Trance',n:'Hyper-bounce',p:'x.x.x.xxx.x.x.xx',d:'Eighths with a stutter on beat 4 — the hypertechno / hardstyle-lite bounce without the kick sound.',m:'hypertechno 2024–26'},
+];
+
+const SHAPES=[
+ {id:'arch',n:'Arch',d:'Rise to a peak in the middle, fall back.',f:(k,n)=>Math.sin(Math.PI*k/Math.max(1,n-1))},
+ {id:'wave',n:'Wave',d:'Two gentle humps. Rolling, deep-house.',f:(k,n)=>.5+.5*Math.sin(2*Math.PI*2*k/Math.max(1,n))},
+ {id:'rise',n:'Rise',d:'Climbs across two bars. Build energy.',f:(k,n)=>k/Math.max(1,n-1)},
+ {id:'fall',n:'Fall',d:'Starts high, descends. Melancholic.',f:(k,n)=>1-k/Math.max(1,n-1)},
+ {id:'zig',n:'Zigzag',d:'Alternates low/high with slow lift.',f:(k,n)=>(k%2)*.6+.4*k/Math.max(1,n-1)},
+ {id:'pedal',n:'Pedal & ping',d:'Root every other hit, colour notes between.',f:(k,n)=>k%2?.3+.7*(((k>>1)%4)/3):0},
+ {id:'octave',n:'Octave bounce',d:'Root ↔ octave. Set range to 12.',f:(k,n)=>k%2?1:0},
+ {id:'stairs',n:'Stairs down',d:'Four descending plateaus.',f:(k,n)=>1-Math.floor(4*k/Math.max(1,n))/3},
+ {id:'walk',n:'Random walk',d:'Steps by a degree at a time. Chaos slider sets the size.',walk:true},
+ {id:'arpup',n:'Arp up 1-3-5-8',abs:[0,2,4,7],d:'Broken chord climbing.'},
+ {id:'arpud',n:'Arp up-down',abs:[0,2,4,7,4,2],d:'Broken chord in an arch.'},
+ {id:'trance',n:'1-5-8-5',abs:[0,4,7,4],d:'The trance/rave arp skeleton.'},
+ {id:'m3',n:'Minor-third rock',abs:[0,2,0,2,0,2,4,2],d:'Root ↔ 3rd, occasional 5th. The mau5 sway.'},
+ {id:'qa',n:'Question / answer',d:'Bar 1 rises, bar 2 falls.',f:(k,n)=>{const t=k/Math.max(1,n-1);return t<.5?t*2:1-(t-.5)*2}},
+];
+
+const PRESETS=[
+ {f:'Progressive 2008–12',n:'Strobe-era arpeggio',rn:'MAU5 · 128',d:'Long broken-chord arp, minor-third colour, wide range, medium gate, no swing. Build it 6 minutes.',bpm:128,scale:'minor',cell:'broken',shape:'arpud',range:19,snap:90,gate:60,voice:'pluck',swing:0,echo:1,oct:60,chaos:8},
+ {f:'Progressive 2008–12',n:'Ghosts pluck',rn:'MAU5 · 128',d:'Anticipated push cell, pedal-and-ping contour, short pluck, dorian for the lift.',bpm:128,scale:'dorian',cell:'mau5',shape:'pedal',range:12,snap:80,gate:35,voice:'pluck',swing:0,echo:1,oct:60,chaos:15},
+ {f:'Progressive 2008–12',n:'Opus climb',rn:'PRYDZ · 126',d:'Rising contour on eighths, supersaw, snap hard to chord tones. One long crescendo.',bpm:126,scale:'minor',cell:'eighths',shape:'rise',range:17,snap:100,gate:70,voice:'supersaw',swing:0,echo:1,oct:60,chaos:5},
+ {f:'Progressive 2008–12',n:'Anjuna pluck',rn:'ANJUNA · 124',d:'Wave contour, gallop cell, high register bell-pluck. Warm, hopeful, endless.',bpm:124,scale:'major',cell:'gallop',shape:'wave',range:12,snap:70,gate:40,voice:'bell',swing:0,echo:1,oct:72,chaos:20},
+ {f:'French / disco house',n:'Filter riff',rn:'FRENCH · 122',d:'Off-eighths, minor-pentatonic, low register, 57% swing. Everything on the "and".',bpm:122,scale:'minpent',cell:'off8',shape:'zig',range:10,snap:60,gate:50,voice:'stab',swing:40,echo:0,oct:48,chaos:20},
+ {f:'French / disco house',n:'Disco octave bass-lead',rn:'DISCO · 120',d:'Octave bounce on eighths. The 1978 bass idea used as a lead.',bpm:120,scale:'minor',cell:'eighths',shape:'octave',range:12,snap:100,gate:45,voice:'sub',swing:30,echo:0,oct:36,chaos:0},
+ {f:'French / disco house',n:'Chicago stab',rn:'CHI · 124',d:'Four-on-floor stab cell with one dropped hit, stairs-down contour, square stab.',bpm:124,scale:'dorian',cell:'four',shape:'stairs',range:7,snap:100,gate:30,voice:'stab',swing:20,echo:0,oct:60,chaos:10},
+ {f:'Melodic techno 2016–23',n:'Afterlife pedal',rn:'AFTERLIFE · 124',d:'Dotted-eighth polymeter, root pedal with rare colour tones, long gate, echo. Hypnosis.',bpm:124,scale:'minor',cell:'dot8',shape:'pedal',range:12,snap:100,gate:80,voice:'supersaw',swing:0,echo:1,oct:48,chaos:6},
+ {f:'Melodic techno 2016–23',n:'Call-and-hole lead',rn:'MELODIC · 124',d:'Two-bar call/hole cell, question-answer contour, harmonic minor for the leading tone.',bpm:124,scale:'harm',cell:'callresp',shape:'qa',range:14,snap:80,gate:55,voice:'pluck',swing:0,echo:1,oct:60,chaos:15},
+ {f:'Melodic techno 2016–23',n:'Glue-style roller',rn:'BICEP · 128',d:'Broken eighths, wave contour, dorian, warm pluck, tiny swing. Melancholic but moving.',bpm:128,scale:'dorian',cell:'broken',shape:'wave',range:12,snap:70,gate:50,voice:'pluck',swing:8,echo:1,oct:60,chaos:20},
+ {f:'Melodic techno 2016–23',n:'ARTBAT lift',rn:'MELODIC · 125',d:'Rolling trance cell in a lower register, rise contour, supersaw. Big-room melodic.',bpm:125,scale:'minor',cell:'trancearp',shape:'rise',range:12,snap:90,gate:60,voice:'supersaw',swing:0,echo:1,oct:48,chaos:8},
+ {f:'Trance',n:'Uplifting 1-5-8',rn:'UPLIFT · 138',d:'The classic: rolling sixteenths, 1-5-8-5 skeleton, supersaw, echo, 138.',bpm:138,scale:'minor',cell:'roll16',shape:'trance',range:12,snap:100,gate:45,voice:'supersaw',swing:0,echo:1,oct:60,chaos:5},
+ {f:'Trance',n:'Psy roller',rn:'PSY · 142',d:'Rest-on-beat gallop, minor-third rock, phrygian, tight sub-pluck. Kick owns the 1.',bpm:142,scale:'phrygian',cell:'psy',shape:'m3',range:7,snap:100,gate:25,voice:'sub',swing:0,echo:0,oct:36,chaos:10},
+ {f:'Trance',n:'2026 trance revival',rn:'REVIVAL · 136',d:'Rolling cell, arch contour, harmonic minor, bell. Nostalgia with modern restraint.',bpm:136,scale:'harm',cell:'trancearp',shape:'arch',range:14,snap:85,gate:50,voice:'bell',swing:0,echo:1,oct:72,chaos:12},
+ {f:'Peak-time / hard techno',n:'One-note stab',rn:'PEAK · 132',d:'Delayed-stab cell, flat contour (range 0-ish), square stab. All rhythm, no pitch.',bpm:132,scale:'minor',cell:'stab',shape:'pedal',range:5,snap:100,gate:20,voice:'stab',swing:0,echo:0,oct:48,chaos:0},
+ {f:'Peak-time / hard techno',n:'Phrygian grind',rn:'HARD · 145',d:'One-note-hook cell, root ↔ ♭2 rock via phrygian + minor-third contour, low register.',bpm:145,scale:'phrygian',cell:'onenote',shape:'m3',range:6,snap:60,gate:30,voice:'stab',swing:0,echo:0,oct:48,chaos:10},
+ {f:'Peak-time / hard techno',n:'Hard-groove tresillo',rn:'GROOVE · 140',d:'Tresillo on a sub, octave contour, tiny swing. The Latin skeleton under 2020s hard groove.',bpm:140,scale:'minpent',cell:'tresillo',shape:'octave',range:12,snap:100,gate:40,voice:'sub',swing:10,echo:0,oct:36,chaos:5},
+ {f:'Peak-time / hard techno',n:'Hypnotic five-step',rn:'HYPNO · 134',d:'Five-step polymeter, pedal contour, long gate. Two-bar loop that never sits still.',bpm:134,scale:'minor',cell:'five',shape:'pedal',range:7,snap:100,gate:90,voice:'pluck',swing:0,echo:1,oct:48,chaos:0},
+ {f:'2024–26 crossover',n:'Hypertechno bounce',rn:'HYPER · 150',d:'Hyper-bounce cell, zigzag, major pentatonic, bright bell. Yes, major. It is 2026.',bpm:150,scale:'majpent',cell:'hyper',shape:'zig',range:12,snap:70,gate:35,voice:'bell',swing:0,echo:1,oct:72,chaos:15},
+ {f:'2024–26 crossover',n:'Afro house lead',rn:'AFRO · 122',d:'Son clave cell, arch contour, dorian, wooden pluck, 25% swing. Space over speed.',bpm:122,scale:'dorian',cell:'son',shape:'arch',range:9,snap:70,gate:40,voice:'bell',swing:25,echo:0,oct:60,chaos:20},
+ {f:'2024–26 crossover',n:'UKG revival riff',rn:'UKG · 134',d:'2-step skip, question/answer, minor pentatonic, mid-register, heavy swing.',bpm:134,scale:'minpent',cell:'twostep',shape:'qa',range:12,snap:60,gate:40,voice:'pluck',swing:45,echo:0,oct:60,chaos:25},
+ {f:'2024–26 crossover',n:'Speed-garage bass-lead',rn:'SPEED · 138',d:'Skipping bass cell, octave bounce, sub voice, swing. Bassline house energy.',bpm:138,scale:'minor',cell:'skipbass',shape:'octave',range:12,snap:100,gate:35,voice:'sub',swing:35,echo:0,oct:36,chaos:5},
+ {f:'2024–26 crossover',n:'Dembow techno',rn:'DEMBOW · 130',d:'Dembow cell, stairs contour, phrygian dominant. Reggaeton skeleton in a techno coat.',bpm:130,scale:'phrydom',cell:'dembow',shape:'stairs',range:10,snap:70,gate:45,voice:'stab',swing:15,echo:0,oct:48,chaos:12},
+ {f:'2024–26 crossover',n:'Euro-revival hook',rn:'EURO · 140',d:'Gallop cell, arch, harmonic minor, supersaw. The 1994 lead recipe with 2026 restraint.',bpm:140,scale:'harm',cell:'gallop',shape:'arch',range:14,snap:90,gate:50,voice:'supersaw',swing:0,echo:1,oct:60,chaos:10},
+];
+
+const COOK=[
+ ['Anticipation','Move a downbeat note one sixteenth early and hold it across the beat.','Progressive house pushes, funk','antic'],
+ ['Delay','Move a downbeat note one sixteenth late. Feels lazy, heavy, dub.','Dub techno, lo-fi house','delay'],
+ ['Displace the whole line','Rotate every note by one sixteenth. Same melody, new relationship to the kick.','Melodic techno variations','disp'],
+ ['Tie across the bar','Let the last note of bar 1 ring into bar 2 and drop the downbeat.','Trance, prog breakdowns','tie'],
+ ['Rests as rhythm','Delete the notes on beat 3 of every bar. The gap becomes the hook.','Minimal, dub techno','holes'],
+ ['Hemiola (3 over 4)','Re-place the hits every three sixteenths. Realigns every 3 beats.','Melodic techno, Afterlife','hemiola'],
+ ['Polymeter 5/16','Hits every five sixteenths; the phrase resolves after 5 bars.','Hypnotic techno','poly5'],
+ ['Off-eighth swap','Move every on-beat note to the following "and".','House basslines, French filter riffs','off8'],
+ ['Gallop fill','Turn each held note into short-short-long.','Trance, big room','gallop'],
+ ['Front-load + hole','Keep only the first 6 sixteenths of each bar.','Peak-time techno stabs','front'],
+ ['Call &amp; answer','Bar 2 = bar 1 with pitches inverted and one fewer hit.','Everything melodic','qa'],
+ ['Octave lift on 4','Every note on beat 4 jumps up an octave.','Rave, hardgroove','oct4'],
+ ['Swing the sixteenths','Global swing 15–25% (house) or 40%+ (garage). Off-sixteenths late.','House, UKG','swing'],
+ ['Velocity syncopation','Same notes; accent the off-sixteenths, soften the beats.','Disco, French house','vel'],
+];
+
+const TX=[
+ {id:'transpose',n:'Transpose',d:'By the slider, in scale degrees. Keeps it in key.'},
+ {id:'invert',n:'Invert',d:'Mirror the contour around the first note. Up becomes down.'},
+ {id:'retro',n:'Retrograde',d:'Play the note order backwards over the same rhythm.'},
+ {id:'displace',n:'Displace',d:'Rotate by the slider (sixteenths). Reshapes the groove.'},
+ {id:'octalt',n:'Octave alternate',d:'Every other note jumps an octave. Rave energy.'},
+ {id:'thin',n:'Thin',d:'Remove every note that is not on an eighth. Leaves holes.'},
+ {id:'double',n:'Double',d:'Add a repeat one sixteenth after each note (ratchet).'},
+ {id:'legato',n:'Legato',d:'Extend every note until the next one starts.'},
+ {id:'stacc',n:'Staccato',d:'Shorten every note to one sixteenth.'},
+ {id:'answer',n:'Answer bar 2',d:'Bar 2 becomes an inverted, thinner reply to bar 1.'},
+ {id:'lead',n:'Leading tones',d:'Insert the 7th degree a sixteenth before each root on a beat.'},
+ {id:'human',n:'Humanise velocity',d:'±15 velocity, off-sixteenths a touch softer.'},
+];
+
+const ARCS=[
+ {n:'A A′ A B (pop / trance)',s:['A','A2','A','B']},
+ {n:'A A A hole (techno)',s:['A','A','A','H']},
+ {n:'A B A B (house)',s:['A','B','A','B']},
+ {n:'A A↑ A↑↑ hole (build)',s:['A','U','U2','H']},
+ {n:'Q A Q A′ (call/answer)',s:['A','I','A','A2']},
+ {n:'A · A · thin · A (breath)',s:['A','A','T','A']},
+];
+const SLOTS={A:'A — motif as is',A2:'A′ — last 4 notes changed',B:'B — contrast (inverted, new rhythm end)',I:'Answer — inverted, thinner',U:'A↑ — up a 3rd',U2:'A↑↑ — up a 5th / octave',T:'Thin — every other note',H:'Hole — bar 1 only, then silence'};
+/* ============ STATE ============ */
+const $=id=>document.getElementById(id);
+const S={bpm:130,root:9,scale:'minor',swing:0,voice:'pluck',kick:true,hat:true,echo:false,
+  rhythm:Array(32).fill(false),mel:Array(32).fill(null),shape:'arch',range:12,snap:70,gate:55,chaos:15,oct:60,accent:'beat',
+  cellId:null,seed:7,tx:new Set(),txT:0,txD:0,slots:['A','A2','A','B'],pLoop:1};
+let rng=mulberry(S.seed);
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const scale=()=>SCALES[S.scale].s;
+const isBeat=i=>i%4===0, isOff8=i=>i%4===2, isOff16=i=>i%2===1;
+function degToSemi(idx){const s=scale();const L=s.length;const o=Math.floor(idx/L);const d=((idx%L)+L)%L;return s[d]+12*o}
+function semiToDeg(semi){const s=scale();const L=s.length;const o=Math.floor(semi/12);const r=((semi%12)+12)%12;let best=0,bd=99;s.forEach((v,i)=>{const d=Math.abs(v-r);if(d<bd){bd=d;best=i}});return best+o*L}
+function degCount(range){let n=0;while(degToSemi(n)<=range)n++;return Math.max(2,n)}
+
+/* ============ AUDIO ============ */
+let AC=null,master,echoIn,echoDelay;
+function audio(){if(AC)return AC;AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=.8;
+  const comp=AC.createDynamicsCompressor();comp.threshold.value=-12;comp.ratio.value=4;master.connect(comp);comp.connect(AC.destination);
+  echoIn=AC.createGain();echoDelay=AC.createDelay(2);const fb=AC.createGain();fb.gain.value=.38;const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=3200;const wet=AC.createGain();wet.gain.value=.32;
+  echoIn.connect(echoDelay);echoDelay.connect(lp);lp.connect(fb);fb.connect(echoDelay);lp.connect(wet);wet.connect(master);return AC}
+const hz=m=>440*Math.pow(2,(m-69)/12);
+function voice(midi,t,dur,vel){const ac=AC;const f=hz(midi);const out=AC.createGain();out.connect(master);if(S.echo)out.connect(echoIn);
+  const v=S.voice;const g=out.gain;const peak=.18*vel;
+  if(v==='pluck'){const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f;const flt=ac.createBiquadFilter();flt.type='lowpass';flt.Q.value=6;
+    flt.frequency.setValueAtTime(Math.min(12000,f*10),t);flt.frequency.exponentialRampToValueAtTime(Math.max(200,f*1.2),t+.12);
+    o.connect(flt);flt.connect(out);g.setValueAtTime(0,t);g.linearRampToValueAtTime(peak,t+.004);g.exponentialRampToValueAtTime(.001,t+Math.max(.08,dur));o.start(t);o.stop(t+dur+.05)}
+  else if(v==='supersaw'){const det=[-12,-7,-3,0,3,7,12];const flt=ac.createBiquadFilter();flt.type='lowpass';flt.frequency.setValueAtTime(900,t);flt.frequency.linearRampToValueAtTime(5000,t+.06);flt.frequency.exponentialRampToValueAtTime(1500,t+dur);flt.connect(out);
+    det.forEach(c=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f;o.detune.value=c*1.6;const gg=ac.createGain();gg.gain.value=.22;o.connect(gg);gg.connect(flt);o.start(t);o.stop(t+dur+.1)});
+    g.setValueAtTime(0,t);g.linearRampToValueAtTime(peak*.9,t+.02);g.setValueAtTime(peak*.9,t+dur*.85);g.exponentialRampToValueAtTime(.001,t+dur+.08)}
+  else if(v==='stab'){const o=ac.createOscillator();o.type='square';o.frequency.value=f;const o2=ac.createOscillator();o2.type='sawtooth';o2.frequency.value=f*1.005;const flt=ac.createBiquadFilter();flt.type='bandpass';flt.Q.value=2;flt.frequency.setValueAtTime(Math.min(9000,f*6),t);flt.frequency.exponentialRampToValueAtTime(Math.max(300,f*1.5),t+.09);
+    o.connect(flt);o2.connect(flt);flt.connect(out);g.setValueAtTime(0,t);g.linearRampToValueAtTime(peak,t+.003);g.exponentialRampToValueAtTime(.001,t+Math.min(dur,.25));o.start(t);o2.start(t);o.stop(t+.3);o2.stop(t+.3)}
+  else if(v==='bell'){[1,2,3.01].forEach((r,i)=>{const o=ac.createOscillator();o.type='sine';o.frequency.value=f*r;const gg=ac.createGain();gg.gain.setValueAtTime(0,t);gg.gain.linearRampToValueAtTime(peak*[1,.35,.12][i],t+.003);gg.gain.exponentialRampToValueAtTime(.001,t+Math.max(.15,dur*[1,.6,.4][i]));o.connect(gg);gg.connect(out);o.start(t);o.stop(t+dur+.1)});g.value=1}
+  else{const o=ac.createOscillator();o.type='sine';o.frequency.value=f;const o2=ac.createOscillator();o2.type='triangle';o2.frequency.value=f*2;const gg=ac.createGain();gg.gain.value=.25;o2.connect(gg);gg.connect(out);o.connect(out);
+    g.setValueAtTime(0,t);g.linearRampToValueAtTime(peak*1.6,t+.006);g.setValueAtTime(peak*1.6,t+dur*.7);g.exponentialRampToValueAtTime(.001,t+dur);o.start(t);o2.start(t);o.stop(t+dur+.05);o2.stop(t+dur+.05)}}
+function kick(t){const o=AC.createOscillator();const g=AC.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(48,t+.09);g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.32);o.connect(g);g.connect(master);o.start(t);o.stop(t+.35)}
+let noiseBuf=null;
+function hat(t,open){if(!noiseBuf){noiseBuf=AC.createBuffer(1,AC.sampleRate*.2,AC.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+  const s=AC.createBufferSource();s.buffer=noiseBuf;const f=AC.createBiquadFilter();f.type='highpass';f.frequency.value=7000;const g=AC.createGain();g.gain.setValueAtTime(open?.25:.12,t);g.gain.exponentialRampToValueAtTime(.001,t+(open?.12:.04));s.connect(f);f.connect(g);g.connect(master);s.start(t);s.stop(t+.15)}
+
+/* ============ SEQUENCER ============ */
+const P={playing:false,seq:null,len:32,step:0,next:0,timer:null,canvas:null,start:0,drawFn:null};
+const stepDur=()=>60/S.bpm/4;
+function swingOff(i){return isOff16(i)?stepDur()*(S.swing/100)*.5:0}
+function play(seq,len,canvas,drawFn){audio();if(AC.state==='suspended')AC.resume();stop(false);P.seq=seq;P.len=len;P.canvas=canvas;P.drawFn=drawFn;P.step=0;P.next=AC.currentTime+.06;P.start=P.next;P.playing=true;
+  $('tPlay').textContent='■ Stop';$('tPlay').classList.add('stop');P.timer=setInterval(tick,25);raf()}
+function stop(ui=true){if(P.timer)clearInterval(P.timer);P.timer=null;P.playing=false;if(echoDelay)echoDelay.delayTime.value=stepDur()*6;$('tPlay').textContent='▶ Play';$('tPlay').classList.remove('stop');if(P.drawFn)P.drawFn(-1);document.querySelectorAll('.grid button.now').forEach(b=>b.classList.remove('now'))}
+function tick(){while(P.next<AC.currentTime+.12){const i=P.step;const t=P.next+swingOff(i);
+  if(S.kick&&i%4===0)kick(P.next);if(S.hat&&i%4===2)hat(t,false);
+  const n=P.seq[i];if(n){const midi=S.oct+S.root-12+n.p;const d=Math.max(.04,n.len*stepDur()*.98);voice(midi,t,d,n.vel)}
+  P.step=(P.step+1)%P.len;P.next+=stepDur()}}
+function raf(){if(!P.playing)return;if(echoDelay)echoDelay.delayTime.value=stepDur()*6;const el=AC.currentTime-P.start;const cur=Math.floor(el/stepDur())%P.len;if(P.drawFn)P.drawFn(cur);
+  const bar=Math.floor(cur/16)%2,beat=Math.floor(cur/4)%4;document.querySelectorAll('#lit i').forEach((e,k)=>{e.className=k===beat+4*bar?'on':(k%4===0?'beat':'')});
+  $('tNow').textContent=`bar ${Math.floor(cur/16)+1} · beat ${beat+1}${isBeat(cur)?'':isOff8(cur)?' &':isOff16(cur)?' ·':''}`;requestAnimationFrame(raf)}
+
+/* ============ RHYTHM ============ */
+function loadCell(id){const c=CELLS.find(x=>x.id===id);let p=c.p;if(p.length===16)p=p+p;S.rhythm=[...p].map(ch=>ch==='x');S.cellId=id;renderCells();renderRhythm()}
+function euclid(k,n,rot){const out=[];let bucket=0;for(let i=0;i<n;i++){bucket+=k;if(bucket>=n){bucket-=n;out.push(true)}else out.push(false)}const r=out.map((_,i)=>out[(i-rot+n)%n]);return r}
+function rhythmStats(r){const on=r.map((v,i)=>v?i:-1).filter(i=>i>=0);const n=on.length;if(!n)return{sync:0,dens:0,gap:32,n:0};
+  let ws=0;on.forEach(i=>{let w=1-WEIGHT[i%16];const nxt=r[(i+1)%32]||(isOff16(i)&&r[(i+1)%32]);if(isOff16(i)&&!r[(i+1)%32])w+=.25;ws+=w});
+  let gap=0,cur=0;for(let i=0;i<64;i++){if(r[i%32]){gap=Math.max(gap,cur);cur=0}else cur++}
+  return{sync:Math.round(100*ws/n/1.25),dens:n/2,gap,n}}
+function renderRhythm(){const g=$('rgrid');g.innerHTML='';S.rhythm.forEach((v,i)=>{const b=document.createElement('button');b.className=(isBeat(i)?'beat ':'')+(v?'on ':'')+(v&&isOff8(i)?'off8 ':'')+(v&&isOff16(i)?'off16':'');b.title=`step ${i+1}`;b.onclick=()=>{S.rhythm[i]=!S.rhythm[i];S.cellId=null;renderCells();renderRhythm()};g.appendChild(b)});
+  $('rlbl').innerHTML=S.rhythm.map((_,i)=>`<span>${i%4===0?(Math.floor(i/4)%4+1):(i%4===2?'&':'·')}</span>`).join('');
+  const st=rhythmStats(S.rhythm);$('rScore').innerHTML=card('Syncopation',st.sync+'%',st.sync<25?'warn':st.sync<60?'good':'bad',st.sync<25?'Sits on the grid — a bed, not a hook':st.sync<60?'Pushes against the kick — hook territory':'Very loose — needs a strong kick/bass anchor')+
+    card('Density',st.dens+' /bar','',st.dens<4?'Sparse: stab / hook':st.dens<9?'Mid: lead / riff':'Busy: arp / roller')+card('Longest rest',st.gap+' st','',st.gap>=6?'Has a real hole — the ear waits':'Continuous — consider one hole')+card('Hits',st.n,'','over 2 bars')}
+function card(k,v,cls,s){return `<div class="sc"><div class="k">${k}</div><div class="v ${cls}">${v}</div><div class="s">${s}</div></div>`}
+let cellFilter='All';
+function renderCells(){const fams=['All',...new Set(CELLS.map(c=>c.f))];$('cellFilters').innerHTML=fams.map(f=>`<button class="${f===cellFilter?'on':''}" data-f="${f}">${f}</button>`).join('');
+  $('cellFilters').querySelectorAll('button').forEach(b=>b.onclick=()=>{cellFilter=b.dataset.f;renderCells()});
+  const box=$('cells');box.innerHTML='';CELLS.filter(c=>cellFilter==='All'||c.f===cellFilter).forEach(c=>{const p=c.p.length===16?c.p:c.p.slice(0,16);const el=document.createElement('button');el.className='cell'+(S.cellId===c.id?' on':'');
+    el.innerHTML=`<h4>${c.n}</h4><div class="pat">${[...p].map((ch,i)=>`<i class="${ch==='x'?'x':''} ${ch==='x'&&isOff8(i)?'o8':''} ${ch==='x'&&isOff16(i)?'o16':''}"></i>`).join('')}</div><p>${c.d}</p><div class="m">${c.m}${c.p.length>16?' · 2-bar':''}</div>`;
+    el.onclick=()=>{loadCell(c.id);play(rhythmSeq(),32,null,drawGrid)};box.appendChild(el)})}
+function rhythmSeq(){return S.rhythm.map(v=>v?{p:0,len:1,vel:.9}:null)}
+function drawGrid(cur){document.querySelectorAll('#rgrid button').forEach((b,i)=>b.classList.toggle('now',i===cur))}
+function renderWeights(){$('weights').innerHTML=WEIGHT.map(w=>`<i style="height:${Math.round(w*100)}%;opacity:${.35+w*.65}"></i>`).join('')}
+
+/* ============ MELODY GEN ============ */
+function generate(rerollSeed=true){if(rerollSeed){S.seed=Math.floor(Math.random()*1e9)}rng=mulberry(S.seed);
+  const on=S.rhythm.map((v,i)=>v?i:-1).filter(i=>i>=0);const n=on.length;const sh=SHAPES.find(x=>x.id===S.shape);const N=degCount(S.range);const L=scale().length;const ct=CHORD_DEG[L]||[0,2,4];
+  const mel=Array(32).fill(null);let walk=Math.floor(N/2);
+  on.forEach((step,k)=>{let idx;
+    if(sh.abs){idx=sh.abs[k%sh.abs.length];while(degToSemi(idx)>S.range)idx-=L}
+    else if(sh.walk){const stepSize=1+Math.round(rng()*S.chaos/25);walk+=Math.round((rng()-.5)*2)*stepSize;walk=Math.max(0,Math.min(N-1,walk));idx=walk}
+    else{let v=sh.f(k,n);v+=(rng()-.5)*(S.chaos/100)*.9;v=Math.max(0,Math.min(1,v));idx=Math.round(v*(N-1))}
+    if(isBeat(step)&&rng()*100<S.snap){const o=Math.floor(idx/L),d=idx%L;let best=d,bd=99;ct.forEach(c=>{const dd=Math.abs(c-d);if(dd<bd){bd=dd;best=c}});idx=best+o*L;if(step===0&&S.snap>50)idx=Math.round(idx/L)*L}
+    if(idx<0)idx=0;
+    let nxt=on[k+1]!==undefined?on[k+1]-step:32-step+on[0];const len=Math.max(1,Math.round(nxt*S.gate/100));
+    let vel=.8;if(S.accent==='beat')vel=isBeat(step)?.95:isOff8(step)?.78:.66;else if(S.accent==='off')vel=isBeat(step)?.62:isOff16(step)?.95:.8;else if(S.accent==='rise')vel=.55+.4*step/31;
+    mel[step]={p:degToSemi(idx),len,vel}});
+  S.mel=mel;afterMelody()}
+function afterMelody(){drawRoll($('mRoll'),S.mel,32,-1);melStats();renderTx();renderPhrase()}
+function melStats(){const on=S.mel.map((v,i)=>v?i:-1).filter(i=>i>=0);if(!on.length){$('mScore').innerHTML='';$('mText').innerHTML='Empty — click Generate.';return}
+  const ps=on.map(i=>S.mel[i].p);const lo=Math.min(...ps),hi=Math.max(...ps);let leaps=0,steps=0;for(let k=1;k<ps.length;k++){const d=Math.abs(ps[k]-ps[k-1]);if(d>=5)leaps++;else if(d>0)steps++}
+  const st=rhythmStats(S.rhythm);const L=scale().length;const ct=CHORD_DEG[L]||[0,2,4];const beatHits=on.filter(isBeat);const ctHits=beatHits.filter(i=>{const d=semiToDeg(S.mel[i].p)%L;return ct.includes(d)}).length;
+  const uniq=new Set(ps).size;const rootName=NOTES[S.root];const peakStep=on[ps.indexOf(hi)];
+  $('mScore').innerHTML=card('Range',(hi-lo)+' st','',`${NOTES[(S.root+lo+120)%12]} → ${NOTES[(S.root+hi+120)%12]}`)+card('Leaps / steps',leaps+' / '+steps,leaps>steps?'warn':'good',leaps>steps?'Leapy — angular, arp-like':'Stepwise — singable')+
+    card('Chord tones on beats',beatHits.length?Math.round(100*ctHits/beatHits.length)+'%':'—','',ctHits===beatHits.length?'Fully anchored':'Some colour on the beat')+card('Distinct pitches',uniq,'',uniq<=3?'Hook-like':uniq<=6?'Melodic':'Wandering')+card('Peak at','bar '+(Math.floor(peakStep/16)+1)+' · beat '+(Math.floor(peakStep/4)%4+1),'','one climax is right');
+  $('mText').innerHTML=`<b>${rootName} ${SCALES[S.scale].n}</b> · ${SHAPES.find(x=>x.id===S.shape).n} over ${S.cellId?CELLS.find(c=>c.id===S.cellId).n:'a custom cell'} · syncopation ${st.sync}% · ${on.length} notes · seed ${S.seed}. ${st.sync>45&&leaps>steps?'Loose rhythm plus leaps: this wants a simple kick and sub — let it be the only busy element.':st.sync<25&&steps>leaps?'Grid-locked and stepwise: fine as an arp bed; for a hook, load Tresillo or Anticipated push and reroll.':'Balanced — send it to the Transform lab and try Displace or Answer bar 2.'}`}
+
+/* ============ ROLL DRAW ============ */
+function drawRoll(cv,mel,len,cur,opts={}){const dpr=window.devicePixelRatio||1;const W=cv.clientWidth,H=cv.clientHeight;if(cv.width!==W*dpr){cv.width=W*dpr;cv.height=H*dpr}const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);
+  const on=mel.map((v,i)=>v?i:-1).filter(i=>i>=0);const ps=on.length?on.map(i=>mel[i].p):[0,12];let lo=Math.min(...ps),hi=Math.max(...ps);if(hi-lo<7){const m=(lo+hi)/2;lo=Math.floor(m-4);hi=Math.ceil(m+4)}lo-=1;hi+=1;const rows=hi-lo+1;const rh=H/rows;const cw=W/len;
+  for(let r=0;r<rows;r++){const semi=hi-r;const pc=((semi%12)+12)%12;const inScale=scale().includes(pc);c.fillStyle=pc===0?'rgba(255,75,50,.10)':inScale?'rgba(242,237,224,.05)':'rgba(0,0,0,.18)';c.fillRect(0,r*rh,W,rh);if(pc===0){c.fillStyle='#8C8474';c.font='9px JetBrains Mono';c.fillText(NOTES[S.root]+(Math.floor((S.oct+S.root-12+semi)/12)-1),4,r*rh+rh-2)}}
+  for(let i=0;i<=len;i++){c.strokeStyle=i%16===0?'#6A6355':i%4===0?'#3E3A33':'#2A2722';c.lineWidth=i%16===0?1.5:1;c.beginPath();c.moveTo(i*cw,0);c.lineTo(i*cw,H);c.stroke()}
+  on.forEach(i=>{const n=mel[i];const r=hi-n.p;const col=opts.color||(isBeat(i)?'#F2EDE0':isOff8(i)?'#FF8A2B':'#FF4B32');c.fillStyle=col;c.globalAlpha=.55+.45*n.vel;c.fillRect(i*cw+1,r*rh+1,Math.max(3,n.len*cw-2),rh-2);c.globalAlpha=1});
+  if(cur>=0){c.fillStyle='rgba(255,197,49,.9)';c.fillRect(cur*cw,0,2,H)}cv._lo=lo;cv._hi=hi;cv._len=len}
+
+/* ============ TRANSFORMS ============ */
+function applyTx(src,set,tv,dv){let m=src.map(x=>x?{...x}:null);const L=scale().length;
+  const onIdx=()=>m.map((v,i)=>v?i:-1).filter(i=>i>=0);
+  const forOrder=TX.map(t=>t.id).filter(id=>set.has(id));
+  forOrder.forEach(id=>{
+    if(id==='transpose')m=m.map(x=>x?{...x,p:degToSemi(semiToDeg(x.p)+tv)}:null);
+    if(id==='invert'){const on=onIdx();if(on.length){const a=semiToDeg(m[on[0]].p);m=m.map(x=>x?{...x,p:degToSemi(2*a-semiToDeg(x.p))}:null)}}
+    if(id==='retro'){const on=onIdx();const ps=on.map(i=>m[i].p).reverse();on.forEach((i,k)=>m[i].p=ps[k])}
+    if(id==='displace'){const out=Array(32).fill(null);m.forEach((x,i)=>{if(x)out[(i+dv+32)%32]=x});m=out}
+    if(id==='octalt'){onIdx().forEach((i,k)=>{if(k%2)m[i].p+=12})}
+    if(id==='thin')m=m.map((x,i)=>x&&i%2===0?x:null);
+    if(id==='double'){const out=m.map(x=>x?{...x}:null);onIdx().forEach(i=>{if(!out[(i+1)%32]){out[(i+1)%32]={...m[i],len:1,vel:m[i].vel*.8};out[i]={...m[i],len:1}}});m=out}
+    if(id==='legato'){const on=onIdx();on.forEach((i,k)=>{const nx=on[k+1]!==undefined?on[k+1]:32+on[0];m[i].len=Math.max(1,nx-i)})}
+    if(id==='stacc')m=m.map(x=>x?{...x,len:1}:null);
+    if(id==='answer'){const on=onIdx().filter(i=>i<16);if(on.length){const a=semiToDeg(m[on[0]].p);for(let i=16;i<32;i++)m[i]=null;on.forEach((i,k)=>{if(k%3!==2)m[i+16]={...m[i],p:degToSemi(2*a-semiToDeg(m[i].p))}})}}
+    if(id==='lead'){onIdx().forEach(i=>{if(isBeat(i)&&semiToDeg(m[i].p)%L===0&&!m[(i+31)%32]){m[(i+31)%32]={p:m[i].p-(12-scale()[L-1]),len:1,vel:m[i].vel*.7}}})}
+    if(id==='human')m=m.map((x,i)=>x?{...x,vel:Math.max(.3,Math.min(1,x.vel+(rng()-.5)*.3-(isOff16(i)?.05:0)))}:null);
+  });return m}
+function renderTx(){if(!$('tx').children.length){$('tx').innerHTML=TX.map(t=>`<label><input type="checkbox" data-id="${t.id}"><div><b>${t.n}</b><span>${t.d}</span></div></label>`).join('');
+  $('tx').querySelectorAll('input').forEach(i=>i.onchange=()=>{i.checked?S.tx.add(i.dataset.id):S.tx.delete(i.dataset.id);renderTx()})}
+  drawRoll($('xRollA'),S.mel,32,-1,{color:'#8C8474'});drawRoll($('xRollB'),txResult(),32,-1)}
+function txResult(){rng=mulberry(S.seed+1);return applyTx(S.mel,S.tx,S.txT,S.txD)}
+
+/* ============ PHRASE ============ */
+function slotMel(type){const A=S.mel;const on=A.map((v,i)=>v?i:-1).filter(i=>i>=0);
+  if(type==='A')return A.map(x=>x?{...x}:null);
+  if(type==='A2'){const m=A.map(x=>x?{...x}:null);const tail=on.slice(-4);rng=mulberry(S.seed+9);tail.forEach(i=>{m[i].p=degToSemi(semiToDeg(m[i].p)+(Math.round(rng()*4)-2))});return m}
+  if(type==='B'){let m=applyTx(A,new Set(['invert']),0,0);const out=m.map(x=>x?{...x}:null);for(let i=24;i<32;i++)out[i]=null;on.filter(i=>i>=24).slice(0,2).forEach((i,k)=>{out[24+k*3]={...m[i],len:2}});return out}
+  if(type==='I')return applyTx(A,new Set(['invert','thin']),0,0);
+  if(type==='U')return applyTx(A,new Set(['transpose']),2,0);
+  if(type==='U2')return applyTx(A,new Set(['transpose']),4,0);
+  if(type==='T')return applyTx(A,new Set(['thin']),0,0);
+  if(type==='H'){const m=A.map((x,i)=>x&&i<16?{...x}:null);return m}
+  return A}
+function phraseSeq(){const out=[];S.slots.forEach(t=>out.push(...slotMel(t)));return out}
+function renderPhrase(){if(!$('slots').children.length){$('arcs').innerHTML=ARCS.map((a,i)=>`<button class="btn ghost sm" data-i="${i}">${a.n}</button>`).join('');$('arcs').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.slots=[...ARCS[+b.dataset.i].s];renderPhrase(true)});
+    $('slots').innerHTML=[0,1,2,3].map(i=>`<div class="slot"><div class="k">Bars ${i*2+1}–${i*2+2}</div><select data-i="${i}">${Object.keys(SLOTS).map(k=>`<option value="${k}">${SLOTS[k]}</option>`).join('')}</select><p></p></div>`).join('');
+    $('slots').querySelectorAll('select').forEach(s=>s.onchange=()=>{S.slots[+s.dataset.i]=s.value;renderPhrase()})}
+  $('slots').querySelectorAll('select').forEach((s,i)=>{s.value=S.slots[i];s.parentNode.querySelector('p').textContent=['Statement','Development','Restatement','Resolution / release'][i]});
+  drawRoll($('pRoll'),phraseSeq(),128,-1)}
+
+/* ============ MIDI ============ */
+function vlq(n){const b=[n&0x7f];while(n>>=7)b.unshift((n&0x7f)|0x80);return b}
+function midiFile(tracks,bpm){const PPQ=96;const chunks=[];const hdr=[0x4d,0x54,0x68,0x64,0,0,0,6,0,1,0,tracks.length,PPQ>>8,PPQ&255];
+  tracks.forEach((tr,ti)=>{const ev=[];if(ti===0){const us=Math.round(60000000/bpm);ev.push({t:0,d:[0xff,0x51,3,us>>16&255,us>>8&255,us&255]})}
+    const nm=[...new TextEncoder().encode(tr.name)];ev.push({t:0,d:[0xff,3,...vlq(nm.length).slice(0,1),...nm]});
+    tr.notes.forEach(n=>{ev.push({t:n.t,d:[0x90,n.m,n.v]});ev.push({t:n.t+n.d,d:[0x80,n.m,0]})});ev.sort((a,b)=>a.t-b.t||(a.d[0]===0x80?-1:1));
+    const bytes=[];let last=0;ev.forEach(e=>{bytes.push(...vlq(e.t-last),...e.d);last=e.t});bytes.push(0,0xff,0x2f,0);
+    chunks.push(0x4d,0x54,0x72,0x6b,bytes.length>>24&255,bytes.length>>16&255,bytes.length>>8&255,bytes.length&255,...bytes)});
+  return new Uint8Array([...hdr,...chunks])}
+function melToNotes(mel){const out=[];mel.forEach((n,i)=>{if(n)out.push({t:i*24,m:S.oct+S.root-12+n.p,v:Math.round(n.vel*127),d:Math.max(6,n.len*24-4)})});return out}
+function dl(name,tracks){const u=new Blob([midiFile(tracks,S.bpm)],{type:'audio/midi'});const a=document.createElement('a');a.href=URL.createObjectURL(u);a.download=name;a.click()}
+const tag=()=>`${NOTES[S.root].replace('#','s')}${S.scale}_${S.bpm}`;
+
+/* ============ UI ============ */
+function init(){
+  $('root').innerHTML=NOTES.map((n,i)=>`<option value="${i}" ${i===9?'selected':''}>${n}</option>`).join('');$('scale').innerHTML=Object.keys(SCALES).map(k=>`<option value="${k}">${SCALES[k].n}</option>`).join('');
+  $('lit').innerHTML='<i class="beat"></i><i></i><i></i><i></i><i class="beat"></i><i></i><i></i><i></i>';
+  const bind=(id,key,fmt,after)=>{$(id).oninput=e=>{S[key]=+e.target.value;if($(id+'V'))$(id+'V').textContent=fmt(S[key]);if(after)after()}};
+  bind('bpm','bpm',v=>v,()=>{renderLens()});bind('swing','swing',v=>v+'%');bind('range','range',v=>v+' st',()=>generate(false));bind('snap','snap',v=>v+'%',()=>generate(false));bind('gate','gate',v=>v+'%',()=>generate(false));bind('chaos','chaos',v=>v+'%',()=>generate(false));
+  bind('eucK','eK',v=>v);bind('eucR','eR',v=>v);bind('txT','txT',v=>(v>0?'+':'')+v,renderTx);bind('txD','txD',v=>(v>0?'+':'')+v,renderTx);S.eK=5;S.eR=0;
+  $('root').onchange=e=>{S.root=+e.target.value;generate(false)};$('scale').onchange=e=>{S.scale=e.target.value;generate(false)};$('voice').onchange=e=>S.voice=e.target.value;$('oct').onchange=e=>{S.oct=+e.target.value;afterMelody()};$('accent').onchange=e=>{S.accent=e.target.value;generate(false)};
+  [['tKick','kick'],['tHat','hat'],['tEcho','echo']].forEach(([id,k])=>$(id).onclick=()=>{S[k]=!S[k];$(id).classList.toggle('on',S[k])});
+  $('tPlay').onclick=()=>{if(P.playing)stop();else play(S.mel,32,null,c=>drawRoll($('mRoll'),S.mel,32,c))};
+  $('eucApply').onclick=()=>{const e=euclid(S.eK,16,S.eR);S.rhythm=[...e,...e];S.cellId=null;renderCells();renderRhythm()};
+  $('polyApply').onclick=()=>loadCell('five');$('poly7Apply').onclick=()=>loadCell('seven');
+  $('rPlay').onclick=()=>play(rhythmSeq(),32,null,drawGrid);
+  $('rShift').onclick=()=>{S.rhythm=S.rhythm.map((_,i)=>S.rhythm[(i+31)%32]);S.cellId=null;renderCells();renderRhythm()};
+  $('rShiftL').onclick=()=>{S.rhythm=S.rhythm.map((_,i)=>S.rhythm[(i+1)%32]);S.cellId=null;renderCells();renderRhythm()};
+  $('rInv').onclick=()=>{S.rhythm=S.rhythm.map(v=>!v);S.cellId=null;renderCells();renderRhythm()};
+  $('rMirror').onclick=()=>{for(let i=0;i<16;i++)S.rhythm[31-i]=S.rhythm[i];S.cellId=null;renderCells();renderRhythm()};
+  $('rClear').onclick=()=>{S.rhythm=Array(32).fill(false);S.cellId=null;renderCells();renderRhythm()};
+  $('rMidi').onclick=()=>dl(`rhythm_${tag()}.mid`,[{name:'Rhythm',notes:melToNotes(rhythmSeq())}]);
+  $('shapes').innerHTML=SHAPES.map(s=>{const pts=[];for(let k=0;k<12;k++){const v=s.abs?(s.abs[k%s.abs.length]/7):s.walk?(.5+.3*Math.sin(k*1.7)):s.f(k,12);pts.push(`${k*100/11},${32-v*28+2}`)}return `<button class="shape ${s.id===S.shape?'on':''}" data-id="${s.id}"><svg viewBox="0 0 100 36" preserveAspectRatio="none"><polyline points="${pts.join(' ')}" fill="none" stroke="#FF4B32" stroke-width="2.5" stroke-linejoin="round"/></svg><h4>${s.n}</h4><p>${s.d}</p></button>`}).join('');
+  $('shapes').querySelectorAll('.shape').forEach(b=>b.onclick=()=>{S.shape=b.dataset.id;$('shapes').querySelectorAll('.shape').forEach(x=>x.classList.toggle('on',x===b));generate(false);play(S.mel,32,null,c=>drawRoll($('mRoll'),S.mel,32,c))});
+  $('mGen').onclick=()=>{generate(true);play(S.mel,32,null,c=>drawRoll($('mRoll'),S.mel,32,c))};$('mReroll').onclick=()=>{generate(true);play(S.mel,32,null,c=>drawRoll($('mRoll'),S.mel,32,c))};
+  $('mRerollR').onclick=()=>{const fam=CELLS[Math.floor(Math.random()*CELLS.length)];loadCell(fam.id);generate(true);play(S.mel,32,null,c=>drawRoll($('mRoll'),S.mel,32,c))};
+  $('mPlay').onclick=()=>play(S.mel,32,null,c=>drawRoll($('mRoll'),S.mel,32,c));$('mMidi').onclick=()=>dl(`melody_${tag()}.mid`,[{name:'Melody',notes:melToNotes(S.mel)}]);
+  const nudge=(e,dir)=>{e.preventDefault();const cv=$('mRoll');const r=cv.getBoundingClientRect();const i=Math.floor((e.clientX-r.left)/r.width*32);let j=i;for(let k=0;k<4;k++){if(S.mel[(i-k+32)%32]){j=(i-k+32)%32;break}}const n=S.mel[j];if(!n)return;n.p=degToSemi(semiToDeg(n.p)+dir);afterMelody();audio();voice(S.oct+S.root-12+n.p,AC.currentTime,.3,.8)};
+  $('mRoll').onclick=e=>nudge(e,1);$('mRoll').oncontextmenu=e=>nudge(e,-1);
+  // presets
+  let pf='All';const renderP=()=>{const fams=['All',...new Set(PRESETS.map(p=>p.f))];$('pgFilters').innerHTML=fams.map(f=>`<button class="${f===pf?'on':''}">${f}</button>`).join('');$('pgFilters').querySelectorAll('button').forEach(b=>b.onclick=()=>{pf=b.textContent;renderP()});
+    $('presets').innerHTML=PRESETS.filter(p=>pf==='All'||p.f===pf).map((p,i)=>`<button class="pg" data-n="${p.n}"><div class="rn">${p.rn}</div><h4>${p.n}</h4><p>${p.d}</p><div class="meta">${CELLS.find(c=>c.id===p.cell).n} · ${SHAPES.find(s=>s.id===p.shape).n} · ${SCALES[p.scale].n} · ${p.voice}</div></button>`).join('');
+    $('presets').querySelectorAll('.pg').forEach(b=>b.onclick=()=>{const p=PRESETS.find(x=>x.n===b.dataset.n);Object.assign(S,{bpm:p.bpm,scale:p.scale,shape:p.shape,range:p.range,snap:p.snap,gate:p.gate,voice:p.voice,swing:p.swing,echo:!!p.echo,oct:p.oct,chaos:p.chaos});
+      ['bpm','swing','range','snap','gate','chaos'].forEach(k=>{$(k).value=S[k];$(k).dispatchEvent(new Event('input'))});$('scale').value=S.scale;$('voice').value=S.voice;$('oct').value=S.oct;$('tEcho').classList.toggle('on',S.echo);
+      $('shapes').querySelectorAll('.shape').forEach(x=>x.classList.toggle('on',x.dataset.id===S.shape));loadCell(p.cell);generate(true);$('presets').querySelectorAll('.pg').forEach(x=>x.classList.toggle('on',x===b));play(S.mel,32,null,c=>drawRoll($('mRoll'),S.mel,32,c));$('s3').scrollIntoView({behavior:'smooth',block:'start'})})};renderP();
+  // cookbook
+  $('cook').querySelector('tbody').innerHTML=COOK.map(c=>`<tr><td><b>${c[0]}</b></td><td>${c[1]}</td><td>${c[2]}</td><td><button class="btn sm ghost" data-m="${c[3]}">Apply</button></td></tr>`).join('');
+  $('cook').querySelectorAll('button').forEach(b=>b.onclick=()=>{cookApply(b.dataset.m);play(S.mel,32,null,c=>drawRoll($('mRoll'),S.mel,32,c));$('s3').scrollIntoView({behavior:'smooth'})});
+  // transform
+  $('xPlay').onclick=()=>{const m=txResult();play(m,32,null,c=>drawRoll($('xRollB'),m,32,c))};$('xPlayA').onclick=()=>play(S.mel,32,null,c=>drawRoll($('xRollA'),S.mel,32,c,{color:'#8C8474'}));
+  $('xCommit').onclick=()=>{S.mel=txResult();S.tx.clear();$('tx').querySelectorAll('input').forEach(i=>i.checked=false);afterMelody()};
+  $('xMidi').onclick=()=>dl(`transform_${tag()}.mid`,[{name:'Original',notes:melToNotes(S.mel)},{name:'Transformed',notes:melToNotes(txResult())}]);
+  // phrase
+  $('pPlay').onclick=()=>{let m=phraseSeq();if(S.pLoop===2)m=[...m,...m];play(m,m.length,null,c=>drawRoll($('pRoll'),phraseSeq(),128,c%128))};$('pLoop').onchange=e=>S.pLoop=+e.target.value;
+  $('pMidi').onclick=()=>dl(`phrase8_${tag()}.mid`,[{name:'Phrase',notes:melToNotes(phraseSeq())}]);
+  window.addEventListener('resize',()=>{afterMelody()});
+  renderWeights();renderCells();loadCell('mau5');renderRhythm();renderLens();generate(false);
+}
+function cookApply(m){const r=S.rhythm;const on=r.map((v,i)=>v?i:-1).filter(i=>i>=0);
+  if(m==='antic'){[0,16].forEach(b=>{if(r[b]&&!r[(b+31)%32]){r[b]=false;r[(b+31)%32]=true}});[8,24].forEach(b=>{if(r[b]&&!r[b-1]){r[b]=false;r[b-1]=true}})}
+  if(m==='delay'){[0,16].forEach(b=>{if(r[b]&&!r[b+1]){r[b]=false;r[b+1]=true}})}
+  if(m==='disp'){S.rhythm=r.map((_,i)=>r[(i+31)%32])}
+  if(m==='tie'){r[16]=false;S.cellId=null;renderCells();renderRhythm();generate(false);const on2=S.mel.map((v,i)=>v?i:-1).filter(i=>i>=0&&i<16);const last=on2[on2.length-1];if(last!==undefined){const nx=S.mel.slice(17).findIndex(x=>x);S.mel[last].len=(nx<0?32:17+nx)-last}afterMelody();return}
+  if(m==='holes'){for(let i=8;i<12;i++){r[i]=false;r[i+16]=false}}
+  if(m==='hemiola'){loadCell('dot8');generate(false);return}
+  if(m==='poly5'){loadCell('five');generate(false);return}
+  if(m==='off8'){const o=Array(32).fill(false);r.forEach((v,i)=>{if(v)o[isBeat(i)?i+2:i]=true});S.rhythm=o.map((v,i)=>v||false)}
+  if(m==='gallop'){const o=Array(32).fill(false);on.forEach(i=>{o[i]=true;o[(i+1)%32]=true});S.rhythm=o;S.cellId=null;renderCells();renderRhythm();generate(false);S.mel.forEach((n,i)=>{if(n)n.len=r[(i+1)%32]&&!on.includes((i+1)%32)?1:n.len});afterMelody();return}
+  if(m==='front'){for(let i=6;i<16;i++){r[i]=false;r[i+16]=false}}
+  if(m==='qa'){S.cellId=null;renderCells();renderRhythm();S.mel=applyTx(S.mel,new Set(['answer']),0,0);S.rhythm=S.mel.map(x=>!!x);renderRhythm();afterMelody();return}
+  if(m==='oct4'){S.mel.forEach((n,i)=>{if(n&&Math.floor(i/4)%4===3)n.p+=12});afterMelody();return}
+  if(m==='swing'){S.swing=S.swing?0:45;$('swing').value=S.swing;$('swingV').textContent=S.swing+'%';return}
+  if(m==='vel'){S.accent=S.accent==='off'?'beat':'off';$('accent').value=S.accent;generate(false);return}
+  S.cellId=null;renderCells();renderRhythm();generate(false)}
+function renderLens(){const q=60000/S.bpm;const rows=[['1/4',q,'Beat; ¼ delay'],['1/8·',q*.75,'The trance delay; anticipation feel'],['1/8',q/2,'Off-beat stab spacing'],['1/8T',q/3,'Triplet delay'],['1/16',q/4,'Grid; swing moves the odd ones'],['1/16·',q*.375,'Gallop long note'],['1/16T',q/6,'Ratchet / roll'],['1/32',q/8,'Reverb pre-delay; humanise range ×½']];
+  $('lens').querySelector('tbody').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1].toFixed(1)}</td><td>${r[2]}</td></tr>`).join('')}
+init();
+</script>
+</body>
+</html>

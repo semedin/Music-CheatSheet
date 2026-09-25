@@ -1,0 +1,5 @@
+[21864:18372:0913/172916.212:ERROR:components\os_crypt\async\browser\os_crypt_win.cc:63] Failed to encrypt: Määritettyä tiedostoa ei löydy. (0x2)
+[21864:2760:0913/172916.233:ERROR:chrome\installer\util\google_update_settings_win.cc:270] Failed opening key Software\Google\Update\ClientStateMedium\{8A69D345-D564-463c-AFF1-A69D9E530F96} to set usagestats; result: 5
+[21864:12956:0913/172916.312:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
+[21864:35000:0913/172916.316:ERROR:components\password_manager\core\browser\password_store\login_database_async_helper.cc:99] Encryption is not available.
+115248 bytes written to file C:\Users\jonat\OneDrive\Tiedostot\Music CheatSheet\sound-design-src\qa\mobile.png

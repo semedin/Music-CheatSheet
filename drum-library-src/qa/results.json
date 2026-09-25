@@ -1,0 +1,25 @@
+{
+  "passed": 19,
+  "checks": [
+    "page boots without external resources",
+    "desktop has no page overflow",
+    "accented downbeats use the lane colour, not the background stripe",
+    "Splice links contain the current active lane searches",
+    "keyboard cell activation, undo and redo work",
+    "take selector changes notes and undo restores them",
+    "search and family filters combine; reset recovers the library",
+    "pagination exposes all studies",
+    "favourites and saved sessions restore",
+    "morph is independent until sent and endpoints match",
+    "play starts, edits are scheduled and stop clears transport",
+    "mute and solo state reset when loading a pattern",
+    "all nine synthesized kits render finite non-silent audio",
+    "mobile has no document overflow",
+    "mobile grid remains scrollable",
+    "field notes open through navigation",
+    "320px viewport has no document overflow",
+    "768px viewport has no document overflow",
+    "1024px viewport has no document overflow"
+  ],
+  "errors": []
+}

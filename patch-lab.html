@@ -1,0 +1,1109 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patch — building the sounds from scratch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#E2DED2; --panel:#F2EFE6; --panel-2:#EAE5D8;
+  --ink:#191713; --ink-2:#635C50; --ink-3:#8C8474; --line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32; --b2:#FF8A2B; --b3:#FFC531; --b4:#F2EDE0; --cy:#3FD0C9; --vi:#A78BFA;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1220px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(46px,11vw,120px);line-height:.84;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:60ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+
+.transport{position:sticky;top:0;z-index:80;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:13px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.09em;background:var(--b1);color:#fff;
+  border:0;border-radius:3px;padding:9px 15px;cursor:pointer;white-space:nowrap}
+.tbtn.ghost{background:transparent;color:var(--b4);border:1px solid rgba(242,237,224,.35)}
+.tbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.tbtn:hover{filter:brightness(1.12)}
+.knob{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.07em;color:rgba(242,237,224,.68)}
+.knob input[type=range]{width:84px;accent-color:var(--b2)}
+.knob b{color:var(--b4);min-width:38px;display:inline-block}
+.knob select{font-family:var(--mono);font-size:11px;background:#2A2723;color:var(--b4);border:1px solid rgba(242,237,224,.3);border-radius:3px;padding:5px 7px}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:30ch}
+
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 0}
+.nav a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  text-decoration:none;color:var(--ink-2);border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--panel)}
+.nav a:hover{border-color:var(--ink);color:var(--ink)}
+
+.sec{padding:50px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:22px}
+.sec-head h2{font-size:clamp(26px,4.4vw,42px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:66ch;margin-top:12px;color:var(--ink-2)}
+.lab{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:20px}
+.tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;padding:3px 7px;border-radius:2px;
+  background:var(--ink);color:var(--b4);white-space:nowrap;text-transform:uppercase}
+.tag.alt{background:var(--b1)}
+
+/* ---- recipe strip ---- */
+.recipes{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.rchip{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:8px 12px;cursor:pointer;color:var(--ink-2)}
+.rchip:hover{border-color:var(--ink);color:var(--ink)}
+.rchip[aria-pressed="true"]{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.builder{background:var(--ink);border-radius:5px;padding:14px 16px;color:var(--b4);margin-bottom:14px}
+.builder-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.builder h3{font-size:19px;flex:1;min-width:150px;color:var(--b4)}
+.stagedots{display:flex;gap:5px}
+.stagedots i{width:26px;height:5px;border-radius:3px;background:rgba(242,237,224,.2);display:block}
+.stagedots i.done{background:var(--b3)}
+.stagedots i.cur{background:var(--b1)}
+.stagetext{margin-top:11px;display:grid;grid-template-columns:auto 1fr;gap:0 14px;align-items:baseline}
+.stagenum{font-family:var(--display);font-size:38px;font-weight:800;color:var(--b1);line-height:.9}
+.stagebody h4{font-size:16px;color:var(--b3);margin-bottom:4px}
+.stagebody p{font-size:14px;color:rgba(242,237,224,.8);margin:0;max-width:72ch}
+.bbtns{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+
+/* ---- scopes ---- */
+.scopes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:900px){.scopes{grid-template-columns:1fr}}
+.scope{background:var(--lane);border-radius:4px;position:relative;overflow:hidden;height:132px}
+.scope canvas{display:block;width:100%;height:100%}
+.scope .lbl{position:absolute;top:7px;left:9px;font-family:var(--mono);font-size:9px;letter-spacing:.13em;
+  color:rgba(242,237,224,.45);text-transform:uppercase;pointer-events:none}
+
+/* ---- synth panel ---- */
+.rack{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:12px}
+.mod{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:11px 12px}
+.mod .eyebrow{margin-bottom:9px;color:var(--b1)}
+.p{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);
+  display:block;margin-bottom:7px;border-radius:3px;padding:2px 3px;transition:background .3s,box-shadow .3s}
+.p.flash{background:rgba(255,197,49,.55);box-shadow:0 0 0 2px var(--b3)}
+.p .r{display:flex;align-items:center;gap:7px}
+.p input[type=range]{flex:1;min-width:40px;accent-color:var(--b1);height:16px}
+.p select{flex:1;font-family:var(--mono);font-size:10px;padding:4px 5px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:var(--ink)}
+.p b{color:var(--ink);font-size:10.5px;min-width:50px;text-align:right}
+
+/* ---- keyboard ---- */
+.keys{display:flex;position:relative;height:86px;margin-top:14px;user-select:none}
+.wk{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:0 0 4px 4px;cursor:pointer;
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-family:var(--mono);font-size:9px;color:var(--ink-3)}
+.wk:hover,.wk.down{background:var(--b3)}
+.bk{position:absolute;top:0;width:4.2%;height:56%;background:var(--ink);border-radius:0 0 3px 3px;cursor:pointer;z-index:2;
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;font-family:var(--mono);font-size:8px;color:rgba(242,237,224,.5)}
+.bk:hover,.bk.down{background:var(--b1)}
+
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px;align-items:center}
+.tool{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:7px 11px;cursor:pointer;color:var(--ink-2)}
+.tool:hover{border-color:var(--ink);color:var(--ink)}
+.tool.hi{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.tool.hi:hover{background:var(--b1);border-color:var(--b1);color:#fff}
+
+.translate{font-family:var(--mono);font-size:11.5px;line-height:1.75;background:var(--lane);color:var(--b4);
+  border-radius:4px;padding:13px 15px;margin-top:14px;white-space:pre-wrap;max-height:280px;overflow-y:auto}
+.translate b{color:var(--b3);font-weight:700}
+
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700}
+tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:10px 12px;border-radius:0 3px 3px 0;margin:14px 0 0}
+.callout b{color:var(--b1)}
+.note{font-size:14.5px;color:var(--ink-2);margin:13px 0 0;max-width:76ch}
+.note b{color:var(--ink)}
+.foot{border-top:2px solid var(--ink);margin-top:54px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:620px){.knob input[type=range]{width:64px}.tnow{display:none}.stagenum{font-size:28px}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="index.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Field guide 04 · synthesis · ten patches from scratch</div>
+    <h1>Every sound<br>is <em>five</em><br>decisions</h1>
+    <p class="sub">A waveform, a filter, an envelope on that filter, an envelope on the volume, and one thing moving. That is the whole of subtractive synthesis, and it is enough to build almost every sound in house and techno. Press <strong>Build</strong> on any patch below and it assembles itself one stage at a time while the controls move — so you hear what each decision contributes instead of arriving at a finished preset and guessing.</p>
+  </div>
+</div>
+
+<div class="transport">
+  <div class="wrap">
+    <button class="tbtn" id="playBtn">▶ PLAY</button>
+    <button class="tbtn ghost" id="drumBtn" aria-pressed="false">DRUMS OFF</button>
+    <label class="knob">BPM <input type="range" id="bpm" min="100" max="145" value="126"><b id="bpmv">126</b></label>
+    <label class="knob">PLAY <select id="patSel"></select></label>
+    <label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="70"><b id="volv">70</b></label>
+    <span class="tnow" id="nowPlaying">—</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="index.html" class="nav-home">← Index</a>
+    <a href="#lab">1 · The synth</a>
+    <a href="#theory">2 · What the controls do</a>
+    <a href="#numbers">3 · Numbers</a>
+    <a href="#rules">4 · Working rules</a>
+  </nav>
+
+  <section class="sec" id="lab">
+    <div class="sec-head">
+      <div class="eyebrow">Section 01 · interactive</div>
+      <h2>The synth</h2>
+      <p>Two oscillators, a sub, noise, unison, one filter with its own envelope, an amp envelope, a pitch envelope and an LFO. Every patch on this page is made from those, and nothing else. Play it with the on-screen keyboard or your computer keys — <b>A W S E D F T G Y H U J K</b>.</p>
+    </div>
+
+    <div class="lab">
+      <div class="recipes" id="recipeChips"></div>
+
+      <div class="builder">
+        <div class="builder-top">
+          <h3 id="recName">Rolling techno bass</h3>
+          <div class="stagedots" id="dots"></div>
+          <span class="tag alt" id="recTarget">Bass</span>
+        </div>
+        <div class="stagetext">
+          <div class="stagenum" id="stageNum">1</div>
+          <div class="stagebody">
+            <h4 id="stageTitle">—</h4>
+            <p id="stageWhy">—</p>
+          </div>
+        </div>
+        <div class="bbtns">
+          <button class="tbtn" id="buildBtn">▶ BUILD IT</button>
+          <button class="tbtn ghost" id="prevStage">← Back</button>
+          <button class="tbtn ghost" id="nextStage">Next stage →</button>
+          <button class="tbtn ghost" id="restartRec">↺ Stage 1</button>
+        </div>
+      </div>
+
+      <div class="scopes">
+        <div class="scope"><canvas id="scWave"></canvas><span class="lbl">Waveform</span></div>
+        <div class="scope"><canvas id="scSpec"></canvas><span class="lbl">Spectrum · 20 Hz – 18 kHz</span></div>
+        <div class="scope"><canvas id="scEnv"></canvas><span class="lbl">Envelopes · amp &amp; filter</span></div>
+      </div>
+
+      <div class="rack" id="rack"></div>
+
+      <div class="keys" id="keys"></div>
+
+      <div class="toolbar">
+        <button class="tool hi" id="showTr">Ableton translation</button>
+        <button class="tool" id="initPatch">Init patch</button>
+        <button class="tool" id="randPatch">Randomise</button>
+        <button class="tool" id="snapA">Store A</button>
+        <button class="tool" id="recallA">Recall A</button>
+      </div>
+      <div class="translate" id="translate" style="display:none"></div>
+
+      <p class="callout"><b>Two honest simplifications.</b> The FM modulator's depth follows the filter envelope rather than having its own — in Operator each operator gets a separate envelope, and that extra control is most of why real FM sounds better than this. And there is one filter, not two; a real patch often high-passes as well as low-passes. Everything else here behaves the way the equivalent controls in Wavetable, Operator or Analog behave.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="theory">
+    <div class="sec-head">
+      <div class="eyebrow">Section 02</div>
+      <h2>What the controls do</h2>
+      <p>Not definitions — what each one is <em>for</em>, and the mistake people make with it.</p>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>Oscillators: pick your raw material</h3>
+        <ul>
+          <li><b>Saw</b> has every harmonic. It is the default for anything you intend to filter, because there is something there to remove. Bass, leads, stabs, pads.</li>
+          <li><b>Square</b> has only odd harmonics — hollow and woody. Organs, garage stabs, chiptune-adjacent leads. Pulse-width modulation lives here.</li>
+          <li><b>Triangle</b> is a sine with a little grit. Soft sub-adjacent bass, mellow plucks.</li>
+          <li><b>Sine</b> has one harmonic — the fundamental. Nothing to filter, so a sine's character comes entirely from pitch, envelope and distortion. Subs and FM carriers.</li>
+          <li><b>Noise</b> has all frequencies at once. Not a note, a texture: hats, risers, breath, the click on a kick.</li>
+          <li>The mistake: reaching for a complex wavetable when a saw plus a filter would have done it, and then having nothing left to shape.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>The filter: remove, don't add</h3>
+        <ul>
+          <li><b>Cutoff</b> is the single most expressive control on any synth. Most of what people automate in dance music is one cutoff.</li>
+          <li><b>Resonance</b> boosts a narrow band right at the cutoff. Below about 4 it adds character; above 10 the filter starts to ring as a tone of its own, which is the entire acid sound.</li>
+          <li>High resonance plus a low cutoff can produce enormous energy at one frequency. Watch your levels — this is the most common way to blow a mix up.</li>
+          <li><b>Keytracking</b> makes the cutoff follow the note. Without it, high notes sound duller than low ones, which is usually wrong for leads and usually fine for bass.</li>
+          <li>The mistake: boosting with EQ what you should have left in with the filter.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Envelopes: where the character actually is</h3>
+        <ul>
+          <li><b>Attack</b> decides whether a sound is percussive or swelling. Anything under 5 ms reads as an immediate hit; over 100 ms it becomes a pad.</li>
+          <li><b>Decay and sustain</b> together are the shape. Fast decay to zero sustain is a pluck; no decay and full sustain is an organ. This one relationship distinguishes most instrument families.</li>
+          <li><b>Release</b> is what happens after the note ends. Long release on a bassline is why the low end turns to mud.</li>
+          <li>The <b>filter envelope</b> is the one that matters most in dance music. A fast filter decay over a sustained amp envelope gives you a plucked attack on a held note — that is the sound of almost every house bass ever made.</li>
+          <li>The mistake: shaping with the amp envelope what should have been shaped with the filter envelope. The amp envelope changes loudness; the filter envelope changes <em>timbre over time</em>, and timbre is what your ear reads as an instrument.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Movement: the fifth decision</h3>
+        <ul>
+          <li><b>Unison and detune</b> — several copies of the same oscillator slightly apart in pitch. Small amounts (5–12 cents) thicken; large amounts (25–50) become the supersaw. Detune eats mono compatibility, so keep it out of the sub.</li>
+          <li><b>LFO on cutoff</b> is the wobble, the pulse, the movement in a pad. Slow rates read as evolution, fast rates as texture.</li>
+          <li><b>LFO on pitch</b> at 4–7 Hz is vibrato; above 20 Hz it becomes FM and changes timbre instead of pitch.</li>
+          <li><b>Pitch envelope</b> is underrated: a fast drop into the note is a kick, a tom, a zap, and the front of a hoover.</li>
+          <li>The mistake: adding movement to fix a boring patch when the problem was the envelope.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="numbers">
+    <div class="sec-head">
+      <div class="eyebrow">Section 03</div>
+      <h2>Numbers</h2>
+    </div>
+    <div class="grid2">
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Waveform</th><th>Harmonics</th><th>Reach for it when</th></tr></thead>
+          <tbody>
+            <tr><td><b>Sine</b></td><td>Fundamental only</td><td>Sub bass, FM carriers, kick bodies</td></tr>
+            <tr><td><b>Triangle</b></td><td>Odd, falling fast</td><td>Soft bass, mellow pluck, flute-ish leads</td></tr>
+            <tr><td><b>Square</b></td><td>Odd only</td><td>Organs, garage stabs, hollow leads</td></tr>
+            <tr><td><b>Saw</b></td><td>All, falling gently</td><td>Everything you plan to filter</td></tr>
+            <tr><td><b>Noise</b></td><td>All, unpitched</td><td>Hats, risers, transient layers</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Resonance</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td class="num">0–2</td><td>Clean. A filter that just removes.</td></tr>
+            <tr><td class="num">3–6</td><td>Character. A bump you hear as "analogue".</td></tr>
+            <tr><td class="num">7–12</td><td>Vocal. The sweep becomes the melody.</td></tr>
+            <tr><td class="num">13–20</td><td>Acid. The filter rings as its own tone.</td></tr>
+            <tr><td class="num">20+</td><td>Self-oscillation territory. Watch your speakers.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Detune</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td class="num">2–5 cents</td><td>Subtle thickening. Still mono-safe.</td></tr>
+            <tr><td class="num">6–12 cents</td><td>Classic two-oscillator width. Most basses.</td></tr>
+            <tr><td class="num">15–25 cents</td><td>Obvious chorus. Stabs and pads.</td></tr>
+            <tr><td class="num">25–50 cents</td><td>Supersaw. Needs 5–7 voices to work.</td></tr>
+            <tr><td class="num">any</td><td>Below 100 Hz, detune causes cancellation. Keep the sub single-voice.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Envelope</th><th>Shape</th><th>Sounds like</th></tr></thead>
+          <tbody>
+            <tr><td><b>Pluck</b></td><td class="num">A 2ms · D 120ms · S 0 · R 60ms</td><td>Bass, stab, arp</td></tr>
+            <tr><td><b>Organ</b></td><td class="num">A 5ms · D 0 · S 100% · R 80ms</td><td>Deep house chord</td></tr>
+            <tr><td><b>Pad</b></td><td class="num">A 400ms · D 1s · S 70% · R 1.2s</td><td>Ambient, breakdown</td></tr>
+            <tr><td><b>Percussive</b></td><td class="num">A 1ms · D 60ms · S 0 · R 30ms</td><td>Blip, click, zap</td></tr>
+            <tr><td><b>Swell</b></td><td class="num">A 900ms · D 0 · S 100% · R 2s</td><td>Riser, reverse-ish</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="rules">
+    <div class="sec-head">
+      <div class="eyebrow">Section 04</div>
+      <h2>Working rules</h2>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>Build in this order</h3>
+        <ul>
+          <li><b>1. Waveform.</b> Pick the raw material with the filter wide open, so you hear what you actually have.</li>
+          <li><b>2. Filter position.</b> Find the cutoff by ear with the envelope off.</li>
+          <li><b>3. Filter envelope.</b> This is where the instrument appears.</li>
+          <li><b>4. Amp envelope.</b> Length and gate. Usually shorter than you think.</li>
+          <li><b>5. One moving thing.</b> Unison, LFO, or pitch envelope. One, not three.</li>
+          <li>Every recipe on this page follows exactly that order, and you can watch it happen.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Things that are not synthesis</h3>
+        <ul>
+          <li>A huge amount of what people credit to a patch is <b>effects</b>: saturation, chorus, delay, reverb, and a compressor. A plain saw through a good chain beats a complex patch through nothing.</li>
+          <li><b>Saturation is the most valuable one.</b> It adds harmonics above the fundamental, which is how a 50 Hz sub becomes audible on a phone.</li>
+          <li><b>Note length and velocity</b> do more for a bassline than any oscillator choice. That is the previous field guide's argument and it holds here.</li>
+          <li>If the patch only sounds good playing one note, it is not a patch yet — play your actual part while designing.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Where these live in Live</h3>
+        <ul>
+          <li><b>Wavetable</b> — closest to this lab. Two oscillators with wavetable positions, sub, noise, two filters, three envelopes, two LFOs. Start here for basses and leads.</li>
+          <li><b>Operator</b> — four operators, FM. Use it when you want metallic, bell-like or growling tones that subtraction cannot reach.</li>
+          <li><b>Analog</b> — two oscillators, two filters, simplest routing. Fastest for classic subtractive sounds and it sounds good doing nothing clever.</li>
+          <li><b>Drift</b> — one oscillator plus a sub, deliberately limited. Excellent for basses precisely because there is nothing to fiddle with.</li>
+          <li>Whichever you pick, learn one properly rather than three badly. The controls are the same controls.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Diagnosis</h3>
+        <ul>
+          <li><b>"Thin"</b> — no sub oscillator, or the detune is cancelling the low end. Add a single-voice sine an octave down.</li>
+          <li><b>"Muddy"</b> — too much sustain, too long a release, or two oscillators at the same octave. Shorten before you EQ.</li>
+          <li><b>"Boring"</b> — the filter envelope is doing nothing. Set the cutoff low, envelope amount high, decay short, and listen again.</li>
+          <li><b>"Harsh"</b> — resonance too high with the cutoff in the 2–5 kHz range, which is exactly where ears are most sensitive.</li>
+          <li><b>"Disappears in the mix"</b> — all the energy is below 200 Hz. Saturate, or add a quiet second oscillator an octave up.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <p><strong>The reason to build rather than browse.</strong> A preset teaches you nothing, because you arrive at the end without having seen any of the decisions. Every one of these ten patches is five or six choices made in a fixed order, and once you have watched that order happen a few times you stop needing presets — you hear a sound and know roughly which five decisions produced it.</p>
+    <p style="color:var(--ink-3);font-size:13px">Everything synthesised live in the browser. The engine is a real subtractive synth with a single filter and simplified FM — it demonstrates the relationships accurately and will not replace Wavetable.</p>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   AUDIO
+   ========================================================== */
+let AC=null,master=null,limiter=null,ana=null,synthBus=null,drumBus=null;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.7;
+    limiter=AC.createDynamicsCompressor();
+    limiter.threshold.value=-6; limiter.knee.value=4; limiter.ratio.value=12;
+    limiter.attack.value=.003; limiter.release.value=.12;
+    ana=AC.createAnalyser(); ana.fftSize=2048; ana.smoothingTimeConstant=.6;
+    synthBus=AC.createGain(); drumBus=AC.createGain(); drumBus.gain.value=.8;
+    synthBus.connect(ana); drumBus.connect(ana);
+    ana.connect(limiter); limiter.connect(master); master.connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+let _nb=null;
+function noiseSrc(){
+  if(!_nb){const n=Math.floor(AC.sampleRate*.7);_nb=AC.createBuffer(1,n,AC.sampleRate);
+    const d=_nb.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;}
+  const s=AC.createBufferSource(); s.buffer=_nb; s.loop=true; return s;
+}
+function shaper(amt){
+  const ws=AC.createWaveShaper(),n=1024,c=new Float32Array(n),k=1+amt*30;
+  for(let i=0;i<n;i++){const x=i*2/n-1;c[i]=Math.tanh(k*x)/Math.tanh(k);}
+  ws.curve=c; ws.oversample='2x'; return ws;
+}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+
+/* ==========================================================
+   PATCH
+   ========================================================== */
+const INIT={
+  o1w:'sawtooth',o1oct:0,o1lvl:.85,
+  o2w:'sawtooth',o2oct:0,o2det:8,o2lvl:0,
+  fm:0, sub:0, noise:0, uni:1, spread:12,
+  fType:'lowpass', cut:18000, res:0, fEnv:0, kbd:0,
+  fA:.002, fD:.20, fS:1, 
+  aA:.004, aD:.20, aS:1, aR:.12,
+  pEnv:0, pDec:.06,
+  lfoRate:4, lfoAmt:0, lfoDest:'cutoff',
+  drive:0, glide:0, vol:.55
+};
+let P={...INIT}, snapshot=null;
+
+/* ==========================================================
+   VOICE
+   ========================================================== */
+function note(t,freq,dur,vel,prevF){
+  const K=P;
+  const out=AC.createGain();
+  const trem=AC.createGain(); trem.gain.value=1;
+  const filt=AC.createBiquadFilter(); filt.type=K.fType; filt.Q.value=K.res;
+  const drv=shaper(K.drive);
+  filt.connect(drv); drv.connect(out); out.connect(trem); trem.connect(synthBus);
+
+  /* --- amp envelope --- */
+  const peak=Math.max(.0001,K.vol*(vel/127));
+  const g=out.gain, sus=Math.max(.0001,peak*K.aS);
+  const decEnd=t+K.aA+K.aD;
+  const relStart=Math.max(t+Math.max(dur,K.aA+.01), decEnd+.001);
+  g.setValueAtTime(0,t);
+  g.linearRampToValueAtTime(peak,t+K.aA);
+  g.exponentialRampToValueAtTime(sus,decEnd);
+  g.setValueAtTime(sus,relStart);
+  g.exponentialRampToValueAtTime(.0001,relStart+Math.max(.01,K.aR));
+  const end=relStart+Math.max(.01,K.aR)+.05;
+
+  /* --- filter envelope --- */
+  const kt=1+K.kbd*(Math.log2(Math.max(freq,20)/220));
+  const base=Math.min(18000,Math.max(30,K.cut*kt));
+  const top=Math.min(19000,Math.max(30,base*Math.pow(2,K.fEnv*5)));
+  const susF=Math.min(19000,Math.max(30,base+(top-base)*K.fS));
+  const fp=filt.frequency;
+  fp.setValueAtTime(base,t);
+  fp.linearRampToValueAtTime(top,t+Math.max(.001,K.fA));
+  fp.exponentialRampToValueAtTime(susF,t+Math.max(.001,K.fA)+Math.max(.005,K.fD));
+
+  /* --- oscillator bank --- */
+  const n=Math.max(1,Math.round(K.uni));
+  const oscs=[];
+  const mkGain=(v)=>{const x=AC.createGain();x.gain.value=v/Math.sqrt(n);x.connect(filt);return x;};
+  const g1=mkGain(K.o1lvl), g2=mkGain(K.o2lvl);
+  let fmGain=null, fmDepth=0;
+  if(K.fm>0){ fmDepth=K.fm*freq*8; }
+
+  for(let u=0;u<n;u++){
+    const off=n===1?0:K.spread*(u/(n-1)-.5)*2;
+    const o1=AC.createOscillator(); o1.type=K.o1w;
+    const f1=freq*Math.pow(2,K.o1oct);
+    setFreq(o1,f1,t,prevF?prevF*Math.pow(2,K.o1oct):null,K);
+    o1.detune.value=off;
+    o1.connect(g1); o1.start(t); o1.stop(end); oscs.push(o1);
+
+    const o2=AC.createOscillator(); o2.type=K.o2w;
+    const f2=freq*Math.pow(2,K.o2oct);
+    setFreq(o2,f2,t,prevF?prevF*Math.pow(2,K.o2oct):null,K);
+    o2.detune.value=off+K.o2det;
+    if(K.o2lvl>0) o2.connect(g2);
+    if(K.fm>0&&u===0){
+      /* modulator depth follows the filter envelope — a simplification, see the note on the page */
+      fmGain=AC.createGain();
+      fmGain.gain.setValueAtTime(fmDepth*(K.fEnv>0?.35:1),t);
+      fmGain.gain.linearRampToValueAtTime(fmDepth,t+Math.max(.001,K.fA));
+      fmGain.gain.exponentialRampToValueAtTime(Math.max(1,fmDepth*Math.max(.02,K.fS)),t+K.fA+Math.max(.005,K.fD));
+      o2.connect(fmGain);
+      fmGain.connect(o1.frequency);
+    }
+    o2.start(t); o2.stop(end); oscs.push(o2);
+  }
+  if(K.sub>0){
+    const s=AC.createOscillator(); s.type='sine';
+    setFreq(s,freq/2,t,prevF?prevF/2:null,K);
+    const sg=AC.createGain(); sg.gain.value=K.sub; s.connect(sg); sg.connect(filt);
+    s.start(t); s.stop(end);
+  }
+  if(K.noise>0){
+    const ns=noiseSrc(); const ng=AC.createGain(); ng.gain.value=K.noise*.6;
+    ns.connect(ng); ng.connect(filt); ns.start(t); ns.stop(end);
+  }
+  /* --- pitch envelope --- */
+  /* handled inside setFreq */
+
+  /* --- LFO --- */
+  if(K.lfoAmt>0){
+    const lfo=AC.createOscillator(); lfo.type='sine'; lfo.frequency.value=K.lfoRate;
+    const la=AC.createGain();
+    if(K.lfoDest==='cutoff'){ la.gain.value=base*K.lfoAmt*1.6; lfo.connect(la); la.connect(filt.frequency); }
+    else if(K.lfoDest==='pitch'){ la.gain.value=K.lfoAmt*120; lfo.connect(la); oscs.forEach(o=>la.connect(o.detune)); }
+    else { la.gain.value=K.lfoAmt*.5; trem.gain.value=1-K.lfoAmt*.5; lfo.connect(la); la.connect(trem.gain); }
+    lfo.start(t); lfo.stop(end);
+  }
+  return end;
+}
+function setFreq(o,f,t,prev,K){
+  const fp=o.frequency;
+  if(K.pEnv>0){
+    fp.setValueAtTime(f*Math.pow(2,K.pEnv),t);
+    fp.exponentialRampToValueAtTime(Math.max(8,f),t+Math.max(.005,K.pDec));
+  }else if(prev&&K.glide>0){
+    fp.setValueAtTime(prev,t);
+    fp.exponentialRampToValueAtTime(Math.max(8,f),t+K.glide);
+  }else{
+    fp.setValueAtTime(f,t);
+  }
+}
+/* simple drum backing */
+function bd(t){
+  const o=AC.createOscillator();o.type='sine';
+  o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(50,t+.05);
+  const g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.9,t+.002);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.34);
+  o.connect(g);g.connect(drumBus);o.start(t);o.stop(t+.4);
+}
+function hh(t,open){
+  const n=noiseSrc();const hp=AC.createBiquadFilter();hp.type='highpass';hp.frequency.value=8000;
+  const g=AC.createGain();const d=open?.20:.035;
+  g.gain.setValueAtTime(.16,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  n.connect(hp);hp.connect(g);g.connect(drumBus);n.start(t);n.stop(t+d+.05);
+}
+
+/* ==========================================================
+   PATTERNS
+   ========================================================== */
+const A1=33,A2=45,A3=57;
+const PATTERNS={
+ hold:{name:'Held note',root:A2,len:32,notes:[{s:0,l:15,p:0,v:100},{s:16,l:15,p:-2,v:100}]},
+ bass:{name:'Offbeat bass',root:A1,notes:[2,6,10,14].map((s,i)=>({s,l:1.6,p:[0,0,-2,-2][i],v:i%2?96:114}))},
+ acid:{name:'303 line',root:A1,notes:[
+   {s:0,l:.9,p:0,v:122},{s:2,l:.9,p:0,v:72},{s:3,l:1.8,p:12,v:120,sl:1},{s:6,l:.9,p:3,v:112},
+   {s:8,l:.9,p:0,v:80},{s:10,l:1.8,p:10,v:122,sl:1},{s:12,l:.9,p:0,v:96},{s:14,l:1.8,p:-2,v:114}]},
+ arp:{name:'16th arp',root:A3,notes:Array.from({length:16},(_,i)=>({s:i,l:.9,p:[0,3,7,12,7,3][i%6],v:i%4===0?116:84}))},
+ stab:{name:'Chord stabs',root:A3,chord:[0,3,7,10],notes:[2,6,10,14].map(s=>({s,l:1.3,p:s>8?-2:0,v:106}))},
+ chord:{name:'Held chords',root:A2,chord:[0,3,7,10],notes:[{s:0,l:7.4,p:0,v:96},{s:8,l:7.4,p:-2,v:96}]},
+ lead:{name:'Lead phrase',root:A3,notes:[
+   {s:0,l:1.8,p:0,v:112},{s:2,l:.9,p:3,v:88},{s:3,l:.9,p:7,v:98},{s:6,l:2.8,p:10,v:114},
+   {s:10,l:.9,p:7,v:96},{s:12,l:.9,p:3,v:86},{s:13,l:2.8,p:0,v:110}]},
+ kick:{name:'Four on the floor',root:A1,notes:[0,4,8,12].map(s=>({s,l:1,v:120,p:0}))},
+ riser:{name:'One long riser',root:A2,len:32,notes:[{s:0,l:31,p:0,v:100}]}
+};
+
+/* ==========================================================
+   RECIPES
+   ========================================================== */
+const R=[
+{name:'Rolling techno bass',target:'Bass',pat:'bass',
+ stages:[
+  {t:'One saw, filter wide open',w:'A raw sawtooth at 55 Hz. Every harmonic present at full strength — harsh, buzzy, and completely static. This is the raw material, and it is deliberately unpleasant. Nothing has been decided yet except the material.',
+   set:{o1w:'sawtooth',o1lvl:.85,o2lvl:0,sub:0,noise:0,uni:1,cut:18000,res:0,fEnv:0,fS:1,aA:.004,aD:.3,aS:1,aR:.1,drive:0,lfoAmt:0,pEnv:0,glide:0,fType:'lowpass',o1oct:0,o2oct:0,fm:0,kbd:0}},
+  {t:'Close the filter',w:'Low-pass at 700 Hz removes the fizz and leaves the fundamental and the first few harmonics. It is a bass now — but a flat one, because every note has the exact same shape from start to finish.',
+   set:{cut:700,res:3}},
+  {t:'Envelope the cutoff',w:'The filter opens to its brightest point instantly, then falls back over 120 ms. That downward sweep on every note is what your ear reads as "plucked". This one control is the difference between a synthesiser and an instrument.',
+   set:{fEnv:.55,fA:.002,fD:.12,fS:.12}},
+  {t:'Add the sub',w:'A sine an octave below, single voice. Now two oscillators are doing two different jobs: the saw supplies character in the midrange, the sine supplies weight below it. Almost every good bass patch is built this way.',
+   set:{sub:.75}},
+  {t:'Shorten the gate',w:'Amp decay to 120 ms with zero sustain cuts each note short. This is the bounce parameter — the same notes with a long sustain sound like a drone, and there is nothing else you can change that will recover the movement.',
+   set:{aD:.12,aS:0,aR:.05}},
+  {t:'Drive it',w:'Saturation folds the peaks and generates harmonics above the fundamental. It makes the bass louder without more level, and — more importantly — audible on speakers that cannot reproduce 55 Hz at all.',
+   set:{drive:.4}}
+ ]},
+
+{name:'Acid 303',target:'Bass',pat:'acid',
+ stages:[
+  {t:'A saw and nothing else',w:'The 303 has one oscillator. Everything that makes an acid line interesting happens after it, which is why the sound survived being made by a machine that was considered a failure.',
+   set:{o1w:'sawtooth',o1lvl:.85,o2lvl:0,sub:0,noise:0,uni:1,cut:18000,res:0,fEnv:0,fS:1,aA:.003,aD:.3,aS:.6,aR:.06,drive:0,lfoAmt:0,pEnv:0,glide:0,fType:'lowpass',o1oct:0,fm:0,kbd:0}},
+  {t:'Steep, resonant low-pass',w:'Cutoff down to 400 Hz and resonance up to 16. At that Q the filter is no longer just removing frequencies — it rings at the cutoff and becomes the loudest thing in the sound. The filter is the instrument here, not the oscillator.',
+   set:{cut:400,res:16}},
+  {t:'Envelope the cutoff hard',w:'A large envelope amount with a medium decay sweeps that resonant peak downward through the harmonics on every note. This is the squelch. Change the decay and you change the entire character of the line.',
+   set:{fEnv:.75,fD:.22,fS:.05}},
+  {t:'Track the keyboard',w:'Keytracking makes the cutoff rise with pitch, so high notes stay bright instead of vanishing. On a 303 line that jumps octaves, this is what keeps the top notes audible.',
+   set:{kbd:.45}},
+  {t:'Glide between notes',w:'Portamento of 60 ms. On the real machine, slide was a per-step switch — notes marked "slide" bend into the next one instead of retriggering. The pitch movement between notes is half the melodic content of an acid line.',
+   set:{glide:.06}},
+  {t:'Distort the output',w:'Almost no famous acid record is undistorted. Drive brings up the harmonics that the resonant filter generates and turns the squelch into a scream.',
+   set:{drive:.55}}
+ ]},
+
+{name:'Disco house stab',target:'Chord',pat:'stab',
+ stages:[
+  {t:'A single saw chord',w:'A minor seventh played as a block. Wide open, it sounds like a cheap organ — every note the same brightness, no shape, no attack.',
+   set:{o1w:'sawtooth',o1lvl:.8,o2lvl:0,sub:0,noise:0,uni:1,cut:18000,res:0,fEnv:0,fS:1,aA:.004,aD:.4,aS:1,aR:.15,drive:0,lfoAmt:0,pEnv:0,glide:0,fType:'lowpass',o1oct:0,o2oct:0,fm:0,kbd:0}},
+  {t:'Two saws, slightly apart',w:'A second saw detuned nine cents. Two oscillators drifting against each other produce a slow beating that reads as warmth and width. This is the cheapest and most effective thickening there is.',
+   set:{o2w:'sawtooth',o2lvl:.8,o2det:9}},
+  {t:'Fast, bright filter envelope',w:'Cutoff low, envelope high, decay 90 ms. The chord now starts bright and closes immediately — a plucked attack on a sustained chord. That attack is what makes a stab cut through a busy mix without being loud.',
+   set:{cut:800,res:4,fEnv:.8,fD:.09,fS:.10}},
+  {t:'Very short amp envelope',w:'80 ms decay to silence. A disco stab is a rhythmic event, not a chord you hold — it exists to hit the offbeat and get out of the way of the bass.',
+   set:{aD:.08,aS:0,aR:.09}},
+  {t:'Drive and widen',w:'Light saturation plus three unison voices. Now it has the midrange density that survives being filtered down in a breakdown and swept back up.',
+   set:{drive:.25,uni:3,spread:14}}
+ ]},
+
+{name:'Supersaw lead',target:'Lead',pat:'lead',
+ stages:[
+  {t:'One saw',w:'A single saw playing a melody. Thin, exposed, and obviously synthetic — there is nothing wrong with it, there is just only one of it.',
+   set:{o1w:'sawtooth',o1lvl:.75,o2lvl:0,sub:0,noise:0,uni:1,spread:12,cut:18000,res:0,fEnv:0,fS:1,aA:.006,aD:.3,aS:.85,aR:.25,drive:0,lfoAmt:0,pEnv:0,glide:0,fType:'lowpass',o1oct:0,o2oct:0,fm:0,kbd:0}},
+  {t:'Seven voices, spread apart',w:'Unison stacks seven copies of the same oscillator at slightly different pitches. Twenty-five cents of spread is the classic trance width. The sound gets enormous without a single new note.',
+   set:{uni:7,spread:26}},
+  {t:'Weight underneath',w:'A sine an octave down, single voice. Unison detune cancels itself in the sub, so the low end has to come from somewhere that is not detuned. This is the fix for "big but thin".',
+   set:{sub:.35}},
+  {t:'Shape the top',w:'Low-pass at 5 kHz with a gentle envelope takes the hardness off the attack. Slower amp attack lets each note bloom instead of stabbing.',
+   set:{cut:5000,res:1,fEnv:.25,fD:.4,fS:.5,aA:.02}},
+  {t:'One slow moving thing',w:'An LFO at 0.3 Hz on the cutoff. Too slow to hear as an effect, fast enough that the sound is never quite the same twice. This is what separates a lead that survives eight bars from one that does not.',
+   set:{lfoRate:.3,lfoAmt:.35,lfoDest:'cutoff'}}
+ ]},
+
+{name:'Deep house organ',target:'Chord',pat:'chord',
+ stages:[
+  {t:'Square wave',w:'Squares contain only odd harmonics, which is what makes them sound hollow and woody rather than bright and buzzy. Every organ patch starts here.',
+   set:{o1w:'square',o1lvl:.6,o2lvl:0,sub:0,noise:0,uni:1,cut:18000,res:0,fEnv:0,fS:1,aA:.01,aD:.3,aS:1,aR:.3,drive:0,lfoAmt:0,pEnv:0,glide:0,fType:'lowpass',o1oct:0,o2oct:0,fm:0,kbd:0}},
+  {t:'Add the octave above',w:'A second square an octave up at lower level. A drawbar organ is literally a stack of octaves and fifths at different volumes — this is the same idea with two drawbars.',
+   set:{o2w:'square',o2oct:1,o2lvl:.4,o2det:4}},
+  {t:'Filter to the midrange',w:'Low-pass at 1.6 kHz. An organ chord in deep house is not supposed to be bright; it sits behind the drums and provides harmony without competing for the top end.',
+   set:{cut:1600,res:1}},
+  {t:'No attack, long release',w:'Instant attack, full sustain, and a half-second release. Organ envelopes barely exist — the sound is either on or off, and all the expression comes from when you play it.',
+   set:{aA:.008,aD:.05,aS:.9,aR:.5}},
+  {t:'Detune into chorus',w:'Three voices at eight cents. This is the chorus effect that everyone associates with deep house chords, and it is cheaper and more controllable done here than with a chorus plugin.',
+   set:{uni:3,spread:8}}
+ ]},
+
+{name:'FM growl bass',target:'Bass',pat:'bass',
+ stages:[
+  {t:'Sine carrier',w:'A pure sine at 55 Hz. Nothing to filter, nothing to remove — a sine is a dead end for subtractive synthesis, which is exactly why FM exists.',
+   set:{o1w:'sine',o1lvl:.9,o2w:'sine',o2lvl:0,sub:0,noise:0,uni:1,cut:18000,res:0,fEnv:0,fS:1,aA:.003,aD:.3,aS:1,aR:.08,drive:0,lfoAmt:0,pEnv:0,glide:0,fType:'lowpass',o1oct:0,o2oct:0,fm:0,kbd:0}},
+  {t:'Modulate it with a second sine',w:'The second oscillator now modulates the first oscillator\'s frequency instead of being heard. At an octave ratio the result stays harmonic; the sine grows a whole series of harmonics that no filter could have produced, because they were never there to remove.',
+   set:{o2oct:1,fm:.35}},
+  {t:'Envelope the modulation',w:'The modulator depth falls with the filter envelope, so the sound barks at the start and settles into something cleaner. That first 50 ms of metallic character is the entire identity of a tech house bass.',
+   set:{fEnv:.5,fD:.11,fS:.12}},
+  {t:'Tame the top',w:'FM generates harmonics a long way up. A low-pass at 1.5 kHz keeps the growl and removes the fizz that would fight with the hats.',
+   set:{cut:1500,res:2}},
+  {t:'Short gate and drive',w:'Short amp decay so it stays a rhythmic part, plus saturation to glue the harmonics together.',
+   set:{aD:.14,aS:0,aR:.05,drive:.3}}
+ ]},
+
+{name:'Pluck',target:'Lead',pat:'arp',
+ stages:[
+  {t:'Saw, open',w:'A saw playing 16ths. Wide open it is a continuous buzz — the notes run into each other and you cannot hear the pattern.',
+   set:{o1w:'sawtooth',o1lvl:.75,o2lvl:0,sub:0,noise:0,uni:1,cut:18000,res:0,fEnv:0,fS:1,aA:.004,aD:.3,aS:.8,aR:.2,drive:0,lfoAmt:0,pEnv:0,glide:0,fType:'lowpass',o1oct:0,o2oct:0,fm:0,kbd:0}},
+  {t:'Extremely fast filter envelope',w:'Cutoff at 600 Hz, envelope high, decay 60 ms. A pluck is defined almost entirely by how fast the filter shuts — the shorter the decay, the more it sounds like something being struck rather than blown.',
+   set:{cut:600,res:5,fEnv:.85,fD:.06,fS:.04}},
+  {t:'Zero sustain',w:'Amp decay 90 ms to silence. Now the pattern is legible: every 16th is a separate event with a gap after it, and the gaps are what let you hear the rhythm.',
+   set:{aD:.09,aS:0,aR:.08}},
+  {t:'Width and air',w:'Three voices with a second saw seven cents away, and a little keytracking so the high notes keep their brightness.',
+   set:{o2lvl:.6,o2det:7,uni:3,spread:10,kbd:.3}}
+ ]},
+
+{name:'Hoover',target:'Lead',pat:'lead',
+ stages:[
+  {t:'A wall of detuned saws',w:'Seven voices at thirty cents. The Roland Alpha Juno preset this comes from was built on a stacked, heavily detuned pulse — the width is the foundation, not a finishing touch.',
+   set:{o1w:'sawtooth',o1lvl:.7,o2w:'sawtooth',o2lvl:.5,o2det:18,sub:0,noise:0,uni:7,spread:30,cut:18000,res:0,fEnv:0,fS:1,aA:.008,aD:.3,aS:.9,aR:.2,drive:0,lfoAmt:0,pEnv:0,glide:0,fType:'lowpass',o1oct:0,o2oct:0,fm:0,kbd:0}},
+  {t:'Fall into every note',w:'A pitch envelope dropping half an octave over 180 ms. That downward swoop into the note is the single most recognisable thing about a hoover, and it is a pitch envelope, not a filter.',
+   set:{pEnv:.5,pDec:.18}},
+  {t:'Resonant sweep',w:'Cutoff low with a big, slow envelope and high resonance. The filter opens across the length of each note rather than closing, which is the opposite of a pluck and reads as menace.',
+   set:{cut:320,res:8,fEnv:.85,fA:.01,fD:.55,fS:.55}},
+  {t:'Wobble',w:'An LFO at 5.5 Hz on pitch, shallow. Just enough instability to keep the sound from reading as a static chord.',
+   set:{lfoRate:5.5,lfoAmt:.10,lfoDest:'pitch'}},
+  {t:'Ruin it',w:'Heavy drive. A clean hoover is not a hoover.',
+   set:{drive:.6}}
+ ]},
+
+{name:'Kick from a synth',target:'Drum',pat:'kick',
+ stages:[
+  {t:'A sine',w:'One sine oscillator at 55 Hz. Held, it is a test tone. Everything that turns it into a kick drum is envelopes.',
+   set:{o1w:'sine',o1lvl:1,o2lvl:0,sub:0,noise:0,uni:1,cut:18000,res:0,fEnv:0,fS:1,aA:.002,aD:.6,aS:1,aR:.1,drive:0,lfoAmt:0,pEnv:0,glide:0,fType:'lowpass',o1oct:0,o2oct:0,fm:0,kbd:0}},
+  {t:'Pitch envelope',w:'Drop the pitch an octave and a half over 40 ms. That is the whole kick — a fast fall from around 160 Hz down to the fundamental. Lengthen the decay and it becomes a tom; shorten it and it becomes a click.',
+   set:{pEnv:1.5,pDec:.04}},
+  {t:'Amp decay',w:'Instant attack, 350 ms decay, zero sustain. The length of this decay is the difference between a tech house kick and a dub techno kick, and nothing else about the patch needs to change.',
+   set:{aA:.002,aD:.35,aS:0,aR:.03}},
+  {t:'Drive for the click',w:'Saturation generates harmonics above the fundamental. On a kick this reads as attack — the click you hear on a club system is largely distortion products, not a separate sound.',
+   set:{drive:.5}},
+  {t:'A touch of noise',w:'A small amount of noise through the same envelope adds a transient edge. In a real patch the noise would have its own much shorter envelope; here it shares the filter, which is why it needs to stay quiet.',
+   set:{noise:.12,cut:2400,fEnv:.3,fD:.02,fS:.02}}
+ ]},
+
+{name:'Noise riser',target:'FX',pat:'riser',
+ stages:[
+  {t:'Just noise',w:'White noise contains every frequency at once. It has no pitch, so it belongs to no key — which is why risers work over any chord.',
+   set:{o1lvl:0,o2lvl:0,sub:0,noise:1,uni:1,cut:18000,res:0,fEnv:0,fS:1,aA:.01,aD:.5,aS:1,aR:.4,drive:0,lfoAmt:0,pEnv:0,glide:0,fType:'bandpass',o1oct:0,fm:0,kbd:0}},
+  {t:'Band-pass it',w:'A narrow band-pass turns undifferentiated hiss into something with a perceived pitch. Resonance narrows the band further and makes that pitch more definite.',
+   set:{cut:700,res:7}},
+  {t:'Sweep it upward over two bars',w:'A huge filter envelope with a four-second decay and full sustain, so the band climbs continuously rather than opening and shutting. Tension in dance music is almost always something rising slowly and never arriving until the drop.',
+   set:{fEnv:.95,fA:3.4,fD:.5,fS:1}},
+  {t:'Movement inside the sweep',w:'A fast LFO on the cutoff adds a shimmer that stops the rise sounding like a synthesiser doing exactly what it was told.',
+   set:{lfoRate:7,lfoAmt:.18,lfoDest:'cutoff'}},
+  {t:'Fade in',w:'A two-second amp attack. The riser should be inaudible when it starts and unavoidable by the end — if you can hear it begin, it begins too loud.',
+   set:{aA:2.0}}
+ ]}
+];
+
+/* ==========================================================
+   CONTROL RACK
+   ========================================================== */
+const logCut=v=>30*Math.pow(600,v/1000);
+const cutLog=f=>1000*Math.log(f/30)/Math.log(600);
+const WAVES=[['sawtooth','Saw'],['square','Square'],['triangle','Triangle'],['sine','Sine']];
+const SPEC=[
+ ['OSC 1',[
+  ['o1w','Wave','sel',WAVES],
+  ['o1oct','Octave','rng',-2,2,1,v=>(v>0?'+':'')+v],
+  ['o1lvl','Level','rng',0,1,.01,v=>Math.round(v*100)+'%']]],
+ ['OSC 2',[
+  ['o2w','Wave','sel',WAVES],
+  ['o2oct','Octave','rng',-2,2,1,v=>(v>0?'+':'')+v],
+  ['o2det','Detune','rng',-50,50,1,v=>v+'¢'],
+  ['o2lvl','Level','rng',0,1,.01,v=>Math.round(v*100)+'%'],
+  ['fm','FM amount','rng',0,1,.01,v=>Math.round(v*100)+'%']]],
+ ['SUB · NOISE · UNISON',[
+  ['sub','Sub level','rng',0,1,.01,v=>Math.round(v*100)+'%'],
+  ['noise','Noise','rng',0,1,.01,v=>Math.round(v*100)+'%'],
+  ['uni','Voices','rng',1,7,1,v=>v+'×'],
+  ['spread','Spread','rng',0,50,1,v=>v+'¢']]],
+ ['FILTER',[
+  ['fType','Type','sel',[['lowpass','Low-pass'],['highpass','High-pass'],['bandpass','Band-pass']]],
+  ['cut','Cutoff','cut',0,1000,1,v=>v<1000?Math.round(v)+' Hz':(v/1000).toFixed(1)+' kHz'],
+  ['res','Resonance','rng',0,24,.5,v=>v.toFixed(1)],
+  ['fEnv','Env amount','rng',-1,1,.01,v=>(v>0?'+':'')+(v*5).toFixed(1)+' oct'],
+  ['kbd','Keytrack','rng',0,1,.01,v=>Math.round(v*100)+'%']]],
+ ['FILTER ENVELOPE',[
+  ['fA','Attack','rng',.001,4,.001,v=>v<1?Math.round(v*1000)+' ms':v.toFixed(2)+' s'],
+  ['fD','Decay','rng',.005,4,.005,v=>v<1?Math.round(v*1000)+' ms':v.toFixed(2)+' s'],
+  ['fS','Sustain','rng',0,1,.01,v=>Math.round(v*100)+'%']]],
+ ['AMP ENVELOPE',[
+  ['aA','Attack','rng',.001,3,.001,v=>v<1?Math.round(v*1000)+' ms':v.toFixed(2)+' s'],
+  ['aD','Decay','rng',.005,3,.005,v=>v<1?Math.round(v*1000)+' ms':v.toFixed(2)+' s'],
+  ['aS','Sustain','rng',0,1,.01,v=>Math.round(v*100)+'%'],
+  ['aR','Release','rng',.01,3,.01,v=>v<1?Math.round(v*1000)+' ms':v.toFixed(2)+' s']]],
+ ['PITCH ENV · LFO',[
+  ['pEnv','Pitch amount','rng',0,2,.01,v=>v.toFixed(2)+' oct'],
+  ['pDec','Pitch decay','rng',.005,.6,.005,v=>Math.round(v*1000)+' ms'],
+  ['lfoRate','LFO rate','rng',.05,20,.05,v=>v.toFixed(2)+' Hz'],
+  ['lfoAmt','LFO amount','rng',0,1,.01,v=>Math.round(v*100)+'%'],
+  ['lfoDest','LFO to','sel',[['cutoff','Cutoff'],['pitch','Pitch'],['amp','Amplitude']]]]],
+ ['OUTPUT',[
+  ['drive','Drive','rng',0,1,.01,v=>Math.round(v*100)+'%'],
+  ['glide','Glide','rng',0,.4,.005,v=>Math.round(v*1000)+' ms'],
+  ['vol','Level','rng',0,1,.01,v=>Math.round(v*100)+'%']]]
+];
+const rack=document.getElementById('rack'), ctrlEls={};
+SPEC.forEach(([title,items])=>{
+  const m=document.createElement('div'); m.className='mod';
+  m.innerHTML=`<div class="eyebrow">${title}</div>`;
+  items.forEach(it=>{
+    const [key,label,kind]=it;
+    const l=document.createElement('label'); l.className='p'; l.dataset.k=key;
+    if(kind==='sel'){
+      l.innerHTML=`${label}<span class="r"><select data-k="${key}">${it[3].map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select></span>`;
+    }else{
+      const [,,,mn,mx,st]=it;
+      l.innerHTML=`${label}<span class="r"><input type="range" data-k="${key}" min="${mn}" max="${mx}" step="${st}"><b></b></span>`;
+    }
+    m.appendChild(l); ctrlEls[key]={el:l,spec:it};
+  });
+  rack.appendChild(m);
+});
+function syncCtrls(){
+  Object.entries(ctrlEls).forEach(([k,{el,spec}])=>{
+    const kind=spec[2];
+    if(kind==='sel'){ el.querySelector('select').value=P[k]; }
+    else if(kind==='cut'){ el.querySelector('input').value=cutLog(P[k]); el.querySelector('b').textContent=spec[6](P[k]); }
+    else { el.querySelector('input').value=P[k]; el.querySelector('b').textContent=spec[6](P[k]); }
+  });
+  drawEnv();
+  if(document.getElementById('translate').style.display!=='none') renderTranslate();
+}
+rack.addEventListener('input',e=>{
+  const k=e.target.dataset.k; if(!k)return;
+  const spec=ctrlEls[k].spec;
+  if(spec[2]==='sel') P[k]=e.target.value;
+  else if(spec[2]==='cut'){ P[k]=logCut(+e.target.value); ctrlEls[k].el.querySelector('b').textContent=spec[6](P[k]); }
+  else { P[k]=+e.target.value; ctrlEls[k].el.querySelector('b').textContent=spec[6](P[k]); }
+  drawEnv();
+  if(document.getElementById('translate').style.display!=='none') renderTranslate();
+});
+function flash(keys){
+  keys.forEach(k=>{ const c=ctrlEls[k]; if(!c)return;
+    c.el.classList.add('flash'); setTimeout(()=>c.el.classList.remove('flash'),1400); });
+}
+
+/* ==========================================================
+   RECIPE ENGINE
+   ========================================================== */
+let rec=0, stage=0, autoBuild=false;
+const chips=document.getElementById('recipeChips');
+R.forEach((x,i)=>{
+  const b=document.createElement('button'); b.className='rchip'; b.textContent=x.name;
+  b.setAttribute('aria-pressed',i===0);
+  b.onclick=()=>{ rec=i; stage=0; autoBuild=false; setBuildBtn(); loadRecipe(); };
+  chips.appendChild(b);
+});
+function loadRecipe(){
+  const x=R[rec];
+  [...chips.children].forEach((c,i)=>c.setAttribute('aria-pressed',i===rec));
+  document.getElementById('recName').textContent=x.name;
+  document.getElementById('recTarget').textContent=x.target;
+  const dots=document.getElementById('dots'); dots.innerHTML='';
+  x.stages.forEach((_,i)=>{const d=document.createElement('i');
+    d.className=i<stage?'done':(i===stage?'cur':''); dots.appendChild(d);});
+  document.getElementById('patSel').value=x.pat;
+  applyStages();
+}
+function applyStages(){
+  const x=R[rec];
+  P={...INIT};
+  const changed=new Set();
+  for(let i=0;i<=stage;i++){
+    Object.entries(x.stages[i].set).forEach(([k,v])=>{P[k]=v; if(i===stage)changed.add(k);});
+  }
+  const st=x.stages[stage];
+  document.getElementById('stageNum').textContent=stage+1;
+  document.getElementById('stageTitle').textContent=st.t;
+  document.getElementById('stageWhy').textContent=st.w;
+  const dots=document.getElementById('dots');
+  [...dots.children].forEach((d,i)=>d.className=i<stage?'done':(i===stage?'cur':''));
+  syncCtrls();
+  if(stage>0) flash([...changed]);
+}
+function goStage(n){
+  const x=R[rec];
+  stage=Math.max(0,Math.min(x.stages.length-1,n));
+  applyStages();
+}
+document.getElementById('nextStage').onclick=()=>{autoBuild=false;setBuildBtn();goStage(stage+1);};
+document.getElementById('prevStage').onclick=()=>{autoBuild=false;setBuildBtn();goStage(stage-1);};
+document.getElementById('restartRec').onclick=()=>{autoBuild=false;setBuildBtn();goStage(0);};
+function setBuildBtn(){
+  const b=document.getElementById('buildBtn');
+  b.textContent=autoBuild?'■ STOP BUILD':'▶ BUILD IT';
+  b.setAttribute('aria-pressed',autoBuild);
+}
+document.getElementById('buildBtn').onclick=()=>{
+  autoBuild=!autoBuild; setBuildBtn();
+  if(autoBuild){ goStage(0); if(!playing) start(); }
+};
+
+/* ==========================================================
+   TRANSPORT
+   ========================================================== */
+let playing=false,timer=null,raf=null,nextT=0,loops=[],curPat='bass';
+const stepDur=()=>60/BPM/4;
+let BPM=126, drumsOn=false;
+const nowEl=document.getElementById('nowPlaying');
+const patSel=document.getElementById('patSel');
+Object.entries(PATTERNS).forEach(([k,v])=>{
+  const o=document.createElement('option'); o.value=k; o.textContent=v.name; patSel.appendChild(o);
+});
+patSel.value='bass';
+patSel.onchange=e=>curPat=e.target.value;
+document.getElementById('bpm').oninput=e=>{BPM=+e.target.value;document.getElementById('bpmv').textContent=BPM;};
+document.getElementById('vol').oninput=e=>{document.getElementById('volv').textContent=e.target.value;
+  if(master)master.gain.value=(+e.target.value/100)*.95;};
+document.getElementById('drumBtn').onclick=function(){drumsOn=!drumsOn;this.setAttribute('aria-pressed',drumsOn);
+  this.textContent=drumsOn?'DRUMS ON':'DRUMS OFF';};
+document.getElementById('playBtn').onclick=()=>playing?stop():start();
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)){e.preventDefault();playing?stop():start();}
+});
+function start(){
+  audio(); if(playing)return; playing=true;
+  document.getElementById('playBtn').textContent='■ STOP';
+  nowEl.textContent='▸ '+R[rec].name;
+  nextT=AC.currentTime+.1; loops=[];
+  schedule(); animate();
+}
+function stop(){
+  playing=false; autoBuild=false; setBuildBtn();
+  if(timer)clearTimeout(timer); timer=null;
+  if(raf)cancelAnimationFrame(raf); raf=null;
+  document.getElementById('playBtn').textContent='▶ PLAY';
+  nowEl.textContent='—';
+}
+function schedule(){
+  /* short lookahead: the build stage advances immediately before the loop it applies to,
+     so what you read, what you see on the controls and what you hear stay together */
+  while(nextT<AC.currentTime+.16){
+    if(autoBuild&&loops.length){
+      if(stage<R[rec].stages.length-1) goStage(stage+1);
+      else { autoBuild=false; setBuildBtn(); }
+    }
+    const pat=PATTERNS[curPat], len=pat.len||16;
+    const sd=stepDur(), dur=len*sd, base=nextT;
+    let prev=null;
+    pat.notes.forEach(n=>{
+      const f=mtof(pat.root+(n.p||0));
+      const t=base+n.s*sd, d=n.l*sd;
+      if(pat.chord){ pat.chord.forEach(iv=>note(t,f*Math.pow(2,iv/12),d,n.v,null)); }
+      else { note(t,f,d,n.v,n.sl?prev:null); }
+      prev=f;
+    });
+    if(drumsOn){
+      for(let s=0;s<len;s+=4) bd(base+s*sd);
+      for(let s=2;s<len;s+=4) hh(base+s*sd,true);
+    }
+    loops.push({start:base,dur});
+    nextT+=dur;
+  }
+  loops=loops.filter(l=>l.start+l.dur>AC.currentTime-.5);
+  timer=setTimeout(schedule,30);
+}
+
+/* ==========================================================
+   KEYBOARD
+   ========================================================== */
+const KEYMAP=['a','w','s','e','d','f','t','g','y','h','u','j','k'];
+const BLACK=[1,3,6,8,10];
+const kb=document.getElementById('keys');
+(function(){
+  let wi=0;
+  for(let i=0;i<13;i++){
+    if(BLACK.includes(i%12)) continue;
+    const k=document.createElement('div'); k.className='wk'; k.dataset.n=i;
+    k.textContent=KEYMAP[i].toUpperCase(); kb.appendChild(k); wi++;
+  }
+  const nW=wi;
+  let seen=0;
+  for(let i=0;i<13;i++){
+    if(!BLACK.includes(i%12)){seen++;continue;}
+    const b=document.createElement('div'); b.className='bk'; b.dataset.n=i;
+    b.style.left=(seen*(100/nW)-2.1)+'%';
+    b.textContent=KEYMAP[i].toUpperCase(); kb.appendChild(b);
+  }
+})();
+function hit(n,el){
+  audio();
+  note(AC.currentTime+.01,mtof(A3+n),.55,110,null);
+  if(el){el.classList.add('down');setTimeout(()=>el.classList.remove('down'),140);}
+}
+kb.addEventListener('pointerdown',e=>{
+  const k=e.target.closest('[data-n]'); if(!k)return;
+  hit(+k.dataset.n,k);
+});
+document.addEventListener('keydown',e=>{
+  if(e.repeat||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  const i=KEYMAP.indexOf(e.key.toLowerCase());
+  if(i>=0) hit(i,kb.querySelector(`[data-n="${i}"]`));
+});
+
+/* ==========================================================
+   VISUALS
+   ========================================================== */
+let td=null,fd=null;
+function cx(id,h){
+  const cv=document.getElementById(id); if(!cv) return null;
+  const dpr=window.devicePixelRatio||1,w=cv.clientWidth||300;
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); return {c,w,h};
+}
+function animate(){
+  if(!td){td=new Float32Array(ana.fftSize);fd=new Uint8Array(ana.frequencyBinCount);}
+  function frame(){
+    if(!playing){ raf=null; return; }
+    ana.getFloatTimeDomainData(td); ana.getByteFrequencyData(fd);
+    drawWave(); drawSpec();
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+function drawWave(){
+  const o=cx('scWave',132); if(!o)return; const {c,w,h}=o;
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  c.strokeStyle='rgba(255,255,255,.07)'; c.beginPath(); c.moveTo(0,h/2); c.lineTo(w,h/2); c.stroke();
+  /* trigger on a rising zero crossing so the shape stands still */
+  let st=0;
+  for(let i=1;i<td.length/2;i++){ if(td[i-1]<0&&td[i]>=0){st=i;break;} }
+  const span=Math.min(td.length-st,Math.floor(ana.fftSize/3));
+  c.strokeStyle='#FFC531'; c.lineWidth=1.8; c.beginPath();
+  for(let i=0;i<span;i++){
+    const x=i/span*w, y=h/2-td[st+i]*h*.44;
+    i?c.lineTo(x,y):c.moveTo(x,y);
+  }
+  c.stroke();
+}
+function drawSpec(){
+  const o=cx('scSpec',132); if(!o)return; const {c,w,h}=o;
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  const nyq=AC.sampleRate/2, bins=fd.length, f0=20, f1=18000;
+  for(let x=0;x<w;x++){
+    const f=f0*Math.pow(f1/f0,x/w);
+    const v=fd[Math.min(bins-1,Math.round(f/nyq*bins))]/255;
+    c.fillStyle='rgba(255,138,43,'+(.12+v*.55)+')';
+    c.fillRect(x,h-v*h,1,v*h);
+  }
+  /* live cutoff marker */
+  const cf=Math.min(f1,Math.max(f0,P.cut));
+  const cxp=w*Math.log(cf/f0)/Math.log(f1/f0);
+  c.fillStyle='rgba(255,75,50,.85)'; c.fillRect(cxp,0,1.5,h);
+  c.font='9px JetBrains Mono, monospace'; c.fillStyle='rgba(242,237,224,.3)';
+  [100,1000,10000].forEach(f=>{const x=w*Math.log(f/f0)/Math.log(f1/f0);
+    c.fillRect(x,h-9,1,9); c.fillText(f>=1000?(f/1000)+'k':f,x+3,h-3);});
+}
+function drawEnv(){
+  const o=cx('scEnv',132); if(!o)return; const {c,w,h}=o;
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  const span=Math.max(1.2,(P.aA+P.aD+P.aR)*1.25,(P.fA+P.fD)*1.25);
+  const pad=8, H=h-pad*2, W=w-pad*2;
+  const gate=Math.max(P.aA+P.aD,span*.55);
+  c.strokeStyle='rgba(255,255,255,.07)';
+  [0,.25,.5,.75,1].forEach(f=>{c.beginPath();c.moveTo(pad,pad+f*H);c.lineTo(w-pad,pad+f*H);c.stroke();});
+  const draw=(A,D,Sv,Rl,col,dash)=>{
+    c.strokeStyle=col; c.lineWidth=2; c.setLineDash(dash||[]);
+    c.beginPath();
+    const X=t=>pad+Math.min(1,t/span)*W, Y=v=>pad+H-v*H;
+    c.moveTo(X(0),Y(0));
+    c.lineTo(X(A),Y(1));
+    c.lineTo(X(A+D),Y(Sv));
+    c.lineTo(X(gate),Y(Sv));
+    if(Rl!==null) c.lineTo(X(gate+Rl),Y(0));
+    c.stroke(); c.setLineDash([]);
+  };
+  draw(P.fA,P.fD,P.fS,null,'#3FD0C9',[5,4]);
+  draw(P.aA,P.aD,P.aS,P.aR,'#FF4B32',null);
+  c.font='9px JetBrains Mono, monospace';
+  c.fillStyle='#FF4B32'; c.fillText('AMP',pad+2,pad+11);
+  c.fillStyle='#3FD0C9'; c.fillText('FILTER',pad+38,pad+11);
+  c.fillStyle='rgba(242,237,224,.3)'; c.fillText(span.toFixed(1)+' s',w-pad-34,h-pad+1);
+}
+
+/* ==========================================================
+   TOOLS
+   ========================================================== */
+document.getElementById('initPatch').onclick=()=>{P={...INIT};syncCtrls();};
+document.getElementById('snapA').onclick=()=>{snapshot={...P};document.getElementById('snapA').textContent='Stored ✓';
+  setTimeout(()=>document.getElementById('snapA').textContent='Store A',1200);};
+document.getElementById('recallA').onclick=()=>{if(snapshot){P={...snapshot};syncCtrls();}};
+document.getElementById('randPatch').onclick=()=>{
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  P={...INIT,
+    o1w:WAVES[Math.floor(Math.random()*4)][0], o2w:WAVES[Math.floor(Math.random()*4)][0],
+    o2lvl:Math.random()<.6?rnd(.3,.9):0, o2det:Math.round(rnd(-20,20)),
+    sub:Math.random()<.5?rnd(.2,.8):0, uni:Math.random()<.4?Math.round(rnd(3,7)):1, spread:Math.round(rnd(5,30)),
+    cut:rnd(200,4000), res:rnd(0,12), fEnv:rnd(.2,.9), fD:rnd(.03,.6), fS:rnd(0,.5),
+    aA:Math.random()<.8?rnd(.002,.02):rnd(.1,.6), aD:rnd(.05,.6), aS:Math.random()<.5?0:rnd(.3,1), aR:rnd(.05,.4),
+    drive:rnd(0,.5), lfoAmt:Math.random()<.4?rnd(.1,.4):0, lfoRate:rnd(.2,8),
+    fm:Math.random()<.25?rnd(.1,.5):0};
+  syncCtrls();
+};
+function renderTranslate(){
+  const oct=v=>v===0?'':(v>0?' +'+v+' oct':' '+v+' oct');
+  const wn=w=>({sawtooth:'Saw',square:'Square',triangle:'Triangle',sine:'Sine'}[w]);
+  const ms=v=>v<1?Math.round(v*1000)+' ms':v.toFixed(2)+' s';
+  const L=[];
+  L.push('<b>WAVETABLE / ANALOG — set it up like this</b>');
+  L.push('Osc 1   '+wn(P.o1w)+oct(P.o1oct)+'   level '+Math.round(P.o1lvl*100)+'%');
+  L.push('Osc 2   '+(P.o2lvl>0?wn(P.o2w)+oct(P.o2oct)+'   detune '+P.o2det+' cents   level '+Math.round(P.o2lvl*100)+'%':'off'));
+  if(P.fm>0) L.push('        FM: use Operator instead — Osc 2 modulating Osc 1, ratio '+Math.pow(2,P.o2oct)+':1, index '+Math.round(P.fm*100)+'%');
+  L.push('Sub     '+(P.sub>0?'sine, one octave down, level '+Math.round(P.sub*100)+'%':'off'));
+  L.push('Noise   '+(P.noise>0?Math.round(P.noise*100)+'%':'off'));
+  L.push('Unison  '+(P.uni>1?P.uni+' voices, spread '+P.spread+' cents':'off'));
+  L.push('');
+  L.push('<b>FILTER</b>');
+  L.push('Type    '+({lowpass:'Low-pass 12 or 24 dB',highpass:'High-pass',bandpass:'Band-pass'}[P.fType]));
+  L.push('Cutoff  '+(P.cut<1000?Math.round(P.cut)+' Hz':(P.cut/1000).toFixed(2)+' kHz')+'    Resonance '+P.res.toFixed(1)+(P.res>10?'  (high — watch levels)':''));
+  L.push('Env amt '+(P.fEnv*5).toFixed(1)+' oct       Keytrack '+Math.round(P.kbd*100)+'%');
+  L.push('Env     A '+ms(P.fA)+'   D '+ms(P.fD)+'   S '+Math.round(P.fS*100)+'%');
+  L.push('');
+  L.push('<b>AMP ENVELOPE</b>');
+  L.push('        A '+ms(P.aA)+'   D '+ms(P.aD)+'   S '+Math.round(P.aS*100)+'%   R '+ms(P.aR));
+  L.push('');
+  L.push('<b>MODULATION</b>');
+  L.push('Pitch env '+(P.pEnv>0?'+'+P.pEnv.toFixed(2)+' oct decaying over '+ms(P.pDec):'off'));
+  L.push('LFO       '+(P.lfoAmt>0?P.lfoRate.toFixed(2)+' Hz → '+P.lfoDest+', depth '+Math.round(P.lfoAmt*100)+'%':'off'));
+  L.push('Glide     '+(P.glide>0?ms(P.glide):'off'));
+  L.push('Drive     '+(P.drive>0?Math.round(P.drive*100)+'% — Saturator or the device\'s own drive':'off'));
+  document.getElementById('translate').innerHTML=L.join('\n');
+}
+document.getElementById('showTr').onclick=()=>{
+  const el=document.getElementById('translate');
+  const open=el.style.display==='none';
+  el.style.display=open?'block':'none';
+  document.getElementById('showTr').textContent=open?'Hide translation':'Ableton translation';
+  if(open) renderTranslate();
+};
+window.addEventListener('resize',()=>{drawEnv();});
+
+/* boot */
+loadRecipe();
+</script>

@@ -1,0 +1,1063 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Cut — sampling, chopping, warping</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E2DED2;--panel:#F2EFE6;--panel-2:#EAE5D8;
+  --ink:#191713;--ink-2:#635C50;--ink-3:#8C8474;--line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32;--b2:#FF8A2B;--b3:#FFC531;--b4:#F2EDE0;--cy:#3FD0C9;--vi:#A78BFA;--gr:#5FBF52;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1260px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(46px,11.5vw,124px);line-height:.82;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:62ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+.warn{margin-top:18px;background:var(--ink);color:var(--b4);border-radius:5px;padding:12px 15px;
+  font-family:var(--mono);font-size:12px;line-height:1.7;max-width:76ch}
+.warn b{color:var(--b3)}
+.transport{position:sticky;top:0;z-index:95;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:11px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;background:var(--b1);color:#fff;
+  border:0;border-radius:3px;padding:9px 14px;cursor:pointer;white-space:nowrap}
+.tbtn.ghost{background:transparent;color:var(--b4);border:1px solid rgba(242,237,224,.35)}
+.tbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.tbtn:disabled{opacity:.4;cursor:default}
+.tbtn:hover:not(:disabled){filter:brightness(1.12)}
+.knob{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.66)}
+.knob input[type=range]{width:74px;accent-color:var(--b2)}
+.knob b{color:var(--b4);min-width:34px;display:inline-block}
+.knob select{font-family:var(--mono);font-size:11px;background:#2A2723;color:var(--b4);border:1px solid rgba(242,237,224,.3);border-radius:3px;padding:5px 6px}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:30ch}
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 0}
+.nav a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;
+  color:var(--ink-2);border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--panel)}
+.nav a:hover{border-color:var(--ink);color:var(--ink)}
+.sec{padding:48px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:20px}
+.sec-head h2{font-size:clamp(26px,4.4vw,42px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:68ch;margin-top:12px;color:var(--ink-2)}
+.lab{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:20px}
+.tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.11em;padding:3px 7px;border-radius:2px;
+  background:var(--ink);color:var(--b4);text-transform:uppercase;white-space:nowrap}
+.tag.alt{background:var(--b1)}
+
+.wave{background:var(--lane);border-radius:5px;overflow:hidden;position:relative;cursor:crosshair;touch-action:none}
+.wave canvas{display:block;width:100%}
+.wave .msg{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:12px;
+  color:rgba(242,237,224,.5);letter-spacing:.1em;text-transform:uppercase;pointer-events:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px;align-items:center}
+.chip{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;color:var(--ink-2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.chip:hover{border-color:var(--ink)}
+.clbl{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);width:74px;flex:0 0 74px}
+.stats{display:flex;gap:16px;flex-wrap:wrap;margin-top:11px;font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
+.stats b{color:var(--ink);font-size:14px;display:block;font-family:var(--display);font-weight:800;letter-spacing:0}
+.stats b.g{color:var(--gr)} .stats b.r{color:var(--b1)}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px 16px;margin-top:12px}
+.ctrl{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);display:block}
+.ctrl .r{display:flex;align-items:center;gap:7px}
+.ctrl input[type=range]{flex:1;min-width:50px;accent-color:var(--b1)}
+.ctrl b{color:var(--ink);font-size:10.5px;min-width:62px;text-align:right}
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.tool{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:8px 12px;cursor:pointer;color:var(--ink-2)}
+.tool:hover{border-color:var(--ink);color:var(--ink)}
+.tool[aria-pressed="true"],.tool.hi{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.tool.hi:hover{background:var(--b1);border-color:var(--b1);color:#fff}
+.tool:disabled{opacity:.4;cursor:default}
+.sep{width:1px;height:22px;background:var(--line);margin:0 3px}
+
+/* slice pads + sequencer */
+.pads{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px;margin-top:11px}
+.pad{font-family:var(--mono);font-size:11px;font-weight:700;background:var(--lane);color:var(--b4);border:1px solid transparent;
+  border-radius:4px;padding:13px 6px;cursor:pointer;text-align:center}
+.pad:hover{border-color:var(--b3)}
+.pad.lit{background:var(--b1);color:#fff}
+.pad small{display:block;font-size:8.5px;color:rgba(242,237,224,.45);margin-top:3px;font-weight:400}
+.pad.lit small{color:rgba(255,255,255,.7)}
+.seq{display:grid;grid-template-columns:repeat(16,1fr);gap:3px;margin-top:11px}
+.st{background:var(--lane);border:1px solid transparent;border-radius:3px;padding:11px 2px;cursor:pointer;
+  font-family:var(--mono);font-size:11px;font-weight:700;color:var(--b4);text-align:center}
+.st.beat{background:#252220}
+.st.empty{color:rgba(242,237,224,.22)}
+.st.cur{border-color:#fff}
+.st:hover{border-color:var(--b3)}
+
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700}
+tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.68;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:10px 12px;border-radius:0 3px 3px 0;margin:13px 0 0}
+.callout b{color:var(--b1)}
+.note{font-size:14.5px;color:var(--ink-2);margin:13px 0 0;max-width:78ch}
+.note b{color:var(--ink)}
+.foot{border-top:2px solid var(--ink);margin-top:54px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:620px){.knob input[type=range]{width:56px}.tnow{display:none}.clbl{width:100%;flex:1 0 100%}.seq{grid-template-columns:repeat(8,1fr)}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="index.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Field guide 10 · sampling · chopping · warping</div>
+    <h1>Cut it<br><em>up</em>.</h1>
+    <p class="sub">A sampler is four operations — <strong>slice, repitch, stretch and reshape</strong> — and almost everything anyone has ever done with a record is a combination of them. This page renders its own source loops into memory and then performs those operations on the actual audio data, so what you hear is real digital signal processing rather than a description of it.</p>
+    <div class="warn">⚠ <b>About the source material.</b> The loops here are synthesised, not sampled from records — I can't ship someone else's audio. But once a loop exists as a buffer, <b>every operation on this page is genuine</b>: real transient detection on real samples, real playback-rate changes, a real granular time-stretcher, real bit reduction. The source is a stand-in; the sampling is not. What this cannot do is reproduce Ableton's specific warp algorithms — the <i>behaviour</i> of each mode is demonstrated honestly, the exact sound of Complex Pro is not reproducible in a browser.</div>
+  </div>
+</div>
+
+<div class="transport">
+  <div class="wrap">
+    <button class="tbtn" id="loadBtn">◉ LOAD THE RECORD</button>
+    <button class="tbtn ghost" id="stopBtn" disabled>■ STOP</button>
+    <label class="knob">SOURCE <select id="srcSel" disabled></select></label>
+    <label class="knob">PROJECT BPM <input type="range" id="bpm" min="80" max="150" value="126"><b id="bpmv">126</b></label>
+    <label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="70"><b id="volv">70</b></label>
+    <span class="tnow" id="nowPlaying">press load to render the sources</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="index.html" class="nav-home">← Index</a>
+    <a href="#chop">1 · Chop</a>
+    <a href="#time">2 · Pitch &amp; time</a>
+    <a href="#one">3 · One slice</a>
+    <a href="#warp">4 · Warp modes</a>
+    <a href="#rules">5 · Working rules</a>
+  </nav>
+
+  <!-- ============== 1 CHOP ============== -->
+  <section class="sec" id="chop">
+    <div class="sec-head">
+      <div class="eyebrow">Section 01 · interactive</div>
+      <h2>Chop</h2>
+      <p>Onset detection running on the real sample data — short-time energy, differenced, peak-picked against a moving threshold. Drag the sensitivity: low finds only the loud hits, high starts picking up ghost notes and hats. Then rearrange the slices into something that is not the record any more.</p>
+    </div>
+    <div class="lab">
+      <div class="chips"><span class="clbl">Slice by</span>
+        <button class="chip" id="mTrans" aria-pressed="true">Transients</button>
+        <button class="chip" id="mGrid8">Grid · 8</button>
+        <button class="chip" id="mGrid16">Grid · 16</button>
+        <button class="chip" id="mGrid32">Grid · 32</button>
+      </div>
+      <div class="wave"><canvas id="chopCv" style="height:190px"></canvas><span class="msg" id="chopMsg">press load</span></div>
+      <div class="ctrls">
+        <label class="ctrl">Sensitivity<span class="r"><input type="range" id="sens" min="0" max="100" value="42"><b id="sensv">42</b></span></label>
+        <label class="ctrl">Slice decay<span class="r"><input type="range" id="decay" min="10" max="100" value="100"><b id="decayv">100%</b></span></label>
+      </div>
+      <div class="stats" id="chopStats"></div>
+
+      <div class="pads" id="pads"></div>
+
+      <p class="note" style="margin-top:18px"><b>Now rebuild it.</b> Sixteen steps, each holding a slice number. Click a step to advance it to the next slice, right-click or shift-click to clear it. The order is the composition — this is the entire technique behind chopped-up house and hip-hop, and the reason a four-bar break can produce a hundred different loops.</p>
+      <div class="seq" id="seq"></div>
+      <div class="toolbar">
+        <button class="tbtn" id="seqPlay" disabled>▶ PLAY SEQUENCE</button>
+        <button class="tool" id="seqLinear" disabled>Original order</button>
+        <button class="tool" id="seqRandom" disabled>Shuffle</button>
+        <button class="tool" id="seqStutter" disabled>Stutter the first beat</button>
+        <button class="tool" id="seqClear" disabled>Clear</button>
+        <span class="sep"></span>
+        <button class="tool hi" id="chopMidi" disabled>⬇ Chop MIDI</button>
+      </div>
+      <p class="callout"><b>The MIDI export writes a Simpler-style clip.</b> Each step becomes a note starting at C1 and climbing — slice 0 is C1, slice 1 is C#1, and so on, which is exactly the layout Live's <b>Slice to New MIDI Track</b> produces. Slice your own break in Live, drop this clip on it, and your arrangement plays on their audio.</p>
+    </div>
+  </section>
+
+  <!-- ============== 2 PITCH & TIME ============== -->
+  <section class="sec" id="time">
+    <div class="sec-head">
+      <div class="eyebrow">Section 02 · interactive</div>
+      <h2>Pitch &amp; time</h2>
+      <p>The source loops are recorded at 94 BPM. Your project is at whatever the transport says. There are four ways to bridge that gap, they sound completely different, and choosing wrong is the single most common sampling mistake there is.</p>
+    </div>
+    <div class="lab">
+      <div class="stats" id="tempoStats"></div>
+      <div class="chips" style="margin-top:14px"><span class="clbl">Method</span>
+        <button class="chip" data-meth="repitch" aria-pressed="true">Repitch</button>
+        <button class="chip" data-meth="granular">Granular stretch</button>
+        <button class="chip" data-meth="slice">Slice &amp; retrigger</button>
+        <button class="chip" data-meth="formant">Repitch + formant fix</button>
+      </div>
+      <div class="wave"><canvas id="timeCv" style="height:150px"></canvas></div>
+      <div class="ctrls">
+        <label class="ctrl">Extra transpose<span class="r"><input type="range" id="semis" min="-12" max="12" value="0"><b id="semisv">0 st</b></span></label>
+        <label class="ctrl">Grain size<span class="r"><input type="range" id="grain" min="15" max="200" value="80"><b id="grainv">80 ms</b></span></label>
+        <label class="ctrl">Grain overlap<span class="r"><input type="range" id="ovl" min="10" max="80" value="50"><b id="ovlv">50%</b></span></label>
+      </div>
+      <div class="toolbar">
+        <button class="tbtn" id="timePlay" disabled>▶ PLAY AT PROJECT TEMPO</button>
+        <button class="tool" id="timeOrig" disabled>Hear the original speed</button>
+        <span class="tag" id="methTag">Repitch</span>
+      </div>
+      <p class="callout" id="methNote"><b>Repitch</b> — playback rate changes, so speed and pitch move together. This is what a turntable does and what Live's Re-Pitch mode does. It is the only method with no artifacts at all, because nothing is being invented; the trade is that a big tempo change becomes a big pitch change.</p>
+      <p class="note"><b>Push the grain size to 15 ms and then to 200 ms</b> with granular selected. Short grains smear transients into a metallic buzz; long grains preserve tone but audibly stutter on drum hits. That trade-off is the entire reason Live has separate Beats, Tones, Texture and Complex modes — each one is a different compromise on that same axis, and no algorithm escapes it.</p>
+    </div>
+  </section>
+
+  <!-- ============== 3 ONE SLICE ============== -->
+  <section class="sec" id="one">
+    <div class="sec-head">
+      <div class="eyebrow">Section 03 · interactive</div>
+      <h2>One slice, whole loop</h2>
+      <p>The most useful skill in sample-based production and the least taught. Take a single hit — one chord stab, one drum, one syllable — and build eight bars from it alone using pitch, reverse, gating and envelope. Nothing else enters.</p>
+    </div>
+    <div class="lab">
+      <div class="chips"><span class="clbl">Source slice</span><span id="oneSlices"></span></div>
+      <div class="wave"><canvas id="oneCv" style="height:150px"></canvas></div>
+      <div class="ctrls">
+        <label class="ctrl">Pattern<span class="r"><select id="onePat" style="flex:1;font-family:var(--mono);font-size:10px;padding:5px;border:1px solid var(--line);border-radius:3px;background:var(--panel-2);color:var(--ink)"></select></span></label>
+        <label class="ctrl">Pitch spread<span class="r"><input type="range" id="oneSpread" min="0" max="12" value="0"><b id="oneSpreadv">off</b></span></label>
+        <label class="ctrl">Gate<span class="r"><input type="range" id="oneGate" min="5" max="100" value="70"><b id="oneGatev">70%</b></span></label>
+        <label class="ctrl">Filter<span class="r"><input type="range" id="oneFilt" min="0" max="100" value="100"><b id="oneFiltv">open</b></span></label>
+        <label class="ctrl">Bit depth<span class="r"><input type="range" id="oneBits" min="2" max="16" value="16"><b id="oneBitsv">16 bit</b></span></label>
+        <label class="ctrl">Sample rate<span class="r"><input type="range" id="oneSr" min="1" max="16" value="1"><b id="oneSrv">full</b></span></label>
+      </div>
+      <div class="toolbar">
+        <button class="tbtn" id="onePlay" disabled>▶ PLAY LOOP</button>
+        <button class="tool" id="oneRev" aria-pressed="false" disabled>Reverse</button>
+        <button class="tool hi" id="oneMidi" disabled>⬇ MIDI</button>
+      </div>
+      <p class="callout"><b>Bit depth and sample rate are separate destructions.</b> Reducing bits adds quantisation noise that sits underneath the sound — grit. Reducing the sample rate folds high frequencies back down as aliasing — a metallic ring that tracks the pitch. Both are applied here to the actual sample data, offline, exactly as a bitcrusher does. <b>Two bits at full rate and sixteen bits at 1/16 rate sound nothing alike</b>, which is worth knowing before you reach for a preset called "lo-fi".</p>
+      <p class="note"><b>Try this:</b> pick a chord slice, set the pattern to <b>Tresillo</b>, pitch spread to 5, gate to 30% and the filter around 60. That is a complete eight-bar loop built from one hit, and it is how a lot of house records that sound sample-heavy were actually made.</p>
+    </div>
+  </section>
+
+  <!-- ============== 4 WARP ============== -->
+  <section class="sec" id="warp">
+    <div class="sec-head">
+      <div class="eyebrow">Section 04</div>
+      <h2>Warp modes</h2>
+      <p>Which algorithm for which material, and what the controls actually do.</p>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Mode</th><th>How it works</th><th>Use it for</th><th>It breaks on</th></tr></thead>
+      <tbody>
+        <tr><td><b>Beats</b></td><td>Chops at transient markers and retriggers each chunk at the new tempo. No pitch change, no smearing.</td><td>Drums, percussion, anything with clear hits.</td><td>Sustained material — you hear the gaps between chunks as stutter.</td></tr>
+        <tr><td><b>Tones</b></td><td>Granular, tuned to preserve a single pitch. Smaller grains locked to the detected period.</td><td>Monophonic material — a bassline, a vocal, one instrument.</td><td>Chords and drums. Two pitches at once confuse it.</td></tr>
+        <tr><td><b>Texture</b></td><td>Granular with user control over grain size and randomisation. Deliberately smeared.</td><td>Pads, atmospheres, noise, anything you want blurred.</td><td>Anything needing rhythmic accuracy.</td></tr>
+        <tr><td><b>Re-Pitch</b></td><td>Just changes playback speed. Pitch follows tempo, like a turntable.</td><td>When you <em>want</em> the pitch shift, or for small tempo moves.</td><td>Big tempo changes — the key moves with it.</td></tr>
+        <tr><td><b>Complex</b></td><td>A phase-vocoder-style algorithm handling multiple pitches at once. CPU heavy.</td><td>Full mixes, chord loops, anything polyphonic.</td><td>Nothing badly, but it softens transients.</td></tr>
+        <tr><td><b>Complex Pro</b></td><td>Complex, plus <b>Formants</b> (keeps vocal character when transposing) and <b>Envelope</b> (transient handling, ~64 default; lower for tonal, higher for percussive).</td><td>Vocals, full loops, anything where quality matters more than CPU.</td><td>Very large stretches still smear. And your CPU.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>Warp markers, practically</h3>
+        <ul>
+          <li><b>Set the first marker on the first transient</b>, not on the file start. Silence before the first hit will drag your whole grid off.</li>
+          <li>Double-click a transient to make it a warp marker; <b>Ctrl+drag</b> a marker to move audio without moving the grid.</li>
+          <li>For a loop that is already tight, <b>two markers is usually enough</b> — the start and the end. More markers means more chances to fight yourself.</li>
+          <li>Right-click → <b>Warp From Here (Straight)</b> when the source is machine-tight and Live has guessed the tempo but drifted.</li>
+          <li>If a loop sounds subtly wrong at the same point every bar, that is a misplaced marker, not the algorithm.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>The tempo decision</h3>
+        <ul>
+          <li><b>Within about ±6%</b>, use Re-Pitch. The pitch shift is under a semitone and it sounds better than any algorithm.</li>
+          <li><b>Beyond that on drums</b>, use Beats. It is the only mode that keeps a transient sounding like a transient.</li>
+          <li><b>Beyond that on anything tonal</b>, use Complex Pro and accept the CPU. Then check the result in the key of your project.</li>
+          <li><b>Or change your project tempo to the sample's.</b> Producers spend hours fighting a warp that a four-BPM change to the session would have solved.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Sampler versus Simpler</h3>
+        <ul>
+          <li><b>Simpler</b> — one sample, three modes. <b>Classic</b> for pitched playback with a loop, <b>One-Shot</b> for drums and stabs, <b>Slicing</b> to spread slices across the pads.</li>
+          <li>In Slicing mode, the slice count and division are right there — this page's chop lab is that panel.</li>
+          <li><b>Sampler</b> — multisampling, zones, velocity layers, modulation. Use when one sample across a keyboard is not enough.</li>
+          <li><b>Right-click a Simpler → Slice to New MIDI Track</b> is the fastest chop workflow Live has, and the MIDI on this page targets its layout.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Making a sample sit in a mix</h3>
+        <ul>
+          <li><b>High-pass it.</b> Almost every sampled loop carries low end that fights your own kick and bass. 100–200 Hz is not aggressive here.</li>
+          <li><b>Sidechain the sample to your kick</b> even when it has its own drums. It makes the two kits read as one.</li>
+          <li><b>Saturate before you EQ.</b> Old recordings are often dull; harmonics are cheaper than a high shelf.</li>
+          <li>If a loop still will not sit, <b>chop it and use less of it</b>. One bar of a break under your own drums beats four bars of it fighting them.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== 5 RULES ============== -->
+  <section class="sec" id="rules">
+    <div class="sec-head">
+      <div class="eyebrow">Section 05</div>
+      <h2>Working rules</h2>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>Sourcing</h3>
+        <ul>
+          <li><b>Record longer than you need.</b> The bar you want is usually next to the bar you will actually use.</li>
+          <li><b>Find the intro, the break and the outro</b> — the moments with fewest instruments playing. Isolated material chops far better than a full mix.</li>
+          <li><b>Note the key and the tempo immediately.</b> Live's Tuner on a sustained note and a tap-tempo takes thirty seconds and saves an hour.</li>
+          <li>A loop that is nearly in your key can be moved a semitone or two. Three or more and you are better off finding another loop.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Chopping strategy</h3>
+        <ul>
+          <li><b>Slice on transients for drums, on the grid for tonal material.</b> A chord that starts a millisecond late is fine; a kick that does is not.</li>
+          <li><b>Fade every slice.</b> A one-millisecond fade in and out removes clicks and costs nothing audible.</li>
+          <li><b>Keep the slice order somewhere</b> before you start rearranging, so you can get back to the original groove.</li>
+          <li>The best chop is usually the one that removes something — a break with the snare taken out is more useful than the break.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Resampling</h3>
+        <ul>
+          <li><b>Bounce it and sample the bounce.</b> Once a chop is committed to audio you can chop it again, and second-generation chops are where most of the interesting textures come from.</li>
+          <li>Resampling also freezes CPU, which matters once Complex Pro is on several tracks.</li>
+          <li><b>Resample your own synths too.</b> A patch you sampled is a patch you can chop, stretch and reverse — none of which you can do to a live instrument.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Diagnosis</h3>
+        <ul>
+          <li><b>"It sounds metallic"</b> — granular artifacts. Longer grains, or switch to Beats if it is drums.</li>
+          <li><b>"It stutters"</b> — Beats mode on sustained material. Switch to Complex Pro.</li>
+          <li><b>"The pitch is wrong"</b> — Re-Pitch with a big tempo change. Check the resulting key before you write anything over it.</li>
+          <li><b>"There are clicks"</b> — slice boundaries at non-zero crossings. Fade the slices.</li>
+          <li><b>"It sounds thin after transposing up"</b> — formants moved with the pitch. Turn on Formants in Complex Pro.</li>
+          <li><b>"The low end is a mess"</b> — the sample has its own kick and bass. High-pass, or chop those hits out entirely.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <p><strong>A sampler is not a shortcut.</strong> The operations on this page are trivial to perform and take a long time to use well, because the skill is not in the chopping — it is in noticing which half-second of a four-minute record is worth chopping. That part is listening, and the only way to get better at it is to do it a great many times.</p>
+    <p style="color:var(--ink-3);font-size:13px">Source loops are synthesised in an offline audio context at 94 BPM, then processed as real sample data. Onset detection, playback-rate changes, granular stretching, bit and rate reduction all operate on the buffers themselves.</p>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   AUDIO
+   ===================================================================== */
+let AC=null,master=null,limiter=null,bus=null;
+const SRC_BPM=94;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.7;
+    limiter=AC.createDynamicsCompressor();
+    limiter.threshold.value=-6;limiter.knee.value=4;limiter.ratio.value=12;
+    limiter.attack.value=.003;limiter.release.value=.12;
+    bus=AC.createGain(); bus.connect(limiter); limiter.connect(master); master.connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+
+/* ---- generic voices that render into any context ---- */
+function eg(g,t,pk,a,d){g.setValueAtTime(0,t);g.linearRampToValueAtTime(pk,t+a);g.exponentialRampToValueAtTime(.0001,t+a+d);}
+function noiseBuf(ctx,dur){
+  const n=Math.floor(ctx.sampleRate*dur), b=ctx.createBuffer(1,n,ctx.sampleRate);
+  const d=b.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
+  return b;
+}
+function gKick(ctx,dest,t,v=1){
+  const o=ctx.createOscillator();o.type='sine';
+  o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(48,t+.06);
+  const g=ctx.createGain();eg(g.gain,t,.9*v,.002,.30);
+  o.connect(g);g.connect(dest);o.start(t);o.stop(t+.36);
+}
+function gSnare(ctx,dest,t,v=1){
+  const n=ctx.createBufferSource();n.buffer=noiseBuf(ctx,.3);
+  const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1750;bp.Q.value=.8;
+  const g=ctx.createGain();eg(g.gain,t,.5*v,.001,.14);
+  n.connect(bp);bp.connect(g);g.connect(dest);n.start(t);n.stop(t+.24);
+  [180,290].forEach((f,i)=>{const o=ctx.createOscillator();o.type='triangle';o.frequency.value=f;
+    const g2=ctx.createGain();eg(g2.gain,t,(i?.12:.26)*v,.001,.10);
+    o.connect(g2);g2.connect(dest);o.start(t);o.stop(t+.18);});
+}
+function gHat(ctx,dest,t,v=1,open=false){
+  const n=ctx.createBufferSource();n.buffer=noiseBuf(ctx,.25);
+  const hp=ctx.createBiquadFilter();hp.type='highpass';hp.frequency.value=7000;
+  const g=ctx.createGain();const d=open?.16:.035;
+  eg(g.gain,t,.20*v,.001,d);
+  n.connect(hp);hp.connect(g);g.connect(dest);n.start(t);n.stop(t+d+.06);
+}
+function gConga(ctx,dest,t,f=320,v=1){
+  const o=ctx.createOscillator();o.type='sine';
+  o.frequency.setValueAtTime(f*1.5,t);o.frequency.exponentialRampToValueAtTime(f,t+.03);
+  const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=f;bp.Q.value=2.4;
+  const g=ctx.createGain();eg(g.gain,t,.45*v,.002,.18);
+  o.connect(bp);bp.connect(g);g.connect(dest);o.start(t);o.stop(t+.26);
+}
+function gShaker(ctx,dest,t,v=1){
+  const n=ctx.createBufferSource();n.buffer=noiseBuf(ctx,.2);
+  const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=6200;bp.Q.value=1.4;
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.22*v,t+.012);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.08);
+  n.connect(bp);bp.connect(g);g.connect(dest);n.start(t);n.stop(t+.16);
+}
+function gBass(ctx,dest,t,m,dur,v=1){
+  const f=mtof(m);
+  const o=ctx.createOscillator();o.type='sawtooth';o.frequency.value=f;
+  const s=ctx.createOscillator();s.type='sine';s.frequency.value=f;
+  const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.Q.value=4;
+  lp.frequency.setValueAtTime(1100,t);lp.frequency.exponentialRampToValueAtTime(280,t+.13);
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.34*v,t+.006);
+  g.gain.setValueAtTime(.34*v,t+Math.max(.03,dur-.04));
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur+.04);
+  const sg=ctx.createGain();sg.gain.value=.6;
+  o.connect(lp);s.connect(sg);sg.connect(lp);lp.connect(g);g.connect(dest);
+  o.start(t);s.start(t);o.stop(t+dur+.1);s.stop(t+dur+.1);
+}
+function gRhodes(ctx,dest,t,notes,dur,v=1){
+  notes.forEach(m=>{
+    const f=mtof(m);
+    [[1,.5],[2,.18],[3.01,.07],[4.7,.03]].forEach(([r,a])=>{
+      const o=ctx.createOscillator();o.type='sine';o.frequency.value=f*r;
+      const g=ctx.createGain();
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(a*.30*v,t+.008);
+      g.gain.exponentialRampToValueAtTime(.0001,t+dur+.3);
+      o.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.4);});
+  });
+}
+function gVox(ctx,dest,t,m,dur,v=1){
+  const o=ctx.createOscillator();o.type='sawtooth';o.frequency.value=mtof(m);
+  const lfo=ctx.createOscillator();lfo.type='sine';lfo.frequency.value=5.2;
+  const la=ctx.createGain();la.gain.value=7;
+  lfo.connect(la);la.connect(o.detune);lfo.start(t);lfo.stop(t+dur+.2);
+  let prev=o;
+  [[700,10],[1180,11],[2600,13]].forEach(([hz,q])=>{
+    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=hz;bp.Q.value=q;
+    prev.connect(bp);prev=bp;});
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.55*v,t+.04);
+  g.gain.setValueAtTime(.55*v,t+Math.max(.06,dur-.08));
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur+.05);
+  prev.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.2);
+}
+
+/* =====================================================================
+   SOURCE RENDERING  (offline, into real buffers)
+   ===================================================================== */
+const SD=()=>60/SRC_BPM/4;                       /* one 16th at the source tempo */
+const SOURCES=[
+{id:'break',n:'Funk break',d:'Drums only, two bars, with ghost snares. The classic chopping material.',
+ bars:2,build(ctx,dest){
+   const sd=SD();
+   [0,3,10,16,22,26].forEach(s=>gKick(ctx,dest,s*sd,1));
+   [4,12,20,28].forEach(s=>gSnare(ctx,dest,s*sd,1));
+   [7,15,23,31].forEach(s=>gSnare(ctx,dest,s*sd,.28));
+   for(let s=0;s<32;s+=2) gHat(ctx,dest,s*sd,s%4===0?.9:.55,s%8===6);
+ }},
+{id:'chords',n:'Soul chords',d:'Rhodes chords with a bass and light drums. Two chords, two bars.',
+ bars:2,build(ctx,dest){
+   const sd=SD();
+   gRhodes(ctx,dest,0,[60,64,67,71],7.2*sd,1);
+   gRhodes(ctx,dest,8*sd,[60,64,67,71],7.2*sd,.8);
+   gRhodes(ctx,dest,16*sd,[57,60,64,67],7.2*sd,1);
+   gRhodes(ctx,dest,24*sd,[57,60,64,67],7.2*sd,.8);
+   [0,16].forEach((b,i)=>[0,6,10].forEach(s=>gBass(ctx,dest,(b+s)*sd,i?45:48,3*sd,.9)));
+   [0,8,16,24].forEach(s=>gKick(ctx,dest,s*sd,.8));
+   [4,12,20,28].forEach(s=>gSnare(ctx,dest,s*sd,.55));
+   for(let s=2;s<32;s+=4) gHat(ctx,dest,s*sd,.5,true);
+ }},
+{id:'perc',n:'Percussion loop',d:'Congas, shaker and rim. No kick, so it layers under anything.',
+ bars:2,build(ctx,dest){
+   const sd=SD();
+   [0,3,6,10,13,16,19,22,26,29].forEach((s,i)=>gConga(ctx,dest,s*sd,[320,240,400][i%3],i%3===0?1:.7));
+   for(let s=1;s<32;s+=2) gShaker(ctx,dest,s*sd,s%4===1?.8:.5);
+   [7,15,23,31].forEach(s=>gConga(ctx,dest,s*sd,520,.5));
+ }},
+{id:'vox',n:'Vocal phrase',d:'A sung-ish line — a formant-filtered stand-in, not a real voice. Four syllables.',
+ bars:2,build(ctx,dest){
+   const sd=SD();
+   [[0,72,5],[6,74,3],[10,71,5],[16,67,7],[24,69,6]].forEach(([s,m,l])=>
+     gVox(ctx,dest,s*sd,m,l*sd,1));
+ }}
+];
+const BUFFERS={};
+async function renderSources(){
+  const sr=AC.sampleRate;
+  for(const S0 of SOURCES){
+    const dur=S0.bars*16*SD()+0.6;
+    const oc=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,Math.ceil(sr*dur),sr);
+    const out=oc.createGain(); out.gain.value=.55;
+    /* band-limit and add a noise floor, the way a record would */
+    const hp=oc.createBiquadFilter();hp.type='highpass';hp.frequency.value=55;
+    const lp=oc.createBiquadFilter();lp.type='lowpass';lp.frequency.value=11500;
+    const wow=oc.createDelay(0.05); wow.delayTime.value=0.006;
+    const wlfo=oc.createOscillator(); wlfo.type='sine'; wlfo.frequency.value=0.7;
+    const wamt=oc.createGain(); wamt.gain.value=0.0009;
+    wlfo.connect(wamt); wamt.connect(wow.delayTime); wlfo.start(0);
+    out.connect(hp);hp.connect(lp);lp.connect(wow);wow.connect(oc.destination);
+    S0.build(oc,out);
+    const hiss=oc.createBufferSource(); hiss.buffer=noiseBuf(oc,dur);
+    const hg=oc.createGain(); hg.gain.value=0.0035;
+    const hhp=oc.createBiquadFilter(); hhp.type='highpass'; hhp.frequency.value=1800;
+    hiss.connect(hhp);hhp.connect(hg);hg.connect(oc.destination);hiss.start(0);
+    BUFFERS[S0.id]=await oc.startRendering();
+  }
+}
+
+/* =====================================================================
+   REAL DSP ON THE BUFFERS
+   ===================================================================== */
+function reverseBuf(buf){
+  const b=AC.createBuffer(1,buf.length,buf.sampleRate);
+  const s=buf.getChannelData(0), d=b.getChannelData(0);
+  for(let i=0;i<s.length;i++) d[i]=s[s.length-1-i];
+  return b;
+}
+function crushBuf(buf,bits,rateDiv){
+  const b=AC.createBuffer(1,buf.length,buf.sampleRate);
+  const s=buf.getChannelData(0), d=b.getChannelData(0);
+  const levels=Math.pow(2,bits-1);
+  let hold=0;
+  for(let i=0;i<s.length;i++){
+    if(i%rateDiv===0) hold=s[i];
+    d[i]=Math.round(hold*levels)/levels;
+  }
+  return b;
+}
+function sliceBuf(buf,from,to){
+  const sr=buf.sampleRate;
+  const a=Math.max(0,Math.floor(from*sr)), z=Math.min(buf.length,Math.ceil(to*sr));
+  const n=Math.max(1,z-a);
+  const b=AC.createBuffer(1,n,sr);
+  const s=buf.getChannelData(0), d=b.getChannelData(0);
+  const fade=Math.min(Math.floor(sr*0.0015),Math.floor(n/2));
+  for(let i=0;i<n;i++){
+    let v=s[a+i]||0;
+    if(i<fade) v*=i/fade;
+    if(i>n-fade) v*=(n-i)/fade;
+    d[i]=v;
+  }
+  return b;
+}
+/* short-time energy onset detection on the actual sample data */
+function detectOnsets(buf,sensitivity){
+  const d=buf.getChannelData(0), sr=buf.sampleRate;
+  const win=Math.max(64,Math.floor(sr*0.01));
+  const env=[];
+  for(let i=0;i<d.length;i+=win){
+    let s=0;
+    for(let j=i;j<Math.min(i+win,d.length);j++) s+=d[j]*d[j];
+    env.push(Math.sqrt(s/win));
+  }
+  const flux=env.map((v,i)=>i?Math.max(0,v-env[i-1]):0);
+  const peak=Math.max(...flux)||1;
+  const W=14, out=[];
+  for(let i=1;i<flux.length-1;i++){
+    let m=0,n=0;
+    for(let k=i-W;k<=i+W;k++) if(k>=0&&k<flux.length){m+=flux[k];n++;}
+    m/=n;
+    /* higher sensitivity must LOWER the threshold so more onsets survive */
+    const k=1-sensitivity;
+    const thr=m*(1.05+k*3.6)+peak*(0.008+k*0.055);
+    if(flux[i]>thr&&flux[i]>=flux[i-1]&&flux[i]>=flux[i+1]){
+      const t=i*win/sr;
+      if(!out.length||t-out[out.length-1]>0.045) out.push(t);
+    }
+  }
+  if(!out.length||out[0]>0.03) out.unshift(0);
+  return out;
+}
+/* granular time-stretch: hop through the source slower or faster than the output */
+function granular(when,buf,{stretch=1,semis=0,grain=.08,overlap=.5,dur=1,dest}){
+  const rate=Math.pow(2,semis/12);
+  const hopOut=Math.max(.008,grain*(1-overlap));   /* floor keeps grain count sane at extreme settings */
+  const hopIn=hopOut/stretch;
+  let tOut=0, tIn=0, guard=0;
+  while(tOut<dur&&guard++<4000){
+    const s=AC.createBufferSource(); s.buffer=buf; s.playbackRate.value=rate;
+    const g=AC.createGain();
+    const t0=when+tOut;
+    g.gain.setValueAtTime(0,t0);
+    g.gain.linearRampToValueAtTime(1,t0+grain*.5);
+    g.gain.linearRampToValueAtTime(0,t0+grain);
+    s.connect(g); g.connect(dest||bus);
+    const off=Math.min(tIn,Math.max(0,buf.duration-grain*rate-.001));
+    s.start(t0,off,grain*rate+.005);
+    s.stop(t0+grain+.02);
+    tOut+=hopOut; tIn+=hopIn;
+    if(tIn>=buf.duration-grain*rate-.002) tIn=0;
+  }
+}
+function playBuf(when,buf,{rate=1,offset=0,dur=null,gain=1,filt=null,dest=null}={}){
+  const s=AC.createBufferSource(); s.buffer=buf; s.playbackRate.value=rate;
+  const g=AC.createGain(); g.gain.value=gain;
+  let node=s;
+  if(filt){const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=filt;f.Q.value=1;
+    s.connect(f);node=f;}
+  node.connect(g); g.connect(dest||bus);
+  if(dur===null) s.start(when,offset); else s.start(when,offset,dur);
+  return s;
+}
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const S={src:'break',bpm:126,loaded:false,playing:null,
+  sliceMode:'trans',sens:.25+.42*.75,decay:1,slices:[],
+  seq:new Array(16).fill(-1),
+  meth:'repitch',semis:0,grain:.08,ovl:.5,
+  one:{slice:0,pat:'four',spread:0,gate:.7,filt:1,bits:16,sr:1,rev:false}};
+const stepDur=()=>60/S.bpm/4;
+const curBuf=()=>BUFFERS[S.src];
+
+/* =====================================================================
+   SLICING
+   ===================================================================== */
+function computeSlices(){
+  const buf=curBuf(); if(!buf){S.slices=[];return;}
+  const loopDur=SOURCES.find(x=>x.id===S.src).bars*16*SD();
+  let pts;
+  if(S.sliceMode==='trans') pts=detectOnsets(buf,S.sens).filter(t=>t<loopDur-.02);
+  else{
+    const n=+S.sliceMode;
+    pts=Array.from({length:n},(_,i)=>i*loopDur/n);
+  }
+  S.slices=pts.map((t,i)=>({i,from:t,to:(i+1<pts.length?pts[i+1]:loopDur)}));
+}
+function sliceBufferOf(i){
+  const sl=S.slices[i]; if(!sl) return null;
+  const len=(sl.to-sl.from)*S.decay;
+  return sliceBuf(curBuf(),sl.from,sl.from+Math.max(.02,len));
+}
+
+/* =====================================================================
+   DRAWING
+   ===================================================================== */
+function prep(cv,h){
+  const dpr=window.devicePixelRatio||1,w=cv.clientWidth||600;
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  return {c,w,h};
+}
+function drawWave(cv,buf,h,{slices=null,marks=null,pos=-1,dur=null,col='#FFC531'}={}){
+  const o=prep(cv,h); if(!o||!buf) return; const {c,w}=o;
+  const d=buf.getChannelData(0);
+  const total=dur||buf.duration;
+  const n=Math.min(d.length,Math.floor(total*buf.sampleRate));
+  if(slices){
+    slices.forEach((s,i)=>{
+      c.fillStyle=(i%2)?'rgba(255,255,255,.035)':'rgba(255,255,255,.06)';
+      c.fillRect(s.from/total*w,0,(s.to-s.from)/total*w,h);
+    });
+  }
+  c.strokeStyle=col; c.lineWidth=1;
+  c.beginPath();
+  for(let x=0;x<w;x++){
+    const a=Math.floor(x/w*n), b=Math.floor((x+1)/w*n);
+    let mn=0,mx=0;
+    for(let i=a;i<b&&i<n;i++){const v=d[i];if(v<mn)mn=v;if(v>mx)mx=v;}
+    c.moveTo(x+.5,h/2-mx*h*.46);
+    c.lineTo(x+.5,h/2-mn*h*.46);
+  }
+  c.stroke();
+  if(slices){
+    slices.forEach((s,i)=>{
+      const x=s.from/total*w;
+      c.fillStyle='#FF4B32'; c.fillRect(x,0,1.5,h);
+      if((s.to-s.from)/total*w>16){
+        c.font='700 9px JetBrains Mono, monospace'; c.fillStyle='rgba(255,75,50,.9)';
+        c.fillText(i,x+3,11);
+      }
+    });
+  }
+  if(marks) marks.forEach(t=>{c.fillStyle='rgba(63,208,201,.8)';c.fillRect(t/total*w,0,1,h);});
+  if(pos>=0){c.fillStyle='rgba(255,255,255,.85)';c.fillRect(pos*w,0,2,h);}
+}
+
+/* =====================================================================
+   TRANSPORT
+   ===================================================================== */
+let timer=null,raf=null,nextT=0,loops=[],stepIx=0;
+const nowEl=document.getElementById('nowPlaying');
+function stopAll(){
+  if(timer)clearTimeout(timer);timer=null;
+  if(raf)cancelAnimationFrame(raf);raf=null;
+  S.playing=null;loops=[];stepIx=0;
+  ['seqPlay','timePlay','onePlay'].forEach(id=>{
+    const b=document.getElementById(id); if(b) b.textContent=b.dataset.lbl||'▶ PLAY';});
+  nowEl.textContent=S.loaded?'ready':'press load to render the sources';
+  renderAll();
+}
+function startPlay(kind){
+  audio(); stopAll(); S.playing=kind;
+  const map={seq:'seqPlay',time:'timePlay',one:'onePlay'};
+  const b=document.getElementById(map[kind]); if(b) b.textContent='■ STOP';
+  nowEl.textContent='▸ '+{seq:'chop sequence',time:'pitch & time',one:'one-slice loop'}[kind];
+  nextT=AC.currentTime+.12; loops=[]; stepIx=0; schedule(); animate();
+}
+const ONEPATS={
+ four:{n:'Four on the floor',steps:[0,4,8,12]},
+ off:{n:'Offbeat 8ths',steps:[2,6,10,14]},
+ tres:{n:'Tresillo',steps:[0,3,6]},
+ sixt:{n:'16ths',steps:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},
+ gallop:{n:'Gallop',steps:[0,3,4,8,11,12]},
+ sparse:{n:'Sparse',steps:[0,10]}
+};
+function schedule(){
+  while(nextT<AC.currentTime+.3){
+    const sd=stepDur(), base=nextT;
+    if(S.playing==='seq'){
+      for(let s=0;s<16;s++){
+        const si=S.seq[s]; if(si<0||si>=S.slices.length) continue;
+        const b=sliceBufferOf(si); if(!b) continue;
+        playBuf(base+s*sd,b,{gain:.9});
+      }
+      loops.push({start:base,dur:16*sd});
+      nextT+=16*sd;
+    }else if(S.playing==='time'){
+      const src=SOURCES.find(x=>x.id===S.src);
+      const srcDur=src.bars*16*SD();
+      const tgtDur=src.bars*16*sd;
+      const ratio=srcDur/tgtDur;
+      const buf=curBuf();
+      if(S.meth==='repitch'){
+        playBuf(base,buf,{rate:ratio*Math.pow(2,S.semis/12),dur:tgtDur/Math.max(.01,1)});
+      }else if(S.meth==='granular'){
+        granular(base,buf,{stretch:1/ratio,semis:S.semis,grain:S.grain,overlap:S.ovl,dur:tgtDur});
+      }else if(S.meth==='slice'){
+        const n=16*src.bars;
+        for(let i=0;i<n;i++){
+          const from=i*srcDur/n;
+          playBuf(base+i*sd,sliceBuf(buf,from,from+srcDur/n),
+            {rate:Math.pow(2,S.semis/12),gain:.95});
+        }
+      }else{
+        /* repitch for speed, then granular back to the original pitch — a formant-ish fix */
+        granular(base,buf,{stretch:1/ratio,semis:S.semis,grain:Math.max(.03,S.grain*.6),
+          overlap:Math.max(.5,S.ovl),dur:tgtDur});
+      }
+      loops.push({start:base,dur:tgtDur});
+      nextT+=tgtDur;
+    }else if(S.playing==='one'){
+      const P=ONEPATS[S.one.pat];
+      let b=sliceBufferOf(S.one.slice);
+      if(!b){nextT+=16*sd;continue;}
+      if(S.one.rev) b=reverseBuf(b);
+      if(S.one.bits<16||S.one.sr>1) b=crushBuf(b,S.one.bits,S.one.sr);
+      P.steps.forEach((st,i)=>{
+        const semis=S.one.spread?[0,S.one.spread,-S.one.spread,S.one.spread*2][i%4]:0;
+        playBuf(base+st*sd,b,{rate:Math.pow(2,semis/12),
+          dur:Math.max(.03,S.one.gate*sd*2),gain:.85,
+          filt:S.one.filt>=1?null:200+S.one.filt*S.one.filt*14000});
+      });
+      loops.push({start:base,dur:16*sd});
+      nextT+=16*sd;
+    }else break;
+  }
+  loops=loops.filter(l=>l.start+l.dur>AC.currentTime-.4);
+  timer=setTimeout(()=>{if(S.playing)schedule();},50);
+}
+function animate(){
+  function frame(){
+    if(!S.playing){raf=null;return;}
+    const now=AC.currentTime;
+    const L=loops.find(l=>now>=l.start&&now<l.start+l.dur);
+    const pos=L?(now-L.start)/L.dur:-1;
+    if(S.playing==='seq'){
+      const cur=L?Math.floor(pos*16):-1;
+      document.querySelectorAll('#seq .st').forEach((e,i)=>e.classList.toggle('cur',i===cur));
+      drawChop(pos);
+    }
+    if(S.playing==='time') drawTime(pos);
+    if(S.playing==='one') drawOne(pos);
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+/* =====================================================================
+   LOAD
+   ===================================================================== */
+document.getElementById('loadBtn').onclick=async function(){
+  if(S.loaded) return;
+  this.textContent='RENDERING…'; this.disabled=true;
+  audio();
+  try{
+    await renderSources();
+    S.loaded=true;
+    this.textContent='◉ LOADED';
+    document.getElementById('chopMsg').style.display='none';
+    ['stopBtn','srcSel','seqPlay','timePlay','onePlay','seqLinear','seqRandom','seqStutter',
+     'seqClear','chopMidi','oneMidi','oneRev','timeOrig'].forEach(id=>{
+      const e=document.getElementById(id); if(e) e.disabled=false;});
+    nowEl.textContent='ready — '+SOURCES.length+' sources rendered at '+SRC_BPM+' BPM';
+    seqLinear(); computeSlices(); buildPads(); renderAll();
+  }catch(err){
+    this.textContent='RENDER FAILED';
+    nowEl.textContent='could not render: '+err.message;
+    console.error(err);
+  }
+};
+document.getElementById('stopBtn').onclick=()=>stopAll();
+const srcSel=document.getElementById('srcSel');
+SOURCES.forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.n;srcSel.appendChild(o);});
+srcSel.onchange=e=>{S.src=e.target.value;computeSlices();S.one.slice=0;seqLinear();buildPads();renderAll();
+  if(S.playing) startPlay(S.playing);};
+document.getElementById('bpm').oninput=e=>{S.bpm=+e.target.value;document.getElementById('bpmv').textContent=S.bpm;renderTempo();};
+document.getElementById('vol').oninput=e=>{document.getElementById('volv').textContent=e.target.value;
+  if(master)master.gain.value=(+e.target.value/100)*.95;};
+document.addEventListener('keydown',e=>{
+  if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.code==='Space'){e.preventDefault();S.playing?stopAll():(S.loaded&&startPlay('seq'));}
+  if(e.key==='Escape')stopAll();
+});
+
+/* =====================================================================
+   CHOP UI
+   ===================================================================== */
+[['mTrans','trans'],['mGrid8','8'],['mGrid16','16'],['mGrid32','32']].forEach(([id,mode])=>{
+  document.getElementById(id).onclick=()=>{
+    S.sliceMode=mode;
+    ['mTrans','mGrid8','mGrid16','mGrid32'].forEach(x=>
+      document.getElementById(x).setAttribute('aria-pressed',x===id));
+    computeSlices();seqLinear();buildPads();renderAll();};
+});
+document.getElementById('sens').oninput=e=>{S.sens=.25+(+e.target.value/100)*.75;
+  document.getElementById('sensv').textContent=e.target.value;
+  computeSlices();buildPads();renderAll();};
+document.getElementById('decay').oninput=e=>{S.decay=+e.target.value/100;
+  document.getElementById('decayv').textContent=e.target.value+'%';renderAll();};
+function buildPads(){
+  const el=document.getElementById('pads'); el.innerHTML='';
+  S.slices.forEach((sl,i)=>{
+    const b=document.createElement('button'); b.className='pad'; b.dataset.slice=i;
+    b.innerHTML=i+'<small>'+Math.round((sl.to-sl.from)*1000)+' ms</small>';
+    el.appendChild(b);
+  });
+  const os=document.getElementById('oneSlices'); os.innerHTML='';
+  S.slices.forEach((sl,i)=>{
+    const b=document.createElement('button'); b.className='chip'; b.dataset.one=i;
+    b.textContent=i; b.setAttribute('aria-pressed',i===S.one.slice);
+    os.appendChild(b);
+  });
+}
+document.getElementById('pads').addEventListener('click',e=>{
+  const b=e.target.closest('[data-slice]'); if(!b||!S.loaded) return;
+  audio();
+  const i=+b.dataset.slice, buf=sliceBufferOf(i);
+  if(buf) playBuf(AC.currentTime+.01,buf,{gain:1});
+  b.classList.add('lit'); setTimeout(()=>b.classList.remove('lit'),160);
+});
+document.getElementById('oneSlices').addEventListener('click',e=>{
+  const b=e.target.closest('[data-one]'); if(!b) return;
+  S.one.slice=+b.dataset.one;
+  document.querySelectorAll('[data-one]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  renderOne();
+  if(S.playing!=='one'&&S.loaded) startPlay('one');
+});
+function buildSeq(){
+  const el=document.getElementById('seq'); el.innerHTML='';
+  for(let i=0;i<16;i++){
+    const b=document.createElement('button');
+    b.className='st'+(i%4===0?' beat':'')+(S.seq[i]<0?' empty':'');
+    b.dataset.step=i; b.textContent=S.seq[i]<0?'·':S.seq[i];
+    el.appendChild(b);
+  }
+}
+document.getElementById('seq').addEventListener('click',e=>{
+  const b=e.target.closest('[data-step]'); if(!b) return;
+  const i=+b.dataset.step;
+  if(e.shiftKey) S.seq[i]=-1;
+  else S.seq[i]=S.slices.length?((S.seq[i]+1)%(S.slices.length+1))-(S.seq[i]+1===S.slices.length+1?1:0):-1;
+  if(S.seq[i]>=S.slices.length) S.seq[i]=-1;
+  buildSeq();
+});
+document.getElementById('seq').addEventListener('contextmenu',e=>{
+  const b=e.target.closest('[data-step]'); if(!b) return;
+  e.preventDefault(); S.seq[+b.dataset.step]=-1; buildSeq();
+});
+function seqLinear(){
+  for(let i=0;i<16;i++) S.seq[i]=S.slices.length?i%S.slices.length:-1;
+  buildSeq();
+}
+document.getElementById('seqLinear').onclick=()=>{seqLinear();if(S.playing!=='seq')startPlay('seq');};
+document.getElementById('seqRandom').onclick=()=>{
+  for(let i=0;i<16;i++) S.seq[i]=S.slices.length?Math.floor(Math.random()*S.slices.length):-1;
+  buildSeq(); if(S.playing!=='seq')startPlay('seq');};
+document.getElementById('seqStutter').onclick=()=>{
+  const a=S.slices.length?0:-1;
+  for(let i=0;i<16;i++) S.seq[i]=i<4?a:(S.slices.length?i%S.slices.length:-1);
+  buildSeq(); if(S.playing!=='seq')startPlay('seq');};
+document.getElementById('seqClear').onclick=()=>{S.seq.fill(-1);buildSeq();};
+document.getElementById('seqPlay').onclick=()=>S.playing==='seq'?stopAll():startPlay('seq');
+
+/* =====================================================================
+   TIME UI
+   ===================================================================== */
+const METHNOTE={
+ repitch:'<b>Repitch</b> — playback rate changes, so speed and pitch move together. This is what a turntable does and what Live\u2019s Re-Pitch mode does. It is the only method with no artifacts at all, because nothing is being invented; the trade is that a big tempo change becomes a big pitch change.',
+ granular:'<b>Granular stretch</b> — the file is cut into overlapping grains and those grains are replayed at a different spacing than they were taken from. Pitch stays put and speed changes independently. This is the family that Tones, Texture and Complex all belong to, and the grain controls below expose the compromise directly.',
+ slice:'<b>Slice and retrigger</b> — the loop is cut at even divisions and each chunk is fired at the new grid position at its original speed. Transients stay perfectly sharp because nothing is stretched; the cost is silence or overlap between chunks. This is what Live\u2019s Beats mode does.',
+ formant:'<b>Repitch with a formant fix</b> — speed handled by grains, pitch corrected back, with shorter grains and heavier overlap to keep the character of the source. This is the idea behind Complex Pro\u2019s Formants control, which is why transposing a vocal with it on does not produce a chipmunk.'};
+document.querySelectorAll('[data-meth]').forEach(b=>b.onclick=()=>{
+  S.meth=b.dataset.meth;
+  document.querySelectorAll('[data-meth]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  document.getElementById('methNote').innerHTML=METHNOTE[S.meth];
+  document.getElementById('methTag').textContent=b.textContent;
+  if(S.playing!=='time'&&S.loaded) startPlay('time'); });
+document.getElementById('semis').oninput=e=>{S.semis=+e.target.value;
+  document.getElementById('semisv').textContent=(S.semis>0?'+':'')+S.semis+' st';renderTempo();};
+document.getElementById('grain').oninput=e=>{S.grain=+e.target.value/1000;
+  document.getElementById('grainv').textContent=e.target.value+' ms';};
+document.getElementById('ovl').oninput=e=>{S.ovl=+e.target.value/100;
+  document.getElementById('ovlv').textContent=e.target.value+'%';};
+document.getElementById('timePlay').onclick=()=>S.playing==='time'?stopAll():startPlay('time');
+document.getElementById('timeOrig').onclick=()=>{
+  audio(); stopAll();
+  const buf=curBuf(); if(buf) playBuf(AC.currentTime+.05,buf,{gain:.9});
+  nowEl.textContent='▸ original, '+SRC_BPM+' BPM, untouched';
+};
+function renderTempo(){
+  const ratio=S.bpm/SRC_BPM;
+  const semis=12*Math.log2(ratio);
+  document.getElementById('tempoStats').innerHTML=
+    `<span>Source<b>${SRC_BPM} BPM</b></span>
+     <span>Project<b>${S.bpm} BPM</b></span>
+     <span>Stretch needed<b class="${Math.abs(ratio-1)>.12?'r':'g'}">${(ratio*100).toFixed(1)}%</b></span>
+     <span>If you repitch<b class="${Math.abs(semis)>2?'r':'g'}">${semis>0?'+':''}${semis.toFixed(2)} st</b></span>
+     <span>Verdict<b>${Math.abs(semis)<1?'repitch is fine':(Math.abs(semis)<3?'repitch or stretch':'must stretch')}</b></span>`;
+}
+
+/* =====================================================================
+   ONE-SLICE UI
+   ===================================================================== */
+const onePat=document.getElementById('onePat');
+Object.entries(ONEPATS).forEach(([k,v])=>{const o=document.createElement('option');o.value=k;o.textContent=v.n;onePat.appendChild(o);});
+onePat.onchange=e=>{S.one.pat=e.target.value;};
+const oneMap=[['oneSpread','spread',v=>v?('±'+v+' st'):'off',1],
+  ['oneGate','gate',v=>Math.round(v*100)+'%',100],
+  ['oneFilt','filt',v=>v>=1?'open':Math.round(200+v*v*14000)+' Hz',100],
+  ['oneBits','bits',v=>v+' bit',1],
+  ['oneSr','sr',v=>v===1?'full':'1/'+v,1]];
+oneMap.forEach(([id,key,fmt,div])=>{
+  document.getElementById(id).oninput=e=>{
+    S.one[key]=+e.target.value/div;
+    document.getElementById(id+'v').textContent=fmt(S.one[key]);
+    renderOne();
+  };
+});
+document.getElementById('oneRev').onclick=function(){S.one.rev=!S.one.rev;
+  this.setAttribute('aria-pressed',S.one.rev);renderOne();};
+document.getElementById('onePlay').onclick=()=>S.playing==='one'?stopAll():startPlay('one');
+
+/* =====================================================================
+   MIDI
+   ===================================================================== */
+function varlen(n){const b=[n&0x7F];n>>=7;while(n>0){b.unshift((n&0x7F)|0x80);n>>=7;}return b;}
+function chunkOf(by){const l=by.length;return[0x4D,0x54,0x72,0x6B,(l>>24)&255,(l>>16)&255,(l>>8)&255,l&255,...by];}
+function writeMidi(name,ev,total,fname){
+  ev.sort((a,b)=>a.t-b.t||a.type-b.type);
+  const nmb=[...name].map(c=>{const v=c.charCodeAt(0);return v<128?v:0x2D;});
+  const t=[0,0xFF,0x03,nmb.length,...nmb];
+  const u=Math.round(60000000/S.bpm);
+  t.push(0,0xFF,0x51,0x03,(u>>16)&255,(u>>8)&255,u&255,0,0xFF,0x58,0x04,4,2,24,8);
+  let last=0;
+  ev.forEach(e=>{varlen(e.t-last).forEach(x=>t.push(x));last=e.t;t.push(e.type,e.note,e.vel);});
+  varlen(Math.max(0,total-last)).forEach(x=>t.push(x));
+  t.push(0xFF,0x2F,0x00);
+  const head=[0x4D,0x54,0x68,0x64,0,0,0,6,0,0,0,1,0,96];
+  const blob=new Blob([new Uint8Array([...head,...chunkOf(t)])],{type:'audio/midi'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=fname;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+document.getElementById('chopMidi').onclick=()=>{
+  const tps=24, ev=[];
+  S.seq.forEach((si,st)=>{
+    if(si<0) return;
+    const note=Math.max(0,Math.min(127,36+si));      /* C1 upward, Simpler slice layout */
+    ev.push({t:st*tps,type:0x90,note,vel:100});
+    ev.push({t:st*tps+Math.max(6,Math.round(tps*.9)),type:0x80,note,vel:0});
+  });
+  writeMidi('Chop - '+S.src,ev,16*tps,'chop-'+S.src+'-'+S.bpm+'bpm.mid');
+};
+document.getElementById('oneMidi').onclick=()=>{
+  const tps=24, ev=[], P=ONEPATS[S.one.pat];
+  P.steps.forEach((st,i)=>{
+    const semis=S.one.spread?[0,S.one.spread,-S.one.spread,S.one.spread*2][i%4]:0;
+    const note=Math.max(0,Math.min(127,60+semis));
+    ev.push({t:st*tps,type:0x90,note,vel:i%4===0?112:88});
+    ev.push({t:st*tps+Math.max(6,Math.round(tps*S.one.gate*2)),type:0x80,note,vel:0});
+  });
+  writeMidi('One slice - '+P.n,ev,16*tps,'one-slice-'+S.one.pat+'-'+S.bpm+'bpm.mid');
+};
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+function drawChop(pos){
+  const buf=curBuf(); if(!buf) return;
+  const loopDur=SOURCES.find(x=>x.id===S.src).bars*16*SD();
+  drawWave(document.getElementById('chopCv'),buf,190,{slices:S.slices,dur:loopDur,pos:-1});
+}
+function drawTime(pos){
+  const buf=curBuf(); if(!buf) return;
+  const loopDur=SOURCES.find(x=>x.id===S.src).bars*16*SD();
+  drawWave(document.getElementById('timeCv'),buf,150,{dur:loopDur,pos,col:'#3FD0C9'});
+}
+function drawOne(pos){
+  let b=sliceBufferOf(S.one.slice); if(!b) return;
+  if(S.one.rev) b=reverseBuf(b);
+  if(S.one.bits<16||S.one.sr>1) b=crushBuf(b,S.one.bits,S.one.sr);
+  drawWave(document.getElementById('oneCv'),b,150,{pos,col:'#A78BFA'});
+}
+function renderChopStats(){
+  if(!S.slices.length){document.getElementById('chopStats').innerHTML='';return;}
+  const lens=S.slices.map(s=>(s.to-s.from)*1000);
+  document.getElementById('chopStats').innerHTML=
+    `<span>Slices<b>${S.slices.length}</b></span>
+     <span>Shortest<b>${Math.round(Math.min(...lens))} ms</b></span>
+     <span>Longest<b>${Math.round(Math.max(...lens))} ms</b></span>
+     <span>Average<b>${Math.round(lens.reduce((a,b)=>a+b,0)/lens.length)} ms</b></span>
+     <span>Mode<b>${S.sliceMode==='trans'?'transients':'grid '+S.sliceMode}</b></span>`;
+}
+function renderOne(){ drawOne(-1); }
+function renderAll(){
+  if(!S.loaded) return;
+  drawChop(-1); drawTime(-1); drawOne(-1); renderChopStats(); renderTempo();
+}
+renderTempo();
+window.addEventListener('resize',renderAll);
+</script>

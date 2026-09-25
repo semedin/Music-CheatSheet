@@ -1,0 +1,1146 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Groove II — the pattern bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E2DED2;--panel:#F2EFE6;--panel-2:#EAE5D8;
+  --ink:#191713;--ink-2:#635C50;--ink-3:#8C8474;--line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32;--b2:#FF8A2B;--b3:#FFC531;--b4:#F2EDE0;--cy:#3FD0C9;--vi:#A78BFA;--gr:#5FBF52;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(44px,10.5vw,116px);line-height:.84;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:62ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+.transport{position:sticky;top:0;z-index:95;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:10px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;background:var(--b1);color:#fff;
+  border:0;border-radius:3px;padding:9px 14px;cursor:pointer;white-space:nowrap}
+.tbtn.ghost{background:transparent;color:var(--b4);border:1px solid rgba(242,237,224,.35)}
+.tbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.tbtn:hover{filter:brightness(1.12)}
+.knob{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.66)}
+.knob input[type=range]{width:70px;accent-color:var(--b2)}
+.knob b{color:var(--b4);min-width:34px;display:inline-block}
+.knob select{font-family:var(--mono);font-size:11px;background:#2A2723;color:var(--b4);border:1px solid rgba(242,237,224,.3);border-radius:3px;padding:5px 6px}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:26ch}
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 0}
+.nav a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;
+  color:var(--ink-2);border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--panel)}
+.nav a:hover{border-color:var(--ink);color:var(--ink)}
+.sec{padding:48px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:20px}
+.sec-head h2{font-size:clamp(26px,4.4vw,42px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:68ch;margin-top:12px;color:var(--ink-2)}
+.lab{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:20px}
+.tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.11em;padding:3px 6px;border-radius:2px;
+  background:var(--ink);color:var(--b4);text-transform:uppercase;white-space:nowrap}
+.tag.m{background:transparent;border:1px solid var(--line);color:var(--ink-3)}
+
+/* --- melting pot --- */
+.pot{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-bottom:13px}
+.slot{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:11px}
+.slot .eyebrow{margin-bottom:7px}
+.slot select{width:100%;font-family:var(--mono);font-size:11px;padding:6px;border:1px solid var(--line);
+  border-radius:3px;background:var(--panel);color:var(--ink);margin-bottom:6px}
+.slotrow{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.sbtn{font-family:var(--mono);font-size:9px;font-weight:700;border:1px solid var(--line);background:transparent;
+  border-radius:2px;padding:4px 7px;cursor:pointer;color:var(--ink-3)}
+.sbtn[aria-pressed="true"]{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.sbtn.mute[aria-pressed="true"]{background:var(--b1);border-color:var(--b1);color:#fff}
+.slotrow .oct{font-family:var(--mono);font-size:9px;color:var(--ink-3);margin-left:auto}
+.potroll{background:var(--lane);border-radius:5px;height:230px;overflow:hidden;position:relative}
+.potroll canvas{display:block;width:100%;height:100%}
+.stats{display:flex;gap:15px;flex-wrap:wrap;margin-top:11px;font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
+.stats b{color:var(--ink);font-size:13px;display:block;font-family:var(--display);font-weight:800;letter-spacing:0}
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.tool{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:7px 11px;cursor:pointer;color:var(--ink-2)}
+.tool:hover{border-color:var(--ink);color:var(--ink)}
+.tool.hi{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.tool.hi:hover{background:var(--b1);border-color:var(--b1);color:#fff}
+.sep{width:1px;height:22px;background:var(--line);margin:0 3px}
+
+/* --- generators --- */
+.gens{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:13px}
+.gen{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px}
+.gen h3{font-size:17px;margin-bottom:4px}
+.gen p{font-size:13.5px;color:var(--ink-2);margin:0 0 10px}
+.gen .mini{height:52px;background:var(--lane);border-radius:3px;overflow:hidden;margin-bottom:9px}
+.gen .mini canvas{display:block;width:100%;height:100%}
+.ctrl{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:6px}
+.ctrl .r{display:flex;align-items:center;gap:7px}
+.ctrl input[type=range]{flex:1;min-width:40px;accent-color:var(--b1)}
+.ctrl input[type=text]{flex:1;font-family:var(--mono);font-size:11px;padding:5px 6px;border:1px solid var(--line);border-radius:3px;background:var(--panel-2);color:var(--ink)}
+.ctrl b{color:var(--ink);font-size:10.5px;min-width:56px;text-align:right}
+.genout{font-family:var(--mono);font-size:10.5px;color:var(--b1);font-weight:700;margin:8px 0}
+
+/* --- bank --- */
+.filters{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.frow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.flbl{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);width:64px;flex:0 0 64px}
+.fchip{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:99px;padding:5px 11px;cursor:pointer;color:var(--ink-2)}
+.fchip[aria-pressed="true"]{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.fchip:hover{border-color:var(--ink)}
+.bank{display:grid;gap:11px;grid-template-columns:repeat(auto-fill,minmax(310px,1fr))}
+.blk{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.blk-top{display:flex;align-items:center;gap:9px}
+.play{width:32px;height:32px;flex:0 0 32px;border-radius:50%;border:0;cursor:pointer;background:var(--ink);
+  color:var(--b4);display:grid;place-items:center;font-size:11px}
+.play:hover{background:var(--b1);color:#fff}
+.play[aria-pressed="true"]{background:var(--b1);color:#fff}
+.blk h4{font-size:14.5px;flex:1;line-height:1.2}
+.blk .roll{height:48px;background:var(--lane);border-radius:3px;overflow:hidden}
+.blk .roll canvas{display:block;width:100%;height:100%}
+.blk .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.blk p{font-size:13px;color:var(--ink-2);margin:0;line-height:1.45}
+.blk .btns{display:flex;gap:5px;flex-wrap:wrap}
+.mb{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:5px 8px;cursor:pointer;color:var(--ink-2)}
+.mb:hover{border-color:var(--ink);color:var(--ink)}
+.sync{font-family:var(--mono);font-size:9px;color:var(--ink-3);letter-spacing:.05em}
+.sync b{color:var(--b1)}
+
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700}
+tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:10px 12px;border-radius:0 3px 3px 0;margin:14px 0 0}
+.callout b{color:var(--b1)}
+.note{font-size:14.5px;color:var(--ink-2);margin:13px 0 0;max-width:78ch}
+.note b{color:var(--ink)}
+.foot{border-top:2px solid var(--ink);margin-top:54px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:620px){.knob input[type=range]{width:56px}.tnow{display:none}.flbl{width:100%;flex:1 0 100%}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="index.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Field guide 01b · the pattern bank · house → techno → trance → psy → garage</div>
+    <h1>Sixty-six<br>ways to<br><em>move</em></h1>
+    <p class="sub">Volume one argued that groove is placement, length and velocity. This one is the <strong>parts bin</strong>: sixty-six playable blocks across bass, sequence, stab, energy shape and fill, filterable by genre <em>and</em> by the kind of motion they produce — driving, rolling, skipping, lifting, floating, hypnotic. Stack four of them in the melting pot, hear them fight, and export the result as multi-track MIDI.</p>
+  </div>
+</div>
+
+<div class="transport">
+  <div class="wrap">
+    <button class="tbtn" id="stopAll">■ STOP</button>
+    <button class="tbtn ghost" id="kickToggle" aria-pressed="true">KICK</button>
+    <button class="tbtn ghost" id="hatToggle" aria-pressed="false">HATS</button>
+    <button class="tbtn ghost" id="clapToggle" aria-pressed="false">CLAP</button>
+    <label class="knob">KEY <select id="keySel"></select></label>
+    <label class="knob">BPM <input type="range" id="bpm" min="100" max="150" value="128"><b id="bpmv">128</b></label>
+    <label class="knob">SWING <input type="range" id="swing" min="50" max="70" value="50"><b id="swingv">50%</b></label>
+    <label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="70"><b id="volv">70</b></label>
+    <span class="tnow" id="nowPlaying">nothing playing</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="index.html" class="nav-home">← Index</a>
+    <a href="#pot">1 · Melting pot</a>
+    <a href="#gens">2 · Generators</a>
+    <a href="#bass">3 · Bass</a>
+    <a href="#seq">4 · Sequences</a>
+    <a href="#stab">5 · Stabs</a>
+    <a href="#energy">6 · Energy shapes</a>
+    <a href="#fills">7 · Fills</a>
+    <a href="#numbers">8 · Numbers</a>
+  </nav>
+
+  <section class="sec" id="pot">
+    <div class="sec-head">
+      <div class="eyebrow">Section 01 · interactive</div>
+      <h2>Melting pot</h2>
+      <p>Four slots. Load a block into each from the banks below — or from the generators — and hear them against each other over a kick. This is where the value is: almost any single block is fine, and almost every interesting groove is two blocks that disagree about where the beat is.</p>
+    </div>
+    <div class="lab">
+      <div class="pot" id="potSlots"></div>
+      <div class="potroll"><canvas id="potCv"></canvas></div>
+      <div class="stats" id="potStats"></div>
+      <div class="toolbar">
+        <button class="tbtn" id="potPlay">▶ PLAY POT</button>
+        <button class="tool hi" id="potMidi">⬇ Multi-track MIDI</button>
+        <button class="tool" id="potRandom">Surprise me</button>
+        <button class="tool" id="potClear">Empty all slots</button>
+        <span class="sep"></span>
+        <button class="tool" id="potHouse">Preset · house</button>
+        <button class="tool" id="potTrance">Preset · trance</button>
+        <button class="tool" id="potTechno">Preset · techno</button>
+        <button class="tool" id="potGarage">Preset · garage</button>
+      </div>
+      <p class="callout"><b>The rule that makes a melting pot work.</b> Two parts in the same rhythmic family cancel each other out — two rolling 16th lines is just one thicker rolling 16th line. Pair by <em>contrast</em>: something driving with something skipping, something rolling with something floating. The motion tag on every block below exists so you can do that deliberately instead of by accident. <b>Surprise me</b> picks four blocks with four different motion types.<br><br><b>Watch the loop-length readout.</b> The pot runs for however long it takes every slot to come home together — pair a 5-bar drift with an 8-bar energy shape and you get a <b>40-bar phrase that never repeats identically</b>. That is the cheapest hypnotic structure available, and the MIDI export writes out the whole cycle.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="gens">
+    <div class="sec-head">
+      <div class="eyebrow">Section 02 · interactive</div>
+      <h2>Generators</h2>
+      <p>Three engines that produce more blocks than the bank ever could. Every one of them writes straight into a melting-pot slot.</p>
+    </div>
+    <div class="gens" id="genBox"></div>
+    <p class="note"><b>Why these three.</b> Almost every rhythm in electronic music is one of them. <b>Phasing</b> is a constant spacing that does not divide the bar, so the figure walks. <b>Euclidean</b> is a number of hits spread as evenly as possible across a number of steps, which is how most West African and Latin bell patterns are built. <b>Additive</b> is uneven groupings of a constant pulse — 3+3+2 is the tresillo underneath half of Latin house, and 3+3+3+3+2+2 is a lot of Balkan and psytrance. Between them they cover most of what a sequencer can usefully do.</p>
+  </section>
+
+  <section class="sec" id="bank">
+    <div class="sec-head">
+      <div class="eyebrow">Section 03–07 · the bank</div>
+      <h2>The bank</h2>
+      <p>Filter by genre, by the motion you want, or both. Every block plays, loads into a slot, and exports as MIDI.</p>
+    </div>
+    <div class="filters" id="filters"></div>
+  </section>
+
+  <section class="sec" id="bass">
+    <div class="sec-head"><div class="eyebrow">Bass</div><h2>Bass</h2>
+      <p>The part that decides whether a track drives or rolls. Everything here is in the current key, one or two bars.</p></div>
+    <div class="bank" id="bank-bass"></div>
+  </section>
+
+  <section class="sec" id="seq">
+    <div class="sec-head"><div class="eyebrow">Sequence</div><h2>Sequences &amp; arps</h2>
+      <p>The upper-register motor. Trance and psytrance live almost entirely here.</p></div>
+    <div class="bank" id="bank-seq"></div>
+  </section>
+
+  <section class="sec" id="stab">
+    <div class="sec-head"><div class="eyebrow">Stab</div><h2>Stabs &amp; chord rhythms</h2>
+      <p>Harmony used as a percussion part. Where it lands matters more than what it is.</p></div>
+    <div class="bank" id="bank-stab"></div>
+  </section>
+
+  <section class="sec" id="energy">
+    <div class="sec-head"><div class="eyebrow">Energy</div><h2>Energy shapes</h2>
+      <p>Four- and eight-bar blocks that <em>change across their length</em> instead of looping flat. These are the answer to "it doesn't go anywhere" — drop one in and the loop stops being a loop.</p></div>
+    <div class="bank" id="bank-energy"></div>
+  </section>
+
+  <section class="sec" id="fills">
+    <div class="sec-head"><div class="eyebrow">Fills</div><h2>Fills &amp; turnarounds</h2>
+      <p>One-bar figures for the end of an eight- or sixteen-bar phrase. Use one every eight bars and the track breathes; use one every two and it sounds nervous.</p></div>
+    <div class="bank" id="bank-fill"></div>
+  </section>
+
+  <section class="sec" id="numbers">
+    <div class="sec-head">
+      <div class="eyebrow">Section 08</div>
+      <h2>Numbers</h2>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Motion</th><th>What it does to a listener</th><th>Pair it with</th></tr></thead>
+      <tbody>
+        <tr><td><b>Driving</b></td><td>Pushes forward evenly. No question, no answer — just momentum.</td><td>Skipping or floating. Two driving parts cancel.</td></tr>
+        <tr><td><b>Rolling</b></td><td>Continuous 16ths that blur into texture. Hypnotic at length.</td><td>Something sparse with big gaps.</td></tr>
+        <tr><td><b>Skipping</b></td><td>Uneven grouping inside an even beat. Reads as bounce.</td><td>Driving. The straight part makes the skip audible.</td></tr>
+        <tr><td><b>Lifting</b></td><td>Rises in register or density. Creates expectation.</td><td>A static anchor, or it just sounds unstable.</td></tr>
+        <tr><td><b>Floating</b></td><td>Sparse, off-grid or long. Gives the ear somewhere to rest.</td><td>Anything dense. This is the contrast part.</td></tr>
+        <tr><td><b>Hypnotic</b></td><td>Long cycles that do not resolve where you expect.</td><td>One firmly on-grid part so the bar is still findable.</td></tr>
+        <tr><td><b>Pulling</b></td><td>Anticipates the next bar. Tilts the loop forward.</td><td>Use sparingly — at phrase boundaries, not every bar.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid2">
+      <div class="tablewrap"><table>
+        <thead><tr><th>Additive group</th><th>Name</th><th>Where it lives</th></tr></thead>
+        <tbody>
+          <tr><td class="num">3+3+2</td><td>Tresillo</td><td>Latin house, Afro house, reggaeton, amapiano</td></tr>
+          <tr><td class="num">3+3+4+3+3</td><td>Son clave feel</td><td>Tribal house, tech house percussion</td></tr>
+          <tr><td class="num">3+3+3+3+2+2</td><td>—</td><td>Psytrance, Balkan-influenced, hard groove</td></tr>
+          <tr><td class="num">2+2+3+2+2+3+2</td><td>—</td><td>Broken techno, IDM-leaning</td></tr>
+          <tr><td class="num">3+2+3</td><td>Cinquillo half</td><td>Garage, UK funky</td></tr>
+          <tr><td class="num">5+3</td><td>—</td><td>Hypnotic techno, deliberately lopsided</td></tr>
+        </tbody>
+      </table></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Genre</th><th>BPM</th><th>Signature motion</th></tr></thead>
+        <tbody>
+          <tr><td><b>Deep house</b></td><td class="num">120–124</td><td>Rolling bass, swung, sparse top</td></tr>
+          <tr><td><b>Tech house</b></td><td class="num">124–128</td><td>Skipping bass, offbeat hats</td></tr>
+          <tr><td><b>Techno</b></td><td class="num">130–140</td><td>Driving, minimal harmony</td></tr>
+          <tr><td><b>Hard groove</b></td><td class="num">140–150</td><td>Rolling percussion, tribal</td></tr>
+          <tr><td><b>Trance</b></td><td class="num">136–142</td><td>Rolling 16th bass under lifting arps</td></tr>
+          <tr><td><b>Psytrance</b></td><td class="num">140–148</td><td>Triple-16th bass, relentless</td></tr>
+          <tr><td><b>Prog house</b></td><td class="num">122–126</td><td>Pulsing 8ths, long builds</td></tr>
+          <tr><td><b>UK garage</b></td><td class="num">130–138</td><td>Skipping everything, heavy swing</td></tr>
+          <tr><td><b>Amapiano</b></td><td class="num">110–115</td><td>Log-drum tresillo, floating</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>How to build a melting pot</h3>
+        <ul>
+          <li><b>One anchor.</b> Something firmly on the grid so the listener can still find beat one. Usually the kick, sometimes the bass.</li>
+          <li><b>One motor.</b> The part that supplies continuous motion — rolling 16ths, an arp, a shaker.</li>
+          <li><b>One argument.</b> Something that disagrees: skipping, off-grid, or in a long cycle. This is where the character comes from.</li>
+          <li><b>One rest.</b> Something sparse and floating that gives the ear a gap. Most amateur productions skip this one and end up dense but static.</li>
+          <li>Four parts, four jobs. If two parts have the same job, delete one.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>Making energy fluctuate</h3>
+        <ul>
+          <li><b>Use the energy shapes as written, not as loops.</b> They are 4 and 8 bars long because that is the unit at which a listener notices change.</li>
+          <li><b>Displacement is the cheapest trick here</b> — the same figure moved one 16th later each bar takes four bars to come home and sounds composed rather than looped.</li>
+          <li><b>Density and register are separate levers.</b> Adding notes and going up an octave both raise energy, but only one of them costs you space in the mix.</li>
+          <li>Alternate: build for eight bars, drop for two, build for six. A straight climb is exhausting; a climb with dips is a track.</li>
+          <li>Gate length is the quietest energy control there is. Same notes, gate down from 90% to 40% across eight bars, and the loop tightens without anything entering or leaving.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <p><strong>A bank is not a substitute for taste.</strong> Sixty-six blocks and three generators can produce more combinations than you will ever use, which makes the scarce thing the ability to throw most of them away. Pick four, live with them for eight bars, and delete the one you notice least.</p>
+    <p style="color:var(--ink-3);font-size:13px">Companion to Groove volume one, which covers why any of this works. All audio synthesised live; MIDI exports carry the current key, tempo and swing.</p>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   AUDIO
+   ===================================================================== */
+let AC=null,master=null,limiter=null,bus=null;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.7;
+    limiter=AC.createDynamicsCompressor();
+    limiter.threshold.value=-6;limiter.knee.value=4;limiter.ratio.value=12;
+    limiter.attack.value=.003;limiter.release.value=.12;
+    bus=AC.createGain(); bus.connect(limiter); limiter.connect(master); master.connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+let _nb=null;
+function noiseSrc(){
+  if(!_nb){const n=Math.floor(AC.sampleRate*.5);_nb=AC.createBuffer(1,n,AC.sampleRate);
+    const d=_nb.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;}
+  const s=AC.createBufferSource();s.buffer=_nb;s.loop=true;return s;
+}
+function shaper(k){const w=AC.createWaveShaper(),n=512,c=new Float32Array(n),a=1+k*22;
+  for(let i=0;i<n;i++){const x=i*2/n-1;c[i]=Math.tanh(a*x)/Math.tanh(a);}w.curve=c;return w;}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function envg(g,t,pk,a,d){g.setValueAtTime(0,t);g.linearRampToValueAtTime(pk,t+a);g.exponentialRampToValueAtTime(.0001,t+a+d);}
+
+const V={
+ bass(t,f,dur,v){
+  const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f;
+  const s=AC.createOscillator();s.type='sine';s.frequency.value=f;
+  const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=5;
+  const co=190+(v/127)*1400;
+  lp.frequency.setValueAtTime(co*2,t);lp.frequency.exponentialRampToValueAtTime(Math.max(110,co*.5),t+.11);
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.28*(v/127),t+.004);
+  g.gain.setValueAtTime(.28*(v/127),t+Math.max(.02,dur-.03));
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur+.03);
+  const sg=AC.createGain();sg.gain.value=.55;
+  o.connect(lp);s.connect(sg);sg.connect(lp);lp.connect(g);g.connect(bus);
+  o.start(t);s.start(t);o.stop(t+dur+.1);s.stop(t+dur+.1);},
+ seq(t,f,dur,v){
+  const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f;
+  const o2=AC.createOscillator();o2.type='sawtooth';o2.frequency.value=f*1.006;
+  const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=7;
+  const co=520+(v/127)*2800;
+  lp.frequency.setValueAtTime(co,t);lp.frequency.exponentialRampToValueAtTime(480,t+Math.min(dur,.16));
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.115*(v/127),t+.003);
+  g.gain.exponentialRampToValueAtTime(.0001,t+Math.max(.05,dur));
+  o.connect(lp);o2.connect(lp);lp.connect(g);g.connect(bus);
+  o.start(t);o2.start(t);o.stop(t+dur+.1);o2.stop(t+dur+.1);},
+ stab(t,f,dur,v){
+  [0,3,7,10].forEach(iv=>{
+   const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f*Math.pow(2,iv/12);
+   const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=3;
+   lp.frequency.setValueAtTime(1300+(v/127)*900,t);
+   lp.frequency.exponentialRampToValueAtTime(560,t+.12);
+   const g=AC.createGain();
+   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.05*(v/127),t+.005);
+   g.gain.setValueAtTime(.05*(v/127),t+Math.max(.02,dur*.7));
+   g.gain.exponentialRampToValueAtTime(.0001,t+dur+.08);
+   o.connect(lp);lp.connect(g);g.connect(bus);o.start(t);o.stop(t+dur+.14);});},
+ pluck(t,f,dur,v){
+  const o=AC.createOscillator();o.type='square';o.frequency.value=f;
+  const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=6;
+  lp.frequency.setValueAtTime(2600,t);lp.frequency.exponentialRampToValueAtTime(700,t+.09);
+  const g=AC.createGain();envg(g.gain,t,.085*(v/127),.003,Math.max(.05,dur));
+  o.connect(lp);lp.connect(g);g.connect(bus);o.start(t);o.stop(t+dur+.12);}
+};
+function kickV(t){
+  const o=AC.createOscillator();o.type='sine';
+  o.frequency.setValueAtTime(158,t);o.frequency.exponentialRampToValueAtTime(52,t+.05);
+  const g=AC.createGain();envg(g.gain,t,.85,.002,.32);
+  const d=shaper(.3);o.connect(g);g.connect(d);d.connect(bus);o.start(t);o.stop(t+.4);
+}
+function hatV(t,v,open){
+  const n=noiseSrc(),hp=AC.createBiquadFilter();hp.type='highpass';hp.frequency.value=8400;
+  const g=AC.createGain(),d=open?.14:.03;
+  envg(g.gain,t,.13*(v/127),.0008,d);n.connect(hp);hp.connect(g);g.connect(bus);n.start(t);n.stop(t+d+.06);
+}
+function clapV(t){
+  const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1300;bp.Q.value=1.1;bp.connect(bus);
+  [0,1,2].forEach(i=>{const n=noiseSrc(),g=AC.createGain(),tt=t+i*.011;
+    envg(g.gain,tt,.26,.001,.017);n.connect(g);g.connect(bp);n.start(tt);n.stop(tt+.06);});
+  const n=noiseSrc(),g=AC.createGain();envg(g.gain,t+.022,.17,.003,.2);
+  n.connect(g);g.connect(bp);n.start(t+.022);n.stop(t+.3);
+}
+
+/* =====================================================================
+   MEASUREMENT (same metric as volume one)
+   ===================================================================== */
+function metricW(step){
+  const s=((step%16)+16)%16;
+  if(Math.abs(s-Math.round(s))>1e-6) return 0;
+  if(s===0) return 4;
+  if(s===8) return 3;
+  if(s===4||s===12) return 2;
+  if(s%2===0) return 1;
+  return 0;
+}
+function syncopation(notes,bars){
+  const total=bars*16;
+  const onsets=[...new Set(notes.map(n=>Math.round(n.s*2)/2))].sort((a,b)=>a-b);
+  let sc=0;
+  notes.forEach(n=>{
+    const s=Math.round(n.s*2)/2, ws=metricW(s);
+    const next=onsets.find(o=>o>s+1e-9);
+    const end=(next!==undefined)?next:total;
+    let best=ws;
+    for(let k=s+.5;k<end-1e-9;k+=.5){const w=metricW(k); if(w>best) best=w;}
+    sc+=Math.max(0,best-ws);
+  });
+  return sc;
+}
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+function cycleBars(sp){const n=Math.round(sp*2);if(n<=0)return 1;return (n*32/gcd(n,32))/32;}
+
+/* =====================================================================
+   BUILDERS
+   ===================================================================== */
+const nn=(s,l,p,v)=>({s,l,p,v});
+const at=(steps,l,pit,vel)=>steps.map((s,i)=>nn(s,l,Array.isArray(pit)?pit[i%pit.length]:pit,
+  Array.isArray(vel)?vel[i%vel.length]:vel));
+const every=(count,sp,l,pit,vel,off=0)=>Array.from({length:count},(_,i)=>
+  nn(off+i*sp,l,Array.isArray(pit)?pit[i%pit.length]:pit,Array.isArray(vel)?vel[i%vel.length]:vel));
+function euclid(k,n){const o=[];let b=n-k;for(let i=0;i<n;i++){b+=k;if(b>=n){b-=n;o.push(i);}}return o;}
+function additive(groups,bars){
+  const out=[],total=bars*16;let s=0,i=0;
+  while(s<total){out.push(s);s+=groups[i%groups.length];i++;}
+  return out.filter(x=>x<total);
+}
+const bar2=a=>a.concat(a.map(n=>({...n,s:n.s+16})));
+
+/* =====================================================================
+   THE BANK
+   ===================================================================== */
+/* fam: bass|seq|stab|energy|fill · mot: Driving|Rolling|Skipping|Lifting|Floating|Hypnotic|Pulling */
+const BANK=[
+/* ---------------- BASS ---------------- */
+{id:'b_house',fam:'bass',g:'House',mot:'Driving',n:'Offbeat 8ths',bars:1,voice:'bass',oct:-2,
+ notes:at([2,6,10,14],1.7,0,[108,92,108,92]),
+ d:'The house default. Never touches the kick, so the track breathes at 8th-note rate for free.'},
+{id:'b_deep',fam:'bass',g:'Deep house',mot:'Rolling',n:'Deep rolling 16ths',bars:1,voice:'bass',oct:-2,
+ notes:at([2,3,6,7,10,11,14,15],.8,[0,0,0,0,-2,-2,-2,-2],[104,64,104,64,100,60,100,60]),
+ d:'Pairs of 16ths on the offbeats. The second note of each pair is a ghost — that is the whole feel.'},
+{id:'b_tech',fam:'bass',g:'Tech house',mot:'Skipping',n:'Skipping tech house',bars:1,voice:'bass',oct:-2,
+ notes:at([2,5,6,10,13,14],.9,[0,0,-2,0,3,-2],[112,70,100,112,70,100]),
+ d:'Two offbeats plus a 16th pickup into each. Uneven inside an even beat.'},
+{id:'b_techno',fam:'bass',g:'Techno',mot:'Driving',n:'16th driver',bars:1,voice:'bass',oct:-2,
+ notes:every(16,1,.85,0,[118,72,88,72]),
+ d:'Every 16th at a short gate with a four-step accent map. Relentless by design.'},
+{id:'b_rumble',fam:'bass',g:'Hypnotic techno',mot:'Hypnotic',n:'Rumble sustain',bars:2,voice:'bass',oct:-2,
+ notes:[nn(0,7.6,0,104),nn(8,7.6,0,96),nn(16,7.6,-2,104),nn(24,7.6,-2,96)],
+ d:'Two long notes per bar. The movement comes from the kick tail, not the bass.'},
+{id:'b_trance',fam:'bass',g:'Trance',mot:'Rolling',n:'Trance rolling 16ths',bars:1,voice:'bass',oct:-2,
+ notes:at([1,2,3,5,6,7,9,10,11,13,14,15],.85,0,[86,96,80,86,96,80,86,96,80,86,96,80]),
+ d:'Three 16ths per beat with the downbeat left empty for the kick. The engine of trance since 1998.'},
+{id:'b_trance2',fam:'bass',g:'Trance',mot:'Driving',n:'Trance offbeat + pickup',bars:1,voice:'bass',oct:-2,
+ notes:at([2,3,6,7,10,11,14,15],.85,[0,0,0,0,0,0,-2,-2],[110,74,110,74,110,74,110,80]),
+ d:'The offbeat 8th with a 16th glued to it. Softer than the three-per-beat roll, easier to sit a lead over.'},
+{id:'b_psy',fam:'bass',g:'Psytrance',mot:'Rolling',n:'Psy triple',bars:1,voice:'bass',oct:-2,
+ notes:at([1,2,3,5,6,7,9,10,11,13,14,15],.7,0,[100,100,100]),
+ d:'Same positions as trance but flat velocity and a very short gate. Machine-like on purpose.'},
+{id:'b_prog',fam:'bass',g:'Prog house',mot:'Driving',n:'Progressive pulse',bars:2,voice:'bass',oct:-2,
+ notes:bar2(at([0,2,4,6,8,10,12,14],1.5,0,[104,84,96,84,104,84,96,84])).map((n,i)=>i>=8?{...n,p:-2}:n),
+ d:'Straight 8ths with a long gate. Boring alone, enormous under a sidechained pad.'},
+{id:'b_basshouse',fam:'bass',g:'Bass house',mot:'Skipping',n:'Octave offbeat',bars:1,voice:'bass',oct:-2,
+ notes:at([2,6,10,14],1.6,[0,12,0,12],[114,88,114,88]),
+ d:'Offbeat 8ths alternating root and octave. The octave jump is the hook.'},
+{id:'b_garage',fam:'bass',g:'UK garage',mot:'Skipping',n:'Skippy garage bass',bars:2,voice:'bass',oct:-2,
+ notes:at([2,5,10,14,18,21,24,29],[1.4],[0,0,-2,0,0,3,-2,0],[112,76,104,90,112,76,104,90])
+   .map((n,i)=>({...n,l:[1.4,.8,1.4,1.1][i%4]})),
+ d:'Gaps where you expect notes. Push swing to 60% and it becomes a different record.'},
+{id:'b_speed',fam:'bass',g:'Speed garage',mot:'Rolling',n:'Speed garage roll',bars:1,voice:'bass',oct:-2,
+ notes:at([0,2,3,6,8,10,11,14],.85,[0,0,0,-2,0,0,3,-2],[116,90,70,104,110,90,70,104]),
+ d:'Rolling but with the downbeat present. Wobbly rather than driving.'},
+{id:'b_acid',fam:'bass',g:'Acid',mot:'Rolling',n:'Acid 16th line',bars:1,voice:'bass',oct:-2,
+ notes:at([0,2,3,4,6,8,10,11,12,14],.9,[0,0,12,0,3,0,10,7,0,-2],[122,74,120,80,114,76,122,72,100,112]),
+ d:'Constant 16ths with octave leaps on the accents. Velocity is doing the melodic work.'},
+{id:'b_disco',fam:'bass',g:'Disco house',mot:'Skipping',n:'Disco octave bass',bars:1,voice:'bass',oct:-1,
+ notes:at([0,2,4,6,8,10,12,14],.8,[0,12,0,12,-2,10,-2,10],[116,86,104,86,116,86,104,90]),
+ d:'The octave-jumping 8th line every disco record is built on. Play it an octave higher than a techno bass.'},
+{id:'b_funk',fam:'bass',g:'Funk house',mot:'Skipping',n:'16th funk line',bars:1,voice:'bass',oct:-1,
+ notes:at([0,1,3,6,7,10,11,13,14],.75,[0,0,-2,3,3,0,7,5,3],[118,66,96,110,64,104,72,90,108]),
+ d:'Busy, ghost-heavy, syncopated. Needs a very short gate or it turns to mud.'},
+{id:'b_french',fam:'bass',g:'French house',mot:'Driving',n:'French loop bass',bars:2,voice:'bass',oct:-1,
+ notes:bar2(at([0,3,6,8,11,14],1.1,[0,0,-2,0,3,-2],[112,84,100,112,84,100])),
+ d:'Filtered-loop phrasing: a repeating figure that sounds sampled rather than programmed.'},
+{id:'b_hard',fam:'bass',g:'Hard techno',mot:'Driving',n:'Distorted 8ths',bars:1,voice:'bass',oct:-2,
+ notes:every(8,2,1.6,0,[120,96]),
+ d:'Straight 8ths, no variation. In hard techno the bass is a texture, not a part.'},
+{id:'b_melodic',fam:'bass',g:'Melodic techno',mot:'Driving',n:'Melodic techno pulse',bars:2,voice:'bass',oct:-2,
+ notes:bar2(every(8,2,1.4,0,[110,84])).map((n,i)=>i>=8?{...n,p:-4}:n),
+ d:'Eight-note pulse that changes root in bar two. Everything expressive happens above it.'},
+{id:'b_dub',fam:'bass',g:'Dub techno',mot:'Floating',n:'Dub sparse',bars:2,voice:'bass',oct:-2,
+ notes:[nn(2,3.4,0,100),nn(10,1.6,0,80),nn(18,3.4,-4,100),nn(26,1.6,-4,78)],
+ d:'Four notes in two bars. The space is the instrument.'},
+{id:'b_ama',fam:'bass',g:'Amapiano',mot:'Floating',n:'Log-drum tresillo',bars:2,voice:'bass',oct:-2,
+ notes:at([0,3,6,10,13,16,19,22,26,29],1.2,[0,0,-2,0,3,0,0,-2,3,0],[116,90,104,96,88,116,90,104,96,88]),
+ d:'A 3+3+2 figure played as a pitched log drum. Slow tempo, huge amount of forward pull.'},
+{id:'b_afro',fam:'bass',g:'Afro house',mot:'Rolling',n:'Afro rolling triplets',bars:1,voice:'bass',oct:-2,
+ notes:every(12,4/3,1.0,[0,0,-2],[110,78,90]),
+ d:'Triplet 8ths against a straight kick. Three against four in the bass rather than the percussion.'},
+{id:'b_breaks',fam:'bass',g:'Breaks',mot:'Skipping',n:'Breakbeat bass',bars:2,voice:'bass',oct:-2,
+ notes:at([0,3,8,11,14,16,19,22,27],1.1,[0,0,-2,-2,0,0,3,-2,0],[118,84,106,78,96,118,84,106,90]),
+ d:'Follows a break rather than the grid. Land on the kick, then leave a hole where the snare is.'},
+
+/* ---------------- SEQUENCE ---------------- */
+{id:'s_trancearp',fam:'seq',g:'Trance',mot:'Lifting',n:'Trance 16th arp',bars:2,voice:'seq',oct:0,
+ notes:every(32,1,.9,[0,3,7,12,7,3],[112,80,88,80]),
+ d:'Six-note cycle over a 16-step bar, so the figure lands differently every bar without changing.'},
+{id:'s_gate1',fam:'seq',g:'Trance',mot:'Driving',n:'Gate pattern · x-xx-x-x',bars:1,voice:'seq',oct:0,
+ notes:at([0,2,3,5,7],.85,[0,0,0,3,7],[114,88,80,96,88]),
+ d:'The classic trance gate. Five hits in eight steps, repeated. Sits perfectly under a supersaw.'},
+{id:'s_gate2',fam:'seq',g:'Trance',mot:'Skipping',n:'Gate pattern · xx-x-xx-',bars:1,voice:'seq',oct:0,
+ notes:at([0,1,3,5,6,8,9,11,13,14],.7,[0,0,3,0,3,7,7,10,7,3],[112,76,92,84,92,112,76,92,84,92]),
+ d:'Denser gate with a hole on the fourth step. Reads as urgency rather than drive.'},
+{id:'s_updown',fam:'seq',g:'Trance',mot:'Lifting',n:'Up-down arp',bars:1,voice:'seq',oct:0,
+ notes:every(16,1,.85,[0,3,7,12,15,12,7,3],[110,80,88,80]),
+ d:'Rises and falls inside the bar. Less relentless than a pure up-arp; better for long sections.'},
+{id:'s_octarp',fam:'seq',g:'Prog / trance',mot:'Lifting',n:'Octave arp',bars:1,voice:'seq',oct:0,
+ notes:every(16,1,.8,[0,12,0,12,3,15,3,15],[112,84,96,84]),
+ d:'Alternating a note and its octave. Two lines out of one, and it cuts through anything.'},
+{id:'s_offpluck',fam:'seq',g:'House',mot:'Driving',n:'Offbeat pluck',bars:1,voice:'pluck',oct:0,
+ notes:at([2,6,10,14],1.3,[0,3,7,3],[108,92,108,92]),
+ d:'The simplest possible top line. Put it opposite an on-grid bass and the track already works.'},
+{id:'s_psyarp',fam:'seq',g:'Psytrance',mot:'Rolling',n:'Psy rolling arp',bars:1,voice:'seq',oct:0,
+ notes:at([1,2,3,5,6,7,9,10,11,13,14,15],.6,[12,7,3,12,7,3,15,10,3,12,7,3],[104,88,80]),
+ d:'Sits in the gaps the psy bass leaves. Together they read as one continuous 16th machine.'},
+{id:'s_dotted',fam:'seq',g:'Prog house',mot:'Hypnotic',n:'Dotted-8th roll',bars:3,voice:'seq',oct:0,
+ notes:every(16,3,2.2,[0,3,7],[112,84,84]),
+ d:'Notes every three 16ths. Comes home after three bars, so a four-bar loop never repeats identically.'},
+{id:'s_drift',fam:'seq',g:'Hypnotic',mot:'Hypnotic',n:'2.5-step drift',bars:5,voice:'seq',oct:0,
+ notes:every(32,2.5,2.1,[0,3,7,10,12],[112,78,78,78,78]),
+ d:'Five thirty-seconds between notes. Takes five bars to return to the downbeat.'},
+{id:'s_ratchet',fam:'seq',g:'Techno',mot:'Driving',n:'Ratchet arp',bars:1,voice:'seq',oct:0,
+ notes:[...at([0,2,4],.9,[0,3,7],[112,88,96]),...every(4,.5,.45,[12,12,12,12],[100,80,90,72],6),
+        ...at([8,10,12],.9,[0,3,7],[110,86,94]),...every(2,.5,.45,[15,15],[104,84],14)],
+ d:'Two 32nd-note bursts inside a 16th figure. The ratchet is what makes a modular sequence sound alive.'},
+{id:'s_supersaw',fam:'seq',g:'Trance',mot:'Driving',n:'Supersaw 8ths',bars:2,voice:'seq',oct:0,
+ notes:bar2(every(8,2,1.7,[0,0,3,3,7,7,3,3],[112,86,104,86])),
+ d:'Straight 8ths on a chord tone cycle. Under a sidechain this is most of a trance breakdown.'},
+{id:'s_detroit',fam:'seq',g:'Detroit',mot:'Floating',n:'Detroit stab sequence',bars:2,voice:'pluck',oct:0,
+ notes:at([0,6,10,19,22,28],1.6,[0,7,3,10,7,3],[110,88,96,108,86,94]),
+ d:'Sparse and slightly wrong-footed. Six notes across two bars, none of them where you expect.'},
+{id:'s_minimal',fam:'seq',g:'Minimal',mot:'Hypnotic',n:'Minimal blip · 5/16',bars:5,voice:'pluck',oct:0,
+ notes:every(16,5,1.2,[0,7,3],[110,84,92]),
+ d:'One blip every five 16ths. Sparse enough to run for four minutes without tiring.'},
+{id:'s_pedal',fam:'seq',g:'Hypnotic techno',mot:'Hypnotic',n:'Pedal alternation',bars:2,voice:'seq',oct:0,
+ notes:every(32,1,.8,[0,3,0,5,0,7,0,10,0,12,0,10,0,7,0,5],[108,78]),
+ d:'Every other note is a fixed root. Lets the moving line wander much further without losing the ear.'},
+{id:'s_callresp',fam:'seq',g:'Any',mot:'Floating',n:'Two-register call & response',bars:2,voice:'seq',oct:0,
+ notes:[...at([0,2,3,6],.9,[0,3,7,10],[112,86,94,108]),...at([16,18,20,22],.9,[19,15,12,7],[104,84,90,102])],
+ d:'Bar one low, bar two an octave up. The gap between them is doing as much work as the notes.'},
+{id:'s_climb',fam:'seq',g:'Trance',mot:'Lifting',n:'Register climb',bars:4,voice:'seq',oct:0,
+ notes:[0,1,2,3].flatMap(b=>every(8,2,1.0,[0+b*3,3+b*3,7+b*3,12+b*3],[110,82,90,82],b*16)),
+ d:'Same rhythm, transposed up a minor third every bar. Four bars of pure lift.'},
+
+/* ---------------- STAB ---------------- */
+{id:'t_offbeat',fam:'stab',g:'House',mot:'Driving',n:'Offbeat stabs',bars:1,voice:'stab',oct:-1,
+ notes:at([2,6,10,14],1.3,0,[106,92,106,92]),
+ d:'The default. Sits exactly where the open hat sits and reinforces it.'},
+{id:'t_disco',fam:'stab',g:'Disco house',mot:'Skipping',n:'Disco 16th chops',bars:1,voice:'stab',oct:-1,
+ notes:at([0,3,6,7,10,13,14],.8,[0,0,0,0,-2,-2,-2],[112,84,104,72,110,84,96]),
+ d:'Chopped chord hits in a funk rhythm. Very short gate, or it stops being percussive.'},
+{id:'t_garage',fam:'stab',g:'UK garage',mot:'Skipping',n:'Garage stabs',bars:2,voice:'stab',oct:-1,
+ notes:at([2,5,6,10,13,14,18,21,26,29],1.0,[0,0,0,-2,-2,-2,0,0,3,3],[110,74,100,110,74,100,108,76,104,88]),
+ d:'Swung stabs with 16th pickups. Push swing past 58% before judging it.'},
+{id:'t_trance',fam:'stab',g:'Trance',mot:'Lifting',n:'Trance chord pulse',bars:2,voice:'stab',oct:-1,
+ notes:bar2(every(8,2,1.7,0,[104,80,96,80])).map((n,i)=>i>=8?{...n,p:-4}:n),
+ d:'Eight-note chord pulse, root changing per bar. The sidechain does the rhythm; you supply the harmony.'},
+{id:'t_dub',fam:'stab',g:'Dub techno',mot:'Floating',n:'Dub offbeat with tail',bars:2,voice:'stab',oct:-1,
+ notes:[nn(2,2.6,0,96),nn(10,2.6,0,80),nn(20,2.6,-4,96),nn(28,2.6,-4,78)],
+ d:'Four chords in two bars, each held long. Everything else is delay.'},
+{id:'t_quarter',fam:'stab',g:'Prog',mot:'Driving',n:'Quarter-note pulse',bars:1,voice:'stab',oct:-1,
+ notes:every(4,4,3.4,0,[108,88,100,88]),
+ d:'On the beat, long gate. Only works with heavy sidechain — without it there is no groove at all.'},
+{id:'t_tresillo',fam:'stab',g:'Latin house',mot:'Skipping',n:'Tresillo stabs',bars:1,voice:'stab',oct:-1,
+ notes:at([0,3,6],1.4,[0,0,-2],[114,92,102]),
+ d:'3+3+2. Three chords per bar in the oldest syncopation in popular music.'},
+{id:'t_antic',fam:'stab',g:'Any',mot:'Pulling',n:'Anticipation stabs',bars:2,voice:'stab',oct:-1,
+ notes:[nn(0,5,0,104),nn(8,3,0,84),nn(15,7,-4,116),nn(24,5,-4,88)],
+ d:'The bar-two chord arrives a 16th early. Tilts the loop forward instead of resetting it.'},
+{id:'t_alt',fam:'stab',g:'Tech house',mot:'Driving',n:'Two-chord alternation',bars:2,voice:'stab',oct:-1,
+ notes:at([2,6,10,14,18,22,26,30],1.2,[0,0,0,0,-4,-4,-4,-4],[108,88,104,88]),
+ d:'Offbeat stabs that change chord every bar. The cheapest way to make a one-chord loop feel like two.'},
+{id:'t_rave',fam:'stab',g:'Rave',mot:'Driving',n:'Rave stab 8ths',bars:1,voice:'stab',oct:0,
+ notes:every(8,2,1.2,[0,0,0,0,3,3,0,0],[120,92,110,92]),
+ d:'Loud, blunt, no extensions. Distortion needs harmonic simplicity or it turns to mud.'},
+
+/* ---------------- ENERGY ---------------- */
+{id:'e_density',fam:'energy',g:'Any',mot:'Lifting',n:'Density ramp · 4 bars',bars:4,voice:'seq',oct:0,
+ notes:[1,2,4,8].flatMap((cnt,b)=>every(cnt,16/cnt,.85,[0,3,7,12],[112,84,92,84],b*16)),
+ d:'One note in bar one, sixteen by bar four. Pure additive energy with no new sounds.'},
+{id:'e_register',fam:'energy',g:'Trance',mot:'Lifting',n:'Register climb · 4 bars',bars:4,voice:'seq',oct:0,
+ notes:[0,1,2,3].flatMap(b=>every(8,2,1.0,[0,3,7,3].map(x=>x+[0,3,7,12][b]),[108,82,94,82],b*16)),
+ d:'Same rhythm, rising register. Raises energy without adding density, which costs nothing in the mix.'},
+{id:'e_gate',fam:'energy',g:'Any',mot:'Driving',n:'Gate shrink · 4 bars',bars:4,voice:'bass',oct:-2,
+ notes:[1.7,1.2,.8,.5].flatMap((g,b)=>at([2,6,10,14].map(s=>s+b*16),g,0,[110,88,104,88])),
+ d:'Identical notes, gate falling from 105% to 30% across four bars. The loop tightens with nothing entering.'},
+{id:'e_displace',fam:'energy',g:'Techno',mot:'Hypnotic',n:'Displacement · 4 bars',bars:4,voice:'seq',oct:0,
+ notes:[0,1,2,3].flatMap(b=>at([0,3,6,10].map(s=>(s+b)%16+b*16),1.0,[0,3,7,10],[110,84,92,88])),
+ d:'The same four-note figure moved one 16th later each bar. Four bars to come home, and it sounds composed.'},
+{id:'e_additive',fam:'energy',g:'Any',mot:'Lifting',n:'Additive entry · 8 bars',bars:8,voice:'seq',oct:0,
+ notes:Array.from({length:8},(_,b)=>b).flatMap(b=>
+   at([0,4,2,6,1,10,13,7].slice(0,b+1).map(s=>s+b*16),.9,[0,7,3,10,12,5,15,1],[110,86,94,82])),
+ d:'One extra note per bar, in a fixed order. Eight bars of climb from a single figure.'},
+{id:'e_subtract',fam:'energy',g:'Any',mot:'Floating',n:'Subtractive exit · 8 bars',bars:8,voice:'seq',oct:0,
+ notes:Array.from({length:8},(_,b)=>b).flatMap(b=>
+   at([0,2,4,6,8,10,12,14].slice(0,8-b).map(s=>s+b*16),.9,[0,3,7,10,12,7,3,0],[108,84,92,80])),
+ d:'The reverse. Use it into a breakdown — removing one note per bar reads as a decision, fading does not.'},
+{id:'e_accent',fam:'energy',g:'Techno',mot:'Hypnotic',n:'Accent migration · 4 bars',bars:4,voice:'seq',oct:0,
+ notes:[0,1,2,3].flatMap(b=>every(16,1,.8,0,Array.from({length:16},(_,i)=>i%4===b?122:70),b*16)),
+ d:'Constant 16ths where only the accent moves — beat 1, then the "e", then the "and", then the "a".'},
+{id:'e_augment',fam:'energy',g:'Any',mot:'Lifting',n:'Rhythmic augmentation · 4 bars',bars:4,voice:'seq',oct:0,
+ notes:[4,2,1,.5].flatMap((sp,b)=>every(Math.round(16/sp),sp,Math.min(sp*.8,1.4),[0,3,7,12],[110,84,92,84],b*16)),
+ d:'Quarters, then 8ths, then 16ths, then 32nds. The oldest build in electronic music and still the clearest.'},
+
+/* ---------------- FILLS ---------------- */
+{id:'f_ratchet',fam:'fill',g:'Techno',mot:'Lifting',n:'16th ratchet fill',bars:1,voice:'seq',oct:0,
+ notes:[...at([0,4,8],1.6,[0,3,7],[104,90,96]),...every(8,.5,.45,[12],[80,88,96,104,110,116,120,124],12)],
+ d:'Three bars of normal, then eight 32nds on the last beat with rising velocity.'},
+{id:'f_triplet',fam:'fill',g:'Any',mot:'Skipping',n:'Triplet fill',bars:1,voice:'seq',oct:0,
+ notes:[...at([0,4,8],1.6,[0,3,7],[104,90,96]),...every(6,2/3,.6,[12,10,7,12,10,7],[110,80,90,110,84,96],12)],
+ d:'Six triplet 16ths across the last beat. Reads as a stumble, which is the point.'},
+{id:'f_ramp',fam:'fill',g:'Any',mot:'Lifting',n:'Note-length ramp',bars:1,voice:'seq',oct:0,
+ notes:[nn(0,3.6,0,104),nn(4,2.6,3,94),nn(8,1.6,7,104),nn(11,1.0,10,110),nn(13,.7,12,116),nn(14.5,.5,15,124)],
+ d:'Notes getting shorter and higher through the bar. Acceleration without changing the tempo.'},
+{id:'f_reverse',fam:'fill',g:'Any',mot:'Floating',n:'Descending run',bars:1,voice:'seq',oct:0,
+ notes:every(8,1,.85,[19,17,15,12,10,7,5,3],[116,104,96,90,84,80,76,72],8),
+ d:'A falling run across the second half of the bar. Ends the phrase and points at the next one.'},
+{id:'f_stutter',fam:'fill',g:'Techno',mot:'Driving',n:'Stutter repeat',bars:1,voice:'seq',oct:0,
+ notes:[...at([0,4],2.6,[0,3],[106,94]),...every(4,1,.8,[7],[92,100,108,116],8),
+        ...every(4,.5,.45,[7],[110,116,120,124],12)],
+ d:'One note repeated, doubling in speed twice. Simplest ratchet there is.'},
+{id:'f_silence',fam:'fill',g:'Any',mot:'Pulling',n:'Silence + pickup',bars:1,voice:'seq',oct:0,
+ notes:[...at([0,2,4,6],1.0,[0,3,7,3],[106,86,96,86]),nn(15,1,12,124)],
+ d:'Half a bar of nothing, then a single 16th pickup into the next bar. Costs nothing, works every time.'},
+{id:'f_chrom',fam:'fill',g:'Hard techno',mot:'Lifting',n:'Chromatic climb',bars:1,voice:'seq',oct:0,
+ notes:every(8,1,.8,[0,1,2,3,4,5,6,7],[80,86,92,98,104,110,118,124],8),
+ d:'Eight ascending semitones. Belongs to no key, which is why it works over anything.'},
+{id:'f_roll32',fam:'fill',g:'Trance',mot:'Lifting',n:'32nd roll',bars:1,voice:'seq',oct:0,
+ notes:[...at([0,4],2.6,[0,3],[104,92]),...every(16,.5,.42,[7,7,12,12],
+   Array.from({length:16},(_,i)=>72+i*3.4),8)],
+ d:'Sixteen 32nds across the last two beats. The trance build in one bar.'},
+{id:'f_octdrop',fam:'fill',g:'Any',mot:'Floating',n:'Octave drop',bars:1,voice:'seq',oct:0,
+ notes:[...at([0,2,4,6,8,10],.9,[12,15,19,15,12,7],[110,84,94,84,100,88]),nn(12,3.6,-12,116)],
+ d:'A busy high figure that drops two octaves and holds. Gives the ear a floor to land on.'},
+{id:'f_halftime',fam:'fill',g:'Any',mot:'Floating',n:'Half-time drop',bars:2,voice:'seq',oct:0,
+ notes:[...every(16,1,.85,[0,3,7,12],[110,80,88,80]),...at([16,20,24,28],3.4,[0,3,7,3],[104,88,96,84])],
+ d:'A bar of 16ths, then a bar at quarter speed. Halving the rate reads as a huge drop in energy.'}
+];
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const KEYN=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const S={bpm:128,swing:50,key:9,kick:true,hats:false,clap:false,playing:null,
+  slots:[{id:null,oct:0,mute:false,sw:true},{id:null,oct:0,mute:false,sw:true},
+         {id:null,oct:0,mute:false,sw:true},{id:null,oct:0,mute:false,sw:true}],
+  gen:{ph:{sp:2.5,n:16,pit:'0 3 7 10'},eu:{k:7,n:16,rot:0,pit:'0 0 3 0 7 3 0'},ad:{g:'3 3 2',pit:'0 3 7'}}};
+const stepDur=()=>60/S.bpm/4;
+const BASEROOT=57;                      /* A3; slot octave offsets shift from here */
+function rootFor(b,slotOct){ return BASEROOT+(S.key-9)+(b.oct+ (slotOct||0))*12; }
+function swingOff(s){
+  const i=Math.round(s);
+  if(Math.abs(s-i)>.01) return 0;
+  return (i%2===1)?stepDur()*((S.swing-50)/50):0;
+}
+const byId=id=>BANK.find(b=>b.id===id);
+
+/* =====================================================================
+   DRAWING
+   ===================================================================== */
+const BEAT=['#FF4B32','#FF8A2B','#FFC531','#F2EDE0'];
+const SLOTC=['#FF4B32','#FFC531','#3FD0C9','#A78BFA'];
+function drawRoll(cv,notes,bars,h,cur,colFn){
+  const dpr=window.devicePixelRatio||1,w=cv.clientWidth||400;
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  const steps=Math.max(1,bars*16);
+  for(let s=0;s<steps*2;s++){
+    const x=s/(steps*2)*w;
+    c.fillStyle=(s%32===0)?'rgba(255,255,255,.30)':((s%8===0)?'rgba(255,255,255,.14)':
+      (s%2===0?'rgba(255,255,255,.055)':'rgba(255,255,255,.022)'));
+    c.fillRect(x,0,1,h);
+  }
+  if(!notes.length){return;}
+  const ps=notes.map(n=>n.p);
+  const lo=Math.min(...ps),hi=Math.max(...ps),rows=Math.max(1,hi-lo+1);
+  const rh=h/rows;
+  notes.forEach(n=>{
+    const x=n.s/steps*w, bw=Math.max(2,n.l/steps*w-.8);
+    const y=(hi-n.p)*rh+.5, bh=Math.max(2.5,rh-1);
+    c.fillStyle=colFn?colFn(n):BEAT[Math.floor((Math.floor(n.s)%16)/4)];
+    c.globalAlpha=.4+.6*(n.v/127);
+    c.fillRect(x,y,bw,bh); c.globalAlpha=1;
+  });
+  if(cur!==undefined&&cur>=0){c.fillStyle='rgba(255,255,255,.85)';c.fillRect(cur*w,0,2,h);}
+}
+
+/* =====================================================================
+   TRANSPORT
+   ===================================================================== */
+let timer=null,raf=null,nextT=0,loops=[],barIx=0;
+const nowEl=document.getElementById('nowPlaying');
+function potBars(){
+  const bs=S.slots.filter(s=>s.id).map(s=>byId(s.id).bars);
+  if(!bs.length) return 2;
+  return bs.reduce((a,b)=>a*b/gcd(a,b),1);
+}
+function stop(){
+  if(timer)clearTimeout(timer);timer=null;
+  if(raf)cancelAnimationFrame(raf);raf=null;
+  document.querySelectorAll('.play[aria-pressed="true"]').forEach(b=>{b.setAttribute('aria-pressed','false');b.textContent='▶';});
+  document.getElementById('potPlay').textContent='▶ PLAY POT';
+  S.playing=null;loops=[];nowEl.textContent='nothing playing';
+  drawPot();
+}
+function play(id){
+  audio();stop();S.playing=id;
+  if(id==='__pot'){document.getElementById('potPlay').textContent='■ STOP';nowEl.textContent='▸ melting pot';}
+  else{
+    const b=document.querySelector(`.play[data-id="${id}"]`);
+    if(b){b.setAttribute('aria-pressed','true');b.textContent='■';}
+    nowEl.textContent='▸ '+(byId(id)||{}).n;
+  }
+  nextT=AC.currentTime+.1;loops=[];barIx=0;schedule();animate();
+}
+function schedule(){
+  /* one bar at a time: two blocks with 5- and 8-bar cycles give a 40-bar loop,
+     and scheduling all of that in one call would spike the audio thread */
+  while(nextT<AC.currentTime+.35){
+    const sd=stepDur(), barDur=16*sd;
+    const total=(S.playing==='__pot')?potBars():((byId(S.playing)||{}).bars||1);
+    const localBar=barIx%total;
+    const emit=(b,root,sw)=>{
+      const lb=localBar%b.bars;
+      b.notes.forEach(n=>{
+        if(Math.floor(n.s/16)!==lb) return;
+        const off=n.s-lb*16;
+        const t=nextT+off*sd+(sw?swingOff(n.s):0);
+        V[b.voice](Math.max(t,AC.currentTime+.004),mtof(root+n.p),Math.max(.04,n.l*sd),n.v);
+      });
+    };
+    if(S.playing==='__pot'){
+      S.slots.forEach(sl=>{
+        if(!sl.id||sl.mute) return;
+        const b=byId(sl.id); if(!b) return;
+        emit(b,rootFor(b,sl.oct),sl.sw);
+      });
+    }else{
+      const b=byId(S.playing);
+      if(b) emit(b,rootFor(b,0),true);
+    }
+    if(S.kick) for(let s=0;s<16;s+=4) kickV(nextT+s*sd);
+    if(S.hats) for(let s=1;s<16;s+=2) hatV(nextT+s*sd+swingOff(s),s%4===3?96:62,s%4===3);
+    if(S.clap) for(let s=4;s<16;s+=8) clapV(nextT+s*sd);
+    loops.push({start:nextT,dur:barDur,bar:localBar,total});
+    nextT+=barDur; barIx++;
+  }
+  loops=loops.filter(l=>l.start+l.dur>AC.currentTime-.4);
+  timer=setTimeout(()=>{if(S.playing)schedule();},50);
+}
+function animate(){
+  function frame(){
+    if(!S.playing){raf=null;return;}
+    const now=AC.currentTime;
+    const L=loops.find(l=>now>=l.start&&now<l.start+l.dur);
+    const pos=L?((L.bar+(now-L.start)/L.dur)/L.total):-1;
+    if(S.playing==='__pot') drawPot(pos);
+    else{
+      const b=byId(S.playing);
+      const cv=document.querySelector(`canvas[data-roll="${S.playing}"]`);
+      if(cv&&b) drawRoll(cv,b.notes,b.bars,48,pos);
+    }
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+document.getElementById('stopAll').onclick=()=>stop();
+document.getElementById('bpm').oninput=e=>{S.bpm=+e.target.value;document.getElementById('bpmv').textContent=S.bpm;};
+document.getElementById('swing').oninput=e=>{S.swing=+e.target.value;document.getElementById('swingv').textContent=S.swing+'%';};
+document.getElementById('vol').oninput=e=>{document.getElementById('volv').textContent=e.target.value;
+  if(master)master.gain.value=(+e.target.value/100)*.95;};
+document.getElementById('kickToggle').onclick=function(){S.kick=!S.kick;this.setAttribute('aria-pressed',S.kick);};
+document.getElementById('hatToggle').onclick=function(){S.hats=!S.hats;this.setAttribute('aria-pressed',S.hats);};
+document.getElementById('clapToggle').onclick=function(){S.clap=!S.clap;this.setAttribute('aria-pressed',S.clap);};
+const keySel=document.getElementById('keySel');
+KEYN.forEach((k,i)=>{const o=document.createElement('option');o.value=i;o.textContent=k+' minor';keySel.appendChild(o);});
+keySel.value=9; keySel.onchange=e=>{S.key=+e.target.value;};
+document.addEventListener('keydown',e=>{
+  if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.code==='Space'){e.preventDefault();S.playing?stop():play('__pot');}
+  if(e.key==='Escape')stop();
+});
+
+/* =====================================================================
+   MELTING POT
+   ===================================================================== */
+const FAMN={bass:'Bass',seq:'Sequence',stab:'Stab',energy:'Energy',fill:'Fill'};
+const potEl=document.getElementById('potSlots');
+function buildSlots(){
+  potEl.innerHTML='';
+  S.slots.forEach((sl,i)=>{
+    const d=document.createElement('div'); d.className='slot';
+    const groups=Object.keys(FAMN).map(f=>
+      `<optgroup label="${FAMN[f]}">`+BANK.filter(b=>b.fam===f).map(b=>
+        `<option value="${b.id}"${b.id===sl.id?' selected':''}>${b.n} · ${b.g}</option>`).join('')+'</optgroup>').join('');
+    d.innerHTML=`<div class="eyebrow" style="color:${SLOTC[i]}">Slot ${i+1}</div>
+      <select data-slot="${i}"><option value="">— empty —</option>${groups}</select>
+      <div class="slotrow">
+        <button class="sbtn mute" data-mute="${i}" aria-pressed="${sl.mute}">M</button>
+        <button class="sbtn" data-sw="${i}" aria-pressed="${sl.sw}">~</button>
+        <button class="sbtn" data-oct="${i}" data-dir="-1">8vb</button>
+        <button class="sbtn" data-oct="${i}" data-dir="1">8va</button>
+        <span class="oct">oct ${sl.oct>0?'+':''}${sl.oct}</span>
+      </div>`;
+    potEl.appendChild(d);
+  });
+}
+potEl.addEventListener('change',e=>{
+  const i=e.target.dataset.slot; if(i===undefined)return;
+  S.slots[+i].id=e.target.value||null; refreshPot();
+});
+potEl.addEventListener('click',e=>{
+  const b=e.target.closest('[data-mute],[data-sw],[data-oct]'); if(!b)return;
+  if(b.dataset.mute!==undefined){const i=+b.dataset.mute;S.slots[i].mute=!S.slots[i].mute;}
+  else if(b.dataset.sw!==undefined){const i=+b.dataset.sw;S.slots[i].sw=!S.slots[i].sw;}
+  else{const i=+b.dataset.oct;S.slots[i].oct=Math.max(-3,Math.min(3,S.slots[i].oct+ +b.dataset.dir));}
+  buildSlots(); refreshPot();
+});
+function potNotes(){
+  const bars=potBars(), out=[];
+  S.slots.forEach((sl,i)=>{
+    if(!sl.id||sl.mute) return;
+    const b=byId(sl.id), reps=bars/b.bars;
+    for(let r=0;r<reps;r++) b.notes.forEach(n=>
+      out.push({s:n.s+r*b.bars*16,l:n.l,p:n.p+(b.oct+sl.oct)*12,v:n.v,slot:i}));
+  });
+  return {notes:out,bars};
+}
+function drawPot(cur){
+  const {notes,bars}=potNotes();
+  drawRoll(document.getElementById('potCv'),notes,bars,230,cur,n=>SLOTC[n.slot]);
+}
+function refreshPot(){
+  drawPot();
+  const {notes,bars}=potNotes();
+  const filled=S.slots.filter(s=>s.id&&!s.mute).length;
+  const mots=[...new Set(S.slots.filter(s=>s.id&&!s.mute).map(s=>byId(s.id).mot))];
+  document.getElementById('potStats').innerHTML=
+    `<span>Parts<b>${filled}</b></span>
+     <span>Notes<b>${notes.length}</b></span>
+     <span>Loop length<b>${bars} bar${bars>1?'s':''}</b></span>
+     <span>Syncopation<b>${syncopation(notes,bars)}</b></span>
+     <span>Motion types<b>${mots.length||'—'}</b></span>
+     <span>Contrast<b>${filled?Math.round(mots.length/filled*100)+'%':'—'}</b></span>`;
+}
+document.getElementById('potPlay').onclick=()=>S.playing==='__pot'?stop():play('__pot');
+document.getElementById('potClear').onclick=()=>{S.slots.forEach(s=>{s.id=null;});buildSlots();refreshPot();};
+document.getElementById('potRandom').onclick=()=>{
+  const mots=[...new Set(BANK.map(b=>b.mot))].sort(()=>Math.random()-.5);
+  const fams=['bass','seq','stab','fill'];
+  S.slots.forEach((sl,i)=>{
+    const pool=BANK.filter(b=>b.fam===fams[i]&&b.mot===mots[i%mots.length]);
+    const alt=BANK.filter(b=>b.fam===fams[i]);
+    const pick=(pool.length?pool:alt)[Math.floor(Math.random()*(pool.length?pool.length:alt.length))];
+    sl.id=pick.id; sl.oct=0; sl.mute=false;
+  });
+  buildSlots(); refreshPot();
+  if(S.playing!=='__pot') play('__pot');
+};
+const PRESETS={
+ potHouse:['b_house','s_offpluck','t_disco','f_silence',124],
+ potTrance:['b_trance','s_trancearp','t_trance','f_roll32',138],
+ potTechno:['b_techno','s_dotted','t_alt','e_accent',134],
+ potGarage:['b_garage','s_gate2','t_garage','f_triplet',134]
+};
+Object.entries(PRESETS).forEach(([id,v])=>{
+  document.getElementById(id).onclick=()=>{
+    S.slots.forEach((sl,i)=>{sl.id=v[i];sl.oct=0;sl.mute=false;});
+    S.bpm=v[4];document.getElementById('bpm').value=v[4];document.getElementById('bpmv').textContent=v[4];
+    if(id==='potGarage'){S.swing=60;document.getElementById('swing').value=60;document.getElementById('swingv').textContent='60%';}
+    buildSlots();refreshPot();
+    if(S.playing!=='__pot') play('__pot');
+  };
+});
+
+/* =====================================================================
+   MIDI
+   ===================================================================== */
+function varlen(n){const b=[n&0x7F];n>>=7;while(n>0){b.unshift((n&0x7F)|0x80);n>>=7;}return b;}
+function chunk(by){const l=by.length;return[0x4D,0x54,0x72,0x6B,(l>>24)&255,(l>>16)&255,(l>>8)&255,l&255,...by];}
+function mkTrack(name,ev,total,withTempo){
+  ev.sort((a,b)=>a.t-b.t||a.type-b.type);
+  const nm=[...name].map(c=>{const v=c.charCodeAt(0);return v<128?v:0x2D;});
+  const t=[0,0xFF,0x03,nm.length,...nm];
+  if(withTempo){
+    const upq=Math.round(60000000/S.bpm);
+    t.push(0,0xFF,0x51,0x03,(upq>>16)&255,(upq>>8)&255,upq&255);
+    t.push(0,0xFF,0x58,0x04,4,2,24,8);
+  }
+  let last=0;
+  ev.forEach(e=>{varlen(e.t-last).forEach(b=>t.push(b));last=e.t;t.push(e.type,e.note,e.vel);});
+  varlen(Math.max(0,total-last)).forEach(b=>t.push(b));
+  t.push(0xFF,0x2F,0x00);
+  return chunk(t);
+}
+function evFor(notes,root,swing){
+  const tps=24, ev=[];
+  notes.forEach(n=>{
+    const sw=(swing&&Math.abs(n.s-Math.round(n.s))<.01&&Math.round(n.s)%2===1)?tps*((S.swing-50)/50):0;
+    const on=Math.round(n.s*tps+sw), off=Math.max(on+6,Math.round((n.s+n.l)*tps+sw));
+    const note=Math.max(0,Math.min(127,root+n.p));
+    ev.push({t:on,type:0x90,note,vel:Math.max(1,Math.min(127,Math.round(n.v)))});
+    ev.push({t:off,type:0x80,note,vel:0});
+  });
+  return ev;
+}
+function download(bytes,name){
+  const blob=new Blob([bytes],{type:'audio/midi'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+function exportBlock(b){
+  const total=b.bars*16*24;
+  const trk=mkTrack('Groove II - '+b.n,evFor(b.notes,rootFor(b,0),true),total,true);
+  const head=[0x4D,0x54,0x68,0x64,0,0,0,6,0,0,0,1,0,96];
+  download(new Uint8Array([...head,...trk]),
+    'groove2-'+b.id+'-'+S.bpm+'bpm.mid');
+}
+document.getElementById('potMidi').onclick=()=>{
+  const bars=potBars(), total=bars*16*24, tracks=[];
+  const meta=[0,0xFF,0x51,0x03,...(()=>{const u=Math.round(60000000/S.bpm);return [(u>>16)&255,(u>>8)&255,u&255];})(),
+              0,0xFF,0x58,0x04,4,2,24,8,0,0xFF,0x2F,0x00];
+  tracks.push(chunk(meta));
+  S.slots.forEach((sl,i)=>{
+    if(!sl.id) return;
+    const b=byId(sl.id), reps=bars/b.bars, notes=[];
+    for(let r=0;r<reps;r++) b.notes.forEach(n=>notes.push({...n,s:n.s+r*b.bars*16}));
+    tracks.push(mkTrack((i+1)+' '+b.n,evFor(notes,rootFor(b,sl.oct),sl.sw),total,false));
+  });
+  const nt=tracks.length;
+  const head=[0x4D,0x54,0x68,0x64,0,0,0,6,0,1,(nt>>8)&255,nt&255,0,96];
+  download(new Uint8Array([...head,...tracks.flat()]),'melting-pot-'+KEYN[S.key].replace('#','s')+'m-'+S.bpm+'bpm.mid');
+};
+
+/* =====================================================================
+   GENERATORS
+   ===================================================================== */
+const parseP=s=>{const a=s.split(/[\s,]+/).map(Number).filter(x=>isFinite(x));return a.length?a:[0];};
+function genPhase(){
+  const {sp,n,pit}=S.gen.ph, P=parseP(pit);
+  const bars=Math.max(1,Math.min(8,cycleBars(sp)));
+  const total=bars*16, out=[];
+  for(let i=0;i<n;i++){const s=i*sp; if(s>=total) break;
+    out.push(nn(s,Math.min(sp*.85,2.2),P[i%P.length],i%P.length===0?114:84));}
+  return {notes:out,bars};
+}
+function genEuclid(){
+  const {k,n,rot,pit}=S.gen.eu, P=parseP(pit);
+  const base=euclid(Math.min(k,n),n);
+  const out=base.map((s,i)=>{const pos=((s-rot)%n+n)%n;return nn(pos,.9,P[i%P.length],pos%4===0?116:88);})
+    .sort((a,b)=>a.s-b.s);
+  return {notes:out,bars:Math.max(1,Math.ceil(n/16))};
+}
+function genAdd(){
+  const {g,pit}=S.gen.ad, P=parseP(pit);
+  const groups=parseP(g).map(x=>Math.max(1,Math.round(x)));
+  const bars=2, steps=additive(groups,bars);
+  return {notes:steps.map((s,i)=>nn(s,Math.min(groups[i%groups.length]*.8,2.4),P[i%P.length],
+    s%4===0?116:88)),bars};
+}
+const GENS=[
+ {id:'ph',t:'Phasing',p:'A constant spacing that does not divide the bar, so the figure walks across the grid and comes home some bars later.',
+  make:genPhase,ctrls:[['sp','Spacing',1,8,.5,v=>v.toFixed(1)+' steps'],['n','Notes',2,40,1,v=>v]]},
+ {id:'eu',t:'Euclidean',p:'K hits distributed as evenly as possible across N steps. Rotation moves the whole figure without changing its shape.',
+  make:genEuclid,ctrls:[['k','Hits',1,16,1,v=>v],['n','Steps',2,16,1,v=>v],['rot','Rotate',0,15,1,v=>v]]},
+ {id:'ad',t:'Additive',p:'Uneven groupings of a constant pulse. 3+3+2 is the tresillo; 3+3+3+3+2+2 is psytrance and Balkan.',
+  make:genAdd,ctrls:[]}
+];
+const genBox=document.getElementById('genBox');
+GENS.forEach(G=>{
+  const d=document.createElement('div'); d.className='gen';
+  const sliders=G.ctrls.map(([k,lbl,mn,mx,st])=>
+    `<label class="ctrl">${lbl}<span class="r"><input type="range" data-g="${G.id}" data-k="${k}" min="${mn}" max="${mx}" step="${st}"><b data-gv="${G.id}-${k}"></b></span></label>`).join('');
+  const txt=G.id==='ad'?`<label class="ctrl">Grouping<span class="r"><input type="text" data-gt="${G.id}" data-k="g" value="${S.gen.ad.g}"></span></label>`:'';
+  d.innerHTML=`<h3>${G.t}</h3><p>${G.p}</p>
+    <div class="mini"><canvas data-gen="${G.id}"></canvas></div>
+    <div class="genout" data-go="${G.id}">—</div>
+    ${sliders}${txt}
+    <label class="ctrl">Pitches<span class="r"><input type="text" data-gt="${G.id}" data-k="pit" value="${S.gen[G.id].pit}"></span></label>
+    <div class="btns" style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">
+      <button class="mb" data-gplay="${G.id}">▶ Hear</button>
+      <button class="mb" data-gslot="${G.id}" data-s="0">→ Slot 1</button>
+      <button class="mb" data-gslot="${G.id}" data-s="1">→ Slot 2</button>
+      <button class="mb" data-gslot="${G.id}" data-s="2">→ Slot 3</button>
+      <button class="mb" data-gslot="${G.id}" data-s="3">→ Slot 4</button>
+    </div>`;
+  genBox.appendChild(d);
+});
+function refreshGen(){
+  GENS.forEach(G=>{
+    const {notes,bars}=G.make();
+    const cv=document.querySelector(`canvas[data-gen="${G.id}"]`);
+    if(cv) drawRoll(cv,notes,bars,52);
+    const out=document.querySelector(`[data-go="${G.id}"]`);
+    if(out) out.textContent=notes.length+' notes · '+bars+' bar'+(bars>1?'s':'')+' · syncopation '+syncopation(notes,bars);
+    G.ctrls.forEach(([k,,,,,fmt])=>{
+      const inp=document.querySelector(`input[data-g="${G.id}"][data-k="${k}"]`);
+      const lab=document.querySelector(`[data-gv="${G.id}-${k}"]`);
+      if(inp){inp.value=S.gen[G.id][k]; if(lab)lab.textContent=fmt(S.gen[G.id][k]);}
+    });
+  });
+}
+genBox.addEventListener('input',e=>{
+  if(e.target.dataset.g){S.gen[e.target.dataset.g][e.target.dataset.k]=+e.target.value;refreshGen();}
+  if(e.target.dataset.gt){S.gen[e.target.dataset.gt][e.target.dataset.k]=e.target.value;refreshGen();}
+});
+genBox.addEventListener('click',e=>{
+  const pb=e.target.closest('[data-gplay]');
+  if(pb){
+    audio();
+    const G=GENS.find(x=>x.id===pb.dataset.gplay), {notes}=G.make();
+    const t=AC.currentTime+.05, sd=stepDur();
+    notes.forEach(n=>V.seq(t+n.s*sd,mtof(BASEROOT+(S.key-9)+n.p),Math.max(.05,n.l*sd),n.v));
+    return;
+  }
+  const sb=e.target.closest('[data-gslot]');
+  if(sb){
+    const G=GENS.find(x=>x.id===sb.dataset.gslot), {notes,bars}=G.make();
+    const id='gen_'+G.id+'_'+Date.now();
+    BANK.push({id,fam:'seq',g:'Generated',mot:'Hypnotic',n:G.t+' ('+notes.length+' notes)',
+      bars,voice:'seq',oct:0,notes,d:'Generated.'});
+    S.slots[+sb.dataset.s].id=id; buildSlots(); refreshPot();
+    document.getElementById('pot').scrollIntoView({block:'start'});
+    if(S.playing!=='__pot') play('__pot');
+  }
+});
+
+/* =====================================================================
+   BANK UI
+   ===================================================================== */
+const MOTS=['Driving','Rolling','Skipping','Lifting','Floating','Hypnotic','Pulling'];
+const GENRES=[...new Set(BANK.map(b=>b.g))].sort();
+const F={mot:'All',g:'All'};
+const fEl=document.getElementById('filters');
+function mkRow(label,items,key){
+  const r=document.createElement('div'); r.className='frow';
+  r.innerHTML=`<span class="flbl">${label}</span>`;
+  ['All',...items].forEach(v=>{
+    const b=document.createElement('button'); b.className='fchip'; b.textContent=v;
+    b.setAttribute('aria-pressed',v===F[key]);
+    b.onclick=()=>{F[key]=v;[...r.querySelectorAll('.fchip')].forEach(c=>c.setAttribute('aria-pressed',c===b));applyFilter();};
+    r.appendChild(b);
+  });
+  fEl.appendChild(r);
+}
+mkRow('Motion',MOTS,'mot');
+mkRow('Genre',GENRES,'g');
+function applyFilter(){
+  document.querySelectorAll('.blk').forEach(el=>{
+    const b=byId(el.dataset.b); if(!b){el.style.display='none';return;}
+    el.style.display=((F.mot==='All'||b.mot===F.mot)&&(F.g==='All'||b.g===F.g))?'':'none';
+  });
+}
+function buildBank(){
+  BANK.forEach(b=>{
+    const host=document.getElementById('bank-'+b.fam); if(!host) return;
+    const d=document.createElement('div'); d.className='blk'; d.dataset.b=b.id;
+    d.innerHTML=`<div class="blk-top">
+        <button class="play" data-id="${b.id}" aria-pressed="false" aria-label="Play ${b.n}">▶</button>
+        <h4>${b.n}</h4></div>
+      <div class="roll"><canvas data-roll="${b.id}"></canvas></div>
+      <div class="meta"><span class="tag">${b.g}</span><span class="tag m">${b.mot}</span>
+        <span class="sync">${b.bars}b · ${b.notes.length}n · sync <b>${syncopation(b.notes,b.bars)}</b></span></div>
+      <p>${b.d}</p>
+      <div class="btns">
+        <button class="mb" data-toslot="${b.id}" data-s="0">→1</button>
+        <button class="mb" data-toslot="${b.id}" data-s="1">→2</button>
+        <button class="mb" data-toslot="${b.id}" data-s="2">→3</button>
+        <button class="mb" data-toslot="${b.id}" data-s="3">→4</button>
+        <button class="mb" data-dl="${b.id}">⬇ MIDI</button>
+      </div>`;
+    host.appendChild(d);
+  });
+}
+buildBank();
+function drawAll(){
+  BANK.forEach(b=>{
+    const cv=document.querySelector(`canvas[data-roll="${b.id}"]`);
+    if(cv) drawRoll(cv,b.notes,b.bars,48);
+  });
+  refreshGen(); refreshPot();
+}
+document.addEventListener('click',e=>{
+  const pb=e.target.closest('.play[data-id]');
+  if(pb){const id=pb.dataset.id;S.playing===id?stop():play(id);return;}
+  const ts=e.target.closest('[data-toslot]');
+  if(ts){S.slots[+ts.dataset.s].id=ts.dataset.toslot;buildSlots();refreshPot();
+    document.getElementById('pot').scrollIntoView({block:'start'});
+    if(S.playing!=='__pot') play('__pot'); return;}
+  const dl=e.target.closest('[data-dl]');
+  if(dl){exportBlock(byId(dl.dataset.dl));}
+});
+window.addEventListener('resize',drawAll);
+buildSlots();
+S.slots[0].id='b_house'; S.slots[1].id='s_offpluck'; S.slots[2].id='t_disco';
+buildSlots();
+drawAll();
+</script>

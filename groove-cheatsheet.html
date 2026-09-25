@@ -1,0 +1,1045 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Groove 2.0 — placement, length, velocity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E2DED2;--panel:#F2EFE6;--panel-2:#EAE5D8;
+  --ink:#191713;--ink-2:#635C50;--ink-3:#8C8474;--line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32;--b2:#FF8A2B;--b3:#FFC531;--b4:#F2EDE0;--cy:#3FD0C9;--vi:#A78BFA;--gr:#5FBF52;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1220px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(44px,10.5vw,116px);line-height:.84;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:60ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+
+.transport{position:sticky;top:0;z-index:90;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:11px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;background:var(--b1);color:#fff;
+  border:0;border-radius:3px;padding:9px 14px;cursor:pointer;white-space:nowrap}
+.tbtn.ghost{background:transparent;color:var(--b4);border:1px solid rgba(242,237,224,.35)}
+.tbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.tbtn:hover{filter:brightness(1.12)}
+.knob{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.66)}
+.knob input[type=range]{width:76px;accent-color:var(--b2)}
+.knob b{color:var(--b4);min-width:36px;display:inline-block}
+.knob select{font-family:var(--mono);font-size:11px;background:#2A2723;color:var(--b4);border:1px solid rgba(242,237,224,.3);border-radius:3px;padding:5px 6px}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:28ch}
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 0}
+.nav a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;
+  color:var(--ink-2);border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--panel)}
+.nav a:hover{border-color:var(--ink);color:var(--ink)}
+.sec{padding:50px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:22px}
+.sec-head h2{font-size:clamp(26px,4.4vw,42px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:66ch;margin-top:12px;color:var(--ink-2)}
+.lab{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:20px}
+.lab-head{display:flex;align-items:center;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+.lab-head h3{font-size:20px;flex:1;min-width:150px}
+.tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;padding:3px 7px;border-radius:2px;
+  background:var(--ink);color:var(--b4);text-transform:uppercase;white-space:nowrap}
+.tag.alt{background:var(--b1)}
+.tag.quiet{background:transparent;color:var(--ink-3);border:1px solid var(--line)}
+
+/* --- money row --- */
+.money{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:var(--ink);
+  border-radius:5px;padding:12px 16px;margin-bottom:13px;color:var(--b4)}
+@media(max-width:820px){.money{grid-template-columns:1fr}}
+.money p{margin:0;font-size:13.5px;color:rgba(242,237,224,.72);max-width:56ch}
+.readout{text-align:right;font-family:var(--display);font-weight:800;font-size:32px;line-height:1;color:var(--b3)}
+.readout small{display:block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.11em;
+  color:rgba(242,237,224,.5);text-transform:uppercase;margin-top:3px}
+.readout.flat{color:var(--ink-3)}
+
+/* --- workbench --- */
+.roll{background:var(--lane);border-radius:5px;position:relative;overflow:hidden;touch-action:none}
+.roll canvas{display:block;width:100%;height:100%}
+.brushes{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px;align-items:center}
+.br{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:7px 11px;cursor:pointer;color:var(--ink-2)}
+.br[aria-pressed="true"]{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.br.acc[aria-pressed="true"]{background:var(--b1);border-color:var(--b1);color:#fff}
+.br.gho[aria-pressed="true"]{background:var(--vi);border-color:var(--vi);color:#fff}
+.br:hover{border-color:var(--ink)}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px 16px;margin-top:12px}
+.ctrl{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.ctrl .r{display:flex;align-items:center;gap:7px}
+.ctrl input[type=range]{flex:1;min-width:50px;accent-color:var(--b1)}
+.ctrl b{color:var(--ink);font-size:10.5px;min-width:52px;text-align:right}
+.stats{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-family:var(--mono);font-size:10.5px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
+.stats b{color:var(--ink);font-size:13px;display:block;font-family:var(--display);font-weight:800;letter-spacing:0}
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px;align-items:center}
+.tool{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:7px 11px;cursor:pointer;color:var(--ink-2)}
+.tool:hover{border-color:var(--ink);color:var(--ink)}
+.tool.hi{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.tool.hi:hover{background:var(--b1);border-color:var(--b1);color:#fff}
+.sep{width:1px;height:22px;background:var(--line);margin:0 3px}
+
+/* --- pattern cards --- */
+.grid2{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(430px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:15px;display:flex;flex-direction:column;gap:10px}
+.card.wide{grid-column:1/-1}
+.card-top{display:flex;align-items:flex-start;gap:11px}
+.play{width:38px;height:38px;flex:0 0 38px;border-radius:50%;border:0;cursor:pointer;background:var(--ink);
+  color:var(--b4);display:grid;place-items:center;font-size:13px}
+.play:hover{background:var(--b1);color:#fff}
+.play[aria-pressed="true"]{background:var(--b1);color:#fff}
+.card h3{font-size:18px;flex:1;line-height:1.15}
+.mini{height:0;background:var(--lane);border-radius:3px;overflow:hidden;position:relative}
+.mini canvas{display:block;width:100%}
+.badges{display:flex;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase}
+.badges b{color:var(--ink)}
+.card .why{font-size:14.5px;color:var(--ink-2);margin:0}
+.card .do{font-family:var(--mono);font-size:11.5px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:9px 11px;border-radius:0 3px 3px 0;margin:0}
+.card .do b{color:var(--b1)}
+.cardbtns{display:flex;gap:6px;flex-wrap:wrap}
+.mini-btn{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:6px 9px;cursor:pointer;color:var(--ink-2)}
+.mini-btn:hover{border-color:var(--ink);color:var(--ink)}
+
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+.kbd{font-family:var(--mono);font-size:11px;background:var(--ink);color:var(--b4);padding:2px 6px;border-radius:3px;white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel)}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700}
+tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:10px 12px;border-radius:0 3px 3px 0;margin:14px 0 0}
+.callout b{color:var(--b1)}
+.note{font-size:14.5px;color:var(--ink-2);margin:13px 0 0;max-width:76ch}
+.note b{color:var(--ink)}
+.foot{border-top:2px solid var(--ink);margin-top:54px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:620px){.knob input[type=range]{width:58px}.tnow{display:none}.readout{text-align:left;font-size:25px}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="index.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Field guide 01 · rebuilt · placement · length · velocity</div>
+    <h1>Groove is<br>a <em>timing</em><br>argument</h1>
+    <p class="sub">Bounce doesn't live in the notes you pick. It lives in <strong>where they sit</strong>, <strong>how long they last</strong>, <strong>how hard they hit</strong>, and <strong>what you leave out</strong>. Twenty-six patterns you can play, edit, measure and export as MIDI — plus a <strong>FLATTEN</strong> button that strips the performance — quantize to the grid, gates rounded up, every velocity at 100 — so you can hear how much of the groove was in the notes and how much was in the playing.</p>
+  </div>
+</div>
+
+<div class="transport">
+  <div class="wrap">
+    <button class="tbtn" id="stopAll">■ STOP</button>
+    <button class="tbtn ghost" id="flatBtn" aria-pressed="false">FLATTEN</button>
+    <button class="tbtn ghost" id="kickToggle" aria-pressed="true">KICK</button>
+    <button class="tbtn ghost" id="hatToggle" aria-pressed="false">HATS</button>
+    <label class="knob">VOICE <select id="voiceSel"></select></label>
+    <label class="knob">BPM <input type="range" id="bpm" min="100" max="145" value="124"><b id="bpmv">124</b></label>
+    <label class="knob">SWING <input type="range" id="swing" min="50" max="70" value="50"><b id="swingv">50%</b></label>
+    <label class="knob">HUMAN <input type="range" id="human" min="0" max="18" value="0"><b id="humanv">0ms</b></label>
+    <label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="70"><b id="volv">70</b></label>
+    <span class="tnow" id="nowPlaying">nothing playing</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="index.html" class="nav-home">← Index</a>
+    <a href="#bench">1 · Workbench</a>
+    <a href="#placement">2 · Placement</a>
+    <a href="#length">3 · Note length</a>
+    <a href="#velocity">4 · Velocity</a>
+    <a href="#melody">5 · Melody</a>
+    <a href="#live">6 · Ableton</a>
+    <a href="#numbers">7 · Numbers</a>
+  </nav>
+
+  <section class="sec" id="bench">
+    <div class="sec-head">
+      <div class="eyebrow">Section 01 · interactive</div>
+      <h2>Workbench</h2>
+      <p>Two bars at 32nd-note resolution, so the off-grid spacings further down this page are actually drawable. Pick a brush, click to place notes, and load any pattern from the catalogue to take it apart. Everything here exports as MIDI at the current tempo with the swing baked in.</p>
+    </div>
+
+    <div class="lab">
+      <div class="money">
+        <button class="tbtn" id="benchPlay">▶ PLAY</button>
+        <p id="moneyText">Syncopation counts notes that land on a weak position and then hold through a stronger one. Straight 16ths score zero — density is not syncopation.</p>
+        <div class="readout" id="syncRead">0<small>syncopation</small></div>
+      </div>
+
+      <div class="roll" id="benchRoll" style="height:330px"><canvas id="benchCv"></canvas></div>
+
+      <div class="brushes">
+        <button class="br" data-br="x" aria-pressed="true">Normal</button>
+        <button class="br acc" data-br="X" aria-pressed="false">Accent</button>
+        <button class="br gho" data-br="o" aria-pressed="false">Ghost</button>
+        <button class="br" data-br="-" aria-pressed="false">Erase</button>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.05em">click or drag on the roll · scroll the page normally</span>
+      </div>
+
+      <div class="ctrls">
+        <label class="ctrl">Gate<span class="r"><input type="range" id="gate" min="10" max="200" value="60"><b id="gatev">60%</b></span></label>
+        <label class="ctrl">Root note<span class="r"><input type="range" id="root" min="21" max="81" step="1" value="45"><b id="rootv">A2</b></span></label>
+        <label class="ctrl">Bars<span class="r"><input type="range" id="benchBars" min="1" max="4" value="2"><b id="benchBarsv">2</b></span></label>
+      </div>
+
+      <div class="stats" id="benchStats"></div>
+
+      <div class="toolbar">
+        <button class="tool hi" id="benchMidi">⬇ Download MIDI</button>
+        <button class="tool" id="benchClear">Clear</button>
+        <button class="tool" id="benchInvert">Invert pitch</button>
+        <button class="tool" id="benchReverse">Reverse</button>
+        <button class="tool" id="benchNudge">Nudge later</button>
+        <span class="sep"></span>
+        <button class="tool" id="benchEuclid">Euclid 7/16</button>
+        <button class="tool" id="benchThin">Remove a note</button>
+      </div>
+
+      <p class="callout"><b>FLATTEN is the A/B.</b> Across the whole library it only drops total syncopation from 158 to 143 — because placement is composition and quantizing does not move an offbeat note off its offbeat. What it destroys is the other two thirds of this page: the gates all become full length and every velocity becomes 100. Play any pattern with it on and off.<br><br><b>Reading the roll.</b> The four colours are the four beats of the bar — red is beat 1 — so a pattern that has stopped agreeing with the grid is visible at a glance. Vertical rules are 16ths; the faint half-rules between them are 32nds, which is where the 2.5-step spacing lives.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="placement">
+    <div class="sec-head">
+      <div class="eyebrow">Section 02</div>
+      <h2>Placement</h2>
+      <p>Where a note lands relative to the kick is the whole game. Each card shows its measured syncopation, its note count and how many bars it takes to come home. Turn the kick on and listen for the argument.</p>
+    </div>
+    <div class="grid2" id="sec-placement"></div>
+  </section>
+
+  <section class="sec" id="length">
+    <div class="sec-head">
+      <div class="eyebrow">Section 03</div>
+      <h2>Note length</h2>
+      <p>The most underused parameter in the piano roll. Same notes, same timing, different gate — one bounces, one sits there like furniture. If a bassline feels flat, shorten everything by 20% before you touch anything else.</p>
+    </div>
+    <div class="grid2" id="sec-length"></div>
+  </section>
+
+  <section class="sec" id="velocity">
+    <div class="sec-head">
+      <div class="eyebrow">Section 04</div>
+      <h2>Velocity</h2>
+      <p>Velocity only grooves if it's a <em>pattern</em>, not a random spray. Write an accent map the way a drummer plays one. And check your synth actually routes velocity somewhere audible — if it isn't mapped to filter or amp, none of this does anything.</p>
+    </div>
+    <div class="grid2" id="sec-velocity"></div>
+  </section>
+
+  <section class="sec" id="melody">
+    <div class="sec-head">
+      <div class="eyebrow">Section 05</div>
+      <h2>Melody &amp; hooks</h2>
+      <p>Catchy in dance music almost always means <em>short and rhythmic</em>. Three notes you can hum beat a beautiful eight-bar line every time. All examples in A minor.</p>
+    </div>
+    <div class="grid2" id="sec-melody"></div>
+  </section>
+
+  <section class="sec" id="live">
+    <div class="sec-head">
+      <div class="eyebrow">Section 06</div>
+      <h2>Ableton moves</h2>
+      <p>The specific clicks. Live 12 Suite.</p>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <div class="eyebrow">Groove Pool</div>
+        <h3>Swing that isn't on/off</h3>
+        <ul>
+          <li>Drag a groove onto a clip, open the <b>Groove Pool</b>, and pull <b>Amount</b> to <b>30–50%</b>. 100% is almost always too much.</li>
+          <li><b>MPC 16</b> grooves at <b>54–62%</b> are the house and garage zone. Below 54 is barely there; above 64 starts sounding like a shuffle track.</li>
+          <li>Apply groove to <b>hats and percussion only</b>. Leave the kick dead straight — the tension between them is the bounce.</li>
+          <li><b>Timing</b> moves notes, <b>Velocity</b> imposes the source's accents, <b>Random</b> adds jitter. Random above ~10% just sounds sloppy.</li>
+          <li>Hit <b>Commit</b> to bake the groove into the MIDI so you can edit the result by hand.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <div class="eyebrow">Extract Groove</div>
+        <h3>Steal a real drummer's timing</h3>
+        <ul>
+          <li>Right-click any audio loop → <b>Extract Groove</b>. It lands in the Groove Pool and applies to your own MIDI.</li>
+          <li>Disco and funk breaks carry microtiming no human programs by hand. Extract it, <b>throw the audio away</b>, keep the groove — no clearance problem, all of the feel.</li>
+          <li>Works on a single bar. Pick a bar where the drummer is locked in, not a fill.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <div class="eyebrow">Track Delay</div>
+        <h3>Push and drag in milliseconds</h3>
+        <ul>
+          <li>Options → <b>Delay Compensation</b> on, then the Track Delay field appears in the mixer.</li>
+          <li><b>Bass at −5 to −10 ms</b> = pushing. <b>Hats at +5 to +15 ms</b> = laid back. Do one or the other, not both, or the pocket collapses.</li>
+          <li>Faster than moving notes because you can audition it while the loop runs. The <b>HUMAN</b> slider up top is the crude version of the same idea.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <div class="eyebrow">MIDI Tools · Live 12</div>
+        <h3>Transformations worth knowing</h3>
+        <ul>
+          <li><b>Ornament</b> — flams, grace notes, ratchets. One hat or one bass note per bar, not everywhere.</li>
+          <li><b>Recombine</b> — rotates and swaps order, pitch, velocity or duration. Run it on a copy and cherry-pick.</li>
+          <li><b>Strum</b> — offsets the notes of a chord in time. Turns a dead stab into a rolling one.</li>
+          <li><b>Connect</b> fills notes between your notes; <b>Time Warp</b> bends the whole pattern's timing curve.</li>
+          <li>Generators: <b>Euclidean</b>, <b>Rhythm</b>, <b>Seed</b>, <b>Shape</b>, <b>Stacks</b>. Suite's extra MIDI Tools pack adds <b>Phase Pattern</b>, which does the polymeter tricks in Section 02 automatically.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <div class="eyebrow">Piano roll</div>
+        <h3>Editing speed</h3>
+        <ul>
+          <li><span class="kbd">Ctrl+U</span> quantize · <span class="kbd">Ctrl+Shift+U</span> settings. Set the amount to <b>50–70%</b> to pull notes toward the grid without killing the feel.</li>
+          <li><span class="kbd">Ctrl+1/2</span> narrow/widen grid · <span class="kbd">Ctrl+3</span> triplets · <span class="kbd">Ctrl+4</span> snapping off — that last one is how you draw a 2.5-step spacing by hand.</li>
+          <li><span class="kbd">F</span> folds to the notes in use. Makes contour visible instantly.</li>
+          <li>Right-click → <b>Reverse</b>, <b>Invert</b>, <b>Legato</b>, <b>Duplicate Loop</b>. Invert on a bassline is a two-second variation generator.</li>
+          <li><b>:2</b> and <b>*2</b> halve or double the pattern speed. Per-note <b>Chance</b> at 70–80% makes hats breathe differently every bar.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <div class="eyebrow">Rest of the set</div>
+        <h3>Where this goes next</h3>
+        <ul>
+          <li><b>The Kit</b> — the same argument applied to drums, with a genre pattern library and an A/B morph.</li>
+          <li><b>Low End</b> — kick and bass as one instrument, with a phase lab that measures cancellation.</li>
+          <li><b>Patch</b> — the synth voices used on this page, built from scratch stage by stage.</li>
+          <li><b>Voicing</b> — chords and progressions, with voice leading measured in semitones.</li>
+          <li><b>Arc</b> — arrangement and transitions, exporting a full track skeleton as MIDI.</li>
+          <li><b>Ears</b> — the trainer. Its swing and microtiming drills test exactly what this page teaches.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="numbers">
+    <div class="sec-head">
+      <div class="eyebrow">Section 07</div>
+      <h2>Numbers</h2>
+      <p>The spacing table is the one to pin up. Pick a note spacing that isn't a whole number of 16ths and the pattern stops repeating every bar — it walks across the grid and comes home some bars later. That walk is what makes hypnotic loops feel like they're going somewhere.</p>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Spacing</th><th>In steps</th><th>Comes home after</th><th>What it feels like</th></tr></thead>
+      <tbody id="spacingTable"></tbody>
+    </table></div>
+    <div class="grid2">
+      <div class="tablewrap"><table>
+        <thead><tr><th>Gate length</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td class="num">20–35%</td><td>Blippy, percussive. Bass reads as a rhythm part.</td></tr>
+          <tr><td class="num">40–60%</td><td>The bounce zone. Most house basslines live here.</td></tr>
+          <tr><td class="num">70–90%</td><td>Rolling and connected. Techno rumble territory.</td></tr>
+          <tr><td class="num">100%+</td><td>Legato. Flat and sustained — kills bounce, good for pads.</td></tr>
+          <tr><td class="num">overlapping</td><td>On a mono synth with glide: portamento slides. 303 behaviour.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Velocity</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td class="num">115–127</td><td>Accent. One or two per bar, no more.</td></tr>
+          <tr><td class="num">85–100</td><td>The main body of the pattern.</td></tr>
+          <tr><td class="num">55–75</td><td>Secondary hits. The "and" of a hat pattern.</td></tr>
+          <tr><td class="num">25–45</td><td>Ghost notes. Felt, not heard. This is where groove hides.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <p class="note"><b>About the syncopation figure.</b> It's a simplified version of the standard Longuet-Higgins and Lee measure: every 16th position gets a metric weight, and a note scores when it lands on a weak position and holds through a stronger one that has no note of its own. It rewards notes that contradict the metre and ignores density entirely — which is why straight 16ths score zero and four offbeat 8ths score four. It is a description, not a grade; plenty of great patterns score low.</p>
+  </section>
+
+  <section class="sec" id="finale">
+    <div class="sec-head">
+      <div class="eyebrow">Section 08</div>
+      <h2>All together</h2>
+    </div>
+    <div class="grid2" id="sec-finale"></div>
+  </section>
+
+  <div class="foot">
+    <p><strong>Change one thing at a time.</strong> Every technique here is a variable. If you stack four of them into a loop at once you won't know which one made it move, and next week you'll be back to guessing. Loop four bars, change one parameter, listen for eight bars, decide.</p>
+    <p style="color:var(--ink-3);font-size:13px">All audio synthesised live in the browser — the voices demonstrate timing, not sound design. MIDI exports carry the current tempo, swing and gate. All examples in A minor.</p>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   AUDIO
+   ===================================================================== */
+let AC=null,master=null,limiter=null,bus=null;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.7;
+    limiter=AC.createDynamicsCompressor();
+    limiter.threshold.value=-6;limiter.knee.value=4;limiter.ratio.value=12;
+    limiter.attack.value=.003;limiter.release.value=.12;
+    bus=AC.createGain(); bus.connect(limiter); limiter.connect(master); master.connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+let _nb=null;
+function noiseSrc(){
+  if(!_nb){const n=Math.floor(AC.sampleRate*.5);_nb=AC.createBuffer(1,n,AC.sampleRate);
+    const d=_nb.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;}
+  const s=AC.createBufferSource();s.buffer=_nb;s.loop=true;return s;
+}
+function shaper(k){const ws=AC.createWaveShaper(),n=512,c=new Float32Array(n),a=1+k*22;
+  for(let i=0;i<n;i++){const x=i*2/n-1;c[i]=Math.tanh(a*x)/Math.tanh(a);}ws.curve=c;return ws;}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function envg(g,t,pk,a,d){g.setValueAtTime(0,t);g.linearRampToValueAtTime(pk,t+a);g.exponentialRampToValueAtTime(.0001,t+a+d);}
+
+const VOICES={
+ bass:{n:'Bass',f(t,f,dur,v){
+   const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f;
+   const s=AC.createOscillator();s.type='sine';s.frequency.value=f;
+   const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=5;
+   const co=200+(v/127)*1500;
+   lp.frequency.setValueAtTime(co*2,t);lp.frequency.exponentialRampToValueAtTime(Math.max(120,co*.5),t+.12);
+   const g=AC.createGain();
+   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.30*(v/127),t+.004);
+   g.gain.setValueAtTime(.30*(v/127),t+Math.max(.02,dur-.03));
+   g.gain.exponentialRampToValueAtTime(.0001,t+dur+.03);
+   const sg=AC.createGain();sg.gain.value=.55;
+   o.connect(lp);s.connect(sg);sg.connect(lp);lp.connect(g);g.connect(bus);
+   o.start(t);s.start(t);o.stop(t+dur+.1);s.stop(t+dur+.1);}},
+ pluck:{n:'Pluck',f(t,f,dur,v){
+   const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f;
+   const o2=AC.createOscillator();o2.type='sawtooth';o2.frequency.value=f*1.005;
+   const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=8;
+   const co=450+(v/127)*2600;
+   lp.frequency.setValueAtTime(co,t);lp.frequency.exponentialRampToValueAtTime(420,t+Math.min(dur,.18));
+   const g=AC.createGain();
+   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.15*(v/127),t+.003);
+   g.gain.exponentialRampToValueAtTime(.0001,t+Math.max(.06,dur));
+   o.connect(lp);o2.connect(lp);lp.connect(g);g.connect(bus);
+   o.start(t);o2.start(t);o.stop(t+dur+.12);o2.stop(t+dur+.12);}},
+ keys:{n:'Keys',f(t,f,dur,v){
+   [[1,.5],[2,.18],[3.01,.08]].forEach(([r,a])=>{
+     const o=AC.createOscillator();o.type='sine';o.frequency.value=f*r;
+     const g=AC.createGain();
+     g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(a*.26*(v/127),t+.006);
+     g.gain.exponentialRampToValueAtTime(.0001,t+dur+.2);
+     o.connect(g);g.connect(bus);o.start(t);o.stop(t+dur+.3);});}},
+ stab:{n:'Stab',f(t,f,dur,v){
+   [0,3,7,10].forEach(iv=>{
+     const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f*Math.pow(2,iv/12);
+     const lp=AC.createBiquadFilter();lp.type='lowpass';lp.Q.value=3;
+     lp.frequency.setValueAtTime(1400+(v/127)*900,t);
+     lp.frequency.exponentialRampToValueAtTime(600,t+.12);
+     const g=AC.createGain();
+     g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.055*(v/127),t+.005);
+     g.gain.setValueAtTime(.055*(v/127),t+Math.max(.02,dur*.7));
+     g.gain.exponentialRampToValueAtTime(.0001,t+dur+.08);
+     o.connect(lp);lp.connect(g);g.connect(bus);o.start(t);o.stop(t+dur+.14);});}},
+ lead:{n:'Lead',f(t,f,dur,v){
+   const g=AC.createGain();
+   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.085*(v/127),t+.006);
+   g.gain.setValueAtTime(.085*(v/127),t+Math.max(.03,dur*.8));
+   g.gain.exponentialRampToValueAtTime(.0001,t+dur+.09);
+   const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=3400;lp.Q.value=2;
+   [-9,0,9].forEach(c=>{const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=f;
+     o.detune.value=c;o.connect(lp);o.start(t);o.stop(t+dur+.16);});
+   const dr=shaper(.25);lp.connect(dr);dr.connect(g);g.connect(bus);}}
+};
+function kickV(t){
+  const o=AC.createOscillator();o.type='sine';
+  o.frequency.setValueAtTime(155,t);o.frequency.exponentialRampToValueAtTime(52,t+.05);
+  const g=AC.createGain();envg(g.gain,t,.85,.002,.33);
+  o.connect(g);g.connect(bus);o.start(t);o.stop(t+.4);
+}
+function hatV(t,v,open){
+  const n=noiseSrc(),hp=AC.createBiquadFilter();hp.type='highpass';hp.frequency.value=8200;
+  const g=AC.createGain(),d=open?.15:.032;
+  envg(g.gain,t,.14*(v/127),.0008,d);n.connect(hp);hp.connect(g);g.connect(bus);n.start(t);n.stop(t+d+.06);
+}
+
+/* =====================================================================
+   MEASUREMENT
+   ===================================================================== */
+/* metric weight of a 16th position — higher is stronger */
+function metricW(step){
+  const s=((step%16)+16)%16;
+  if(Math.abs(s-Math.round(s))>1e-6) return 0;      /* off the 16th grid = weakest */
+  if(s===0) return 4;
+  if(s===8) return 3;
+  if(s===4||s===12) return 2;
+  if(s%2===0) return 1;
+  return 0;
+}
+/* simplified Longuet-Higgins & Lee: a note on a weak position holding through a
+   stronger unoccupied one contradicts the metre, and scores the difference */
+function syncopation(notes,bars){
+  const total=bars*16;
+  /* Longuet-Higgins & Lee, simplified: look from each onset to the NEXT onset.
+     If any unoccupied position in that gap is metrically stronger than the onset
+     itself, the note is holding through a stronger beat — that is the syncopation. */
+  const onsets=[...new Set(notes.map(n=>Math.round(n.s*2)/2))].sort((a,b)=>a-b);
+  let sc=0;
+  notes.forEach(n=>{
+    const s=Math.round(n.s*2)/2, ws=metricW(s);
+    const next=onsets.find(o=>o>s+1e-9);
+    const end=(next!==undefined)?next:total;
+    let best=ws;
+    for(let k=s+.5;k<end-1e-9;k+=.5){
+      const w=metricW(k);
+      if(w>best) best=w;
+    }
+    sc+=Math.max(0,best-ws);
+  });
+  return sc;
+}
+function offGrid(notes){
+  const off=notes.filter(n=>Math.abs(n.s-Math.round(n.s))>1e-6).length;
+  return notes.length?Math.round(off/notes.length*100):0;
+}
+function avgGate(notes){
+  if(!notes.length) return 0;
+  return Math.round(notes.reduce((a,n)=>a+n.l,0)/notes.length*100);
+}
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+function cycleBars(spacing){           /* spacing in 16ths, may be fractional */
+  const num=Math.round(spacing*2), den=32;      /* in 32nds per bar */
+  if(num<=0) return 1;
+  return (num*den/gcd(num,den))/den;
+}
+
+/* =====================================================================
+   PATTERN LIBRARY
+   ===================================================================== */
+const A2=45,A4=69;
+const rep=(n,step,fn)=>Array.from({length:n},(_,i)=>fn(i,i*step));
+const P=[
+/* ---- placement ---- */
+{id:'straight',sec:'placement',name:'Straight 16ths',tag:'Reference',voice:'bass',root:A2,bars:1,
+ notes:rep(16,1,(i,s)=>({s,l:.9,p:0,v:100})),
+ why:'The null hypothesis. Perfectly even, perfectly locked to the kick, and completely inert — there is nothing for your ear to lean against. Its syncopation score is zero, which is the point: density is not groove.',
+ do:'Play it with the kick on. Notice you stop hearing it after two bars.'},
+{id:'offbeat',sec:'placement',name:'Offbeat 8ths',tag:'House 101',voice:'bass',root:A2,bars:1,
+ notes:rep(4,4,i=>({s:i*4+2,l:1.7,p:0,v:105})),
+ why:'The single most important placement in house: bass on the "and" of every beat, never on the beat itself. Four notes, each landing on a weak 16th and holding through the strong beat that follows — which is exactly what the syncopation figure counts, and why it scores 4 where straight 16ths score 0.',
+ do:'Steps <b>3, 7, 11, 15</b> in the roll. Gate around 85% of an 8th.'},
+{id:'ea',sec:'placement',name:'The "e" and the "a"',tag:'Garage',voice:'bass',root:A2,bars:1,
+ notes:[{s:0,l:.8,p:0,v:110},{s:3,l:.8,p:0,v:80},{s:6,l:1.6,p:-2,v:100},{s:7,l:.7,p:0,v:60},
+        {s:10,l:.8,p:0,v:105},{s:11,l:.8,p:3,v:75},{s:14,l:1.4,p:-2,v:100}],
+ why:'Counting a bar as 1-e-and-a, notes on the "e" and "a" are the 16th subdivisions either side of the 8th. They are where swing lives, and where UK garage gets its stagger from.',
+ do:'Push the swing slider to <b>58%</b> while this plays. This is the pattern type swing was invented for.'},
+{id:'dotted',sec:'placement',name:'Dotted 8th roll · 3 steps',tag:'Polymeter',voice:'pluck',root:A4,bars:3,
+ notes:rep(16,3,(i,s)=>({s,l:2.2,p:[0,3,7][i%3],v:i%3===0?110:82})),
+ why:'Notes every 3 steps against a 16-step bar. The pattern refuses to line up and only comes home after 3 bars, so a 4-bar loop never sounds like the same bar four times. This is the rolling figure behind half of progressive house.',
+ do:'Draw 3 notes per 4 beats, or set a delay to <b>3/16</b> and let the delay do it. Watch the red beat-1 note move each bar.'},
+{id:'twofive',sec:'placement',name:'2.5 steps · 5/32',tag:'The find',voice:'pluck',root:A4,bars:5,
+ notes:rep(32,2.5,(i,s)=>({s,l:2.1,p:[0,3,7,10,12][i%5],v:i%5===0?112:78})),
+ why:'Notes every two and a half 16ths — half a step off the grid on every other note, landing on 32nd positions the ear does not expect. It takes a full 5 bars to return to the downbeat, which is why it rolls endlessly instead of looping.',
+ do:'Grid snapping off (<b>Ctrl+4</b>) or grid at 1/32, notes every 5 thirty-seconds. Make the clip <b>5 bars</b> to complete the cycle, or 4 to leave it permanently unresolved.'},
+{id:'fiveover',sec:'placement',name:'5 steps · wide polymeter',tag:'Techno',voice:'stab',root:A4-12,bars:5,
+ notes:rep(16,5,(i,s)=>({s,l:2.4,p:[0,3,7][i%3],v:100})),
+ why:'Same trick, more space. Five 16ths between hits means roughly three per bar, drifting. Sparse enough to read as hypnotic rather than busy — this is the stab placement in a lot of dub and hypnotic techno.',
+ do:'One element only. Two parts in polymeter and the listener loses the bar.'},
+{id:'push',sec:'placement',name:'Anticipation',tag:'Push',voice:'stab',root:A4-12,bars:2,
+ notes:[{s:0,l:5,p:0,v:100},{s:8,l:3,p:0,v:80},{s:15,l:7,p:-2,v:112},{s:24,l:5,p:-2,v:85}],
+ why:'The chord for bar 2 arrives one 16th early, on the last step of bar 1. The ear hears the change before the downbeat confirms it, which tilts the loop forward instead of resetting it.',
+ do:'Take any chord landing on beat 1 and drag it <b>one 16th left</b>. Do it at 4- and 8-bar boundaries, not every bar.'},
+{id:'skip',sec:'placement',name:'Skip figure · 16-16-8',tag:'Bounce',voice:'bass',root:A2,bars:1,
+ notes:[0,4,8,12].flatMap(b=>[{s:b,l:.85,p:0,v:112},{s:b+1,l:.85,p:0,v:70},{s:b+2,l:1.7,p:b===8?3:0,v:95}]),
+ why:'Two 16ths then an 8th, repeated. The grouping is uneven inside an even beat, which is exactly what "bouncy" means — the ear keeps expecting the third note early and gets it late. Note that it scores <b>zero</b> syncopation: uneven grouping and syncopation are different things, and this is the former.',
+ do:'The middle note is the ghost: drop it to velocity <b>65–75</b>. Equal velocities turn it into a machine gun.'},
+{id:'triplet',sec:'placement',name:'Triplets over straight',tag:'Tension',voice:'pluck',root:A4,bars:1,
+ notes:rep(12,4/3,(i,s)=>({s,l:1.0,p:[0,7,3][i%3],v:i%3===0?108:76})),
+ why:'Three notes per beat against a four-on-the-floor kick. Three against four is the oldest groove tension there is — it is why shuffle house works. Keep it to one part.',
+ do:'<b>Ctrl+3</b> toggles the triplet grid. Layer a triplet shaker over straight hats and only the shaker is triplet.'},
+{id:'euclid',sec:'placement',name:'Euclidean E(7,16)',tag:'Generator',voice:'pluck',root:A4-12,bars:1,
+ notes:[0,2,4,6,9,11,13].map((s,i)=>({s,l:1.6,p:[0,0,3,0,7,3,0][i],v:s%4===0?110:82})),
+ why:'Seven hits spread as evenly as possible across sixteen steps. Because 7 does not divide 16, the gaps alternate 2-2-2-3-2-2-3 and you get a pattern that is even but not regular. Most West African bell patterns are Euclidean, which is why they groove.',
+ do:'Live 12: clip view → <b>Generative Tools → Euclidean</b>. E(5,16) for a clave, E(3,8) for a shaker, E(7,16) for hats.'},
+
+/* ---- length ---- */
+{id:'gate',sec:'length',name:'The gate slider',tag:'Interactive',voice:'bass',root:A2,bars:1,gate:.45,
+ notes:[{s:0,l:1,p:0,v:110},{s:2,l:1,p:0,v:90},{s:3,l:1,p:0,v:70},{s:6,l:1,p:-2,v:105},
+        {s:8,l:1,p:0,v:100},{s:10,l:1,p:0,v:88},{s:11,l:1,p:3,v:72},{s:14,l:1,p:-2,v:105}],
+ why:'Identical notes, identical timing. Only the note length changes. Drag the slider while it loops — around 40–60% the line bounces, past 100% it welds itself into a drone. Nothing else in the piano roll changes character this fast.',
+ do:'Select all notes, drag the right edge of any one — Live scales the whole selection proportionally.'},
+{id:'glide',sec:'length',name:'Overlap = glide',tag:'303',voice:'bass',root:A2,bars:1,
+ notes:[{s:0,l:2.4,p:0,v:112},{s:2,l:2.4,p:0,v:80},{s:4,l:1.2,p:7,v:100},{s:6,l:2.6,p:3,v:95},
+        {s:8,l:2.4,p:0,v:110},{s:10,l:1.2,p:-2,v:85},{s:12,l:3.2,p:5,v:105},{s:15,l:1,p:0,v:90}],
+ why:'Where two notes overlap on a monophonic synth with glide on, you get a slide instead of a retrigger. The overlap does two jobs at once: it removes an attack and it adds pitch movement.',
+ do:'Mono voice + <b>Glide 60–120 ms</b>. Overlap only 2 or 3 notes per bar; slide everything and it turns to soup.'},
+{id:'longnote',sec:'length',name:'One long note',tag:'Contrast',voice:'pluck',root:A4,bars:2,
+ notes:[{s:0,l:.9,p:0,v:105},{s:2,l:.9,p:3,v:85},{s:4,l:.9,p:7,v:95},{s:6,l:.9,p:3,v:80},
+        {s:8,l:.9,p:0,v:105},{s:10,l:.9,p:3,v:85},{s:12,l:7,p:10,v:118}],
+ why:'Three bars of chatter and then one note that just hangs. Length is an accent: the longest note in a phrase reads as the most important, no velocity change required. It also creates the gap the next phrase falls into.',
+ do:'End every 2- or 4-bar phrase with a note at least 4x longer than the rest. Cheapest hook-building trick there is.'},
+
+/* ---- velocity ---- */
+{id:'velflat',sec:'velocity',name:'Flat velocity',tag:'Reference',voice:'pluck',root:A4-12,bars:1,
+ notes:rep(16,1,(i,s)=>({s,l:.9,p:[0,0,3,0][i%4],v:100})),
+ why:'Every note at 100. Machine-accurate, and your ear files it away as noise within a bar because there is no internal shape to track.',
+ do:'Compare with the next two cards without changing anything else.'},
+{id:'velacc',sec:'velocity',name:'Accent map',tag:'Do this',voice:'pluck',root:A4-12,bars:1,
+ notes:rep(16,1,(i,s)=>({s,l:.9,p:[0,0,3,0][i%4],v:[122,72,95,66][i%4]})),
+ why:'Strong, weak, medium, weak — the way a drummer distributes weight across a beat. The same sixteen notes now have a pulse inside them, and the pattern reads as a phrase rather than a texture.',
+ do:'Write the map deliberately: <b>120 / 70 / 95 / 65</b> repeating. Do not use a velocity randomiser for this — random is not the same as accented.'},
+{id:'velghost',sec:'velocity',name:'Ghost notes',tag:'Where groove hides',voice:'pluck',root:A4-12,bars:1,
+ notes:rep(16,1,(i,s)=>({s,l:.9,p:[0,0,3,0][i%4],v:[124,34,90,40][i%4]})),
+ why:'Same accent shape, but the weak notes drop to 30–45 where they are barely audible. You do not consciously hear them; you hear the pattern get looser and more alive. Take them out and it goes stiff.',
+ do:'For this to work, velocity must go somewhere: map it to <b>filter cutoff</b> as well as amplitude. On many presets velocity does nothing at all.'},
+{id:'velinvert',sec:'velocity',name:'Accent the offbeat',tag:'Lean',voice:'bass',root:A2,bars:1,
+ notes:rep(16,1,(i,s)=>({s,l:.85,p:[0,0,0,3][i%4],v:i%4===2?124:(i%4===0?70:58)})),
+ why:'Put the heaviest velocity on the "and" instead of the downbeat. The bar leans backwards against the kick, which reads as swagger. Common in disco and funk-leaning house, rare in techno.',
+ do:'Try it on a clap or a rim first — the effect is more obvious on a percussive sound.'},
+
+/* ---- melody ---- */
+{id:'threenote',sec:'melody',name:'The three-note hook',tag:'Start here',voice:'pluck',root:A4,bars:1,
+ notes:[0,4,8,12].flatMap(b=>[{s:b,l:.9,p:0,v:112},{s:b+2,l:.9,p:3,v:88},{s:b+3,l:1,p:7,v:98}]),
+ why:'A, C, E in a fixed rhythm, four times a bar. Three notes is enough to be a hook and few enough that the rhythm does the memorable work. Almost every dance record you can hum has a hook this small.',
+ do:'Write the <b>rhythm</b> first with all notes on one pitch. If it does not groove flat, no melody will save it.'},
+{id:'changeone',sec:'melody',name:'Repeat, then break it once',tag:'The rule',voice:'pluck',root:A4,bars:2,
+ notes:[0,4,8,12,16,20,24].flatMap(b=>[{s:b,l:.9,p:0,v:112},{s:b+2,l:.9,p:3,v:88},{s:b+3,l:1,p:7,v:98}])
+   .concat([{s:28,l:.9,p:0,v:112},{s:30,l:.9,p:3,v:88},{s:31,l:1,p:10,v:118}]),
+ why:'Seven identical repetitions, then the last note of the last one goes up to G instead of E. That single change gives the loop a shape and an ending. Repetition builds the expectation; one deviation pays it off.',
+ do:'Duplicate your 1-bar hook to 4 bars, then change exactly <b>one note in the final bar</b>. Resist changing two.'},
+{id:'octave',sec:'melody',name:'Octave displacement',tag:'Free variation',voice:'pluck',root:A4,bars:2,
+ notes:[0,4,8,12,16,20,24,28].flatMap((b,k)=>[
+   {s:b,l:.9,p:0,v:110},{s:b+2,l:.9,p:3,v:86},{s:b+3,l:1,p:(k%4===3?19:7),v:100}]),
+ why:'Same three notes, but every fourth time the top note jumps up an octave. No new pitches, no new rhythm — the melody just gained a peak. Cheapest way to make a repetitive riff feel like it develops.',
+ do:'Select one note, <b>Shift+↑</b> for 12 semitones. Do it to the highest note of the phrase, not the lowest.'},
+{id:'callresp',sec:'melody',name:'Call and response',tag:'Phrasing',voice:'pluck',root:A4,bars:2,
+ notes:[{s:0,l:.9,p:0,v:110},{s:2,l:.9,p:3,v:88},{s:4,l:.9,p:5,v:95},{s:6,l:2.4,p:7,v:108},
+        {s:16,l:.9,p:7,v:100},{s:18,l:.9,p:5,v:84},{s:20,l:.9,p:3,v:92},{s:22,l:3.4,p:0,v:106}],
+ why:'Bar 1 rises and stops on a question note; bar 2 answers by falling back to the root. Note the silence in the second half of each bar — the gap is not empty, it is where the phrase lands. Fill it and the melody stops being a sentence.',
+ do:'Write in <b>2-bar units</b> and leave the last beat of each unit empty. If you cannot bear the silence, that is what percussion is for.'},
+{id:'pedal',sec:'melody',name:'Pedal tone',tag:'Hypnotic',voice:'pluck',root:A4,bars:2,
+ notes:[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30].flatMap((s,i)=>
+   i%2===0?[{s,l:.9,p:0,v:104}]:[{s,l:.9,p:[3,5,7,10,12,10,7,5][Math.floor(i/2)%8],v:86}]),
+ why:'Every other note is a fixed A; the notes between climb and fall. The repeated note anchors the line so the moving part can wander much further than it otherwise could without losing the listener.',
+ do:'Alternate <b>root, x, root, y, root, z</b>. Works especially well when the root is also your bass note.'},
+{id:'sequence',sec:'melody',name:'Move the shape',tag:'Development',voice:'pluck',root:A4,bars:2,
+ notes:[{s:0,l:.9,p:0,v:108},{s:2,l:.9,p:3,v:86},{s:3,l:.9,p:7,v:96},{s:6,l:1.8,p:5,v:100},
+        {s:8,l:.9,p:0,v:108},{s:10,l:.9,p:3,v:86},{s:11,l:.9,p:7,v:96},{s:14,l:1.8,p:5,v:100},
+        {s:16,l:.9,p:-4,v:108},{s:18,l:.9,p:0,v:86},{s:20,l:.9,p:3,v:96},{s:22,l:1.8,p:0,v:100},
+        {s:24,l:.9,p:-4,v:108},{s:26,l:.9,p:0,v:86},{s:28,l:.9,p:3,v:96},{s:30,l:1.8,p:0,v:104}],
+ why:'The identical melodic shape and rhythm, transposed down to start on F in bar 2. The ear recognises the shape immediately and hears the transposition as intent rather than as a new idea. Two bars of music from one bar of writing.',
+ do:'Select the bar, <b>Ctrl+D</b>, move the copy by <b>3, 4 or 5 semitones</b> staying in key. Down resolves; up builds.'},
+{id:'tension',sec:'melody',name:'Tension notes',tag:'Colour',voice:'pluck',root:A4,bars:2,
+ notes:[{s:0,l:.9,p:0,v:106},{s:2,l:.9,p:7,v:88},{s:4,l:1.8,p:10,v:110},
+        {s:8,l:.9,p:0,v:106},{s:10,l:.9,p:7,v:88},{s:12,l:1.8,p:14,v:112},
+        {s:16,l:.9,p:0,v:106},{s:18,l:.9,p:7,v:88},{s:20,l:1.8,p:17,v:110},
+        {s:24,l:.9,p:12,v:104},{s:26,l:.9,p:10,v:90},{s:28,l:3.4,p:0,v:112}],
+ why:'The phrase keeps landing on the b7, then the 9th, then the 11th before finally resting on the root. Those notes sound unfinished over A minor, which is the point — unresolved notes pull the loop forward. Resolving too early is why a lot of loops sit still.',
+ do:'Over A minor the interesting landing notes are <b>G (b7), B (9th), D (11th)</b>. Land on A only when you want the phrase to end.'},
+
+/* ---- finale ---- */
+{id:'together',sec:'finale',name:'The whole thing',tag:'Payoff',voice:'bass',root:A2,bars:2,wide:true,
+ notes:[
+  ...[0,4,8,12,16,20,24].map((b,i)=>({s:b+2,l:.85,p:[0,0,0,3,0,0,-2][i],v:b%8===0?116:92})),
+  {s:19,l:.5,p:0,v:38},{s:27,l:.5,p:3,v:40},
+  {s:15,l:1.2,p:-2,v:120},
+  ...rep(10,3,(i,s)=>({s:s+1,l:1.9,p:[12,15,19][i%3],v:i%3===0?104:74,voice:'pluck'})),
+  {s:0,l:6,p:0,v:70,voice:'stab'},{s:16,l:6,p:-2,v:70,voice:'stab'}
+ ],
+ why:'Six ideas from this page in one 2-bar loop: bass on the offbeat at a short gate, an accent map with two ghost notes, a pluck rolling every 3 steps so it never repeats the same way, a stab anticipating bar 2 by one 16th, and a straight kick underneath. Turn the hats on and push swing to 56%.',
+ do:'Nothing here is fast or complicated. Four voices, none dense, all disagreeing slightly about where the beat is.'}
+];
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const S={bpm:124,swing:50,human:0,kick:true,hats:false,flat:false,voice:'auto',
+  playing:null,bench:{notes:[],bars:2,root:45,gate:.6,brush:'x'}};
+const stepDur=()=>60/S.bpm/4;
+function effNotes(n){
+  if(!S.flat) return n;
+  return n.map(x=>({...x,s:Math.round(x.s),l:Math.max(.95,Math.round(x.l)),v:100}));
+}
+function swingOff(s){
+  const i=Math.round(s);
+  if(Math.abs(s-i)>.01) return 0;
+  return (i%2===1)?stepDur()*((S.swing-50)/50):0;
+}
+
+/* =====================================================================
+   DRAWING
+   ===================================================================== */
+const BEAT=['#FF4B32','#FF8A2B','#FFC531','#F2EDE0'];
+const SCALE=new Set([9,11,0,2,4,5,7]);
+function drawRoll(cv,notes,bars,root,h,cur){
+  const dpr=window.devicePixelRatio||1,w=cv.clientWidth||600;
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  const steps=bars*16;
+  const ps=notes.length?notes.map(n=>n.p):[0];
+  const lo=Math.min(...ps),hi=Math.max(...ps),rows=Math.max(1,hi-lo+1);
+  const rh=h/rows;
+  for(let r=0;r<rows;r++){
+    const pc=(((root+hi-r)%12)+12)%12;
+    if(!SCALE.has(pc)){c.fillStyle='rgba(255,255,255,.035)';c.fillRect(0,r*rh,w,rh);}
+    c.fillStyle='rgba(255,255,255,.06)';c.fillRect(0,(r+1)*rh-1,w,1);
+  }
+  for(let s=0;s<steps*2;s++){
+    const x=s/(steps*2)*w;
+    c.fillStyle=(s%32===0)?'rgba(255,255,255,.34)':((s%8===0)?'rgba(255,255,255,.15)':
+      (s%2===0?'rgba(255,255,255,.06)':'rgba(255,255,255,.025)'));
+    c.fillRect(x,0,1,h);
+  }
+  notes.forEach(n=>{
+    const x=n.s/steps*w, bw=Math.max(2.5,n.l/steps*w-1);
+    const y=(hi-n.p)*rh+1, bh=Math.max(4,rh-2);
+    c.fillStyle=BEAT[Math.floor((Math.floor(n.s)%16)/4)];
+    c.globalAlpha=.42+.58*(n.v/127);
+    c.fillRect(x,y,bw,bh);
+    c.globalAlpha=1;
+    if(n.v>=115){c.strokeStyle='rgba(255,255,255,.85)';c.lineWidth=1;c.strokeRect(x+.5,y+.5,bw-1,bh-1);}
+  });
+  if(cur!==undefined&&cur>=0){
+    c.fillStyle='rgba(255,255,255,.85)';
+    c.fillRect(cur*w,0,2,h);
+  }
+}
+
+/* =====================================================================
+   TRANSPORT
+   ===================================================================== */
+let timer=null,raf=null,nextT=0,loops=[];
+const nowEl=document.getElementById('nowPlaying');
+function stop(){
+  if(timer)clearTimeout(timer);timer=null;
+  if(raf)cancelAnimationFrame(raf);raf=null;
+  document.querySelectorAll('.play[aria-pressed="true"]').forEach(b=>{b.setAttribute('aria-pressed','false');b.textContent='▶';});
+  document.getElementById('benchPlay').textContent='▶ PLAY';
+  S.playing=null; loops=[]; nowEl.textContent='nothing playing';
+  drawBench();
+}
+function play(id){
+  audio(); stop(); S.playing=id;
+  if(id==='__bench'){ document.getElementById('benchPlay').textContent='■ STOP'; nowEl.textContent='▸ workbench'; }
+  else{
+    const b=document.querySelector(`.play[data-id="${id}"]`);
+    if(b){b.setAttribute('aria-pressed','true');b.textContent='■';}
+    nowEl.textContent='▸ '+(P.find(p=>p.id===id)||{}).name;
+  }
+  nextT=AC.currentTime+.1; loops=[]; schedule(); animate();
+}
+function current(){
+  if(S.playing==='__bench') return {notes:S.bench.notes,bars:S.bench.bars,root:S.bench.root,voice:'pluck',gate:null};
+  return P.find(p=>p.id===S.playing);
+}
+function schedule(){
+  while(nextT<AC.currentTime+.3){
+    const p=current(); if(!p) break;
+    const sd=stepDur(), steps=p.bars*16, dur=steps*sd, base=nextT;
+    const notes=effNotes(p.notes);
+    notes.forEach(n=>{
+      let t=base+n.s*sd+swingOff(n.s);
+      if(S.human>0) t+=(Math.random()-.5)*2*(S.human/1000);
+      const len=(p.gate!==undefined&&p.gate!==null)?S.gateLive:(n.l);
+      const d=Math.max(.04,(len!==undefined&&p.gate!==undefined&&p.gate!==null?len:n.l)*sd);
+      const vk=S.voice==='auto'?(n.voice||p.voice):S.voice;
+      (VOICES[vk]||VOICES.pluck).f(Math.max(t,AC.currentTime+.004),mtof(p.root+n.p),d,n.v);
+    });
+    if(S.kick) for(let s=0;s<steps;s+=4) kickV(base+s*sd);
+    if(S.hats) for(let s=0;s<steps;s++) if(s%2===1) hatV(base+s*sd+swingOff(s),s%4===3?96:60,s%4===3);
+    loops.push({start:base,dur,p});
+    nextT+=dur;
+  }
+  loops=loops.filter(l=>l.start+l.dur>AC.currentTime-.4);
+  timer=setTimeout(()=>{if(S.playing)schedule();},60);
+}
+function animate(){
+  function frame(){
+    if(!S.playing){raf=null;return;}
+    const now=AC.currentTime;
+    const L=loops.find(l=>now>=l.start&&now<l.start+l.dur);
+    const pos=L?(now-L.start)/L.dur:-1;
+    if(S.playing==='__bench') drawBench(pos);
+    else{
+      const cv=document.querySelector(`canvas[data-mini="${S.playing}"]`);
+      const p=P.find(x=>x.id===S.playing);
+      if(cv&&p) drawRoll(cv,effNotes(p.notes),p.bars,p.root,cardH(p),pos);
+    }
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+/* =====================================================================
+   TRANSPORT CONTROLS
+   ===================================================================== */
+const vs=document.getElementById('voiceSel');
+vs.innerHTML='<option value="auto">As written</option>'+Object.entries(VOICES).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('');
+vs.onchange=e=>S.voice=e.target.value;
+document.getElementById('stopAll').onclick=()=>stop();
+document.getElementById('bpm').oninput=e=>{S.bpm=+e.target.value;document.getElementById('bpmv').textContent=S.bpm;};
+document.getElementById('swing').oninput=e=>{S.swing=+e.target.value;document.getElementById('swingv').textContent=S.swing+'%';};
+document.getElementById('human').oninput=e=>{S.human=+e.target.value;document.getElementById('humanv').textContent=S.human+'ms';};
+document.getElementById('vol').oninput=e=>{document.getElementById('volv').textContent=e.target.value;
+  if(master)master.gain.value=(+e.target.value/100)*.95;};
+document.getElementById('kickToggle').onclick=function(){S.kick=!S.kick;this.setAttribute('aria-pressed',S.kick);};
+document.getElementById('hatToggle').onclick=function(){S.hats=!S.hats;this.setAttribute('aria-pressed',S.hats);};
+document.getElementById('flatBtn').onclick=function(){
+  S.flat=!S.flat; this.setAttribute('aria-pressed',S.flat);
+  document.getElementById('moneyText').textContent=S.flat
+    ? 'FLATTENED: notes snapped to the nearest 16th, gates rounded up, every velocity at 100. Watch what does NOT change — syncopation barely moves, because where you put a note survives quantizing. What dies is gate, velocity and anything that was off the grid.'
+    : 'Syncopation counts notes that land on a weak position and then hold through a stronger one. Straight 16ths score zero — density is not syncopation.';
+  refreshAll();
+};
+document.addEventListener('keydown',e=>{
+  if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.code==='Space'){e.preventDefault(); S.playing?stop():play('__bench');}
+  if(e.key==='Escape') stop();
+});
+
+/* =====================================================================
+   WORKBENCH
+   ===================================================================== */
+const B=S.bench;
+const benchCv=document.getElementById('benchCv');
+const ROWS=25;
+function drawBench(cur){
+  const h=330,dpr=window.devicePixelRatio||1,w=benchCv.clientWidth||800;
+  if(benchCv.width!==w*dpr||benchCv.height!==h*dpr){benchCv.width=w*dpr;benchCv.height=h*dpr;}
+  const c=benchCv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  const steps=B.bars*16, rh=h/ROWS;
+  for(let r=0;r<ROWS;r++){
+    const p=12-r, pc=(((B.root+p)%12)+12)%12;
+    if(!SCALE.has(pc)){c.fillStyle='rgba(255,255,255,.04)';c.fillRect(0,r*rh,w,rh);}
+    if(p===0){c.fillStyle='rgba(255,75,50,.10)';c.fillRect(0,r*rh,w,rh);}
+    c.fillStyle='rgba(255,255,255,.055)';c.fillRect(0,(r+1)*rh-1,w,1);
+  }
+  for(let s=0;s<steps*2;s++){
+    const x=s/(steps*2)*w;
+    c.fillStyle=(s%32===0)?'rgba(255,255,255,.34)':((s%8===0)?'rgba(255,255,255,.16)':
+      (s%2===0?'rgba(255,255,255,.07)':'rgba(255,255,255,.03)'));
+    c.fillRect(x,0,1,h);
+  }
+  effNotes(B.notes).forEach(n=>{
+    const x=n.s/steps*w, bw=Math.max(3,n.l/steps*w-1);
+    const r=12-n.p; if(r<0||r>=ROWS) return;
+    c.fillStyle=BEAT[Math.floor((Math.floor(n.s)%16)/4)];
+    c.globalAlpha=.42+.58*(n.v/127);
+    c.fillRect(x,r*rh+1,bw,rh-2);
+    c.globalAlpha=1;
+    if(n.v>=115){c.strokeStyle='rgba(255,255,255,.9)';c.lineWidth=1;c.strokeRect(x+.5,r*rh+1.5,bw-1,rh-3);}
+  });
+  if(cur!==undefined&&cur>=0){c.fillStyle='rgba(255,255,255,.85)';c.fillRect(cur*w,0,2,h);}
+}
+function benchHit(ev){
+  const r=benchCv.getBoundingClientRect();
+  const steps=B.bars*16;
+  const s=Math.floor((ev.clientX-r.left)/r.width*steps*2)/2;
+  const row=Math.floor((ev.clientY-r.top)/r.height*ROWS);
+  const p=12-row;
+  if(s<0||s>=steps||row<0||row>=ROWS) return;
+  const i=B.notes.findIndex(n=>Math.abs(n.s-s)<.01&&n.p===p);
+  if(S.bench.brush==='-'){ if(i>=0) B.notes.splice(i,1); }
+  else{
+    const v={x:98,X:120,o:44}[S.bench.brush];
+    if(i>=0) B.notes[i].v=v;
+    else B.notes.push({s,l:B.gate,p,v});
+  }
+  B.notes.sort((a,b)=>a.s-b.s);
+  refreshBench();
+}
+let dragging=false;
+benchCv.addEventListener('pointerdown',e=>{e.preventDefault();dragging=true;benchHit(e);benchCv.setPointerCapture(e.pointerId);});
+benchCv.addEventListener('pointermove',e=>{if(dragging)benchHit(e);});
+window.addEventListener('pointerup',()=>{dragging=false;});
+document.querySelectorAll('[data-br]').forEach(b=>b.onclick=()=>{
+  S.bench.brush=b.dataset.br;
+  document.querySelectorAll('[data-br]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+});
+const NN=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+document.getElementById('gate').oninput=e=>{B.gate=+e.target.value/100;
+  document.getElementById('gatev').textContent=e.target.value+'%';
+  B.notes.forEach(n=>n.l=B.gate); refreshBench();};
+document.getElementById('root').oninput=e=>{B.root=+e.target.value;
+  document.getElementById('rootv').textContent=NN[B.root%12]+(Math.floor(B.root/12)-1); refreshBench();};
+document.getElementById('benchBars').oninput=e=>{B.bars=+e.target.value;
+  document.getElementById('benchBarsv').textContent=B.bars;
+  B.notes=B.notes.filter(n=>n.s<B.bars*16); refreshBench();};
+document.getElementById('benchPlay').onclick=()=>S.playing==='__bench'?stop():play('__bench');
+document.getElementById('benchClear').onclick=()=>{B.notes=[];refreshBench();};
+document.getElementById('benchInvert').onclick=()=>{
+  if(!B.notes.length)return;
+  const ps=B.notes.map(n=>n.p),mid=(Math.max(...ps)+Math.min(...ps))/2;
+  B.notes.forEach(n=>n.p=Math.round(2*mid-n.p)); refreshBench();};
+document.getElementById('benchReverse').onclick=()=>{
+  const steps=B.bars*16;
+  B.notes.forEach(n=>n.s=Math.max(0,steps-n.s-n.l));
+  B.notes.sort((a,b)=>a.s-b.s); refreshBench();};
+document.getElementById('benchNudge').onclick=()=>{
+  const steps=B.bars*16;
+  B.notes.forEach(n=>n.s=(n.s+.5)%steps); B.notes.sort((a,b)=>a.s-b.s); refreshBench();};
+document.getElementById('benchEuclid').onclick=()=>{
+  const steps=B.bars*16, k=7, n=16;
+  B.notes=[]; let bucket=n-k;
+  for(let i=0;i<n;i++){bucket+=k;if(bucket>=n){bucket-=n;
+    for(let b=0;b<B.bars;b++) B.notes.push({s:b*16+i,l:B.gate,p:[0,0,3,0,7,3,0][B.notes.length%7],v:i%4===0?118:92});}}
+  B.notes.sort((a,b)=>a.s-b.s); refreshBench();};
+document.getElementById('benchThin').onclick=()=>{
+  if(B.notes.length<2)return;
+  B.notes.splice(Math.floor(Math.random()*B.notes.length),1); refreshBench();};
+function refreshBench(){
+  drawBench();
+  const n=effNotes(B.notes), bars=B.bars;
+  const sync=syncopation(n,bars);
+  const el=document.getElementById('syncRead');
+  el.innerHTML=sync+'<small>syncopation</small>';
+  el.className='readout'+(sync===0?' flat':'');
+  document.getElementById('benchStats').innerHTML=
+    `<span>Notes<b>${n.length}</b></span>
+     <span>Off the 16th grid<b>${offGrid(n)}%</b></span>
+     <span>Average gate<b>${avgGate(n)}%</b></span>
+     <span>Density<b>${(n.length/(bars*16)*100).toFixed(0)}%</b></span>
+     <span>Velocity range<b>${n.length?Math.min(...n.map(x=>x.v))+'–'+Math.max(...n.map(x=>x.v)):'—'}</b></span>`;
+}
+
+/* =====================================================================
+   MIDI
+   ===================================================================== */
+function varlen(n){const b=[n&0x7F];n>>=7;while(n>0){b.unshift((n&0x7F)|0x80);n>>=7;}return b;}
+function chunk(by){const l=by.length;return [0x4D,0x54,0x72,0x6B,(l>>24)&255,(l>>16)&255,(l>>8)&255,l&255,...by];}
+function exportMidi(notes,bars,root,name){
+  const PPQ=96, tps=PPQ/4;
+  const ev=[];
+  effNotes(notes).forEach(n=>{
+    const sw=(Math.abs(n.s-Math.round(n.s))<.01&&Math.round(n.s)%2===1)?tps*((S.swing-50)/50):0;
+    const on=Math.round(n.s*tps+sw), off=Math.max(on+6,Math.round((n.s+n.l)*tps+sw));
+    ev.push({t:on,type:0x90,note:root+n.p,vel:Math.max(1,Math.min(127,n.v))});
+    ev.push({t:off,type:0x80,note:root+n.p,vel:0});
+  });
+  ev.sort((a,b)=>a.t-b.t||a.type-b.type);
+  const nm=[...('Groove - '+name)].map(c=>{const v=c.charCodeAt(0);return v<128?v:0x2D;});
+  const trk=[0,0xFF,0x03,nm.length,...nm];
+  const upq=Math.round(60000000/S.bpm);
+  trk.push(0,0xFF,0x51,0x03,(upq>>16)&255,(upq>>8)&255,upq&255);
+  trk.push(0,0xFF,0x58,0x04,4,2,24,8);
+  let last=0;
+  ev.forEach(e=>{varlen(e.t-last).forEach(b=>trk.push(b));last=e.t;trk.push(e.type,e.note,e.vel);});
+  varlen(Math.max(0,bars*16*tps-last)).forEach(b=>trk.push(b));
+  trk.push(0xFF,0x2F,0x00);
+  const head=[0x4D,0x54,0x68,0x64,0,0,0,6,0,0,0,1,(PPQ>>8)&255,PPQ&255];
+  const bytes=new Uint8Array([...head,...chunk(trk)]);
+  const blob=new Blob([bytes],{type:'audio/midi'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='groove-'+name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+S.bpm+'bpm.mid';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+document.getElementById('benchMidi').onclick=()=>exportMidi(B.notes,B.bars,B.root,'workbench');
+
+/* =====================================================================
+   CARDS
+   ===================================================================== */
+function cardH(p){
+  const ps=p.notes.map(n=>n.p);
+  return Math.max(30,(Math.max(...ps)-Math.min(...ps)+1)*13);
+}
+function buildCard(p){
+  const d=document.createElement('div'); d.className='card'+(p.wide?' wide':'');
+  const sync=syncopation(p.notes,p.bars);
+  d.innerHTML=`
+    <div class="card-top">
+      <button class="play" data-id="${p.id}" aria-pressed="false" aria-label="Play ${p.name}">▶</button>
+      <h3>${p.name}</h3>
+      <span class="tag ${p.tag==='Reference'?'quiet':(['Do this','The find','Payoff'].includes(p.tag)?'alt':'')}">${p.tag}</span>
+    </div>
+    <div class="mini" style="height:${cardH(p)}px"><canvas data-mini="${p.id}"></canvas></div>
+    <div class="badges" data-badges="${p.id}"></div>
+    ${p.gate!==undefined?`<label class="ctrl" style="margin:0">Gate<span class="r"><input type="range" class="gsl" min="10" max="150" value="${p.gate*100}"><b>${Math.round(p.gate*100)}%</b></span></label>`:''}
+    <p class="why">${p.why}</p>
+    <p class="do">${p.do}</p>
+    <div class="cardbtns">
+      <button class="mini-btn" data-load="${p.id}">→ Workbench</button>
+      <button class="mini-btn" data-midi="${p.id}">⬇ MIDI</button>
+    </div>`;
+  return d;
+}
+S.gateLive=.45;
+P.forEach(p=>{
+  const host=document.getElementById('sec-'+p.sec);
+  if(host) host.appendChild(buildCard(p));
+});
+function refreshAll(){
+  P.forEach(p=>{
+    const cv=document.querySelector(`canvas[data-mini="${p.id}"]`);
+    if(cv) drawRoll(cv,effNotes(p.notes),p.bars,p.root,cardH(p));
+    const bg=document.querySelector(`[data-badges="${p.id}"]`);
+    if(bg){
+      const n=effNotes(p.notes);
+      bg.innerHTML=`<span>Notes <b>${n.length}</b></span><span>Syncopation <b>${syncopation(n,p.bars)}</b></span>
+        <span>Bars <b>${p.bars}</b></span><span>Off-grid <b>${offGrid(n)}%</b></span>`;
+    }
+  });
+  refreshBench();
+}
+document.addEventListener('click',e=>{
+  const pb=e.target.closest('.play');
+  if(pb){ const id=pb.dataset.id; S.playing===id?stop():play(id); return; }
+  const lb=e.target.closest('[data-load]');
+  if(lb){
+    const p=P.find(x=>x.id===lb.dataset.load);
+    B.bars=Math.min(4,p.bars); B.root=p.root;
+    B.notes=p.notes.filter(n=>n.s<B.bars*16)
+      .map(n=>({s:Math.round(n.s*2)/2,l:n.l,p:Math.max(-12,Math.min(12,n.p)),v:n.v}));
+    document.getElementById('benchBars').value=B.bars;
+    document.getElementById('benchBarsv').textContent=B.bars;
+    document.getElementById('root').value=B.root;
+    document.getElementById('rootv').textContent=NN[B.root%12]+(Math.floor(B.root/12)-1);
+    refreshBench();
+    document.getElementById('bench').scrollIntoView({block:'start'});
+    if(S.playing!=='__bench'){stop();setTimeout(()=>play('__bench'),150);}
+    return;
+  }
+  const mb=e.target.closest('[data-midi]');
+  if(mb){ const p=P.find(x=>x.id===mb.dataset.midi); exportMidi(p.notes,p.bars,p.root,p.name); }
+});
+document.querySelectorAll('.gsl').forEach(sl=>{
+  sl.addEventListener('input',e=>{
+    S.gateLive=+e.target.value/100;
+    e.target.parentNode.querySelector('b').textContent=e.target.value+'%';
+    const p=P.find(x=>x.gate!==undefined);
+    if(p){ p.notes.forEach(n=>n.l=S.gateLive); refreshAll(); }
+  });
+});
+
+/* spacing table */
+document.getElementById('spacingTable').innerHTML=[
+ [1,'1/16','Driving, machine-like. The reference point.'],
+ [1.5,'3/32','Fast nervous roll. Great on closed hats or a blip pluck.'],
+ [2,'1/8','Straight. Offbeat 8ths are the house bass default.'],
+ [2.5,'5/32','The one to try. Rolls, drifts, resolves late. Hypnotic.'],
+ [3,'3/16','Dotted 8th. The classic trance and prog rolling figure.'],
+ [3.5,'7/32','Very long drift. Use over a 16-bar hypnotic section.'],
+ [4,'1/4','Locked to the kick. Anchoring, but static on its own.'],
+ [5,'5/16','Wide, spacious polymeter. Good for a stab or a bleep.'],
+ [6,'3/8','Half-time dotted roll. Chord stabs love this.'],
+ [7,'7/16','Barely repeats. One sparse element only, or it is noise.']
+].map(([sp,nm,txt])=>`<tr><td class="num">${nm}</td><td class="num">${sp.toFixed(1)}</td>
+  <td class="num">${cycleBars(sp)} bar${cycleBars(sp)>1?'s':''}</td><td>${txt}</td></tr>`).join('');
+
+window.addEventListener('resize',refreshAll);
+document.getElementById('rootv').textContent=NN[B.root%12]+(Math.floor(B.root/12)-1);
+refreshAll();
+</script>

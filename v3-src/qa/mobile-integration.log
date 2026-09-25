@@ -1,0 +1,1 @@
+[34520:35716:0913/120159.405:ERROR:components\device_event_log\device_event_log_impl.cc:211] [12:01:59.406] USB: usb_service_win.cc:108 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: Elementtiä ei löydy. (0x490)

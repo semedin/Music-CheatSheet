@@ -1,0 +1,1205 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Low End — kick &amp; bass as one instrument</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#E2DED2; --panel:#F2EFE6; --panel-2:#EAE5D8;
+  --ink:#191713; --ink-2:#635C50; --ink-3:#8C8474; --line:#C4BDAC;
+  --lane:#1C1A17; --grid:rgba(255,255,255,.07);
+  --b1:#FF4B32; --b2:#FF8A2B; --b3:#FFC531; --b4:#F2EDE0;
+  --cyan:#3FD0C9;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);
+  background-size:120px 100%;
+}
+.wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+
+/* hero */
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(46px,11vw,116px);line-height:.84;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:58ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+.warn{
+  margin-top:20px;background:var(--ink);color:var(--b4);border-radius:5px;padding:12px 15px;
+  font-family:var(--mono);font-size:12px;line-height:1.6;max-width:70ch
+}
+.warn b{color:var(--b3)}
+
+/* transport */
+.transport{position:sticky;top:0;z-index:60;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:16px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;background:var(--b1);color:#fff;
+  border:0;border-radius:3px;padding:9px 16px;cursor:pointer}
+.tbtn.ghost{background:transparent;color:var(--b4);border:1px solid rgba(242,237,224,.35)}
+.tbtn[aria-pressed="true"]{background:var(--b3);color:var(--ink);border-color:var(--b3)}
+.tbtn:hover{filter:brightness(1.12)}
+.knob{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:rgba(242,237,224,.7)}
+.knob input[type=range]{width:100px;accent-color:var(--b2)}
+.knob b{color:var(--b4);min-width:42px;display:inline-block}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;color:rgba(242,237,224,.55);letter-spacing:.06em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40ch}
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 0}
+.nav a{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  text-decoration:none;color:var(--ink-2);border:1px solid var(--line);border-radius:99px;padding:6px 13px;background:var(--panel)}
+.nav a:hover{border-color:var(--ink);color:var(--ink)}
+
+/* sections */
+.sec{padding:52px 0 8px}
+.sec-head{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:24px}
+.sec-head h2{font-size:clamp(26px,4.4vw,42px);margin-top:6px;text-transform:uppercase}
+.sec-head p{max-width:64ch;margin-top:12px;color:var(--ink-2)}
+.grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+
+/* lab panel */
+.lab{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:20px}
+.lab-head{display:flex;align-items:center;gap:13px;margin-bottom:15px;flex-wrap:wrap}
+.lab-head h3{font-size:21px;flex:1;min-width:180px}
+.play{width:42px;height:42px;flex:0 0 42px;border-radius:50%;border:0;cursor:pointer;background:var(--ink);
+  color:var(--b4);display:grid;place-items:center;font-size:14px}
+.play:hover{background:var(--b1);color:#fff}
+.play[aria-pressed="true"]{background:var(--b1);color:#fff}
+.scope{background:var(--lane);border-radius:4px;position:relative;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.scope canvas{display:block;width:100%;height:100%}
+.readout{position:absolute;top:8px;left:10px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  color:rgba(242,237,224,.55);text-transform:uppercase;pointer-events:none}
+.readout b{color:var(--b3)}
+.readout .big{display:block;font-size:20px;color:var(--b4);letter-spacing:0;margin-top:2px}
+
+.ctrls{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px 18px;margin-top:14px}
+.ctrl{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.ctrl .row{display:flex;align-items:center;gap:8px}
+.ctrl input[type=range]{flex:1;min-width:60px;accent-color:var(--b1)}
+.ctrl b{color:var(--ink);font-size:11px;min-width:56px;text-align:right}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.chip{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:7px 11px;cursor:pointer;color:var(--ink-2)}
+.chip:hover{border-color:var(--ink);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.chip.bad[aria-pressed="true"]{background:var(--b1);border-color:var(--b1);color:#fff}
+.chip.good{border-color:rgba(63,208,201,.7)}
+.chip.dim{opacity:.55}
+
+.note{font-size:14.5px;color:var(--ink-2);margin:14px 0 0;max-width:74ch}
+.note b{color:var(--ink)}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:10px 12px;border-radius:0 3px 3px 0;margin:14px 0 0}
+.callout b{color:var(--b1)}
+
+/* cards */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:11px}
+.card-top{display:flex;align-items:flex-start;gap:12px}
+.card h3{font-size:18px;flex:1;line-height:1.15}
+.tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;padding:3px 7px;border-radius:2px;
+  background:var(--ink);color:var(--b4);white-space:nowrap;text-transform:uppercase}
+.tag.alt{background:var(--b1)}
+.card .why{font-size:14.5px;color:var(--ink-2);margin:0}
+.card .do{font-family:var(--mono);font-size:11.5px;line-height:1.65;background:var(--panel-2);border-left:3px solid var(--b2);
+  padding:9px 11px;border-radius:0 3px 3px 0;margin:0}
+.card .do b{color:var(--b1)}
+.mini{height:54px;background:var(--lane);border-radius:3px;position:relative;overflow:hidden}
+.mini canvas{display:block;width:100%;height:100%}
+
+.tcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+.tcard h3{font-size:17px;margin-bottom:9px}
+.tcard ul{margin:0;padding-left:17px;font-size:14.5px;color:var(--ink-2)}
+.tcard li{margin-bottom:7px}
+.tcard li b{color:var(--ink)}
+.kbd{font-family:var(--mono);font-size:11px;background:var(--ink);color:var(--b4);padding:2px 6px;border-radius:3px;white-space:nowrap}
+
+table{width:100%;border-collapse:collapse;font-size:14px;background:var(--panel)}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700}
+tr.inkey td.num{color:var(--b1)}
+tr:hover td{background:var(--panel-2)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px}
+
+.foot{border-top:2px solid var(--ink);margin-top:56px;padding:22px 0 70px;color:var(--ink-2);font-size:14px}
+.foot strong{color:var(--ink)}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:620px){.knob input[type=range]{width:74px}.tnow{display:none}}
+</style>
+<div id="v2-navigation" style="padding:12px 24px;background:#19221e;color:#eeeade;font:14px Arial,sans-serif;display:flex;gap:20px;flex-wrap:wrap"><a href="index.html" style="color:inherit">← Fieldwork V2 studio</a><a href="bass-v2.html" style="color:#ffc96e">1,760 MIDI recipes · open the V2 tools ↗</a><span style="color:#b3beb5">V1 field guide</span></div>
+
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Field guide 02 · kick &amp; bass · house / techno / disco house</div>
+    <h1>The low end<br>is <em>one</em><br>instrument</h1>
+    <p class="sub">Kick and bass occupy the same two octaves, so they are not two parts that need balancing — they are one part played by two devices. Everything below is about making them agree: <strong>on pitch</strong>, <strong>in time</strong>, and <strong>in phase</strong>. Two of the labs measure the result rather than describing it.</p>
+    <div class="warn">⚠ <b>You need headphones or monitors with real low end.</b> Laptop speakers reproduce almost nothing below 150 Hz, and every demonstration on this page lives between 30 and 120 Hz. On a phone speaker the phase lab will look like it is doing nothing and the tuning lab will sound identical on every note.</div>
+  </div>
+</div>
+
+<div class="transport">
+  <div class="wrap">
+    <button class="tbtn" id="stopAll">■ STOP</button>
+    <label class="knob">BPM <input type="range" id="bpm" min="110" max="145" value="126"><b id="bpmv">126</b></label>
+    <label class="knob">VOL <input type="range" id="vol" min="0" max="100" value="70"><b id="volv">70</b></label>
+    <span class="tnow" id="nowPlaying">nothing playing</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="nav">
+    <a href="index.html" class="nav-home">← Index</a>
+    <a href="#anatomy">1 · Kick anatomy</a>
+    <a href="#kicklab">2 · Kick lab</a>
+    <a href="#tuning">3 · Tuning</a>
+    <a href="#basses">4 · Bass types</a>
+    <a href="#sidechain">5 · Sidechain lab</a>
+    <a href="#phase">6 · Phase lab</a>
+    <a href="#carve">7 · Carving</a>
+    <a href="#numbers">8 · Numbers</a>
+    <a href="#fix">9 · Diagnosis</a>
+  </nav>
+
+  <!-- 1 ANATOMY -->
+  <section class="sec" id="anatomy">
+    <div class="sec-head">
+      <div class="eyebrow">Section 01</div>
+      <h2>Kick anatomy</h2>
+      <p>A kick drum is three events stacked in the first half second: a broadband transient, a pitch that falls fast, and a sustained fundamental. Genres differ almost entirely in the ratio between them.</p>
+    </div>
+
+    <div class="lab">
+      <svg viewBox="0 0 900 260" style="width:100%;height:auto;display:block" role="img" aria-label="Kick envelope diagram">
+        <rect x="0" y="0" width="900" height="260" fill="#1C1A17" rx="5"/>
+        <g stroke="rgba(255,255,255,.09)">
+          <line x1="60" y1="40" x2="60" y2="215"/><line x1="60" y1="215" x2="860" y2="215"/>
+          <line x1="230" y1="40" x2="230" y2="215" stroke-dasharray="3 5"/>
+          <line x1="480" y1="40" x2="480" y2="215" stroke-dasharray="3 5"/>
+        </g>
+        <!-- amplitude -->
+        <path d="M60 215 L70 55 Q 200 70 330 140 Q 520 200 860 213" fill="none" stroke="#FF4B32" stroke-width="3"/>
+        <!-- pitch -->
+        <path d="M62 48 Q 90 48 120 140 Q 160 178 240 182 L860 182" fill="none" stroke="#FFC531" stroke-width="2.5" stroke-dasharray="7 4"/>
+        <!-- click -->
+        <g stroke="#3FD0C9" stroke-width="2">
+          <line x1="63" y1="45" x2="63" y2="215"/><line x1="68" y1="80" x2="68" y2="215"/><line x1="73" y1="120" x2="73" y2="215"/>
+        </g>
+        <g font-family="JetBrains Mono, monospace" font-size="11" fill="#F2EDE0">
+          <text x="78" y="36" fill="#3FD0C9">CLICK · 0–8 ms · 2–6 kHz</text>
+          <text x="245" y="88" fill="#FFC531">PITCH ENVELOPE · 150→55 Hz in 30–90 ms</text>
+          <text x="245" y="130" fill="#FF4B32">BODY / AMPLITUDE DECAY · 200–800 ms</text>
+          <text x="600" y="205" fill="rgba(242,237,224,.5)">TAIL · the part the club actually feels</text>
+          <text x="60" y="240" fill="rgba(242,237,224,.4)">0 ms</text>
+          <text x="205" y="240" fill="rgba(242,237,224,.4)">100 ms</text>
+          <text x="455" y="240" fill="rgba(242,237,224,.4)">300 ms</text>
+          <text x="800" y="240" fill="rgba(242,237,224,.4)">700 ms</text>
+        </g>
+      </svg>
+      <p class="note"><b>The pitch envelope is the whole personality.</b> Fall fast from high (150–320 Hz) and you get punch and attack — tech house, hard techno. Fall slowly from low (110–130 Hz) and you get weight and roundness — dub techno, deep house. The end pitch is the note the kick actually plays, and it is the number that has to agree with your bass.</p>
+    </div>
+  </section>
+
+  <!-- 2 KICK LAB -->
+  <section class="sec" id="kicklab">
+    <div class="sec-head">
+      <div class="eyebrow">Section 02 · interactive</div>
+      <h2>Kick lab</h2>
+      <p>Every kick below is synthesised live from these six parameters. Load a genre preset, then move one slider and watch both the waveform and the spectrum change. The readout tells you what note the kick is currently playing.</p>
+    </div>
+
+    <div class="lab">
+      <div class="lab-head">
+        <button class="play" id="playKick" aria-pressed="false" aria-label="Play kick">▶</button>
+        <h3>Design a kick</h3>
+        <span class="tag alt">Live synthesis</span>
+      </div>
+      <div class="scope" style="height:190px">
+        <canvas id="kickScope"></canvas>
+        <div class="readout">Fundamental<span class="big" id="kickNoteOut">—</span></div>
+      </div>
+      <div class="chips" id="kickPresets"></div>
+      <div class="ctrls" id="kickCtrls"></div>
+      <p class="note"><b>All eight presets are already tuned to A minor</b> — the note is in the preset name. That is not how kicks normally arrive; a sample pack kick is whatever pitch someone happened to record. Section 03 is about what happens when it isn't.</p>
+      <p class="callout"><b>Reading the display:</b> the orange trace is one kick hit in the time domain (0–600 ms). The bars behind it are the spectrum from 20 Hz to 1 kHz on a log scale — the tall bar on the left is your fundamental, and the spread to the right is click and drive harmonics. If there is nothing on the left, you have a click, not a kick.</p>
+      <p class="note"><b>Rumble</b> is not a kick parameter in most people's heads, but it is the defining sound of contemporary hypnotic techno: a long reverb tail on the kick, filtered low, feeding back into the space between hits. Push the rumble slider up on the Hypnotic preset and the kick stops being an event and becomes a continuous bed. That bed <em>is</em> the bassline in a lot of records — which is why so many rumble techno tracks have no separate bass part at all.</p>
+    </div>
+  </section>
+
+  <!-- 3 TUNING -->
+  <section class="sec" id="tuning">
+    <div class="sec-head">
+      <div class="eyebrow">Section 03 · interactive</div>
+      <h2>Tuning the kick</h2>
+      <p>Your kick plays a note whether you chose one or not. If that note is a semitone away from your bass root, the two beat against each other several times a second and the low end sounds unstable and cheap — and no amount of EQ fixes it, because the problem is pitch, not level.</p>
+    </div>
+
+    <div class="lab">
+      <div class="lab-head">
+        <button class="play" id="playTune" aria-pressed="false" aria-label="Play tuning demo">▶</button>
+        <h3>Kick against an A minor bassline</h3>
+        <span class="tag">Track key: A minor</span>
+      </div>
+      <div class="scope" style="height:130px">
+        <canvas id="tuneScope"></canvas>
+        <div class="readout">Kick tuned to<span class="big" id="tuneOut">A1 · 55.0 Hz</span></div>
+      </div>
+      <div class="chips" id="tuneKeys"></div>
+      <p class="note">The bass is fixed on A. Move the kick around the chromatic scale and listen — not for "wrong notes" but for a slow wobble in the low end. <b>A</b> and <b>E</b> lock solid. <b>C</b> and <b>G</b> sit fine. <b>A♯</b> and <b>G♯</b> produce an audible beating that gets faster the further out of tune you go. That beating is the two fundamentals interfering, and its rate is literally the difference between the two frequencies in Hz.</p>
+      <div class="callout">
+        <b>How to find your kick's note in Live:</b> drop a <b>Tuner</b> on the kick channel and trigger it — it reads the fundamental if the tail is long enough. If the kick is too short, use <b>Spectrum</b>, freeze on the peak below 100 Hz, and read the frequency off the display. Then pitch the sample with <b>Warp off + Transpose</b>, or with <b>Utility</b> if you only need cents.<br><br>
+        <b>Which note to pick:</b> the root of your track is the safe default. Tuning to the <b>fifth</b> (E in A minor) is the pro move when your bass sits on the root a lot — the kick reinforces the harmony without masking the bass fundamental. Tuning to the <b>octave below</b> the bass root is the third option and it is the one that makes systems feel deepest.
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 BASSES -->
+  <section class="sec" id="basses">
+    <div class="sec-head">
+      <div class="eyebrow">Section 04 · interactive</div>
+      <h2>Bass types</h2>
+      <p>Ten bass sounds that carry ten different genres, each played over a house kick so you hear it in context. All in A minor at the transport tempo. The recipe on each card is what to build in Operator, Wavetable or Analog to get there.</p>
+    </div>
+    <div class="grid2" id="bassGrid"></div>
+  </section>
+
+  <!-- 5 SIDECHAIN -->
+  <section class="sec" id="sidechain">
+    <div class="sec-head">
+      <div class="eyebrow">Section 05 · interactive</div>
+      <h2>Sidechain lab</h2>
+      <p>Sidechain compression is usually taught as a mixing fix — stop the bass and kick from clashing. It is much more useful to think of it as a <em>rhythm generator</em>: the release time sets a pulse that the whole track breathes at, and that pulse is a note value.</p>
+    </div>
+
+    <div class="lab">
+      <div class="lab-head">
+        <button class="play" id="playSC" aria-pressed="false" aria-label="Play sidechain demo">▶</button>
+        <h3>Duck shape against a rolling bass</h3>
+        <span class="tag alt">Release = a note value</span>
+      </div>
+      <div class="scope" style="height:170px">
+        <canvas id="scScope"></canvas>
+        <div class="readout">Release<span class="big" id="scOut">160 ms</span></div>
+      </div>
+      <div class="chips" id="scPresets"></div>
+      <div class="ctrls" id="scCtrls"></div>
+      <p class="note">The white curve is the gain applied to the bass over one bar; the red marks are the kicks. Watch what happens when release passes a note boundary: at a 1/8 release the bass recovers exactly as the offbeat arrives and the groove locks; at 1/4 it never fully recovers and the track turns into a continuous pump; below 1/16 you get a click-like duck that reads as tightness rather than movement.</p>
+      <div class="callout">
+        <b>In Live, three ways to do this:</b><br>
+        <b>1. Compressor with sidechain input</b> — ratio 4:1 to 8:1, attack as fast as it goes (0.1–1 ms), release the number from this lab, threshold set so you get 6–10 dB of reduction. Honest, reacts to the actual kick.<br>
+        <b>2. LFO Tool / Volume Shaper style</b> — a drawn curve triggered per beat. Total control over shape, no dependence on kick level. What most producers actually use.<br>
+        <b>3. Auto Pan on Sine, phase 180°, rate 1/4</b> — the free hack. Set Amount to taste. Fine for a pumping pad, too blunt for bass.<br><br>
+        <b>Also duck the reverb and the pads</b>, not just the bass. Half of what people hear as "a tight low end" is actually the reverb tails getting out of the kick's way.
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 PHASE -->
+  <section class="sec" id="phase">
+    <div class="sec-head">
+      <div class="eyebrow">Section 06 · interactive · measured</div>
+      <h2>Phase lab</h2>
+      <p>The one that costs people whole tracks. When your kick and your sub occupy the same frequency at the same moment, their phase relationship decides whether they add up or subtract. Nothing on the meters warns you — the mix just sounds quiet and weak, and turning the bass up makes it worse.</p>
+    </div>
+
+    <div class="lab">
+      <div class="lab-head">
+        <button class="play" id="playPhase" aria-pressed="false" aria-label="Play phase demo">▶</button>
+        <h3>Kick on A1 + sub on A1, same moment</h3>
+        <span class="tag alt">Watch the peak meter</span>
+      </div>
+      <div class="scope" style="height:200px">
+        <canvas id="phScope"></canvas>
+        <div class="readout">Summed peak<span class="big" id="phOut">— dB</span></div>
+      </div>
+      <div class="ctrls">
+        <label class="ctrl">Sub phase offset
+          <span class="row"><input type="range" id="phSl" min="0" max="360" value="0"><b id="phV">0°</b></span>
+        </label>
+        <label class="ctrl">Sub level
+          <span class="row"><input type="range" id="phLvl" min="0" max="100" value="70"><b id="phLvlV">70%</b></span>
+        </label>
+      </div>
+      <div class="chips">
+        <button class="chip" data-ph="0">In phase · 0°</button>
+        <button class="chip bad" data-ph="180">Flip polarity · 180°</button>
+        <button class="chip" data-ph="90">Quadrature · 90°</button>
+      </div>
+      <p class="note">Both sounds are 55 Hz. At <b>0°</b> they reinforce and the peak reads high. Sweep to <b>180°</b> and the summed peak drops — often 6 to 10 dB — even though you added nothing and removed nothing. Your ears hear it as the kick losing its weight. This is exactly what happens in a real project when a sub note lands underneath a kick with the wrong polarity or a few milliseconds of offset.</p>
+      <div class="callout">
+        <b>How this happens to you for real:</b> a sample with inverted polarity, a plugin that adds latency, a sub layer nudged off the grid, or two kick layers stacked where one starts on a rarefaction and the other on a compression.<br><br>
+        <b>How to fix it in 30 seconds:</b> put <b>Utility</b> on one of the two channels and click the <b>polarity invert (ø)</b> button. If the low end gets louder, you had a phase problem and you just solved it. If it gets quieter, you were fine. That is the entire test — do it every time you layer two kicks or sit a sub under a kick.<br><br>
+        <b>The structural fix:</b> don't let them overlap. Put the sub note on the offbeat, or gate the sub for the first 40–60 ms of every kick. No overlap, no cancellation, no decision to make.
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 CARVE -->
+  <section class="sec" id="carve">
+    <div class="sec-head">
+      <div class="eyebrow">Section 07</div>
+      <h2>Carving space</h2>
+      <p>Once pitch, timing and phase agree, the remaining work is deciding which sound owns which band. There is only room for one thing at a time down there.</p>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <div class="eyebrow">The split</div>
+        <h3>Decide who owns the sub</h3>
+        <ul>
+          <li><b>Kick owns 30–70 Hz, bass owns 70–200 Hz.</b> The most common split in techno. High-pass the bass around 60–80 Hz and let the kick be the entire sub. Track feels punchy and controlled.</li>
+          <li><b>Bass owns 30–70 Hz, kick owns 70–200 Hz.</b> Common in house, garage, disco house. High-pass the <em>kick</em> around 60 Hz so it reads as a knock, and let a sine sub carry the weight. Track feels deep and rolling.</li>
+          <li>Pick one. Doing both is what "muddy" means.</li>
+          <li>Whichever you pick, the other one still needs <em>some</em> presence in the band it doesn't own — a shelf, not a wall.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <div class="eyebrow">Mono</div>
+        <h3>Nothing wide below 120 Hz</h3>
+        <ul>
+          <li>Stereo information in the sub cancels on mono club systems and eats headroom on vinyl. <b>Utility → Width 0</b> on the kick and bass, or a Utility with <b>Bass Mono</b> set to 120 Hz across the low group.</li>
+          <li>Chorus, unison detune and stereo reverb on a bass are all fine — as long as you fold the bottom back to mono after them.</li>
+          <li>Check it: Utility on the master, Width 0, and listen. If the low end changes character, something down there is wide.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <div class="eyebrow">Dynamics</div>
+        <h3>Peak vs sustained</h3>
+        <ul>
+          <li>The kick is a transient, the bass is sustained — so the bass reads louder on a meter while the kick reads louder to the ear. Trust the loudness meter over the peak meter for balance.</li>
+          <li>Rough starting point: kick peaking around <b>−6 dBFS</b> on its own channel, bass sitting <b>3–6 dB below</b> it in perceived loudness.</li>
+          <li>Compress the bass <em>before</em> sidechaining it. An uneven bass makes the duck sound uneven.</li>
+          <li>Saturate the bass rather than boosting it. Harmonics at 200–800 Hz make a sub audible on phone speakers that reproduce none of the fundamental.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <div class="eyebrow">Placement</div>
+        <h3>Timing solves what EQ can't</h3>
+        <ul>
+          <li>Bass on the offbeat means kick and bass never sound simultaneously. This is the single most effective low-end technique in house and it costs nothing.</li>
+          <li>If the bass must land on the beat, shorten the kick's tail or gate the bass for the first 50 ms.</li>
+          <li>Nudge the bass <b>−5 to −10 ms</b> (track delay) if the low end feels sluggish. Sub frequencies take time to develop, so an on-grid sub can read as late.</li>
+          <li>Long-tailed kick + long-gated bass is the actual cause of most "muddy" low ends, not EQ.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 NUMBERS -->
+  <section class="sec" id="numbers">
+    <div class="sec-head">
+      <div class="eyebrow">Section 08</div>
+      <h2>Numbers</h2>
+      <p>The frequency table is the one to keep open. Scale tones of A minor are marked in red — those are the notes your kick is allowed to be.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Note</th><th>Oct 0</th><th>Oct 1</th><th>Oct 2</th><th>In A min</th></tr></thead>
+          <tbody id="freqTable"></tbody>
+        </table>
+      </div>
+      <div>
+        <div class="tablewrap" style="margin-bottom:18px">
+          <table>
+            <thead><tr><th>Release</th><th>ms @ <span id="tblBpm">126</span> BPM</th><th>Feel</th></tr></thead>
+            <tbody id="msTable"></tbody>
+          </table>
+        </div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Band</th><th>What lives there</th></tr></thead>
+            <tbody>
+              <tr><td class="num">20–35 Hz</td><td>Felt, not heard. Rumble and room. Often worth removing entirely.</td></tr>
+              <tr><td class="num">35–60 Hz</td><td>The weight. Sub fundamentals, kick fundamental.</td></tr>
+              <tr><td class="num">60–100 Hz</td><td>The punch. Where kick and bass fight hardest.</td></tr>
+              <tr><td class="num">100–200 Hz</td><td>Body and warmth. Too much here is the definition of muddy.</td></tr>
+              <tr><td class="num">200–500 Hz</td><td>Where a sub becomes audible on small speakers. Saturate here.</td></tr>
+              <tr><td class="num">2–6 kHz</td><td>The kick's click. What cuts through on a club system.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Genre</th><th>Kick</th><th>Bass</th><th>Sidechain</th><th>Who owns the sub</th></tr></thead>
+        <tbody>
+          <tr><td><b>Classic house</b></td><td>909, 55–60 Hz, ~400 ms</td><td>Offbeat saw, short gate</td><td>Moderate, 1/8 release</td><td>Shared, kick slightly</td></tr>
+          <tr><td><b>Deep house</b></td><td>Soft, 50 Hz, long</td><td>Sine sub + organ layer</td><td>Gentle, long release</td><td>Bass</td></tr>
+          <tr><td><b>Disco house</b></td><td>707-ish, 65 Hz, short</td><td>Plucky 16th funk line</td><td>Light or none</td><td>Bass</td></tr>
+          <tr><td><b>Tech house</b></td><td>Tight punch, 58 Hz, 250 ms</td><td>FM growl, offbeat</td><td>Hard, short release</td><td>Kick</td></tr>
+          <tr><td><b>Hypnotic techno</b></td><td>Long + rumble tail</td><td>Often none — the rumble is the bass</td><td>Heavy on everything else</td><td>Kick</td></tr>
+          <tr><td><b>Hard techno</b></td><td>Distorted, 62 Hz, clicky</td><td>Distorted saw or hoover</td><td>Extreme</td><td>Kick</td></tr>
+          <tr><td><b>UK garage</b></td><td>Short, sharp, 60 Hz</td><td>Sub + organ stab</td><td>Moderate, swung</td><td>Bass</td></tr>
+          <tr><td><b>Acid</b></td><td>909, dry</td><td>303 line, resonant, gliding</td><td>Light</td><td>Kick</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 9 DIAGNOSIS -->
+  <section class="sec" id="fix">
+    <div class="sec-head">
+      <div class="eyebrow">Section 09</div>
+      <h2>Diagnosis</h2>
+      <p>Symptom first, because that is how you actually encounter these.</p>
+    </div>
+    <div class="grid2">
+      <div class="tcard">
+        <h3>"It's muddy"</h3>
+        <ul>
+          <li>Two things are sustaining in the same band at the same time. Shorten one of them before you EQ anything.</li>
+          <li>Check 100–250 Hz on everything, not just bass — pads, vocals and even hats pile up there.</li>
+          <li>High-pass everything that isn't kick or bass at 100–150 Hz. Ruthlessly.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>"It's weak / thin"</h3>
+        <ul>
+          <li>Phase. Run the polarity test on the kick and the sub. This is the first thing to check, not the last.</li>
+          <li>Check the kick's note against the bass root. A semitone out reads as weak, not as wrong.</li>
+          <li>Are you high-passing the kick and the bass? Two 60 Hz high-passes leave nothing below 60 Hz at all.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>"No punch"</h3>
+        <ul>
+          <li>Too much sidechain, or too slow a release — the kick is landing in a hole rather than on top of something.</li>
+          <li>Missing click. Layer a short noise or a click sample at 2–6 kHz.</li>
+          <li>Compressor attack too fast on the master or the drum bus, flattening the transient.</li>
+        </ul>
+      </div>
+      <div class="tcard">
+        <h3>"Great at home, gone in the club"</h3>
+        <ul>
+          <li>Stereo content below 120 Hz cancelling in mono. Check with Utility on the master.</li>
+          <li>All the energy is at 40 Hz and none at 80 — small rooms exaggerate 40, PA systems reproduce 80.</li>
+          <li>Check on a phone speaker deliberately: if the bassline disappears completely, it has no harmonics and needs saturation.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <p><strong>The order of operations.</strong> Pitch, then timing, then phase, then level, then EQ. Almost everyone works that list backwards, starting with EQ on a kick and bass that are in different keys and cancelling each other — which is why the EQ never fixes it.</p>
+    <p style="color:var(--ink-3);font-size:13px">Everything here is synthesised live in the browser. The synths are approximations built to demonstrate relationships, not to replace your plugins. All examples in A minor.</p>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   ENGINE
+   ========================================================= */
+let AC=null,master=null,limiter=null,sumBus=null,kickBus=null,bassBus=null,scGain=null,ana=null,rev=null,revSend=null;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain(); master.gain.value=.7;
+    limiter=AC.createDynamicsCompressor();
+    limiter.threshold.value=-4; limiter.knee.value=2; limiter.ratio.value=14;
+    limiter.attack.value=.002; limiter.release.value=.12;
+    ana=AC.createAnalyser(); ana.fftSize=2048; ana.smoothingTimeConstant=.55;
+    sumBus=AC.createGain();
+    kickBus=AC.createGain();
+    bassBus=AC.createGain();
+    scGain=AC.createGain(); scGain.gain.value=1;
+    /* reverb for kick rumble */
+    rev=AC.createConvolver(); rev.buffer=impulse(1.6,3.2);
+    revSend=AC.createGain(); revSend.gain.value=0;
+    const revLP=AC.createBiquadFilter(); revLP.type='lowpass'; revLP.frequency.value=170; revLP.Q.value=.7;
+    kickBus.connect(revSend); revSend.connect(rev); rev.connect(revLP); revLP.connect(sumBus);
+    bassBus.connect(scGain); scGain.connect(sumBus);
+    kickBus.connect(sumBus);
+    sumBus.connect(ana); ana.connect(limiter); limiter.connect(master); master.connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+function impulse(dur,decay){
+  const len=Math.floor(44100*dur), b=(AC||new AudioContext()).createBuffer(2,len,44100);
+  for(let c=0;c<2;c++){const d=b.getChannelData(c);
+    for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}
+  return b;
+}
+function shaper(amount){
+  const ws=AC.createWaveShaper(), n=1024, c=new Float32Array(n), k=1+amount*26;
+  for(let i=0;i<n;i++){const x=i*2/n-1; c[i]=Math.tanh(k*x)/Math.tanh(k);}
+  ws.curve=c; ws.oversample='2x'; return ws;
+}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+const NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+function ftoNote(f){
+  const m=Math.round(69+12*Math.log2(f/440));
+  const cents=Math.round(1200*Math.log2(f/mtof(m)));
+  return {name:NAMES[((m%12)+12)%12]+(Math.floor(m/12)-1),cents};
+}
+
+/* ---------- KICK ---------- */
+function kick(t,K,noteHz){
+  const f1=noteHz||K.f1, f0=f1*K.ratio;
+  const o=AC.createOscillator(); o.type='sine';
+  o.frequency.setValueAtTime(f0,t);
+  o.frequency.exponentialRampToValueAtTime(f1,t+K.pdec);
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(1,t+.002);
+  g.gain.exponentialRampToValueAtTime(.0001,t+K.adec);
+  const dr=shaper(K.drive);
+  const out=AC.createGain(); out.gain.value=.95;
+  o.connect(g); g.connect(dr); dr.connect(out); out.connect(kickBus);
+  o.start(t); o.stop(t+K.adec+.1);
+  /* click */
+  if(K.click>0.001){
+    const n=AC.createBufferSource(); n.buffer=noiseBuf();
+    const hp=AC.createBiquadFilter(); hp.type='bandpass'; hp.frequency.value=2600; hp.Q.value=.8;
+    const cg=AC.createGain();
+    cg.gain.setValueAtTime(K.click*.55,t);
+    cg.gain.exponentialRampToValueAtTime(.0001,t+.014);
+    n.connect(hp); hp.connect(cg); cg.connect(kickBus);
+    n.start(t); n.stop(t+.05);
+    const s=AC.createOscillator(); s.type='triangle'; s.frequency.value=f0*2.6;
+    const sg=AC.createGain();
+    sg.gain.setValueAtTime(K.click*.30,t);
+    sg.gain.exponentialRampToValueAtTime(.0001,t+.026);
+    s.connect(sg); sg.connect(kickBus); s.start(t); s.stop(t+.06);
+  }
+}
+let _nb=null;
+function noiseBuf(){
+  if(!_nb){_nb=AC.createBuffer(1,AC.sampleRate*.5,AC.sampleRate);
+    const d=_nb.getChannelData(0); for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;}
+  return _nb;
+}
+
+/* ---------- BASS VOICES ---------- */
+function adsr(g,t,dur,peak,a,r){
+  g.setValueAtTime(0,t);
+  g.linearRampToValueAtTime(peak,t+a);
+  g.setValueAtTime(peak,t+Math.max(a+.005,dur-r));
+  g.exponentialRampToValueAtTime(.0001,t+dur+.02);
+}
+const BASS={
+  sub(t,f,d,v){
+    const o=AC.createOscillator(); o.type='sine'; o.frequency.value=f;
+    const g=AC.createGain(); adsr(g.gain,t,d,.55*(v/127),.012,.05);
+    o.connect(g); g.connect(bassBus); o.start(t); o.stop(t+d+.1);
+  },
+  rolling(t,f,d,v){
+    const o=AC.createOscillator(); o.type='sawtooth'; o.frequency.value=f;
+    const s=AC.createOscillator(); s.type='sine'; s.frequency.value=f;
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.Q.value=5;
+    lp.frequency.setValueAtTime(1500,t);
+    lp.frequency.exponentialRampToValueAtTime(320,t+Math.min(d,.16));
+    const gs=AC.createGain(); gs.gain.value=.55;
+    const g=AC.createGain(); adsr(g.gain,t,d,.34*(v/127),.004,.03);
+    o.connect(lp); lp.connect(g); s.connect(gs); gs.connect(g); g.connect(bassBus);
+    o.start(t);s.start(t);o.stop(t+d+.1);s.stop(t+d+.1);
+  },
+  reese(t,f,d,v){
+    const g=AC.createGain(); adsr(g.gain,t,d,.16*(v/127),.03,.12);
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=520; lp.Q.value=3;
+    [-9,0,7,14].forEach(c=>{
+      const o=AC.createOscillator(); o.type='sawtooth';
+      o.frequency.value=f*Math.pow(2,c/1200);
+      const lfo=AC.createOscillator(); lfo.type='sine'; lfo.frequency.value=.22+Math.random()*.3;
+      const la=AC.createGain(); la.gain.value=1.4;
+      lfo.connect(la); la.connect(o.frequency); lfo.start(t); lfo.stop(t+d+.2);
+      o.connect(lp); o.start(t); o.stop(t+d+.15);
+    });
+    lp.connect(g); g.connect(bassBus);
+  },
+  acid(t,f,d,v,slide){
+    const o=AC.createOscillator(); o.type='sawtooth';
+    if(slide){o.frequency.setValueAtTime(slide,t);o.frequency.exponentialRampToValueAtTime(f,t+.055);}
+    else o.frequency.setValueAtTime(f,t);
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.Q.value=14;
+    const co=340+(v/127)*2400;
+    lp.frequency.setValueAtTime(co,t);
+    lp.frequency.exponentialRampToValueAtTime(220,t+Math.min(d*1.4,.26));
+    const dr=shaper(.35);
+    const g=AC.createGain(); adsr(g.gain,t,d,.22*(v/127),.003,.03);
+    o.connect(lp); lp.connect(dr); dr.connect(g); g.connect(bassBus);
+    o.start(t); o.stop(t+d+.1);
+  },
+  disco(t,f,d,v){
+    const o=AC.createOscillator(); o.type='sawtooth'; o.frequency.value=f;
+    const o2=AC.createOscillator(); o2.type='square'; o2.frequency.value=f*.999;
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.Q.value=7;
+    lp.frequency.setValueAtTime(2600,t);
+    lp.frequency.exponentialRampToValueAtTime(420,t+.11);
+    const g=AC.createGain(); adsr(g.gain,t,d,.20*(v/127),.003,.02);
+    const g2=AC.createGain(); g2.gain.value=.4;
+    o.connect(lp); o2.connect(g2); g2.connect(lp); lp.connect(g); g.connect(bassBus);
+    o.start(t);o2.start(t);o.stop(t+d+.1);o2.stop(t+d+.1);
+  },
+  fm(t,f,d,v){
+    const car=AC.createOscillator(); car.type='sine'; car.frequency.value=f;
+    const mod=AC.createOscillator(); mod.type='sine'; mod.frequency.value=f*2.005;
+    const mg=AC.createGain();
+    mg.gain.setValueAtTime(f*5.5*(v/127),t);
+    mg.gain.exponentialRampToValueAtTime(f*.55,t+Math.min(d,.13));
+    mod.connect(mg); mg.connect(car.frequency);
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1800;
+    const g=AC.createGain(); adsr(g.gain,t,d,.26*(v/127),.003,.03);
+    car.connect(lp); lp.connect(g); g.connect(bassBus);
+    car.start(t);mod.start(t);car.stop(t+d+.1);mod.stop(t+d+.1);
+  },
+  organ(t,f,d,v){
+    const g=AC.createGain(); adsr(g.gain,t,d,.13*(v/127),.006,.04);
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1500; lp.Q.value=1;
+    [[1,1],[2,.5],[3,.28],[.5,.7]].forEach(([m,a])=>{
+      const o=AC.createOscillator(); o.type=m===.5?'sine':'square';
+      o.frequency.value=f*m*(1+(Math.random()-.5)*.002);
+      const og=AC.createGain(); og.gain.value=a;
+      o.connect(og); og.connect(lp); o.start(t); o.stop(t+d+.1);
+    });
+    lp.connect(g); g.connect(bassBus);
+  },
+  dist(t,f,d,v){
+    const o=AC.createOscillator(); o.type='sawtooth'; o.frequency.value=f;
+    const o2=AC.createOscillator(); o2.type='sawtooth'; o2.frequency.value=f*1.008;
+    const dr=shaper(.85);
+    const bp=AC.createBiquadFilter(); bp.type='lowpass'; bp.frequency.value=900; bp.Q.value=2;
+    const g=AC.createGain(); adsr(g.gain,t,d,.15*(v/127),.004,.03);
+    o.connect(dr);o2.connect(dr);dr.connect(bp);bp.connect(g);g.connect(bassBus);
+    o.start(t);o2.start(t);o.stop(t+d+.1);o2.stop(t+d+.1);
+  },
+  glide(t,f,d,v,slide){
+    const o=AC.createOscillator(); o.type='sine';
+    o.frequency.setValueAtTime(slide||f*1.6,t);
+    o.frequency.exponentialRampToValueAtTime(f,t+.13);
+    const dr=shaper(.22);
+    const g=AC.createGain(); adsr(g.gain,t,d,.5*(v/127),.006,.09);
+    o.connect(dr);dr.connect(g);g.connect(bassBus);
+    o.start(t);o.stop(t+d+.15);
+  },
+  hoover(t,f,d,v){
+    const g=AC.createGain(); adsr(g.gain,t,d,.10*(v/127),.02,.1);
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.Q.value=8;
+    lp.frequency.setValueAtTime(340,t);
+    lp.frequency.linearRampToValueAtTime(1500,t+d*.6);
+    lp.frequency.linearRampToValueAtTime(400,t+d);
+    [-14,-7,0,7,14,21].forEach(c=>{
+      const o=AC.createOscillator(); o.type='sawtooth';
+      o.frequency.setValueAtTime(f*Math.pow(2,c/1200)*1.06,t);
+      o.frequency.exponentialRampToValueAtTime(f*Math.pow(2,c/1200),t+.18);
+      o.connect(lp); o.start(t); o.stop(t+d+.1);
+    });
+    const dr=shaper(.5);
+    lp.connect(dr); dr.connect(g); g.connect(bassBus);
+  }
+};
+
+/* =========================================================
+   STATE
+   ========================================================= */
+const KP={f1:55,ratio:3.4,pdec:.045,adec:.42,click:.35,drive:.25,rumble:0};
+const S={bpm:126,mode:null,kickNote:33,bassId:null,phase:0,phLvl:.7,
+  sc:{depth:.72,atk:.003,hold:.03,rel:.16}};
+/* every preset is pre-tuned to a note of A minor — A1 55, E1 41.2, G1 49, B1 61.7, C2 65.4, F1 43.7 */
+const KICK_PRESETS={
+ '909 house · A1' :{f1:55.00,ratio:3.4,pdec:.045,adec:.42,click:.35,drive:.25,rumble:0},
+ '808 sub · F1'   :{f1:43.65,ratio:2.9,pdec:.09, adec:.85,click:.10,drive:.10,rumble:.08},
+ 'tech house · A1':{f1:55.00,ratio:4.2,pdec:.028,adec:.26,click:.60,drive:.45,rumble:0},
+ 'disco 707 · C2' :{f1:65.41,ratio:3.1,pdec:.034,adec:.30,click:.48,drive:.20,rumble:0},
+ 'hypnotic · G1'  :{f1:49.00,ratio:2.4,pdec:.10, adec:.70,click:.05,drive:.06,rumble:.55},
+ 'hard techno · B1':{f1:61.74,ratio:5.2,pdec:.024,adec:.35,click:.72,drive:.88,rumble:.12},
+ 'uk garage · B1' :{f1:61.74,ratio:3.7,pdec:.030,adec:.20,click:.55,drive:.32,rumble:0},
+ 'deep house · E1':{f1:41.20,ratio:2.7,pdec:.070,adec:.55,click:.12,drive:.08,rumble:.10}
+};
+const KCTRL=[
+ ['f1','End pitch',30,90,.5,v=>v.toFixed(1)+' Hz'],
+ ['ratio','Pitch sweep',1.5,7,.1,v=>'×'+v.toFixed(1)],
+ ['pdec','Pitch decay',10,140,1,v=>v.toFixed(0)+' ms',1000],
+ ['adec','Body decay',120,1000,10,v=>v.toFixed(0)+' ms',1000],
+ ['click','Click',0,100,1,v=>v.toFixed(0)+'%',100],
+ ['drive','Drive',0,100,1,v=>v.toFixed(0)+'%',100],
+ ['rumble','Rumble tail',0,100,1,v=>v.toFixed(0)+'%',100]
+];
+
+/* patterns: {s,l,p,v} in 16ths, p semitones from A1 (MIDI 33) */
+const A1=33;
+const BASSES=[
+ {id:'sub',name:'Pure sine sub',tag:'Deep house',voice:'sub',root:A1,
+  pat:[{s:2,l:3.4,p:0,v:110},{s:6,l:1.6,p:0,v:92},{s:10,l:3.4,p:-2,v:108},{s:14,l:1.6,p:-2,v:90}],
+  why:'A sine wave and nothing else. No harmonics means it is completely invisible on laptop speakers and enormous on a club system. The purest low end there is, and the least forgiving — if the note is wrong there is nothing else in the sound to hide behind.',
+  do:'Operator, one sine operator, that is the entire patch. Or <b>Wavetable</b> with the Basics → Sine table. Add a touch of <b>Saturator</b> in parallel if you need it audible on phones.'},
+
+ {id:'rolling',name:'Rolling offbeat bass',tag:'Classic house',voice:'rolling',root:A1,
+  pat:[2,6,10,14].map((s,i)=>({s,l:1.5,p:[0,0,-2,-2][i],v:i%2?96:112})),
+  why:'Saw plus a sine sub, low-passed with a fast filter envelope and a short gate. The single most common bass sound in house music: it lands only on the offbeat, so it never touches the kick, and the filter envelope gives each note a percussive front.',
+  do:'Saw + sub oscillator an octave down. <b>LPF at 800 Hz, Q around 5</b>, filter envelope with decay ~120 ms and about 40% amount. Gate 45–55% of an 8th note.'},
+
+ {id:'reese',name:'Reese',tag:'Dark techno',voice:'reese',root:A1,
+  pat:[{s:0,l:7.6,p:0,v:100},{s:8,l:7.6,p:-2,v:96}],
+  why:'Two or more detuned saws beating against each other, with slow LFO movement on the detune. Named after Reese Project\'s 1988 record and now the backbone of dark techno and drum and bass. It is inherently phasey — which is exactly why it needs a separate mono sine under it.',
+  do:'Two saws, <b>detune 8–16 cents</b>, LFO on the detune amount at 0.2–0.5 Hz. Low-pass around 500 Hz. Always <b>split the sub off below 100 Hz to a mono sine</b> or it will cancel on club systems.'},
+
+ {id:'acid',name:'303 acid line',tag:'Acid / techno',voice:'acid',root:A1,
+  pat:[{s:0,l:.9,p:0,v:120},{s:2,l:.9,p:0,v:70},{s:3,l:.9,p:12,v:118,sl:1},{s:4,l:.9,p:0,v:80},
+       {s:6,l:1.8,p:3,v:114},{s:8,l:.9,p:0,v:76},{s:10,l:.9,p:10,v:120,sl:1},{s:11,l:.9,p:7,v:72},
+       {s:12,l:.9,p:0,v:100},{s:14,l:1.8,p:-2,v:112}],
+  why:'A single saw through a steeply resonant low-pass with the filter tracking an envelope, plus accents and glides. The resonance is the instrument — at high Q the filter itself sings, and the accented notes open it further. Everything interesting about acid is in the interaction of accent and slide.',
+  do:'One saw, <b>LPF Q at 12–18</b>, envelope amount high with a 100–200 ms decay. Map <b>velocity to filter cutoff</b> so accents open it. Mono voice with <b>glide 60 ms</b>, overlap two notes to slide.'},
+
+ {id:'disco',name:'Plucked disco bass',tag:'Disco house',voice:'disco',root:A1+12,
+  pat:[{s:0,l:.85,p:0,v:118},{s:2,l:.85,p:0,v:82},{s:3,l:.85,p:-5,v:96},{s:5,l:.85,p:0,v:88},
+       {s:6,l:.85,p:3,v:110},{s:8,l:.85,p:0,v:114},{s:10,l:.85,p:0,v:80},{s:11,l:.85,p:7,v:104},
+       {s:13,l:.85,p:5,v:92},{s:14,l:1.6,p:3,v:112}],
+  why:'Brighter and higher than a house bass, played in busy 16ths like a real bass guitar, with a fast filter envelope standing in for a finger pluck. It lives at 100–300 Hz rather than in the sub, which is why disco house often has a separate sine underneath doing the actual weight.',
+  do:'Saw + square, <b>filter envelope decay 90–130 ms</b> sweeping 2.5 kHz down to 400 Hz. Play it an octave up from where you think. Velocity to cutoff for the funk.'},
+
+ {id:'fm',name:'FM growl',tag:'Tech house',voice:'fm',root:A1,
+  pat:[{s:2,l:1.4,p:0,v:114},{s:5,l:.7,p:0,v:70},{s:6,l:1.4,p:-2,v:106},
+       {s:10,l:1.4,p:0,v:114},{s:13,l:.7,p:3,v:74},{s:14,l:1.4,p:-2,v:104}],
+  why:'A sine carrier frequency-modulated by another sine, with the modulation depth on a fast envelope. That envelope is why it barks at the start and settles into a clean tone — a lot of metallic character in the first 50 ms, almost none afterwards. The tech house default for twenty years.',
+  do:'<b>Operator</b>: operator B modulating A, ratio around <b>2:1</b>, B\'s envelope decaying fast to a low level. Push B\'s level for more growl. Ratios of 1, 2 and 3 stay musical; 1.41 and 2.5 go metallic.'},
+
+ {id:'organ',name:'Organ stab bass',tag:'UK garage',voice:'organ',root:A1+12,
+  pat:[{s:2,l:1.2,p:0,v:112},{s:3,l:.8,p:0,v:74},{s:6,l:1.6,p:-2,v:104},
+       {s:10,l:1.2,p:3,v:110},{s:11,l:.8,p:3,v:72},{s:14,l:1.6,p:0,v:106}],
+  why:'Stacked square waves at octaves and fifths, slightly detuned — a drawbar organ reduced to a bass register. Sits in the midrange, so it reads as harmony rather than weight and pairs with a sine sub doing the bottom. Garage and speed garage live on this.',
+  do:'Square at 1×, 2×, 3× and a sine at 0.5×, each slightly detuned. Low-pass around 1.5 kHz. Add a short <b>reverb throw on the offbeat stabs only</b>.'},
+
+ {id:'dist',name:'Distorted saw',tag:'Hard techno',voice:'dist',root:A1,
+  pat:[0,2,4,6,8,10,12,14].map((s,i)=>({s,l:1.5,p:i===5?3:0,v:i%2?90:118})),
+  why:'Two saws through hard saturation into a low-pass. The distortion generates harmonics well above the fundamental, which is what lets the bass be heard at all under a distorted kick — in hard techno both parts are clipped, so the only room left is spectral.',
+  do:'Saw pair, <b>Saturator in Waveshaper mode</b>, drive high, then a low-pass at 800–1000 Hz to tame the fizz. Sidechain hard. Watch your gain staging — this eats headroom.'},
+
+ {id:'glide',name:'Gliding 808',tag:'Bass house',voice:'glide',root:A1-5,
+  pat:[{s:0,l:5.6,p:0,v:118},{s:8,l:3.6,p:5,v:110},{s:13,l:2.6,p:7,v:104}],
+  why:'A long sine with a pitch drop at the start and portamento between notes. Half the sound is the glide — the pitch sliding between two notes is the melodic content, so it does more with three notes than most basses do with sixteen.',
+  do:'Sine with a <b>pitch envelope dropping about an octave over 100–150 ms</b>, mono voice with <b>glide 80–150 ms</b>, overlap the notes to trigger the slide. Saturate for phone speakers.'},
+
+ {id:'hoover',name:'Hoover',tag:'Rave / hard',voice:'hoover',root:A1+12,
+  pat:[{s:0,l:6.6,p:0,v:104},{s:8,l:2.6,p:3,v:100},{s:12,l:3.6,p:-2,v:100}],
+  why:'Six detuned saws with a pitch sweep into the note and a resonant filter moving across it. Born on the Roland Alpha Juno, adopted by rave, and now back in hard techno and hard groove. Barely a bass — more a mid-range instrument you play low.',
+  do:'Unison saws, <b>detune wide</b>, pitch envelope sweeping down into each note over ~180 ms, resonant LPF with an LFO or envelope sweeping 300 Hz → 1.5 kHz. Keep it above 80 Hz and let something else own the sub.'}
+];
+
+/* =========================================================
+   BUILD UI
+   ========================================================= */
+/* kick presets + controls */
+const kpEl=document.getElementById('kickPresets');
+Object.keys(KICK_PRESETS).forEach((k,i)=>{
+  const b=document.createElement('button');
+  b.className='chip'; b.textContent=k; b.setAttribute('aria-pressed',i===0);
+  b.onclick=()=>{
+    Object.assign(KP,KICK_PRESETS[k]);
+    [...kpEl.children].forEach(c=>c.setAttribute('aria-pressed',c===b));
+    syncKickCtrls();
+  };
+  kpEl.appendChild(b);
+});
+const kcEl=document.getElementById('kickCtrls');
+KCTRL.forEach(([key,label,min,max,step,fmt,scale])=>{
+  const sc=scale||1;
+  const l=document.createElement('label'); l.className='ctrl';
+  l.innerHTML=`${label}<span class="row"><input type="range" data-k="${key}" data-scale="${sc}" min="${min}" max="${max}" step="${step}"><b></b></span>`;
+  kcEl.appendChild(l);
+  const inp=l.querySelector('input');
+  inp.value=KP[key]*sc;
+  l.querySelector('b').textContent=fmt(KP[key]*sc);
+  inp.oninput=e=>{
+    KP[key]=+e.target.value/sc;
+    l.querySelector('b').textContent=fmt(+e.target.value);
+    updateKickReadout();
+    if(revSend&&S.mode==='kick') revSend.gain.value=KP.rumble*.9;
+  };
+});
+function syncKickCtrls(){
+  kcEl.querySelectorAll('input').forEach(inp=>{
+    const k=inp.dataset.k, sc=+inp.dataset.scale;
+    inp.value=KP[k]*sc;
+    const def=KCTRL.find(c=>c[0]===k);
+    inp.parentNode.querySelector('b').textContent=def[5](KP[k]*sc);
+  });
+  updateKickReadout();
+  if(revSend) revSend.gain.value=(S.mode==='kick')?KP.rumble*.9:0;
+}
+function updateKickReadout(){
+  const n=ftoNote(KP.f1);
+  document.getElementById('kickNoteOut').textContent=
+    n.name+' '+(n.cents>=0?'+':'')+n.cents+'¢ · '+KP.f1.toFixed(1)+' Hz';
+}
+updateKickReadout();
+
+/* tuning chips */
+const tuneEl=document.getElementById('tuneKeys');
+const SCALE=[0,2,3,5,7,8,10]; /* A natural minor intervals from A */
+for(let i=0;i<13;i++){
+  const midi=A1+i, f=mtof(midi), inKey=SCALE.includes(i%12);
+  const label=NAMES[((midi%12)+12)%12]+(Math.floor(midi/12)-1);
+  const b=document.createElement('button');
+  b.className='chip'+(inKey?' good':' dim');
+  b.textContent=label+' · '+f.toFixed(1);
+  b.setAttribute('aria-pressed',i===0);
+  b.onclick=()=>{
+    S.kickNote=midi;
+    [...tuneEl.children].forEach(c=>c.setAttribute('aria-pressed',c===b));
+    document.getElementById('tuneOut').textContent=
+      label+' · '+f.toFixed(1)+' Hz'+(inKey?'':'  ✗ out of key with the bass');
+  };
+  tuneEl.appendChild(b);
+}
+
+/* sidechain controls */
+const SCC=[['depth','Depth',0,100,1,v=>v+'%',100],
+           ['atk','Attack',0,30,1,v=>v+' ms',1000],
+           ['hold','Hold',0,80,1,v=>v+' ms',1000],
+           ['rel','Release',20,500,5,v=>v+' ms',1000]];
+const scEl=document.getElementById('scCtrls');
+SCC.forEach(([k,label,min,max,step,fmt,sc])=>{
+  const l=document.createElement('label'); l.className='ctrl';
+  l.innerHTML=`${label}<span class="row"><input type="range" data-k="${k}" min="${min}" max="${max}" step="${step}"><b></b></span>`;
+  scEl.appendChild(l);
+  const inp=l.querySelector('input');
+  inp.value=S.sc[k]*sc; l.querySelector('b').textContent=fmt(S.sc[k]*sc);
+  inp.oninput=e=>{S.sc[k]=+e.target.value/sc;l.querySelector('b').textContent=fmt(+e.target.value);scReadout();};
+});
+const SCP={'off':{depth:0,atk:.003,hold:.02,rel:.1},
+ 'classic pump':{depth:.8,atk:.003,hold:.03,rel:.22},
+ 'tight tech house':{depth:.7,atk:.001,hold:.02,rel:.075},
+ 'long pump':{depth:.9,atk:.005,hold:.05,rel:.38},
+ 'click duck':{depth:.6,atk:.001,hold:.005,rel:.035}};
+const scpEl=document.getElementById('scPresets');
+Object.keys(SCP).forEach((k,i)=>{
+  const b=document.createElement('button'); b.className='chip'; b.textContent=k;
+  b.setAttribute('aria-pressed',false);
+  b.onclick=()=>{Object.assign(S.sc,SCP[k]);
+    [...scpEl.children].forEach(c=>c.setAttribute('aria-pressed',c===b));
+    scEl.querySelectorAll('input').forEach(inp=>{
+      const key=inp.dataset.k, def=SCC.find(c=>c[0]===key);
+      inp.value=S.sc[key]*def[6]; inp.parentNode.querySelector('b').textContent=def[5](Math.round(S.sc[key]*def[6]));
+    }); scReadout();};
+  scpEl.appendChild(b);
+});
+function scReadout(){
+  const ms=S.sc.rel*1000, beat=60000/S.bpm;
+  const divs=[['1/32',beat/8],['1/16',beat/4],['1/8',beat/2],['1/4',beat],['1/2',beat*2]];
+  let near=divs.reduce((a,d)=>Math.abs(d[1]-ms)<Math.abs(a[1]-ms)?d:a);
+  document.getElementById('scOut').textContent=Math.round(ms)+' ms  ≈ '+near[0];
+}
+scReadout();
+
+/* phase controls */
+const phSl=document.getElementById('phSl');
+phSl.oninput=e=>{S.phase=+e.target.value;document.getElementById('phV').textContent=S.phase+'°';};
+const phLvl=document.getElementById('phLvl');
+phLvl.oninput=e=>{S.phLvl=+e.target.value/100;document.getElementById('phLvlV').textContent=e.target.value+'%';};
+document.querySelectorAll('[data-ph]').forEach(b=>b.onclick=()=>{
+  S.phase=+b.dataset.ph; phSl.value=S.phase; document.getElementById('phV').textContent=S.phase+'°';
+});
+
+/* bass cards */
+const bg=document.getElementById('bassGrid');
+BASSES.forEach(b=>{
+  const c=document.createElement('div'); c.className='card';
+  c.innerHTML=`<div class="card-top">
+      <button class="play" data-bass="${b.id}" aria-pressed="false" aria-label="Play ${b.name}">▶</button>
+      <h3>${b.name}</h3><span class="tag ${['acid','fm','sub'].includes(b.id)?'alt':''}">${b.tag}</span></div>
+    <div class="mini"><canvas data-mini="${b.id}"></canvas></div>
+    <p class="why">${b.why}</p><p class="do">${b.do}</p>`;
+  bg.appendChild(c);
+  drawMini(c.querySelector('canvas'),b);
+});
+function drawMini(cv,b){
+  const dpr=window.devicePixelRatio||1, w=cv.clientWidth||400, h=54;
+  cv.width=w*dpr; cv.height=h*dpr; const x=cv.getContext('2d'); x.scale(dpr,dpr);
+  x.fillStyle='#1C1A17'; x.fillRect(0,0,w,h);
+  for(let i=0;i<16;i++){x.fillStyle=i%4===0?'rgba(255,255,255,.16)':'rgba(255,255,255,.06)';
+    x.fillRect(i*w/16,0,1,h);}
+  const ps=b.pat.map(n=>n.p), lo=Math.min(...ps), hi=Math.max(...ps), rows=Math.max(1,hi-lo+1);
+  b.pat.forEach(n=>{
+    const col=['#FF4B32','#FF8A2B','#FFC531','#F2EDE0'][Math.floor((Math.floor(n.s)%16)/4)];
+    x.fillStyle=col; x.globalAlpha=.45+.55*(n.v/127);
+    const rh=Math.min(12,(h-8)/rows);
+    x.fillRect(n.s*w/16, 4+(hi-n.p)*rh, Math.max(3,n.l*w/16-1), Math.max(4,rh-2));
+  });
+  x.globalAlpha=1;
+}
+window.addEventListener('resize',()=>{
+  BASSES.forEach(b=>{const cv=document.querySelector(`[data-mini="${b.id}"]`); if(cv) drawMini(cv,b);});
+});
+
+/* frequency table */
+const ft=document.getElementById('freqTable');
+NAMES.forEach((n,i)=>{
+  const rel=(i-9+12)%12; /* semitones above A */
+  const inKey=SCALE.includes(rel);
+  const tr=document.createElement('tr'); if(inKey) tr.className='inkey';
+  const f=oct=>mtof(12*(oct+1)+i).toFixed(1);
+  tr.innerHTML=`<td><b>${n}</b></td><td class="num">${f(0)}</td><td class="num">${f(1)}</td><td class="num">${f(2)}</td>
+    <td>${inKey?'<b style="color:var(--b1)">yes</b>':'—'}</td>`;
+  ft.appendChild(tr);
+});
+function msTable(){
+  const beat=60000/S.bpm, rows=[
+    ['1/32',beat/8,'Click-tight. Reads as compression, not movement.'],
+    ['1/16',beat/4,'Snappy. Tech house and hard groove.'],
+    ['1/8',beat/2,'The pocket. Bass recovers exactly on the offbeat.'],
+    ['1/8 dotted',beat*.75,'Long swell. Works with a rolling bass.'],
+    ['1/4',beat,'Full pump. Never fully recovers — a stylistic choice.']];
+  document.getElementById('msTable').innerHTML=rows.map(r=>
+    `<tr><td><b>${r[0]}</b></td><td class="num">${Math.round(r[1])} ms</td><td>${r[2]}</td></tr>`).join('');
+  document.getElementById('tblBpm').textContent=S.bpm;
+}
+msTable();
+
+/* =========================================================
+   TRANSPORT
+   ========================================================= */
+let timer=null,raf=null,startT=0,barDur=0,barIndex=0,kickTimes=[];
+const stepDur=()=>60/S.bpm/4;
+const nowEl=document.getElementById('nowPlaying');
+document.getElementById('bpm').oninput=e=>{
+  S.bpm=+e.target.value; document.getElementById('bpmv').textContent=S.bpm;
+  msTable(); scReadout(); if(S.mode) restart();
+};
+document.getElementById('vol').oninput=e=>{
+  document.getElementById('volv').textContent=e.target.value;
+  if(master) master.gain.value=(+e.target.value/100)*.9;
+};
+document.getElementById('stopAll').onclick=()=>stop();
+document.addEventListener('keydown',e=>{if(e.key==='Escape')stop();});
+
+function stop(){
+  if(timer)clearTimeout(timer); timer=null;
+  if(raf)cancelAnimationFrame(raf); raf=null;
+  document.querySelectorAll('.play[aria-pressed="true"]').forEach(b=>{b.setAttribute('aria-pressed','false');b.textContent='▶';});
+  if(revSend) revSend.gain.value=0;
+  if(scGain){scGain.gain.cancelScheduledValues(AC.currentTime);scGain.gain.setValueAtTime(1,AC.currentTime);}
+  S.mode=null; nowEl.textContent='nothing playing';
+}
+function restart(){const m=S.mode,b=S.bassId;stop();start(m,b);}
+
+function start(mode,bassId){
+  audio(); stop();
+  S.mode=mode; S.bassId=bassId||null;
+  const btn=mode==='bass'
+    ? document.querySelector(`.play[data-bass="${bassId}"]`)
+    : document.getElementById({kick:'playKick',tune:'playTune',sc:'playSC',phase:'playPhase'}[mode]);
+  if(btn){btn.setAttribute('aria-pressed','true');btn.textContent='■';}
+  nowEl.textContent='▸ '+({kick:'kick lab',tune:'tuning',sc:'sidechain lab',phase:'phase lab'}[mode]
+    || (BASSES.find(b=>b.id===bassId)||{}).name);
+  revSend.gain.value=(mode==='kick')?KP.rumble*.9:0;
+  phHold=0;
+  barDur=16*stepDur();
+  startT=AC.currentTime+.08; barIndex=0; kickTimes=[];
+  schedule(); animate();
+}
+
+function schedule(){
+  const ahead=AC.currentTime+.4;
+  while(startT+barIndex*barDur<ahead){
+    const base=startT+barIndex*barDur;
+    scheduleBar(base);
+    barIndex++;
+  }
+  kickTimes=kickTimes.filter(t=>t>AC.currentTime-2);
+  timer=setTimeout(schedule,80);
+}
+
+function scheduleBar(base){
+  const sd=stepDur();
+  const m=S.mode;
+
+  if(m==='kick'){
+    for(let s=0;s<16;s+=4){const t=base+s*sd;kick(t,KP);kickTimes.push(t);}
+    return;
+  }
+  if(m==='tune'){
+    const TK={f1:55,ratio:2.6,pdec:.06,adec:.60,click:.25,drive:.15};
+    for(let s=0;s<16;s+=4){const t=base+s*sd;kick(t,TK,mtof(S.kickNote));kickTimes.push(t);}
+    /* pure sine on A, sustained THROUGH the kick so you hear the two fundamentals beat */
+    [0,8].forEach(s=>BASS.sub(base+s*sd,mtof(A1),3.8*sd,104));
+    scGain.gain.setValueAtTime(1,base);
+    return;
+  }
+  if(m==='bass'){
+    const b=BASSES.find(x=>x.id===S.bassId);
+    for(let s=0;s<16;s+=4){const t=base+s*sd;kick(t,KICK_PRESETS['909 house · A1']);kickTimes.push(t);}
+    b.pat.forEach(n=>{
+      const f=mtof(b.root+n.p);
+      const t=base+n.s*sd, d=n.l*sd;
+      if(b.voice==='acid') BASS.acid(t,f,d,n.v,n.sl?f*0.62:null);
+      else if(b.voice==='glide') BASS.glide(t,f,d,n.v,f*1.7);
+      else BASS[b.voice](t,f,d,n.v);
+    });
+    duck(base,sd,.5);
+    return;
+  }
+  if(m==='sc'){
+    for(let s=0;s<16;s+=4){const t=base+s*sd;kick(t,KICK_PRESETS['909 house · A1']);kickTimes.push(t);}
+    for(let s=0;s<16;s++) BASS.rolling(base+s*sd,mtof(A1+(s%8<4?0:-2)),sd*.9,100);
+    duck(base,sd);
+    return;
+  }
+  if(m==='phase'){
+    const K={f1:55,ratio:2.0,pdec:.03,adec:.55,click:.12,drive:.12};
+    for(let s=0;s<16;s+=4){
+      const t=base+s*sd; kick(t,K,55); kickTimes.push(t);
+      const off=(S.phase/360)/55;
+      const o=AC.createOscillator(); o.type='sine'; o.frequency.value=55;
+      const g=AC.createGain();
+      g.gain.setValueAtTime(0,t+off);
+      g.gain.linearRampToValueAtTime(.55*S.phLvl,t+off+.004);
+      g.gain.setValueAtTime(.55*S.phLvl,t+off+.30);
+      g.gain.exponentialRampToValueAtTime(.0001,t+off+.42);
+      o.connect(g); g.connect(bassBus);
+      o.start(t+off); o.stop(t+off+.5);
+    }
+    return;
+  }
+}
+function duck(base,sd,scale){
+  const d=S.sc.depth*(scale===undefined?1:scale);
+  if(d<=0.001){scGain.gain.setValueAtTime(1,base);return;}
+  for(let s=0;s<16;s+=4){
+    const t=base+s*sd, g=scGain.gain;
+    g.setValueAtTime(1,t);
+    g.linearRampToValueAtTime(1-d,t+S.sc.atk);
+    g.setValueAtTime(1-d,t+S.sc.atk+S.sc.hold);
+    g.setTargetAtTime(1,t+S.sc.atk+S.sc.hold,Math.max(.008,S.sc.rel/3));
+  }
+}
+
+/* =========================================================
+   VISUALS
+   ========================================================= */
+const cvs={};
+function ctx(id,h){
+  const cv=document.getElementById(id);
+  if(!cv) return null;
+  const dpr=window.devicePixelRatio||1, w=cv.clientWidth||600;
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w,h};
+}
+let td=null,fd=null,phHold=0;
+function animate(){
+  if(!td){td=new Float32Array(ana.fftSize);fd=new Uint8Array(ana.frequencyBinCount);}
+  function frame(){
+    if(!S.mode){return;}
+    ana.getFloatTimeDomainData(td); ana.getByteFrequencyData(fd);
+    if(S.mode==='kick') drawKickScope();
+    else if(S.mode==='tune') drawWave('tuneScope',130);
+    else if(S.mode==='sc') drawSC();
+    else if(S.mode==='phase') drawPhase();
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+function drawSpectrum(c,w,h){
+  const nyq=AC.sampleRate/2, bins=fd.length;
+  const f0=20,f1=1000;
+  c.save();
+  for(let x=0;x<w;x++){
+    const f=f0*Math.pow(f1/f0,x/w);
+    const bin=Math.min(bins-1,Math.round(f/nyq*bins));
+    const v=fd[bin]/255;
+    c.fillStyle='rgba(255,138,43,'+(0.10+v*0.30)+')';
+    c.fillRect(x,h-v*h,1,v*h);
+  }
+  /* octave markers */
+  c.font='9px JetBrains Mono, monospace'; c.fillStyle='rgba(242,237,224,.28)';
+  [30,55,110,220,440,880].forEach(f=>{
+    const x=w*Math.log(f/f0)/Math.log(f1/f0);
+    c.fillRect(x,0,1,h); c.fillText(f+' Hz',x+3,h-5);
+  });
+  c.restore();
+}
+function drawKickScope(){
+  const o=ctx('kickScope',190); if(!o) return; const {c,w,h}=o;
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  drawSpectrum(c,w,h);
+  /* time domain */
+  c.strokeStyle='#FF4B32'; c.lineWidth=1.6; c.beginPath();
+  for(let i=0;i<td.length;i++){
+    const x=i/td.length*w, y=h/2-td[i]*h*.44;
+    i?c.lineTo(x,y):c.moveTo(x,y);
+  }
+  c.stroke();
+}
+function drawWave(id,h0){
+  const o=ctx(id,h0); if(!o) return; const {c,w,h}=o;
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  c.strokeStyle='rgba(255,255,255,.08)'; c.beginPath(); c.moveTo(0,h/2); c.lineTo(w,h/2); c.stroke();
+  c.strokeStyle='#FFC531'; c.lineWidth=1.6; c.beginPath();
+  for(let i=0;i<td.length;i++){const x=i/td.length*w,y=h/2-td[i]*h*.44;i?c.lineTo(x,y):c.moveTo(x,y);}
+  c.stroke();
+}
+function drawPhase(){
+  const o=ctx('phScope',200); if(!o) return; const {c,w,h}=o;
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  /* peak meter with hold + slow release, so the reading is stable enough to compare */
+  let peak=0; for(let i=0;i<td.length;i++) peak=Math.max(peak,Math.abs(td[i]));
+  phHold=Math.max(peak,phHold*0.965);
+  const db=20*Math.log10(Math.max(phHold,1e-5));
+  document.getElementById('phOut').textContent=(db>-99?db.toFixed(1):'-inf')+' dB';
+  /* meter bar */
+  const norm=Math.min(1,Math.max(0,(db+30)/30));
+  c.fillStyle='rgba(255,255,255,.07)'; c.fillRect(0,h-16,w,16);
+  c.fillStyle=norm>.75?'#FF4B32':(norm>.45?'#FFC531':'#3FD0C9');
+  c.fillRect(0,h-16,w*norm,16);
+  c.font='10px JetBrains Mono, monospace'; c.fillStyle='rgba(28,26,23,.9)';
+  c.fillText('PEAK',6,h-5);
+  /* waveform */
+  c.strokeStyle='#3FD0C9'; c.lineWidth=1.8; c.beginPath();
+  for(let i=0;i<td.length;i++){const x=i/td.length*w,y=(h-20)/2-td[i]*(h-20)*.44;i?c.lineTo(x,y):c.moveTo(x,y);}
+  c.stroke();
+  c.strokeStyle='rgba(255,255,255,.08)'; c.beginPath(); c.moveTo(0,(h-20)/2); c.lineTo(w,(h-20)/2); c.stroke();
+}
+function drawSC(){
+  const o=ctx('scScope',170); if(!o) return; const {c,w,h}=o;
+  c.fillStyle='#1C1A17'; c.fillRect(0,0,w,h);
+  const sd=stepDur(), bar=16*sd;
+  for(let i=0;i<16;i++){c.fillStyle=i%4===0?'rgba(255,255,255,.16)':'rgba(255,255,255,.05)';c.fillRect(i*w/16,0,1,h);}
+  /* envelope curve over one bar */
+  c.strokeStyle='#F2EDE0'; c.lineWidth=2; c.beginPath();
+  for(let x=0;x<w;x++){
+    const tt=x/w*bar;
+    const since=tt%(bar/4);
+    let g=1;
+    if(S.sc.depth>0){
+      if(since<S.sc.atk) g=1-S.sc.depth*(since/Math.max(S.sc.atk,1e-4));
+      else if(since<S.sc.atk+S.sc.hold) g=1-S.sc.depth;
+      else g=1-S.sc.depth*Math.exp(-(since-S.sc.atk-S.sc.hold)/Math.max(S.sc.rel/3,1e-4));
+    }
+    const y=h-8-g*(h-30);
+    x?c.lineTo(x,y):c.moveTo(x,y);
+  }
+  c.stroke();
+  /* kick markers */
+  c.fillStyle='#FF4B32';
+  for(let i=0;i<4;i++) c.fillRect(i*w/4,0,2,h);
+  c.font='9px JetBrains Mono, monospace'; c.fillStyle='rgba(242,237,224,.4)';
+  c.fillText('BASS GAIN OVER ONE BAR · red = kick',8,h-6);
+}
+
+/* =========================================================
+   PLAY BUTTONS
+   ========================================================= */
+function bind(id,mode){document.getElementById(id).onclick=()=>{S.mode===mode?stop():start(mode);};}
+bind('playKick','kick'); bind('playTune','tune'); bind('playSC','sc'); bind('playPhase','phase');
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-bass]'); if(!b) return;
+  const id=b.dataset.bass;
+  (S.mode==='bass'&&S.bassId===id)?stop():start('bass',id);
+});
+</script>

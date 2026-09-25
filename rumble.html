@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumble / Low-end laboratory — 24 sounds, one-track racks & creative recipes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E2DED2;--panel:#F2EFE6;--panel-2:#EAE5D8;
+  --ink:#191713;--ink-2:#635C50;--ink-3:#8C8474;--line:#C4BDAC;
+  --lane:#1C1A17;
+  --b1:#FF4B32;--b2:#FF8A2B;--b3:#FFC531;--b4:#F2EDE0;--cy:#3FD0C9;--vi:#A78BFA;--gr:#5FBF52;
+  --display:'Bricolage Grotesque','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:repeating-linear-gradient(90deg,rgba(25,23,19,.05) 0 1px,transparent 1px 100%);background-size:120px 100%}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;margin:0;letter-spacing:-.02em;line-height:1.05}
+p{margin:0 0 12px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--b1);outline-offset:2px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.hero{padding:52px 0 26px;border-bottom:2px solid var(--ink)}
+.hero h1{font-size:clamp(44px,10.5vw,116px);line-height:.84;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--b1)}
+.hero .sub{max-width:62ch;margin-top:20px;font-size:17px;color:var(--ink-2)}
+.hero .sub strong{color:var(--ink);font-weight:600}
+.hero .map{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:22px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.hero .map a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:1px}
+.hero .map a:hover{color:var(--b1);border-color:var(--b1)}
+.herogrid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:end}
+.herowave{background:var(--lane);border-radius:6px;padding:12px;position:relative}
+.herowave canvas{width:100%;height:190px;display:block}
+.herowave .cap{position:absolute;left:14px;bottom:10px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:#A9A08C;text-transform:uppercase}
+.herowave .cap b{color:var(--b3)}
+@media (max-width:860px){.herogrid{grid-template-columns:1fr}}
+
+/* transport */
+.transport{position:sticky;top:0;z-index:95;background:var(--ink);color:var(--b4);border-bottom:2px solid var(--ink)}
+.transport .wrap{display:flex;align-items:center;gap:10px;padding:10px 20px;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--b1);color:#fff;border:0;border-radius:4px;padding:9px 16px;cursor:pointer;min-width:84px}
+.tbtn.stop{background:var(--b4);color:var(--ink)}
+.tbtn:hover{filter:brightness(1.08)}
+.knob{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#A9A08C}
+.knob b{color:var(--b4);font-size:12px;min-width:30px}
+.knob input[type=range]{width:90px;accent-color:var(--b1)}
+.knob select,.transport select{font-family:var(--mono);font-size:12px;background:#2A2723;color:var(--b4);border:1px solid #4A453C;border-radius:4px;padding:6px 8px}
+.tnow{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:#A9A08C}
+.tnow b{color:var(--b3)}
+.tog{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;border:1px solid #4A453C;color:#A9A08C;background:transparent;border-radius:4px;padding:7px 9px;cursor:pointer}
+.tog.on{border-color:var(--b3);color:var(--b3)}
+.lit{display:flex;gap:3px}
+.lit i{width:9px;height:9px;border-radius:2px;background:#3A362F}
+.lit i.beat{background:#5A554B}
+.lit i.on{background:var(--b1)}
+
+/* sections */
+.sec{padding:48px 0 8px;border-bottom:1px solid var(--line)}
+.sechead{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:end;margin-bottom:20px}
+.sechead .n{font-family:var(--display);font-weight:800;font-size:clamp(50px,7vw,86px);line-height:.8;color:var(--b1)}
+.sechead h2{font-size:clamp(26px,3.6vw,44px)}
+.sechead p{color:var(--ink-2);margin:8px 0 0;max-width:70ch;font-size:15.5px}
+.sechead p b{color:var(--ink);font-weight:600}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:18px}
+.panel h3{font-size:19px;margin-bottom:8px}
+.panel > p{max-width:78ch}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.btn{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--b4);border:1px solid var(--ink);border-radius:4px;padding:8px 13px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.hot{background:var(--b1);border-color:var(--b1);color:#fff}
+.btn:hover{filter:brightness(1.12)}
+.btn.sm{padding:6px 9px;font-size:10px}
+.btn[disabled]{opacity:.5;cursor:wait}
+.ctrl{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);display:block}
+.ctrl .r{display:flex;align-items:center;gap:7px;margin-top:3px}
+.ctrl input[type=range]{flex:1;min-width:60px;accent-color:var(--b1)}
+.ctrl b{color:var(--ink);font-size:10.5px;min-width:58px;text-align:right}
+.ctrl select{font-family:var(--mono);font-size:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:6px 8px;color:var(--ink)}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:10px 0 12px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-top:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:5px}
+
+/* lab */
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:18px;align-items:start}
+@media (max-width:980px){.lab{grid-template-columns:1fr}}
+.cgroup{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.cgroup:first-child{border-top:0;margin-top:0;padding-top:0}
+.cgroup h4{font-size:15px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.cgroup h4 span{font-family:var(--body);font-weight:400;font-size:12.5px;color:var(--ink-3);letter-spacing:0}
+.scope{background:var(--lane);border-radius:6px;padding:10px;margin-bottom:12px}
+.scope canvas{width:100%;display:block}
+.scope .st{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#A9A08C;margin-bottom:6px}
+.scope .st b{color:var(--b4)}
+.modes{display:flex;flex-wrap:wrap;gap:6px}
+.modes button{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:7px 10px;cursor:pointer;color:var(--ink)}
+.modes button.on{background:var(--ink);color:var(--b4);border-color:var(--ink)}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:10px 0}
+.readout div{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:8px 10px}
+.readout .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.readout .v{font-family:var(--display);font-weight:800;font-size:20px;line-height:1.1}
+.readout .v small{font-family:var(--mono);font-size:10px;font-weight:400;color:var(--ink-3)}
+.note{font-size:13px;color:var(--ink-2)}
+
+/* preset + type cards */
+.pgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:11px;margin-top:6px}
+.pg{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:11px 12px;display:flex;flex-direction:column;gap:6px;text-align:left;color:var(--ink);font:inherit}
+button.pg{cursor:pointer}
+.pg:hover{border-color:var(--ink)}
+.pg.on{border-color:var(--b1);box-shadow:inset 0 0 0 1px var(--b1)}
+.pg h4{font-size:16px}
+.pg .rn{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--b1);letter-spacing:.05em}
+.pg p{font-size:13px;color:var(--ink-2);margin:0;line-height:1.45}
+.pg .meta{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
+.pg .chain{font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--panel);border:1px dashed var(--line);border-radius:4px;padding:6px 8px;line-height:1.5}
+.pg .foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:4px}
+
+/* chain diagram */
+.chainwrap{overflow-x:auto;background:var(--lane);border-radius:6px;padding:14px}
+.chainwrap svg{display:block;min-width:820px;width:100%;height:auto}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:860px){.three{grid-template-columns:1fr}}
+.three .panel{margin-bottom:0}
+.three h3 small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--b1);text-transform:uppercase;font-weight:700;margin-bottom:4px}
+
+/* tables + prose */
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--panel-2);border-bottom:1px solid var(--ink)}
+td.num{font-family:var(--mono);font-weight:700;white-space:nowrap}
+tr:hover td{background:var(--panel-2)}
+tr.hl td{background:#FBE3C9}
+tr.hl td.num:first-child{color:var(--b1)}
+.tablewrap{border:1px solid var(--line);border-radius:6px;overflow:hidden;overflow-x:auto;margin-bottom:20px;background:var(--panel)}
+.tablewrap table{min-width:640px}
+.callout{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--ink);color:var(--b4);border-radius:6px;padding:12px 14px;margin:0 0 18px}
+.callout b{color:var(--b3)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.two .panel{margin-bottom:18px}
+.pill{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:2px 6px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-2)}
+.pill.hot{background:var(--b1);border-color:var(--b1);color:#fff}
+.pill.ok{background:var(--gr);border-color:var(--gr);color:#fff}
+.pill.warn{background:var(--b3);border-color:var(--b3);color:var(--ink)}
+
+/* steps */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tabs button{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:transparent;border:1px solid var(--ink);color:var(--ink);border-radius:4px;padding:8px 12px;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--b4)}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:38px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.steps li:first-child{border-top:0}
+.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--display);font-weight:800;font-size:24px;color:var(--b1);line-height:1}
+.steps h4{font-size:16px;margin-bottom:4px}
+.steps p{font-size:14px;color:var(--ink-2);margin:0 0 6px;max-width:80ch}
+.steps .set{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.steps .set span{font-family:var(--mono);font-size:11px;background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:2px 7px;color:var(--ink)}
+.steps .set span i{font-style:normal;color:var(--ink-3)}
+.why{font-size:13px;color:var(--ink-3);font-style:italic}
+
+.checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:7px}
+.checks label{display:flex;gap:9px;align-items:flex-start;background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:9px 10px;cursor:pointer;font-size:13.5px}
+.checks input{margin-top:3px;accent-color:var(--b1)}
+.checks label.done{opacity:.6;text-decoration:line-through}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.chip{font-family:var(--mono);font-size:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:6px 11px;cursor:pointer;color:var(--ink)}
+.chip:hover{border-color:var(--ink)}
+.chip.copied{background:var(--gr);border-color:var(--gr);color:#fff}
+.chip.neg{text-decoration:line-through;color:var(--ink-3);cursor:default}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--b4);font-family:var(--mono);font-size:12px;padding:9px 14px;border-radius:4px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:200}
+.toast.show{opacity:1}
+.moves{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.move{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px}
+.move h4{font-size:15px;margin-bottom:4px}
+.move .when{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--b1);font-weight:700;margin-bottom:4px}
+.move p{font-size:13px;color:var(--ink-2);margin:0}
+footer{padding:36px 0 60px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink-3)}
+footer b{color:var(--ink)}
+.bar16{display:grid;grid-template-columns:repeat(16,1fr);gap:3px;margin-top:8px}
+.bar16 i{height:8px;border-radius:2px;background:#DDD7C8}
+.bar16 i.k{background:var(--ink)}
+.bar16 i.r{background:var(--b2)}
+</style>
+<style>
+/* Expanded field edition: a studio instrument above a readable field guide. */
+:root{--acid:#D5F568;--ink-3:#6F6759}
+body{background-color:#E9E5DA}
+.hero{max-width:none;background:#171C1B;color:#F4F0E6;padding:52px max(24px,calc((100vw - 1240px)/2)) 32px;border:0;overflow:hidden;position:relative}
+.hero:before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 119px,#ffffff05 119px 120px)}
+.hero .eyebrow{color:var(--acid)}
+.hero h1{font-size:clamp(66px,11vw,144px);letter-spacing:-.065em;margin-top:22px}
+.hero h1 em{color:var(--acid)}
+.hero .sub{color:#B7C0B6;max-width:58ch;font-size:17px}
+.hero .sub strong{color:#F4F0E6}
+.hero .map{gap:12px 20px;margin-top:30px}
+.hero .map a{color:#D1D6C9;border-color:#586151}
+.hero .map a:hover{color:var(--acid)}
+.hero .herowave{border:1px solid #48533E;background:#101512;padding:22px 16px;margin-bottom:12px}
+.hero .herowave canvas{height:190px}
+.scope-label{display:flex;justify-content:space-between;gap:16px;font:10px var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--acid);margin-bottom:20px}
+.hero .herowave .cap{position:static;padding-top:14px;border-top:1px solid #48533E}
+.hero-actions{display:flex;flex-wrap:wrap;gap:9px;margin:24px 0}
+.hero-actions a{padding:12px 18px;text-decoration:none;border:1px solid #6C7863;font:700 11px var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.hero-actions a:first-child{background:var(--acid);color:#171C1B;border-color:var(--acid)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:25px;border-top:1px solid #48533E;padding-top:20px}
+.hero-stats b{display:block;font:800 32px var(--display);color:#F4F0E6}.hero-stats span{font:10px var(--mono);color:#AAB6A5;text-transform:uppercase}
+.transport{background:#242B25;border-bottom:3px solid var(--acid)}
+.transport .wrap{max-width:1440px}.transport .tbtn{background:var(--acid);color:#171C1B}
+.sec{scroll-margin-top:140px;padding-top:60px}.sechead{margin-bottom:26px}.sechead .n{font-size:50px;color:#8F8D7A;align-self:start}
+.panel{padding:22px;border-radius:3px}.pg{border-radius:3px!important;padding:20px!important;position:relative}.pg h4{font-size:23px!important;line-height:1.05!important;margin:12px 0!important}
+.pg.on{box-shadow:inset 0 4px var(--b1)}.pg .chain{line-height:1.6!important}.pg .foot{gap:8px;flex-wrap:wrap}
+.lab-actions{display:flex;flex-wrap:wrap;gap:8px}.lab-actions .btn{min-height:38px}
+.workbench{background:#1E2620;color:#EEEFE5;padding:24px;margin:18px 0}.workbench h3{font-size:25px;margin:6px 0 12px}.workbench .note{color:#B8C3B3}.workbench .eyebrow{color:var(--acid)}
+.sequence{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:5px;margin:16px 0}.sequence button{height:58px;min-width:0;padding:0;border:1px solid #586151;border-radius:3px;background:#303A2C;color:#B8C3B3;font:11px var(--mono);cursor:pointer}.sequence button:nth-child(4n+1){border-top:4px solid #F0EBDD}.sequence button[data-level="1"]{background:#788D48;color:#FFF}.sequence button[data-level="2"]{background:var(--acid);color:#17200F}.sequence button span{display:block;font-size:16px;margin-top:4px}
+.workbench .ctrl{color:#CDD6C5}.workbench .ctrl b{color:var(--acid)}.workbench input{accent-color:var(--acid)}
+.workbench .btn{border-color:#829572}.workbench .btn.hot{background:var(--acid);color:#17200F;border-color:var(--acid)}
+.browser-note{font-size:12px;color:var(--ink-2);border-left:3px solid var(--b1);padding-left:12px;margin-top:12px}
+.library-tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;align-items:center}.library-tools input,.library-tools select{font:13px var(--body);padding:12px;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:3px}.library-tools input{flex:1;min-width:180px}.library-tools output{font:11px var(--mono)}
+.preview-bars{display:flex;gap:3px;height:20px;align-items:end;margin-top:15px}.preview-bars i{flex:1;background:var(--b1);min-height:3px;opacity:.65}.preview-bars i:nth-child(4n+1){background:var(--ink)}
+.rack-intro{background:var(--acid);padding:28px;display:grid;grid-template-columns:1.2fr 1fr;gap:28px;margin-bottom:20px}.rack-intro h3{font-size:clamp(30px,4vw,48px);margin:10px 0}.rack-intro p{max-width:65ch}
+.routing{background:#202720;color:#E7ECD9;padding:22px;font:12px/1.9 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;border-left:4px solid var(--acid);margin:16px 0}
+.rack-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}.rack-picker button{background:var(--panel);border:1px solid var(--line);padding:16px;text-align:left;font:700 17px var(--display);cursor:pointer;color:var(--ink)}.rack-picker small{display:block;font:11px var(--body);margin-top:8px}.rack-picker button[aria-pressed=true]{background:#232C24;color:var(--acid);border-color:#232C24}
+.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}.macro-grid div{padding:16px;background:var(--panel);border:1px solid var(--line)}.macro-grid b{display:block;font:700 13px var(--mono);margin-bottom:6px}.macro-grid p{font-size:13px;color:var(--ink-2);margin:0}
+.experiment{border-top:4px solid var(--b1)}.experiment .eyebrow{color:var(--b1)}.experiment h3{font-size:27px;margin:12px 0}.experiment p{font-size:14px}.experiment details{border-top:1px solid var(--line);padding-top:12px;margin-top:14px}.experiment summary{cursor:pointer;font:700 11px var(--mono);text-transform:uppercase}.experiment ol{padding-left:20px;font-size:14px}.experiment li{padding:5px 0}
+.challenge{background:#232C24;color:#E7ECD9;padding:26px;margin:24px 0}.challenge h3{color:var(--acid);margin-bottom:10px;font-size:26px}.challenge p{max-width:80ch}.challenge .btn{background:var(--acid);color:#17200F;border-color:var(--acid)}
+.section-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}.section-nav a{font:11px var(--mono);padding:8px 10px;border:1px solid var(--line);text-decoration:none}
+.source-links{font-size:12px;line-height:1.8;color:var(--ink-2)}.source-links a{text-decoration:underline;text-underline-offset:3px}
+.pgs{grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr))}.herogrid>*{min-width:0}.sequence button.playing{box-shadow:0 0 0 2px #FFF;transform:translateY(-2px)}.sec{scroll-margin-top:calc(var(--transport-height,160px) + 20px)}
+[hidden]{display:none!important}button,input,select{touch-action:manipulation}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #C34C1B;outline-offset:3px}
+@media(max-width:860px){.hero{padding:32px 20px}.rack-intro{grid-template-columns:1fr}.rack-picker,.macro-grid{grid-template-columns:repeat(2,1fr)}.transport .wrap{gap:7px}.transport .tnow{display:none}.hero-stats{margin-bottom:8px}.sec{scroll-margin-top:190px}}
+@media(max-width:540px){.wrap{padding-left:14px;padding-right:14px}.panel,.workbench{padding:16px}.transport .wrap{padding:8px 12px}.knob input[type=range]{width:65px}.transport select{max-width:135px}.knob{font-size:9px}.transport .tog{padding:8px 6px}.sequence{grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}.sequence button{height:48px}.sechead{gap:12px}.sechead .n{font-size:33px}.macro-grid{grid-template-columns:1fr 1fr}.lab{gap:8px}.hero h1{font-size:80px}.hero-stats b{font-size:27px}}
+@media print{.transport,.hero-actions,.lab-actions,.sequence,button,.library-tools,.toast{display:none!important}.hero{background:white;color:black}.hero h1 em,.hero .sub,.hero .sub strong{color:black}.sec{break-before:auto}.panel,.pg,.experiment{break-inside:avoid}.rack-picker{display:none}.scope,.herowave{display:none}.wrap{max-width:none}.hero .map{display:none}}
+</style>
+</head>
+<body>
+<header class="wrap hero">
+  <div class="herogrid">
+    <div>
+      <div class="eyebrow">Field Guide 17 / Expanded edition / Low-end laboratory</div>
+      <h1>Rumble<br><em>kick</em></h1>
+      <p class="sub"><strong>Make the space between kicks your signature.</strong> From subterranean fog to elastic subs, broken machinery and short, violent rooms. Play it. Pull it apart. Build the whole thing on one Ableton track.</p>
+      <div class="hero-actions"><a href="#lab">Enter the laboratory ↗</a><a href="#racks">Build a one-track rack ↗</a></div>
+      <nav class="map" aria-label="Sections">
+        <a href="#anatomy">Anatomy</a><a href="#lab">Lab</a><a href="#types">24 sound studies</a><a href="#racks">One-track racks</a><a href="#experiments">Strange ideas</a><a href="#key">Tuning</a><a href="#length">Timing</a><a href="#ableton">Ableton</a><a href="#serum">Serum 2</a><a href="#splice">Splice</a><a href="#fix">Fix it</a><a href="#arrange">Arrangement</a>
+      </nav>
+    </div>
+    <div class="herowave">
+      <div class="scope-label"><span>Pressure / movement / space</span><span>01 beat</span></div>
+      <canvas id="heroCv" aria-label="One beat of the current rumble: kick, pump and tail"></canvas>
+      <div class="cap">One beat · <b id="heroCap">press play</b></div>
+      <div class="hero-stats"><div><b>24</b><span>Sound studies</span></div><div><b>10</b><span>Motion engines</span></div><div><b>01</b><span>Ableton track</span></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="transport" role="region" aria-label="Transport">
+  <div class="wrap">
+    <button class="tbtn" id="playBtn" aria-pressed="false">Play</button>
+    <label class="knob">BPM <input type="range" id="bpm" min="118" max="165" step="1" value="132"><b id="bpmV">132</b></label>
+    <label class="knob">Key <select id="keySel"></select></label>
+    <label class="knob">Kick on <select id="tuneSel"><option value="0">Root</option><option value="7">Fifth</option><option value="5">Fourth</option></select></label>
+    <label class="knob">Preset <select id="presetSel"></select></label>
+    <button class="tog" id="soloKick" aria-pressed="false">Kick only</button>
+    <button class="tog" id="soloRum" aria-pressed="false">Rumble only</button>
+    <label class="knob">Vol <input type="range" id="vol" min="0" max="1" step=".01" value=".7"></label>
+    <div class="lit" id="lit" aria-hidden="true"></div>
+    <div class="tnow">Kick <b id="kickNote">–</b> · <b id="kickHz">–</b></div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- 01 ANATOMY -->
+<section class="sec" id="anatomy">
+  <div class="sechead"><div class="n">01</div><div><h2>What a rumble actually is</h2>
+  <p>A classic rumble is <b>a kick’s processed echo</b>, shaped into low-end movement. But a played sub, a delayed tom or a chopped texture can do the same job. Reverb resonances and distortion can change the perceived pitch: tune the source, then listen to the finished tail. The diagram shows the classic parallel version.</p></div></div>
+
+  <div class="chainwrap" role="img" aria-label="Signal chain: kick splits to a dry output and a rumble send. The send passes pre-delay, reverb at 100% wet, distortion, high-pass and low-pass filters, mono, then a pump driven by the kick, into the rumble output.">
+    <svg viewBox="0 0 1000 230" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, monospace">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#A9A08C"/></marker></defs>
+      <g font-size="11" text-anchor="middle">
+        <rect x="10" y="85" width="88" height="54" rx="4" fill="#FF4B32"/><text x="54" y="109" fill="#fff" font-weight="700">KICK</text><text x="54" y="125" fill="#fff" font-size="9.5">tuned</text>
+        <path d="M98 112 H130 V40 H835" stroke="#A9A08C" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+        <text x="470" y="32" fill="#A9A08C" font-size="10">dry kick path · stays punchy and unprocessed</text>
+        <rect x="845" y="16" width="140" height="48" rx="4" fill="#F2EDE0"/><text x="915" y="45" fill="#191713" font-weight="700">KICK OUT</text>
+        <path d="M130 112 H150" stroke="#A9A08C" stroke-width="1.5" marker-end="url(#ar)"/>
+        <g>
+          <rect x="152" y="92" width="76" height="40" rx="4" fill="#2A2723" stroke="#4A453C"/><text x="190" y="110" fill="#F2EDE0">SEND</text><text x="190" y="124" fill="#A9A08C" font-size="9">−6…0 dB</text>
+          <path d="M228 112 H244" stroke="#A9A08C" stroke-width="1.5" marker-end="url(#ar)"/>
+          <rect x="246" y="92" width="86" height="40" rx="4" fill="#2A2723" stroke="#4A453C"/><text x="289" y="110" fill="#F2EDE0">PRE-DELAY</text><text x="289" y="124" fill="#A9A08C" font-size="9">5–25 ms</text>
+          <path d="M332 112 H348" stroke="#A9A08C" stroke-width="1.5" marker-end="url(#ar)"/>
+          <rect x="350" y="84" width="100" height="56" rx="4" fill="#3FD0C9"/><text x="400" y="106" fill="#191713" font-weight="700">REVERB</text><text x="400" y="121" fill="#191713" font-size="9.5">100% wet</text><text x="400" y="133" fill="#191713" font-size="9">1.5–4.5 s</text>
+          <path d="M450 112 H466" stroke="#A9A08C" stroke-width="1.5" marker-end="url(#ar)"/>
+          <rect x="468" y="84" width="92" height="56" rx="4" fill="#FF8A2B"/><text x="514" y="106" fill="#191713" font-weight="700">DRIVE</text><text x="514" y="121" fill="#191713" font-size="9.5">harmonics</text><text x="514" y="133" fill="#191713" font-size="9">so it translates</text>
+          <path d="M560 112 H576" stroke="#A9A08C" stroke-width="1.5" marker-end="url(#ar)"/>
+          <rect x="578" y="84" width="92" height="56" rx="4" fill="#FFC531"/><text x="624" y="106" fill="#191713" font-weight="700">HP + LP</text><text x="624" y="121" fill="#191713" font-size="9.5">30 Hz / 250 Hz</text><text x="624" y="133" fill="#191713" font-size="9">keep it dark</text>
+          <path d="M670 112 H686" stroke="#A9A08C" stroke-width="1.5" marker-end="url(#ar)"/>
+          <rect x="688" y="92" width="64" height="40" rx="4" fill="#2A2723" stroke="#4A453C"/><text x="720" y="110" fill="#F2EDE0">MONO</text><text x="720" y="124" fill="#A9A08C" font-size="9">&lt;120 Hz</text>
+          <path d="M752 112 H768" stroke="#A9A08C" stroke-width="1.5" marker-end="url(#ar)"/>
+          <rect x="770" y="84" width="72" height="56" rx="4" fill="#A78BFA"/><text x="806" y="106" fill="#191713" font-weight="700">PUMP</text><text x="806" y="121" fill="#191713" font-size="9.5">sidechain</text><text x="806" y="133" fill="#191713" font-size="9">from kick</text>
+          <path d="M842 112 H843" stroke="#A9A08C" stroke-width="1.5" marker-end="url(#ar)"/>
+          <rect x="845" y="88" width="140" height="48" rx="4" fill="#F2EDE0"/><text x="915" y="117" fill="#191713" font-weight="700">RUMBLE OUT</text>
+        </g>
+        <path d="M54 139 V200 H806 V144" stroke="#A78BFA" stroke-width="1.5" stroke-dasharray="5 4" fill="none" marker-end="url(#ar)"/>
+        <text x="430" y="218" fill="#A78BFA" font-size="10">sidechain trigger · rumble ducks on every kick, swells back before the next one</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="three" style="margin-top:14px">
+    <div class="panel"><h3><small>Job 1</small>A focused kick</h3><p>A stable kick body can give the low end a tonal anchor. Start around a third to half a beat in length, then shorten or extend it by ear to leave room for the tail.</p></div>
+    <div class="panel"><h3><small>Job 2</small>A useful tail</h3><p>Reverb stretches the source; drive adds harmonics that can help it translate. Filters shape its role, but low-mid buildup can still need a targeted cut or a quieter tail.</p></div>
+    <div class="panel"><h3><small>Job 3</small>The pump</h3><p class="note">Sidechain carves space for the kick transient, then lets the tail swell back in. The swell between kicks is the groove. How fast it returns sets the feel, from floaty to galloping.</p></div>
+  </div>
+</section>
+
+<!-- 02 LAB -->
+<section class="sec" id="lab">
+  <div class="sechead"><div class="n">02</div><div><h2>Rumble lab</h2>
+  <p>A real rumble engine running in your browser: synthesized kick, generated reverb, waveshaper, filters and a kick-triggered pump. <b>Change one control at a time</b> while it plays, and watch the beat drawing redraw. When it sounds right, render it to WAV and drop it into Ableton.</p></div></div>
+
+  <div class="lab">
+    <div class="panel">
+      <div class="cgroup">
+        <h4>Rumble style <span>How the tail moves inside the beat</span></h4>
+        <div class="modes" id="modes" role="group" aria-label="Rumble style"></div>
+        <p class="note" id="modeDesc" style="margin:8px 0 0"></p>
+      </div>
+      <div id="ctrlGroups"></div>
+    </div>
+
+    <div>
+      <div class="scope">
+        <div class="st"><span>First beat / schematic envelope</span><span><b id="beatMs">–</b></span></div>
+        <canvas id="beatCv" height="210"></canvas>
+        <div class="legend" style="color:#A9A08C">
+          <span><i style="background:#F2EDE0"></i>Kick level</span>
+          <span><i style="background:#FFC531"></i>Kick pitch drop</span>
+          <span><i style="background:#A78BFA"></i>Pump (duck)</span>
+          <span><i style="background:#FF4B32"></i>Rumble energy</span>
+        </div>
+      </div>
+      <div class="scope">
+        <div class="st"><span>Live spectrum 20–800 Hz</span><span>Peak <b id="peakHz">–</b></span></div>
+        <canvas id="specCv" height="170"></canvas>
+      </div>
+      <div class="readout" id="readout"></div>
+      <div class="panel">
+        <h3>Render a loop</h3>
+        <p class="note">Four bars, with a full reverb warm-up before capture. Stems use the mix’s gain and sum back to it within 16-bit rounding. Keep the settings identical between exports. Check the loop join in your DAW; add tiny fades if needed.</p>
+        <div class="row">
+          <button class="btn hot" data-render="mix">Render mix WAV</button>
+          <button class="btn" data-render="rumble">Rumble stem</button>
+          <button class="btn ghost" data-render="kick">Kick stem</button>
+        </div>
+        <p class="note" id="renderMsg" style="margin:0" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="workbench">
+    <div class="eyebrow">Pattern workshop / one bar / 16 steps</div><h3>Give the floor a different gait.</h3>
+    <p class="note">A separate tuned sub feeds the rumble chain. Click each step: off → soft → accent → off. The white markers are the four kick positions. Your pattern plays only in <b>Pattern</b> mode; press Enable pattern to hear it. Swing delays alternate sixteenths.</p>
+    <div id="sequence" class="sequence" role="group" aria-label="Editable rumble sub pattern"></div>
+    <div class="ctrls"><label class="ctrl">Swing<span class="r"><input id="swing" type="range" min="0" max="45" value="0"><b id="swingV">0%</b></span></label><label class="ctrl">Sub note length<span class="r"><input id="gate" type="range" min="15" max="95" value="60"><b id="gateV">60% step</b></span></label><label class="ctrl">Sub interval<select id="subTune"><option value="0">Root / same as kick</option><option value="7">Fifth above kick</option><option value="12">Octave above kick</option><option value="-12">Octave below kick</option></select></label></div>
+    <div class="lab-actions"><button class="btn hot" id="enablePattern">Enable pattern</button><button class="btn" data-pattern="roll">Rolling</button><button class="btn" data-pattern="skip">Broken</button><button class="btn" data-pattern="sparse">Sparse</button><button class="btn" data-pattern="clear">Clear</button></div>
+  </div>
+  <div class="panel"><h3>Keep the good accidents.</h3><p class="note">Store A, change the sound, then swap between both versions. Explore changes texture and motion while keeping your tempo, key and kick controls. Save a session to bring your edited sound and pattern back later.</p>
+    <div class="lab-actions"><button class="btn" id="storeA">Store A</button><button class="btn ghost" id="swapA" disabled>Swap A ↔ B</button><button class="btn hot" id="mutate">Explore a variation</button><button class="btn" id="saveSession">Save session</button><button class="btn ghost" id="openSession">Load session</button><button class="btn ghost" id="recipeDownload">Download build notes</button><input id="sessionFile" type="file" accept=".json,application/json" hidden></div>
+    <p class="note" id="sessionStatus" role="status" style="margin-top:12px">A/B is empty. Sessions are saved as files, not automatically.</p>
+    <p class="browser-note">Browser studies use a synthetic kick, generated convolution reverb, filtered distortion and programmed gain envelopes. They illustrate character and timing; they do not emulate named Ableton devices. The live output has protective compression; WAVs omit it and use a shared peak gain. The beat picture is schematic, not a waveform capture.</p>
+  </div>
+  <details class="panel" style="margin-top:4px"><summary>Quick preset bank · all 24 studies</summary>
+    <h3>Presets</h3>
+    <div class="pgs" id="presetCards"></div>
+  </details>
+</section>
+
+<!-- 03 TYPES -->
+<section class="sec" id="types">
+  <div class="sechead"><div class="n">03</div><div><h2>A whole spectrum of weight.</h2>
+  <p>Same ingredients, different proportions. Each card loads a lab preset so you can hear what the description means, then gives you the chain to build it for real.</p></div></div>
+  <div class="library-tools"><input id="styleSearch" type="search" placeholder="Find a feeling, style or technique…" aria-label="Search sound studies"><select id="styleFamily" aria-label="Filter sound family"><option value="all">All families</option><option>Deep & atmospheric</option><option>Groove & bounce</option><option>Hard & industrial</option><option>Experimental</option></select><output id="styleCount" aria-live="polite">24 studies</output></div>
+  <div class="pgs" id="typeCards"></div><p id="styleEmpty" hidden>No matching studies. Try a broader feeling or choose All families.</p>
+</section>
+
+<section class="sec" id="racks">
+  <div class="sechead"><div class="n">↳</div><div><h2>One track. A whole low-end instrument.</h2><p>Yes: multiple instruments, parallel effects, independent levels and shared tuning can live inside one rack. Choose the structure that fits how you want to play.</p></div></div>
+  <div class="rack-intro"><div><div class="eyebrow">The quickest useful answer</div><h3>One kick.<br>Two paths.<br>Eight good knobs.</h3><p>Start with <b>Simpler → Audio Effect Rack</b>. One dry chain keeps the punch; one wet chain makes the rumble. Tune Simpler once and both paths receive that source.</p><p>Want multiple instruments too? Use an <b>Instrument Rack</b>. Want the whole thing under one drum pad? Nest that rack inside a <b>Drum Rack</b>.</p></div><div><div class="routing">MIDI → Simpler (your kick)
+         ↓ Audio Effect Rack
+         ├─ DRY → Utility
+         └─ WET → Reverb 100%
+                → Saturator → EQ
+                → Compressor → Utility
+         ↓ one track output</div><p class="note">The wet branch must not leak a second dry transient. Add any final output control after the rack.</p></div></div>
+  <div class="rack-picker" role="group" aria-label="Choose a one-track rack"><button data-rack="fx" aria-pressed="true">01 / One source<small>Audio Effect Rack · easiest start</small></button><button data-rack="instrument" aria-pressed="false">02 / Layered machine<small>Instrument Rack · several instruments</small></button><button data-rack="pad" aria-pressed="false">03 / One super-pad<small>Drum Rack · nested instrument</small></button><button data-rack="return" aria-pressed="false">04 / Internal send<small>Drum Rack · shared rumble return</small></button></div>
+  <article class="panel" id="rackRecipe" aria-live="polite"></article>
+  <div class="two"><div class="panel"><h3>Make one tuning knob work properly.</h3><ol class="steps"><li><div><h4>Calibrate first</h4><p>Different samples at Transpose 0 are not necessarily the same pitch. Tune their settled bodies individually to one target. Match synth octaves by frequency too: DAWs differ in octave labels.</p></div></li><li><div><h4>Then map a relative transpose</h4><p>In a single-source rack, tune the source. In a layered Instrument Rack, put a MIDI Pitch device at the start of each instrument chain and map them to the same macro, or map each instrument’s transpose with ranges that preserve your calibrated offsets. Use −12 to +12 semitones as a starting span.</p></div></li><li><div><h4>Keep drum-pad selection separate</h4><p>Pitch before a Drum Rack changes which pad gets triggered. Put pitch changes inside the target pad, or map its instruments’ transpose controls. The pad’s Receive note selects the pad; its Play note is sent to its instrument.</p></div></li></ol></div><div class="panel"><h3>Sidechain without another track.</h3><p>On the wet chain’s Compressor, enable external Sidechain. Select this MIDI track, then the <b>dry kick chain’s audio tap</b> in the lower chooser. Use the tap after the instrument, before rumble processing. Verify that only the dry kick drives the meter.</p><p>At track level, <b>Pre FX on a MIDI track is not the synthesized kick audio</b>. Select the rack chain tap, or the appropriate Post FX signal on a separate clean kick track. Never use the complete kick-plus-rumble output as the trigger.</p><p class="note">If nested routing makes the desired tap unavailable, draw a repeating gain envelope on a Utility inside the wet branch. This needs no audio detector. Align it with the actual kick pattern; a free-running quarter-note shape will still dip when a kick is missing.</p><div class="callout">Quick test: turn the wet branch down, play the kick, and confirm the Compressor’s gain-reduction meter still moves. Then bring the wet branch back up.</div></div></div>
+  <h3 style="margin:18px 0">A macro panel you will actually use</h3><p class="note">Suggested mappings, not a supplied .adg rack. Start with narrow ranges; level-match the extremes.</p>
+  <div class="macro-grid"><div><b>01 / TUNE</b><p>Relative pitch ±12 st. Calibrate layers first; leave unpitched clicks alone.</p></div><div><b>02 / WEIGHT</b><p>Wet-chain level. Start −24 to −6 dB; judge against the kick.</p></div><div><b>03 / ROOM</b><p>Reverb decay 0.6–4 s. Start short for fast or busy patterns.</p></div><div><b>04 / DIRT</b><p>Saturator Drive 0–9 dB; map Output downward to roughly compensate.</p></div><div><b>05 / SHADE</b><p>Low-pass 140–700 Hz. Brighter means more texture, not more sub.</p></div><div><b>06 / BREATHE</b><p>Compressor Release 60–320 ms. Confirm recovery at your BPM.</p></div><div><b>07 / SPACE</b><p>Pre-delay 0–30 ms. This separates onset; it is not ducking.</p></div><div><b>08 / GHOST</b><p>High-passed texture-chain level. Keep its deep lows out.</p></div></div>
+  <div class="callout"><b>Save three Macro Variations:</b> Tight / Rolling / Destroyed. Exclude Tune and output level from variation changes if you want to preserve them. Save the outer rack to your User Library; save any sample files it depends on with your project.</div>
+  <p class="source-links">Routing reference: <a href="https://www.ableton.com/en/manual/instrument-drum-and-effect-racks/" target="_blank" rel="noopener">Ableton: racks, pads, macros and variations</a> · <a href="https://www.ableton.com/en/manual/routing-and-i-o/" target="_blank" rel="noopener">Ableton: internal rack routing points</a> · <a href="https://www.ableton.com/en/manual/live-audio-effect-reference/#compressor" target="_blank" rel="noopener">Ableton: Compressor</a>. Live 12 reference; device availability depends on your edition.</p>
+</section>
+
+<section class="sec" id="experiments">
+  <div class="sechead"><div class="n">✳</div><div><h2>Leave the warehouse door open.</h2><p>Eight original experiments for when another dark reverb is not enough. These are DAW build recipes; the linked lab studies are starting moods, not simulations of these processes.</p></div></div>
+  <div id="experimentCards" class="pgs"></div>
+  <div class="challenge"><div class="eyebrow" style="color:#BBC6B1">Creative constraint / ten minutes</div><h3 id="challengeTitle">Make the silence heavier than the sound.</h3><p id="challengeText">Use only two rumble events per bar. Give them different lengths. Keep the kick unchanged, and make the second bar answer the first.</p><button class="btn" id="newChallenge">Give me another constraint ↗</button></div>
+  <div class="two"><div class="panel"><h3>Choose who owns the bottom.</h3><p><b>Kick-led:</b> short sub-heavy kick, rumble high-passed a little higher. <b>Rumble-led:</b> tighter kick, fuller tail. <b>Separate bassline:</b> make the rumble a quiet low-mid texture or remove it when the bass speaks.</p><p class="note">A lower high-pass is not automatically heavier. Two layers fighting at the same frequency can sound smaller together.</p></div><div class="panel"><h3>Listen for a useful difference.</h3><p>Compare at similar loudness. Listen to eight bars, not one hit. Does the tail add pace, space, menace or bounce? Mute it: if the groove improves, simplify its timing before making it louder.</p><p class="note">For phase checks, compare in mono and try polarity inversion on one layer. Neither setting is universally correct, and reverb phase moves over time.</p></div></div>
+</section>
+
+<!-- 04 KEY -->
+<section class="sec" id="key">
+  <div class="sechead"><div class="n">04</div><div><h2>Key &amp; tuning</h2>
+  <p><b>43–62 Hz</b> (roughly F1 to B1 in this page’s octave notation) is a useful starting window for a low kick, not a rule. Lower or higher kicks can work. Choose register for the sound and playback system, then check the relationship with your bass and harmony.</p></div></div>
+
+  <div class="two">
+    <div class="panel">
+      <h3>Your track key → kick options</h3>
+      <p class="note">Uses the transport key. “Near 50 Hz” is only a register hint; choose the note by ear against your music. Note labels here use C4 = middle C; compare Hz if your DAW labels octaves differently.</p>
+      <div class="tablewrap" style="margin:10px 0 0"><table style="min-width:0"><thead><tr><th>Degree</th><th>Note</th><th>Hz</th><th>Verdict</th><th></th></tr></thead><tbody id="keyOpts"></tbody></table></div>
+    </div>
+    <div class="panel">
+      <h3>The rules that matter</h3>
+      <ol class="steps">
+        <li><div><h4>Tune the tail, not the click</h4><p>A kick sweeps down in pitch. Its perceived note is where the sweep lands. Measure the body after the first ~50 ms in Spectrum, not the transient.</p></div></li>
+        <li><div><h4>Root is a useful first comparison</h4><p>A tonal rumble on the root often supports a static harmony. It does not fit every chord or bass note automatically. Short, noisy kicks may have no stable pitch worth forcing to a note.</p></div></li>
+        <li><div><h4>Compare a fifth and another octave</h4><p>For C or D, roots around 33/37 Hz or 65/73 Hz offer different weight. G or A may suit the arrangement too. Choose the harmony and punch you want rather than automatically preferring the closest note to 50 Hz.</p></div></li>
+        <li><div><h4>Kick first is valid too</h4><p>Many techno producers find a kick they love, tune it by ear, then write the track in that key. Either direction works as long as they agree.</p></div></li>
+        <li><div><h4>Check changing harmony</h4><p>A sustained tonal tail can clash when chords move. Shorten it, reduce its tonal emphasis, choose a shared pedal note, or use the MIDI-driven rumble in Recipe C to follow the harmony.</p></div></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tablewrap">
+    <table><thead><tr><th>Note</th><th>Hz</th><th>Character as a rumble fundamental</th><th>Good for</th><th></th></tr></thead><tbody id="noteTable"></tbody></table>
+  </div>
+  <div class="callout">Your A minor track at 130 BPM: <b>A1 = 55 Hz</b> is right in the window. Deep, punchy, translates well. The fifth, <b>E1 = 41 Hz</b>, is heavier on a big system but can vanish on laptops and earbuds.</div>
+</section>
+
+<!-- 05 LENGTH -->
+<section class="sec" id="length">
+  <div class="sechead"><div class="n">05</div><div><h2>Length &amp; timing</h2>
+  <p>Everything here is relative to one beat. The kick body takes the first third to half of it; the rumble owns the rest; the pump decides where the handover happens. The highlighted row follows the transport BPM.</p></div></div>
+
+  <div class="tablewrap">
+    <table><thead><tr><th>BPM</th><th>1 beat</th><th>1/16</th><th>1/32 (pre-delay)</th><th>Kick body</th><th>Pump release</th><th>Reverb decay</th></tr></thead><tbody id="bpmTable"></tbody></table>
+  </div>
+
+  <div class="two">
+    <div class="panel">
+      <h3>How long should the kick be?</h3>
+      <div class="tablewrap" style="margin:6px 0 10px"><table style="min-width:0"><thead><tr><th>Style</th><th>Kick body</th><th>Why</th></tr></thead><tbody>
+        <tr><td>Hypnotic / deep</td><td class="num">220–300 ms</td><td>Round body, rumble fades in behind it</td></tr>
+        <tr><td>Peak-time warehouse</td><td class="num">180–250 ms</td><td>Punch first, rumble does the bass work</td></tr>
+        <tr><td>Rolling / grumble</td><td class="num">160–220 ms</td><td>Short so the 16th movement is audible</td></tr>
+        <tr><td>Hard techno 145+</td><td class="num">120–180 ms</td><td>Beats are short, the tail needs space</td></tr>
+        <tr><td>Dub / melodic</td><td class="num">250–350 ms</td><td>Softer, more sub; the wash stays quieter</td></tr>
+      </tbody></table></div>
+      <p class="note">A Splice sample that rings 600 ms+ is a boom kick, not a rumble kick body. Shorten it with a fade in Simpler or pick a tighter one.</p>
+    </div>
+    <div class="panel">
+      <h3>Three timing rules</h3>
+      <ol class="steps">
+        <li><div><h4>The tail must peak before the next kick</h4><p>If the pump is still recovering when the next kick hits, the rumble never breathes and the low end sounds flat. Release around half a beat is the starting point.</p></div></li>
+        <li><div><h4>Reverb decay longer than you think</h4><p>1.5–4.5 s sounds absurd soloed, but the pump chops it every beat. Long decay means a steady, even rumble; short decay means a bouncing one.</p></div></li>
+        <li><div><h4>Pre-delay separates, it doesn't delay</h4><p>5–25 ms (around a 1/64–1/32 note) keeps the reverb onset out of the kick transient. Beyond ~40 ms you start hearing a flam.</p></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+<!-- 06 ABLETON -->
+<section class="sec" id="ableton">
+  <div class="sechead"><div class="n">06</div><div><h2>Ableton Live 12</h2>
+  <p>Three workflows to complement the <a href="#racks">one-track rack builds</a>: classic sends, resampling, and played sub notes. B lets you commit and edit audio; C gives you a tonal layer that can follow harmony. Device availability varies by Live edition.</p></div></div>
+
+  <div class="tabs" role="tablist" data-tabs="abl">
+    <button class="on" role="tab" aria-selected="true" data-t="a">A · Send rumble</button>
+    <button role="tab" aria-selected="false" data-t="b">B · Resample &amp; chop</button>
+    <button role="tab" aria-selected="false" data-t="c">C · Tuned MIDI rumble</button>
+  </div>
+
+  <div class="panel" data-pane="abl-a">
+    <h3>Recipe A: the classic send rumble</h3>
+    <ol class="steps">
+      <li><div><h4>Put the kick on its own track and tune it</h4><p>Load the kick into Simpler’s One-Shot mode. Add Spectrum after it, inspect the settled low body, and adjust Transpose/Detune if a pitch change improves its fit with your track.</p>
+        <div class="set"><span><i>Simpler</i> One-Shot, Warp off</span><span><i>Spectrum</i> Block 8192, Avg 1</span><span><i>Target</i> 43–62 Hz</span></div></div></li>
+      <li><div><h4>Make a Return track called RUMBLE</h4><p>Send the kick to it. Alternative: duplicate the kick track and process the copy 100% wet. The duplicate lets you mute individual rumble hits without touching the kick.</p>
+        <div class="set"><span><i>Send A</i> −6 dB to 0 dB</span><span><i>Return</i> Post</span></div></div></li>
+      <li><div><h4>Hybrid Reverb, fully wet</h4><p>Dark, large, long. Make sure nothing in the reverb's own EQ is cutting the lows, because the lows are the point.</p>
+        <div class="set"><span><i>Dry/Wet</i> 100%</span><span><i>Pre-delay</i> 10–20 ms</span><span><i>Decay</i> 2–4 s</span><span><i>Size</i> large</span><span><i>Algorithm</i> a dark hall</span><span><i>Reverb low cut</i> off</span></div>
+        <p class="why">Classic Reverb works too: Decay 3 s, Diffusion high, Hi filter around 2 kHz, Dry/Wet 100%.</p></div></li>
+      <li><div><h4>Saturate before you filter</h4><p>Distortion creates harmonics that make the rumble audible on small speakers. Filtering afterwards keeps those harmonics dark and low.</p>
+        <div class="set"><span><i>Saturator</i> Bass Shaper or Analog Clip</span><span><i>Drive</i> 6–15 dB</span><span><i>Soft Clip</i> on</span><span><i>or Roar</i> single stage, amount 30–60%</span></div></div></li>
+      <li><div><h4>EQ Eight: box it in</h4><p>High-pass the subsonic mud, low-pass everything above the low mids.</p>
+        <div class="set"><span><i>Band 1</i> HP 48 dB @ 30–35 Hz</span><span><i>Band 8</i> LP 48 dB @ 180–300 Hz</span><span><i>Optional</i> −2 dB bell at kick fundamental</span></div></div></li>
+      <li><div><h4>Compressor with sidechain from the kick</h4><p>This is the pump. Aim for deep gain reduction and a release that recovers just before the next kick.</p>
+        <div class="set"><span><i>Sidechain</i> clean kick audio: Post FX after Simpler, or its rack chain tap</span><span><i>Ratio</i> start 6:1</span><span><i>Attack</i> 1–3 ms</span><span><i>Release</i> 100–250 ms</span><span><i>Threshold</i> adjust for space around the kick</span></div>
+        <p class="why">Tighter alternative: Auto Pan-Tremolo in its shape/tremolo mode, synced to 1/4, with a ramp-up curve phase-aligned to the kick. No trigger lag at all.</p></div></li>
+      <li><div><h4>Utility: mono the lows</h4><p>Stereo reverb puts phase movement into the sub. Collapse it.</p>
+        <div class="set"><span><i>Utility</i> Bass Mono on</span><span><i>Freq</i> 120 Hz</span><span><i>or</i> Width 0%</span></div></div></li>
+      <li><div><h4>Balance and check</h4><p>Loop 8 bars, set levels by ear, then check mono, a small speaker and a reference track.</p>
+        <div class="set"><span><i>Rumble peak</i> 4–10 dB under kick</span><span><i>Spectrum</i> no build-up at 250–400 Hz</span></div></div></li>
+    </ol>
+  </div>
+
+  <div class="panel" data-pane="abl-b" hidden>
+    <h3>Recipe B: resample and chop</h3>
+    <ol class="steps">
+      <li><div><h4>Build Recipe A first</h4><p>Get the rumble sounding right in context.</p></div></li>
+      <li><div><h4>Record the Return</h4><p>New audio track, Audio From: RUMBLE return (Post FX), Monitor Off. Record 8 bars while the kick loop plays.</p>
+        <div class="set"><span><i>Audio From</i> A-Return</span><span><i>Monitor</i> Off</span></div></div></li>
+      <li><div><h4>Cut a steady-state loop</h4><p>Skip bar 1 (the tail isn't built up yet). Select bars 3–4, Consolidate (Ctrl/Cmd+J).</p></div></li>
+      <li><div><h4>Now edit it like a sample</h4><p>Clip envelopes for volume per beat, transpose per bar to follow chords, reverse a single beat before a drop, delete hits for gaps.</p>
+        <div class="set"><span><i>Warp</i> initially off at the source tempo; compare modes when retiming</span><span><i>Gain envelope</i> shape per beat</span></div></div></li>
+      <li><div><h4>Keep a raw version</h4><p>Resample the rumble before the sidechain too. A non-pumped rumble loop lets you reshape the pump later with a different curve.</p></div></li>
+    </ol>
+    <p class="why">Return tracks can't be frozen, so recording is the reliable way. If you used the duplicated-kick-track method, Freeze → Flatten does the same job in one click.</p>
+  </div>
+
+  <div class="panel" data-pane="abl-c" hidden>
+    <h3>Recipe C: tuned MIDI rumble</h3>
+    <ol class="steps">
+      <li><div><h4>Operator as a sine body</h4><p>Algorithm with Oscillator A alone, sine wave. Short amp envelope, tiny pitch envelope for a soft attack.</p>
+        <div class="set"><span><i>Osc A</i> Sin, Level 0 dB</span><span><i>Amp env</i> A 2 ms, D 1/8 beat, S −inf</span><span><i>Pitch env</i> +12 st, decay 20 ms</span><span><i>Voices</i> 1</span></div>
+        <p class="why">Drift works as well: sine shape, filter LP around 200 Hz, voice mode Mono.</p></div></li>
+      <li><div><h4>Write the MIDI on the root</h4><p>Notes around A0–A1 depending on key. Offbeats for bounce, or 16ths 2–3–4 of each beat for a roll. Move the note with your chords.</p></div></li>
+      <li><div><h4>Same chain, smaller reverb</h4><p>The MIDI already provides the rhythm, so the reverb only glues.</p>
+        <div class="set"><span><i>Reverb</i> 0.8–1.5 s, 25–50% wet</span><span><i>Saturator</i> Bass Shaper</span><span><i>EQ Eight</i> HP 30 / LP 200</span><span><i>Compressor</i> sidechain from kick</span></div></div></li>
+      <li><div><h4>Blend with Recipe A</h4><p>A quiet reverb rumble underneath plus the MIDI rumble on top gives movement and density that still follows harmony.</p></div></li>
+    </ol>
+  </div>
+
+  <div class="panel">
+    <h3>Before you call it done</h3>
+    <div class="checks" id="checks"></div>
+  </div>
+</section>
+
+<!-- 07 SERUM -->
+<section class="sec" id="serum">
+  <div class="sechead"><div class="n">07</div><div><h2>Serum 2</h2>
+  <p>Serum 2 can hold the whole kick-plus-rumble in one patch, which makes it a great instrument for designing your own. Values are starting points. <b>Menu labels can differ slightly between Serum 2 versions</b>, so look for the function if a name doesn't match.</p></div></div>
+
+  <div class="tabs" role="tablist" data-tabs="ser">
+    <button class="on" role="tab" aria-selected="true" data-t="a">Kick + rumble patch</button>
+    <button role="tab" aria-selected="false" data-t="b">Rolling tuned rumble</button>
+    <button role="tab" aria-selected="false" data-t="c">Splice kick inside Serum</button>
+  </div>
+
+  <div class="panel" data-pane="ser-a">
+    <h3>One patch: synthesized kick with its own rumble</h3>
+    <ol class="steps">
+      <li><div><h4>Init and set up a mono sine</h4><p>Start from the init preset. Oscillator A on a pure sine (basic shapes table, sine position). Other oscillators, noise and sub off for now.</p>
+        <div class="set"><span><i>Osc A</i> sine, Octave −1 or −2</span><span><i>Voicing</i> Mono, Legato off</span><span><i>Glide</i> 0</span></div></div></li>
+      <li><div><h4>Amp envelope = kick body length</h4>
+        <div class="set"><span><i>ENV 1</i> A 0 ms</span><span><i>H</i> 10–20 ms</span><span><i>D</i> 180–300 ms</span><span><i>S</i> 0 / −inf</span><span><i>R</i> 15 ms</span></div></div></li>
+      <li><div><h4>Pitch drop with ENV 2</h4><p>Drag ENV 2 onto Osc A coarse pitch. Steep decay curve. This is what makes a sine a kick.</p>
+        <div class="set"><span><i>ENV 2 → Coarse</i> +36 to +48 st</span><span><i>A</i> 0</span><span><i>D</i> 30–60 ms</span><span><i>S</i> 0</span></div></div></li>
+      <li><div><h4>Click layer</h4><p>Noise oscillator with a short transient-type sample, one-shot (not looping), low level. Or skip it and layer a separate top kick in Ableton.</p></div></li>
+      <li><div><h4>Split dry and rumble with FX busses</h4><p>Route Osc A to the main FX and also to an FX bus. Main gets light punch; the bus becomes the rumble.</p>
+        <div class="set"><span><i>Main</i> Distortion (soft/tube) 15–30%</span><span><i>Bus</i> Reverb (hall, large, long) Mix 100%</span><span><i>→</i> Distortion 40–70%</span><span><i>→</i> Filter LP 200–260 Hz</span><span><i>→</i> EQ low cut ~30 Hz</span></div></div></li>
+      <li><div><h4>Pump it</h4><p>Most reliable: do the pump in Ableton with Compressor sidechained from the kick MIDI track (duplicate the patch with bus-only output if needed). In-Serum option: an LFO in envelope/trigger mode, drawn as a drop then a curved rise over about half a beat, modulating the bus output level.</p></div></li>
+      <li><div><h4>Play the root</h4><p>Serum keytracks, so the MIDI note is the tuning. Four-on-the-floor on the note that lands 43–62 Hz (e.g. A1 for A minor with Osc A at the right octave). Confirm with Spectrum in Ableton.</p></div></li>
+    </ol>
+  </div>
+
+  <div class="panel" data-pane="ser-b" hidden>
+    <h3>Rolling tuned rumble between the kicks</h3>
+    <ol class="steps">
+      <li><div><h4>Body</h4><p>Osc A sine, plus Osc B saw quietly underneath for harmonics.</p>
+        <div class="set"><span><i>Osc A</i> sine 0 dB</span><span><i>Osc B</i> saw −18 dB</span><span><i>Voicing</i> Mono</span></div></div></li>
+      <li><div><h4>Filter tracks the note</h4>
+        <div class="set"><span><i>Filter</i> LP 24</span><span><i>Cutoff</i> 180–250 Hz</span><span><i>Key track</i> on</span><span><i>ENV 2 → cutoff</i> small, fast decay</span></div></div></li>
+      <li><div><h4>Short notes</h4>
+        <div class="set"><span><i>ENV 1</i> A 2–5 ms, D ≈ 1/16 at your BPM, S 0</span></div></div></li>
+      <li><div><h4>The MIDI is the roll</h4><p>16ths on steps 2–3–4 of each beat, root note, velocity accenting step 3. Leave step 1 empty for the kick.</p>
+        <div class="bar16" aria-hidden="true"><i class="k"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="k"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="k"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="k"></i><i class="r"></i><i class="r"></i><i class="r"></i></div></div></li>
+      <li><div><h4>FX</h4>
+        <div class="set"><span><i>Distortion</i> 30–50%</span><span><i>Reverb</i> small, Mix 20–35%</span><span><i>Compressor</i> gentle</span><span><i>EQ</i> low cut 30 Hz</span></div>
+        <p class="why">Then sidechain from the kick in Ableton, with a faster release (80–120 ms) so each 16th still speaks.</p></div></li>
+    </ol>
+  </div>
+
+  <div class="panel" data-pane="ser-c" hidden>
+    <h3>Put a Splice kick inside Serum 2</h3>
+    <ol class="steps">
+      <li><div><h4>Load it into a sample oscillator</h4><p>Switch an oscillator to its sample mode and drop the kick in. One-shot playback, no loop.</p></div></li>
+      <li><div><h4>Set its root note</h4><p>Measure the kick's settled pitch in Ableton Spectrum first (say G1), then set that as the sample's root. Now playing A1 gives you an A-tuned kick, pitched correctly.</p></div></li>
+      <li><div><h4>Rumble through the bus</h4><p>Same bus chain as the first patch: reverb 100% → distortion → LP filter. You get your favourite sample kick with a rumble you can re-tune by playing a different note.</p></div></li>
+      <li><div><h4>Experiment: granular drone</h4><p>Load the same kick into a granular oscillator, freeze the playhead on the tail, long grains, LP filter low. A sustained rumble tone built from your kick's own texture. Sidechain it hard.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 08 SPLICE -->
+<section class="sec" id="splice">
+  <div class="sechead"><div class="n">08</div><div><h2>Starting from a Splice kick</h2>
+  <p>You're looking for a <b>dry, tunable body</b>, not a finished rumble. Tap any search term to copy it. Combine the text search with Splice's filters: One-Shots, Kick, Techno, and the key filter when you already know your track key.</p></div></div>
+
+  <div class="two">
+    <div class="panel">
+      <h3>For a body you'll turn into a rumble</h3>
+      <div class="chips" data-chips="body"></div>
+      <h3 style="margin-top:14px">To layer a click on top</h3>
+      <div class="chips" data-chips="top"></div>
+      <h3 style="margin-top:14px">As references, not starting points</h3>
+      <div class="chips" data-chips="ref"></div>
+      <p class="note" style="margin-top:8px">Ready-made rumble loops are fine to learn from: A/B your own against them. Using one skips the part where you learn to make it, and it's locked to someone else's key and tempo.</p>
+      <h3 style="margin-top:14px">Skip results tagged</h3>
+      <div class="chips" data-chips="neg"></div>
+    </div>
+    <div class="panel">
+      <h3>Judge a kick in 20 seconds</h3>
+      <div class="checks" id="spliceChecks" style="grid-template-columns:1fr"></div>
+      <h3 style="margin-top:14px">Prep it in Ableton</h3>
+      <ol class="steps">
+        <li><div><h4>Simpler, one-shot</h4><p>Warp off, Snap off, start marker right at the transient.</p></div></li>
+        <li><div><h4>Shape the length</h4><p>Simpler fade-out or amp decay to your target body length (see 05).</p></div></li>
+        <li><div><h4>Tune to the key</h4><p>Spectrum on the settled body, Transpose + Detune until the peak reads the note.</p></div></li>
+        <li><div><h4>Clean the bottom</h4><p>EQ Eight HP at 20–25 Hz, Utility mono. Then feed it into Recipe A.</p></div></li>
+        <li><div><h4>Once found, use "similar sounds"</h4><p>When a kick works, Splice's similar-sounds search usually finds three more that fit the same role.</p></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 09 FIX -->
+<section class="sec" id="fix">
+  <div class="sechead"><div class="n">09</div><div><h2>Fix it</h2>
+  <p>Most rumble problems are one of these. The fix column is ordered: try the first move before the second.</p></div></div>
+  <div class="tablewrap"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody id="fixTable"></tbody></table></div>
+  <div class="panel">
+    <h3>Numbers to keep in your head</h3>
+    <div class="readout" id="numbers"></div>
+  </div>
+</section>
+
+<!-- 10 ARRANGE -->
+<section class="sec" id="arrange">
+  <div class="sechead"><div class="n">10</div><div><h2>Rumble in the arrangement</h2>
+  <p>A static rumble for seven minutes is a loop, not a track. These are the moves that make the low end tell a story.</p></div></div>
+  <div class="moves" id="moves"></div>
+</section>
+
+</main>
+<footer class="wrap"><b>Field Guide 17 · Rumble / Expanded edition.</b> 24 browser studies, four one-track builds and eight creative experiments. Audio and exports run locally; web fonts are optional. Rendered WAVs are yours to use.<div class="section-nav"><a href="#lab">Back to the laboratory ↑</a><a href="#racks">One-track rack guide</a><a href="#experiments">Find a strange idea</a></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const NOTES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ---------- data ---------- */
+const MODES={
+  tail:{name:'Reverb tail',desc:'The classic: the kick\'s reverb swells between hits. Smooth, hypnotic, one ducked tone per beat.'},
+  rolling:{name:'Rolling',desc:'The tail is chopped again on every 16th, so the rumble rolls forward in three pushes per beat.'},
+  offbeat:{name:'Offbeat sub',desc:'A tuned sub note on every offbeat feeds the same chain. Bouncier, more like a bassline.'},
+  grind:{name:'Grind',desc:'Heavy drive plus an 8th-note chop. Industrial and hard-techno territory.'}
+};
+const PRESETS=[
+ {id:'hypno',name:'Hypnotic deep',bpm:130,mode:'tail',sweep:30,pdec:45,kdec:260,click:.25,klvl:.85,size:3.2,damp:.75,pre:12,send:.9,drive:.35,hpf:32,lpf:180,res:1.2,depth:.95,hold:30,rel:300,lvl:.7,
+  desc:'Long, dark, smooth tail. The rumble fades in behind a round kick and never gets aggressive.',where:'Hypnotic / deep techno · 126–132 BPM',chain:'Kick → Reverb 3 s → light drive → LP 180 Hz → slow pump'},
+ {id:'ware',name:'Warehouse thump',bpm:132,mode:'tail',sweep:36,pdec:35,kdec:220,click:.45,klvl:.9,size:2.2,damp:.6,pre:8,send:1,drive:.6,hpf:35,lpf:260,res:2,depth:1,hold:20,rel:220,lvl:.72,
+  desc:'The default rumble most people mean. Punchy kick, driven tail, clear pump on every beat.',where:'Peak-time / warehouse · 130–136 BPM',chain:'Kick → Reverb 2.2 s → Saturator → LP 260 Hz → Compressor SC'},
+ {id:'roll',name:'Rolling grumble',bpm:132,mode:'rolling',sweep:32,pdec:40,kdec:200,click:.35,klvl:.88,size:2.8,damp:.65,pre:10,send:1,drive:.55,hpf:34,lpf:230,res:1.5,depth:.9,hold:10,rel:90,lvl:.8,
+  desc:'The tail is gated in 16ths, so it rolls. Drives a groove even with nothing else playing.',where:'Rolling / driving techno · 128–135 BPM',chain:'Reverb rumble → 16th volume shaper → drive → LP 230 Hz'},
+ {id:'off',name:'Offbeat tuned sub',bpm:128,mode:'offbeat',sweep:28,pdec:45,kdec:230,click:.3,klvl:.9,size:1.2,damp:.8,pre:10,send:.5,drive:.3,hpf:30,lpf:200,res:1,depth:.9,hold:15,rel:140,lvl:.62,
+  desc:'A short sub note on each offbeat, softened with a small reverb. Rumble that behaves like a bassline.',where:'Tech house to groovy techno · 124–130 BPM',chain:'MIDI sine on offbeats → small reverb → drive → LP 200 Hz'},
+ {id:'ind',name:'Industrial grind',bpm:136,mode:'grind',sweep:42,pdec:30,kdec:180,click:.6,klvl:.9,size:2.5,damp:.35,pre:5,send:1,drive:.95,hpf:40,lpf:420,res:3.5,depth:1,hold:15,rel:200,lvl:.55,
+  desc:'Brighter filter, resonant, heavily saturated, chopped on 8ths. Aggressive and textured.',where:'Industrial / EBM-leaning techno · 132–140 BPM',chain:'Reverb → Roar heavy → resonant LP 420 Hz → 8th chop → SC'},
+ {id:'dub',name:'Dub wash',bpm:124,mode:'tail',sweep:24,pdec:55,kdec:300,click:.15,klvl:.85,size:4.5,damp:.85,pre:25,send:.8,drive:.2,hpf:30,lpf:150,res:.8,depth:.75,hold:60,rel:420,lvl:.62,
+  desc:'Very long, very dark and only partly ducked. A warm fog under the kick rather than a pump.',where:'Dub techno / deep · 118–126 BPM',chain:'Kick → long dark reverb (+ delay) → LP 150 Hz → gentle SC'},
+ {id:'hard',name:'Hard techno tok',bpm:150,mode:'grind',sweep:48,pdec:22,kdec:150,click:.8,klvl:.95,size:1.6,damp:.4,pre:3,send:1,drive:1,hpf:45,lpf:520,res:4,depth:1,hold:10,rel:130,lvl:.6,
+  desc:'Short, clicky, distorted kick with a gritty, fast tail. The rumble is almost a second drum.',where:'Hard / schranz-leaning · 145–160 BPM',chain:'Short kick → reverb 1.6 s → hard clip → LP 520 Hz → fast SC'},
+ {id:'mel',name:'Melodic tuned rumble',bpm:124,mode:'tail',sweep:28,pdec:50,kdec:340,click:.2,klvl:.85,size:3.6,damp:.82,pre:15,send:.85,drive:.25,hpf:30,lpf:160,res:1,depth:.85,hold:40,rel:360,lvl:.72,
+  desc:'Smooth, very tonal, lots of sub. Sits under pads and arps without fighting them.',where:'Melodic techno / progressive · 120–126 BPM',chain:'Tuned kick → reverb 3.6 s → soft sat → LP 160 Hz → slow SC'},
+ {id:'min',name:'Minimal tight',bpm:128,mode:'tail',sweep:34,pdec:35,kdec:170,click:.5,klvl:.9,size:1,damp:.7,pre:8,send:.8,drive:.3,hpf:35,lpf:220,res:1.2,depth:1,hold:10,rel:140,lvl:.5,
+  desc:'Small, quick rumble that just fills the gap. Clean low end with room for percussion.',where:'Minimal / microhouse-adjacent · 125–130 BPM',chain:'Kick → short reverb 1 s → LP 220 Hz → fast SC'}
+];
+Object.assign(MODES,{
+ gated:{name:'Gated room',desc:'The wet tail opens after the kick, then closes before the next hit. Actual silence makes the rhythm feel more physical.'},
+ swell:{name:'Reverse-like swell',desc:'A rising gain window pulls the reverb toward the next kick. This is a shaped forward tail, not reversed audio.'},
+ triplet:{name:'Triplet engine',desc:'Two tuned sub replies divide each beat into three. A different gait from dotted-eighth echoes.'},
+ broken:{name:'Broken pulse',desc:'An asymmetric one-bar sub pattern under a straight kick. The fourth beat answers the first.'},
+ metallic:{name:'FM pressure',desc:'A short FM sub adds a clang-like upper texture before distortion and low-pass filtering. Keep the level restrained.'},
+ pattern:{name:'Pattern',desc:'Your editable 16-step sub sequence, mixed into the wet processing. Swing, note length and interval live in the pattern workshop.'}
+});
+const extraStudy=(base,id,name,bpm,mode,family,desc,chain,params)=>({...PRESETS.find(p=>p.id===base),id,name,bpm,mode,family,desc,chain,where:family+' · '+bpm+' BPM',...params});
+PRESETS.push(
+ extraStudy('hypno','abyss','Abyssal pressure',126,'tail','Deep & atmospheric','A near-continuous, dark floor under a soft strike. Slow recovery keeps the room hovering.','Dark hall → low-pass 135 Hz → shallow, slow duck',{size:5.2,lpf:135,damp:.94,depth:.72,rel:390,drive:.22,lvl:.58}),
+ extraStudy('min','concrete','Concrete pocket',138,'gated','Hard & industrial','A compact slab of room, then silence. Hits harder through contrast rather than endless sub.','Short room → drive → gain window → mono',{size:.8,kdec:150,hold:35,rel:75,lpf:330,drive:.65}),
+ extraStudy('off','rubber','Rubber piston',134,'offbeat','Groove & bounce','A springy offbeat with a little filter bite. A kick and sub conversation, not a wash.','Offbeat sine → gentle drive → resonant low-pass',{res:3,lpf:300,kdec:170,send:.25,size:.7,rel:90}),
+ extraStudy('roll','tunnel','Tunnel triplets',141,'triplet','Groove & bounce','Two low replies against each kick make a loping three-part stride.','Two sub notes per beat → room → duck',{kdec:150,size:1.1,send:.35,rel:75,lpf:250}),
+ extraStudy('ind','steel','Steel membrane',142,'metallic','Hard & industrial','FM gives the tail a struck-metal edge; filtering leaves a low, tense growl.','FM sub → saturation → low-pass 550 Hz → duck',{lpf:550,drive:.65,res:2,size:1.2,send:.4,kdec:155}),
+ extraStudy('hypno','undertow','Undertow',128,'swell','Deep & atmospheric','The tail gathers toward each next kick. Pull instead of push.','Dark room → rising gain window → short end fade',{size:3.8,hold:20,rel:230,lpf:210,depth:1}),
+ extraStudy('off','fracture','Fractured floor',137,'broken','Experimental','Straight kicks hold the centre while uneven sub replies disturb the edges.','Asymmetric sub MIDI → small room → kick duck',{send:.3,size:.9,kdec:165,rel:80,lpf:340}),
+ extraStudy('min','ghost','Ghost percussion',130,'pattern','Experimental','An understated syncopation. Leave holes for the hats and let accents do the talking.','Sparse sub pattern → saturation → high low-cut',{pattern:[0,0,1,0,0,1,0,0,0,0,2,0,0,1,0,1],hpf:55,lpf:390,size:.7,send:.2,lvl:.45,swing:20}),
+ extraStudy('dub','velvet','Velvet dub',122,'offbeat','Deep & atmospheric','A soft offbeat under warm, lingering air. No sharp click and very little grit.','Round sine reply → long dark room → gentle duck',{click:.06,drive:.12,lpf:145,size:4.2,send:.35,depth:.8}),
+ extraStudy('hard','clamp','Schranz clamp',155,'gated','Hard & industrial','An abrasive short burst with a clean end gap. Keep room for the next transient.','Tiny room → heavy saturation → tight gain window',{size:.6,kdec:120,lpf:650,res:2,hold:12,rel:55,lvl:.45}),
+ extraStudy('roll','motor','Motor groove',144,'pattern','Groove & bounce','Three short sub notes after each kick, accented in the middle. Push the swing a little.','16th sub sequence → mild room → fast duck',{pattern:[0,1,2,1,0,1,2,1,0,1,2,1,0,1,2,1],swing:16,gate:45,size:.8,send:.25,kdec:145,rel:60}),
+ extraStudy('mel','orbit','Orbital fifth',126,'triplet','Experimental','Replies a fifth above the kick add an audible tonal relationship. Check the harmony.','Fifth-up sub replies → diffuse reverb → low-pass',{subTune:7,size:2.4,send:.35,kdec:220,rel:100,lpf:320}),
+ extraStudy('ind','relay','Broken relay',146,'broken','Hard & industrial','A nervous, clipped machine pattern with a more exposed midrange.','Broken sub → drive → short room → duck',{size:.7,drive:.85,lpf:600,kdec:135,send:.3,rel:65}),
+ extraStudy('hypno','breath','Breathing chamber',120,'swell','Deep & atmospheric','A slow inhalation with a soft kick. Try it as the quiet section before a harder variation.','Long room → smooth rise → narrow dark band',{size:5.8,lpf:170,hpf:38,click:.1,drive:.15,lvl:.55}),
+ extraStudy('ind','ceramic','Ceramic teeth',148,'metallic','Experimental','A small metallic object made improbably large. Short decay exposes the pitched edges.','FM reply → short room → resonant low-pass',{size:.6,send:.2,lpf:740,res:3.2,kdec:130,rel:65,drive:.45,lvl:.45})
+);
+PRESETS.forEach(p=>{
+ p.family??=(['hypno','dub','mel'].includes(p.id)?'Deep & atmospheric':['ind','hard'].includes(p.id)?'Hard & industrial':'Groove & bounce');
+ p.pattern??=[0,0,2,0,0,0,2,0,0,0,2,0,0,0,2,0];p.swing??=0;p.gate??=60;p.subTune??=0;
+});
+const CTRLS=[
+ {g:'Kick',hint:'The body and its pitch drop',items:[
+  {k:'sweep',l:'Pitch sweep',min:0,max:60,step:1,f:v=>v+' st'},
+  {k:'pdec',l:'Sweep time',min:10,max:120,step:1,f:v=>v+' ms'},
+  {k:'kdec',l:'Body length',min:90,max:450,step:5,f:v=>v+' ms'},
+  {k:'click',l:'Click',min:0,max:1,step:.01,f:v=>Math.round(v*100)+'%'},
+  {k:'klvl',l:'Kick level',min:0,max:1,step:.01,f:v=>Math.round(v*100)+'%'}]},
+ {g:'Space',hint:'The reverb that becomes the rumble',items:[
+  {k:'send',l:'Send',min:0,max:1,step:.01,f:v=>Math.round(v*100)+'%'},
+  {k:'pre',l:'Pre-delay',min:0,max:50,step:1,f:v=>v+' ms'},
+  {k:'size',l:'Decay',min:.6,max:6,step:.1,f:v=>v.toFixed(1)+' s'},
+  {k:'damp',l:'Darkness',min:0,max:1,step:.01,f:v=>Math.round(v*100)+'%'}]},
+ {g:'Grit & tone',hint:'Harmonics in, mud out',items:[
+  {k:'drive',l:'Drive',min:0,max:1,step:.01,f:v=>Math.round(v*100)+'%'},
+  {k:'hpf',l:'High-pass',min:20,max:80,step:1,f:v=>v+' Hz'},
+  {k:'lpf',l:'Low-pass',min:90,max:900,step:5,f:v=>v+' Hz'},
+  {k:'res',l:'Resonance',min:.5,max:8,step:.1,f:v=>'Q '+v.toFixed(1)}]},
+ {g:'Pump',hint:'How the rumble gets out of the way',items:[
+  {k:'depth',l:'Duck depth',min:0,max:1,step:.01,f:v=>(v>=.999?'−∞':(20*Math.log10(1-v)).toFixed(0))+' dB'},
+  {k:'hold',l:'Hold',min:0,max:120,step:1,f:v=>v+' ms'},
+  {k:'rel',l:'Release',min:30,max:600,step:5,f:v=>v+' ms'},
+  {k:'lvl',l:'Rumble level',min:0,max:1,step:.01,f:v=>Math.round(v*100)+'%'}]}
+];
+
+const S={bpm:132,key:9,tune:0,preset:'ware',P:{...PRESETS[1]},playing:false,soloKick:false,soloRum:false,vol:.7};
+
+/* ---------- pitch ---------- */
+function kickNote(){
+  const n=(S.key+S.tune)%12, f1=32.7032*Math.pow(2,n/12);
+  const f=Math.abs(Math.log2(f1/50))<=Math.abs(Math.log2(f1*2/50))?f1:f1*2;
+  const oct=f===f1?1:2;
+  return {n,name:NOTES[n]+oct,f};
+}
+function noteInWindow(n){ const f1=32.7032*Math.pow(2,n/12); const f=Math.abs(Math.log2(f1/50))<=Math.abs(Math.log2(f1*2/50))?f1:f1*2; return {f,name:NOTES[n]+(f===f1?1:2)}; }
+
+/* ---------- audio engine (shared by live + offline) ---------- */
+const noiseCache=new WeakMap();
+function noiseBuf(ctx){
+  if(noiseCache.has(ctx))return noiseCache.get(ctx);
+  const b=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.05),ctx.sampleRate), d=b.getChannelData(0);
+  const R=rng(909);for(let i=0;i<d.length;i++)d[i]=R()*2-1;
+  noiseCache.set(ctx,b);return b;
+}
+function rng(seed){return ()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+function makeIR(ctx,size,damp){
+  const sr=ctx.sampleRate,len=Math.floor(sr*size),b=ctx.createBuffer(2,len,sr);
+  const R=rng(1717);
+  for(let c=0;c<2;c++){
+    const d=b.getChannelData(c); let lp=0;
+    for(let i=0;i<len;i++){
+      const t=i/len;
+      const env=Math.pow(1-t,2.2)*Math.exp(-3*t);
+      const a=clamp(.02+(1-damp)*.5*(1-t*.8),.005,.9); // darker over time
+      lp+=a*((R()*2-1)-lp);
+      const fade=Math.min(1,i/(sr*.03));
+      d[i]=lp*env*fade;
+    }
+  }
+  return b;
+}
+function shaperCurve(drive){
+  const n=2048,c=new Float32Array(n),k=1+drive*40,nk=Math.tanh(k);
+  for(let i=0;i<n;i++){const x=i/(n-1)*2-1;c[i]=Math.tanh(k*x)/nk;}
+  return c;
+}
+function buildGraph(ctx,dest){
+  const N={};
+  N.master=ctx.createGain();
+  N.kickBus=ctx.createGain();
+  N.kickMain=ctx.createGain();
+  N.send=ctx.createGain();
+  N.pre=ctx.createDelay(.2);
+  N.verb=ctx.createConvolver();
+  N.subBus=ctx.createGain();
+  N.subSend=ctx.createGain(); N.subSend.gain.value=.35;
+  N.shaper=ctx.createWaveShaper(); N.shaper.oversample='4x';
+  N.post=ctx.createGain();
+  N.hp=ctx.createBiquadFilter(); N.hp.type='highpass'; N.hp.Q.value=.707;
+  N.hp2=ctx.createBiquadFilter(); N.hp2.type='highpass'; N.hp2.Q.value=.707;
+  N.lp=ctx.createBiquadFilter(); N.lp.type='lowpass';
+  N.lp2=ctx.createBiquadFilter(); N.lp2.type='lowpass'; N.lp2.Q.value=.707;
+  N.mono=ctx.createGain(); N.mono.channelCount=1; N.mono.channelCountMode='explicit'; N.mono.channelInterpretation='speakers';
+  N.duck=ctx.createGain();
+  N.rum=ctx.createGain();
+  N.kickBus.connect(N.kickMain); N.kickMain.connect(N.master);
+  N.kickBus.connect(N.send); N.send.connect(N.pre); N.pre.connect(N.verb); N.verb.connect(N.shaper);
+  N.subBus.connect(N.shaper); N.subBus.connect(N.subSend); N.subSend.connect(N.pre);
+  N.shaper.connect(N.post); N.post.connect(N.hp); N.hp.connect(N.hp2); N.hp2.connect(N.lp); N.lp.connect(N.lp2); N.lp2.connect(N.mono);
+  N.mono.connect(N.duck); N.duck.connect(N.rum); N.rum.connect(N.master);
+  N.master.connect(dest);
+  return N;
+}
+function applyParams(ctx,N,P,opts){
+  const t=ctx.currentTime;
+  N.kickMain.gain.setTargetAtTime(opts.kickOn?P.klvl:0,t,.01);
+  N.rum.gain.setTargetAtTime(opts.rumOn?P.lvl*.55:0,t,.01);
+  N.send.gain.setTargetAtTime(P.send,t,.01);
+  N.pre.delayTime.setTargetAtTime(P.pre/1000,t,.01);
+  N.shaper.curve=shaperCurve(P.drive);
+  N.post.gain.setTargetAtTime(1/(1+P.drive*1.2),t,.01);
+  N.hp.frequency.setTargetAtTime(P.hpf,t,.01); N.hp2.frequency.setTargetAtTime(P.hpf,t,.01);
+  N.lp.frequency.setTargetAtTime(P.lpf,t,.01); N.lp.Q.setTargetAtTime(P.res,t,.01);
+  N.lp2.frequency.setTargetAtTime(P.lpf*1.4,t,.01);
+}
+function setIR(ctx,N,P){ N.verb.buffer=makeIR(ctx,P.size,P.damp); }
+
+function playKick(ctx,t,P,f0,dest){
+  const o=ctx.createOscillator(),g=ctx.createGain(),kd=P.kdec/1000;
+  o.type='sine';
+  o.frequency.setValueAtTime(f0*Math.pow(2,P.sweep/12),t);
+  o.frequency.exponentialRampToValueAtTime(f0,t+P.pdec/1000);
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(1,t+.002);
+  g.gain.setValueAtTime(1,t+.018);
+  g.gain.exponentialRampToValueAtTime(.001,t+kd);
+  g.gain.linearRampToValueAtTime(0,t+kd+.01);
+  o.connect(g);g.connect(dest);o.start(t);o.stop(t+kd+.03);
+  if(P.click>0){
+    const n=ctx.createBufferSource(),f=ctx.createBiquadFilter(),cg=ctx.createGain();
+    n.buffer=noiseBuf(ctx); f.type='bandpass'; f.frequency.value=3200; f.Q.value=.8;
+    cg.gain.setValueAtTime(P.click*.9,t); cg.gain.exponentialRampToValueAtTime(.001,t+.014);
+    n.connect(f);f.connect(cg);cg.connect(dest);n.start(t);n.stop(t+.02);
+  }
+}
+function playSub(ctx,t,f0,len,dest,velocity=1,metal=false){
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='sine'; o.frequency.setValueAtTime(f0*1.5,t); o.frequency.exponentialRampToValueAtTime(f0,t+.012);
+  if(metal){const m=ctx.createOscillator(),mg=ctx.createGain();m.frequency.value=f0*2.71;mg.gain.setValueAtTime(f0*2,t);mg.gain.exponentialRampToValueAtTime(.1,t+len);m.connect(mg);mg.connect(o.frequency);m.start(t);m.stop(t+len+.05);}
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.9*velocity,t+.004);
+  g.gain.setTargetAtTime(0,t+.01,len/4);
+  o.connect(g);g.connect(dest);o.start(t);o.stop(t+len+.05);
+}
+function dipEvents(P,bpm){
+  // events within one beat (ms): [time, target, tauMs]
+  const s16=60000/bpm/4, ev=[[0,1-P.depth,2],[P.hold+8,1,Math.max(P.rel,10)/3]];
+  if(P.mode==='rolling'){for(let s=1;s<4;s++){ev.push([s*s16,1-P.depth*.7,2]);ev.push([s*s16+6,1,Math.min(P.rel,s16*.9)/3]);}}
+  if(P.mode==='grind'){ev.push([2*s16,1-P.depth*.5,2]);ev.push([2*s16+6,1,s16*.6/3]);}
+  if(P.mode==='gated'){ev[1]=[Math.max(P.hold+8,s16*.8),1,8];ev.push([s16*2.9,1-P.depth,5]);}
+  if(P.mode==='swell'){
+    ev.length=0;ev.push([0,1-P.depth,3]);
+    for(let i=1;i<16;i++)ev.push([i*s16/4,(1-P.depth)+P.depth*Math.pow(i/16,2),s16/4]);
+    ev.push([s16*3.88,1-P.depth,4]);
+  }
+  return ev.sort((a,b)=>a[0]-b[0]);
+}
+function subEvents(P,bpm,beatIndex=0){
+  const b=60/bpm, f=Math.pow(2,(P.subTune||0)/12),events=[];
+  if(P.mode==='offbeat')events.push([b/2,f,b*.45,1,false]);
+  if(P.mode==='triplet')for(const n of [1,2])events.push([b*n/3,f,b*.23,n===1?.65:1,false]);
+  if(P.mode==='metallic')events.push([b*.5,f,b*.3,.65,true]);
+  if(P.mode==='broken'||P.mode==='pattern'){
+    const pat=P.mode==='broken'?[0,0,2,0,0,1,0,2,0,0,1,0,0,2,0,1]:P.pattern;
+    for(let s=0;s<4;s++){const level=pat[(beatIndex%4)*4+s];if(level)events.push([b/4*(s+(s%2?(P.swing||0)/100:0)),f,b/4*(P.gate||60)/100,level===2?1:.48,false]);}
+  }
+  return events;
+}
+function scheduleBeat(ctx,N,P,f0,bpm,t,opts){
+  if(opts.kickAudible!==false) playKick(ctx,t,P,f0,N.kickBus);
+  for(const [ms,target,tau] of dipEvents(P,bpm)) N.duck.gain.setTargetAtTime(target,t+ms/1000,Math.max(tau,.5)/1000);
+  for(const [offset,ratio,len,velocity,metal] of subEvents(P,bpm,opts.beatIndex||0))playSub(ctx,t+offset,f0*ratio,len,N.subBus,velocity,metal);
+}
+
+/* ---------- live context ---------- */
+let AC=null,LN=null,comp=null,an=null,timer=null,nextT=0,beatIdx=0,beatQueue=[],irTimer=null,playToken=0;
+function ensureAudio(){
+  if(AC)return;
+  AC=new (window.AudioContext||window.webkitAudioContext)();
+  comp=AC.createDynamicsCompressor();
+  comp.threshold.value=-6;comp.knee.value=2;comp.ratio.value=12;comp.attack.value=.003;comp.release.value=.12;
+  const out=AC.createGain(); out.gain.value=S.vol;
+  an=AC.createAnalyser(); an.fftSize=16384; an.smoothingTimeConstant=.82;
+  LN=buildGraph(AC,comp); comp.connect(out); out.connect(an); an.connect(AC.destination); LN.out=out;
+  applyLive(); setIR(AC,LN,S.P);
+}
+function applyLive(){ if(!AC)return; applyParams(AC,LN,S.P,{kickOn:!S.soloRum,rumOn:!S.soloKick}); }
+function queueIR(){ if(!AC)return; clearTimeout(irTimer); irTimer=setTimeout(()=>setIR(AC,LN,S.P),160); }
+function tick(){
+  const f0=kickNote().f, beat=60/S.bpm;
+  while(nextT<AC.currentTime+.15){
+    scheduleBeat(AC,LN,S.P,f0,S.bpm,nextT,{beatIndex:beatIdx});
+    beatQueue.push({t:nextT,i:beatIdx});
+    nextT+=beat; beatIdx++;
+  }
+}
+async function play(){
+  if(S.playing)return;
+  const token=++playToken;
+  S.playing=true;
+  try{
+  ensureAudio(); if(AC.state==='suspended')await AC.resume();
+  if(token!==playToken)return;
+  LN.master.gain.cancelScheduledValues(AC.currentTime);LN.master.gain.setTargetAtTime(1,AC.currentTime,.01);
+  LN.duck.gain.cancelScheduledValues(0); LN.duck.gain.value=1;
+  nextT=AC.currentTime+.06; beatIdx=0; beatQueue=[];
+  S.playing=true; tick(); timer=setInterval(tick,25);
+  const b=$('#playBtn'); b.textContent='Stop'; b.classList.add('stop'); b.setAttribute('aria-pressed','true');
+  $('#heroCap').textContent=presetById(S.preset)?presetById(S.preset).name:'Custom';
+  }catch(e){stop();toast('Audio could not start: '+e.message);}
+}
+function stop(){
+  playToken++;
+  S.playing=false; clearInterval(timer);
+  if(LN){LN.duck.gain.cancelScheduledValues(0);LN.master.gain.setTargetAtTime(0,AC.currentTime,.015);}
+  const b=$('#playBtn'); b.textContent='Play'; b.classList.remove('stop'); b.setAttribute('aria-pressed','false');
+  $('#heroCap').textContent='press play';
+  $$('#lit i').forEach(i=>i.classList.remove('on'));$$('#sequence button').forEach(b=>b.classList.remove('playing'));
+}
+
+/* ---------- offline render ---------- */
+async function renderBuf(which,state=S){
+  const P=state.P,bpm=state.bpm,sr=44100,beat=60/bpm;
+  // Full bars preserve the phase of the one-bar sequence. Warm up the longest IR and envelopes.
+  const warmBars=Math.ceil((P.size+1)/(4*beat))+1,pre=warmBars*4*beat,bars=4,total=pre+bars*4*beat;
+  const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+  const ctx=new OC(2,Math.ceil(total*sr),sr);
+  const N=buildGraph(ctx,ctx.destination);
+  N.shaper.curve=shaperCurve(P.drive);
+  N.kickMain.gain.value=which!=='rumble'?P.klvl:0; N.rum.gain.value=which!=='kick'?P.lvl*.55:0;
+  N.send.gain.value=P.send; N.pre.delayTime.value=P.pre/1000; N.post.gain.value=1/(1+P.drive*1.2);
+  N.hp.frequency.value=N.hp2.frequency.value=P.hpf; N.lp.frequency.value=P.lpf; N.lp.Q.value=P.res; N.lp2.frequency.value=P.lpf*1.4;
+  setIR(ctx,N,P);
+  const f0=noteInWindow((state.key+state.tune)%12).f, nBeats=Math.round(total/beat);
+  for(let i=0;i<nBeats;i++) scheduleBeat(ctx,N,P,f0,bpm,i*beat,{beatIndex:i});
+  const buf=await ctx.startRendering();
+  const start=Math.round(pre*sr), len=Math.round(bars*4*beat*sr);
+  return {sr,len,chans:[0,1].map(c=>buf.getChannelData(c).slice(start,start+len))};
+}
+const peakOf=chans=>{let p=0;for(const ch of chans)for(let i=0;i<ch.length;i++){const a=Math.abs(ch[i]);if(a>p)p=a;}return p;};
+let renderCache=null;
+async function render(which){
+  const snapshot=takeSnapshot();
+  const btns=$$('[data-render]'); btns.forEach(b=>b.disabled=true);
+  const msg=$('#renderMsg'); msg.textContent='Rendering…';
+  try{
+    const cacheKey=JSON.stringify(snapshot);
+    if(renderCache?.key!==cacheKey){
+      msg.textContent='Rendering mix and matching stems…';
+      const mix=await renderBuf('mix',snapshot),kick=await renderBuf('kick',snapshot),rumble=await renderBuf('rumble',snapshot);
+      renderCache={key:cacheKey,mix,kick,rumble,norm:.891/Math.max(peakOf(mix.chans),peakOf(kick.chans),peakOf(rumble.chans),1)};
+    }
+    const out=renderCache[which];
+    // Shared attenuation also protects stems whose peaks exceed the mix through cancellation.
+    const norm=renderCache.norm;
+    const wav=encodeWav(out.chans,out.sr,norm);
+    const kn=noteInWindow((snapshot.key+snapshot.tune)%12),pn=(presetById(snapshot.preset)||{id:'custom'}).id;
+    const name=`rumble_${pn}_${kn.name.replace('#','s')}_${snapshot.bpm}bpm_${which}.wav`;
+    const url=URL.createObjectURL(new Blob([wav],{type:'audio/wav'}));
+    const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    msg.textContent=`Saved ${name} · 4 bars · ${(out.len/out.sr).toFixed(2)} s. Warp off at ${snapshot.bpm} BPM; unchanged settings give matching stems. Live protective compression is not printed.`;
+  }catch(e){ msg.textContent='Rendering failed in this browser ('+e.message+'). Try Chrome or Firefox.'; }
+  btns.forEach(b=>b.disabled=false);
+}
+function encodeWav(chans,sr,norm){
+  const n=chans[0].length, bufL=44+n*4, ab=new ArrayBuffer(bufL), v=new DataView(ab);
+  const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  w(0,'RIFF');v.setUint32(4,bufL-8,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,2,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*4,true);v.setUint16(32,4,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*4,true);
+  let o=44; for(let i=0;i<n;i++)for(let c=0;c<2;c++){const s=clamp(chans[c][i]*norm,-1,1);v.setInt16(o,s<0?s*32768:s*32767,true);o+=2;}
+  return ab;
+}
+/* ---------- UI ---------- */
+const presetById=id=>PRESETS.find(p=>p.id===id);
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),1600);};
+const dpr=()=>Math.min(window.devicePixelRatio||1,2);
+function fitCanvas(cv,h){const r=dpr(),w=Math.max(200,cv.clientWidth);if(cv.width!==Math.round(w*r)||cv.height!==Math.round(h*r)){cv.width=Math.round(w*r);cv.height=Math.round(h*r);}cv.style.height=h+'px';const c=cv.getContext('2d');c.setTransform(r,0,0,r,0,0);return {c,w,h};}
+
+function initSelects(){
+  $('#keySel').innerHTML=NOTES.map((n,i)=>`<option value="${i}">${n}</option>`).join('');
+  $('#presetSel').innerHTML=PRESETS.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')+'<option value="custom">Custom</option>';
+  $('#lit').innerHTML='<i class="beat"></i><i></i><i></i><i></i>';
+}
+function renderCtrls(){
+  $('#modes').innerHTML=Object.entries(MODES).map(([k,m])=>`<button data-mode="${k}" aria-pressed="false">${m.name}</button>`).join('');
+  $('#ctrlGroups').innerHTML=CTRLS.map(g=>`<div class="cgroup"><h4>${g.g}<span>${g.hint}</span></h4><div class="ctrls">${
+    g.items.map(it=>`<label class="ctrl">${it.l}<span class="r"><input type="range" data-k="${it.k}" min="${it.min}" max="${it.max}" step="${it.step}"><b data-v="${it.k}"></b></span></label>`).join('')
+  }</div></div>`).join('');
+}
+function syncCtrls(){
+  for(const g of CTRLS)for(const it of g.items){
+    const inp=document.querySelector(`input[data-k="${it.k}"]`); inp.value=S.P[it.k];
+    document.querySelector(`b[data-v="${it.k}"]`).textContent=it.f(S.P[it.k]);
+  }
+  $$('#modes button').forEach(b=>{const on=b.dataset.mode===S.P.mode;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);});
+  $('#modeDesc').textContent=MODES[S.P.mode].desc;
+  $('#presetSel').value=S.preset;
+  $$('[data-preset]').forEach(b=>b.classList.toggle('on',b.dataset.preset===S.preset));
+  $$('[data-study]').forEach(b=>b.classList.toggle('on',b.dataset.study===S.preset));
+  renderSequence();
+}
+function syncTransport(){
+  $('#bpm').value=S.bpm; $('#bpmV').textContent=S.bpm;
+  $('#keySel').value=S.key; $('#tuneSel').value=S.tune;
+  const k=kickNote(); $('#kickNote').textContent=k.name; $('#kickHz').textContent=k.f.toFixed(1)+' Hz';
+}
+function loadPreset(id,autoplay){
+  const p=presetById(id); if(!p)return;
+  S.P=structuredClone(p); S.preset=id; S.bpm=p.bpm;
+  syncCtrls(); syncTransport(); applyLive(); queueIR(); refreshAll();
+  if(S.playing)$('#heroCap').textContent=p.name;
+  if(autoplay&&!S.playing)play();
+}
+function refreshAll(){ drawStatic(); renderReadout(); renderKeyOpts(); renderNoteTable(); renderBpmTable(); }
+
+/* beat drawing */
+function simDuck(P,bpm,N){
+  const B=60000/bpm, ev=dipEvents(P,bpm), dt=.5, out=new Float32Array(N).fill(-1);
+  let v=1, target=1, tau=10, ei=0, beat=0, tt=0;
+  const steps=Math.ceil(3*B/dt);
+  for(let i=0;i<steps;i++){
+    const t=i*dt, local=t-Math.floor(t/B)*B, b=Math.floor(t/B);
+    if(b!==beat){beat=b;ei=0;}
+    while(ei<ev.length&&ev[ei][0]<=local){target=ev[ei][1];tau=Math.max(ev[ei][2],.5);ei++;}
+    v+=(target-v)*(1-Math.exp(-dt/tau));
+    if(b===2){const idx=Math.min(N-1,Math.floor(local/B*N)); out[idx]=v;}
+  }
+  if(out[0]<0)out[0]=1;for(let i=1;i<N;i++)if(out[i]<0)out[i]=out[i-1];
+  return out;
+}
+function tailEnv(P,bpm,t){
+  const B=60000/bpm, S0=P.size*1000; let e=0;
+  for(let k=0;k<12;k++){
+    const x=t+k*B-P.pre; if(x<=0||x>=S0)continue;
+    const u=x/S0; e+=Math.min(1,x/30)*Math.pow(1-u,2.2)*Math.exp(-3*u);
+  }
+  e*=P.send*.55;
+  for(const [offset,,len,velocity] of subEvents(P,bpm,0)){const x=t-offset*1000;if(x>0)e+=.9*velocity*Math.exp(-x/(len*1000/4));}
+  return e;
+}
+function drawBeatOn(cv,h,phase,compact){
+  const {c,w}=fitCanvas(cv,h), P=S.P, B=60000/S.bpm, N=Math.max(120,Math.floor(w));
+  c.clearRect(0,0,w,h);
+  const padL=compact?4:28,padR=6,padT=compact?8:14,padB=compact?22:24, gw=w-padL-padR, gh=h-padT-padB;
+  const X=ms=>padL+ms/B*gw, Y=v=>padT+(1-v)*gh;
+  // grid
+  c.font='10px JetBrains Mono, monospace'; c.textAlign='center';
+  for(let s=0;s<=16;s++){
+    const x=padL+s/16*gw; c.strokeStyle=s%4===0?'#4A453C':'#2E2B26'; c.lineWidth=1;
+    c.beginPath();c.moveTo(x,padT);c.lineTo(x,padT+gh);c.stroke();
+  }
+  if(!compact){
+    c.fillStyle='#8C8474';
+    ['1','e','&','a'].forEach((l,i)=>c.fillText(l+'  '+Math.round(i*B/4)+'ms',padL+(i/4)*gw+ (i===0?26:0),h-8));
+    c.textAlign='right';c.fillText('next kick',padL+gw,h-8);
+  }
+  const duck=simDuck(P,S.bpm,N);
+  // rumble area
+  const ref=(()=>{let m=0;for(let i=0;i<60;i++){m=Math.max(m,tailEnv(P,S.bpm,i/60*B));}return Math.max(m,.35);})();
+  const norm=Math.max(ref, .9);
+  c.beginPath(); c.moveTo(X(0),Y(0));
+  for(let i=0;i<N;i++){const t=i/(N-1)*B; const v=clamp(tailEnv(P,S.bpm,t)/norm*duck[i]*P.lvl*1.15,0,1); c.lineTo(X(t),Y(v));}
+  c.lineTo(X(B),Y(0)); c.closePath();
+  c.fillStyle='rgba(255,75,50,.42)'; c.fill();
+  c.strokeStyle='#FF4B32'; c.lineWidth=1.5; c.stroke();
+  // duck
+  c.beginPath();
+  for(let i=0;i<N;i++){const t=i/(N-1)*B; const y=Y(duck[i]); i?c.lineTo(X(t),y):c.moveTo(X(t),y);}
+  c.strokeStyle='#A78BFA'; c.lineWidth=1.5; c.stroke();
+  // kick amp
+  c.beginPath();
+  for(let i=0;i<N;i++){
+    const t=i/(N-1)*B; let v=0;
+    if(t<18)v=1; else if(t<P.kdec)v=Math.pow(.001,(t-18)/(P.kdec-18));
+    v*=P.klvl; const y=Y(v); i?c.lineTo(X(t),y):c.moveTo(X(t),y);
+  }
+  c.strokeStyle='#F2EDE0'; c.lineWidth=2; c.stroke();
+  // pitch
+  c.beginPath(); c.setLineDash([4,3]);
+  for(let i=0;i<N;i++){const t=i/(N-1)*Math.min(B,P.pdec*2.5); const v=Math.max(0,1-t/P.pdec)*P.sweep/60; const y=Y(v); i?c.lineTo(X(t),y):c.moveTo(X(t),y);}
+  c.strokeStyle='#FFC531'; c.lineWidth=1.5; c.stroke(); c.setLineDash([]);
+  if(!compact){
+    c.fillStyle='#F2EDE0';c.textAlign='left';
+    c.fillText('body '+P.kdec+'ms',Math.min(X(P.kdec)+4,padL+gw-80),Y(.08)-4);
+    c.strokeStyle='#F2EDE0';c.globalAlpha=.4;c.beginPath();c.moveTo(X(P.kdec),padT);c.lineTo(X(P.kdec),padT+gh);c.stroke();c.globalAlpha=1;
+  }
+  if(phase!=null){c.strokeStyle='#FFC531';c.lineWidth=2;c.beginPath();c.moveTo(padL+phase*gw,padT);c.lineTo(padL+phase*gw,padT+gh);c.stroke();}
+}
+function drawSpec(){
+  const cv=$('#specCv'), {c,w,h}=fitCanvas(cv,170);
+  c.clearRect(0,0,w,h);
+  const lo=20,hi=800, X=f=>Math.log(f/lo)/Math.log(hi/lo)*w, pb=18;
+  c.font='10px JetBrains Mono, monospace';
+  // zones
+  [[20,43,'deep'],[43,62,'kick window'],[62,150,'punch'],[150,300,'rumble top'],[300,800,'mud zone']].forEach(([a,b,l],i)=>{
+    c.fillStyle=i===1?'rgba(255,197,49,.10)':(i===4?'rgba(255,75,50,.06)':'rgba(255,255,255,.02)');
+    c.fillRect(X(a),0,X(b)-X(a),h-pb);
+    c.fillStyle=i===1?'#FFC531':'#6A6357';c.textAlign='center';c.fillText(l,(X(a)+X(b))/2,12);
+  });
+  c.fillStyle='#8C8474';c.textAlign='center';
+  [30,50,100,200,400,800].forEach(f=>{c.fillText(f,Math.min(w-12,X(f)),h-4);c.strokeStyle='#2E2B26';c.beginPath();c.moveTo(X(f),16);c.lineTo(X(f),h-pb);c.stroke();});
+  const k=kickNote();
+  [k.f,k.f*2].forEach((f,i)=>{c.strokeStyle=i?'rgba(255,197,49,.4)':'#FFC531';c.setLineDash([3,3]);c.beginPath();c.moveTo(X(f),16);c.lineTo(X(f),h-pb);c.stroke();c.setLineDash([]);});
+  if(!AC||!S.playing){c.fillStyle='#A9A08C';c.textAlign='center';c.fillText('Press play to see the live spectrum',w/2,h/2);$('#peakHz').textContent='–';return;}
+  const data=new Float32Array(an.frequencyBinCount); an.getFloatFrequencyData(data);
+  const binHz=AC.sampleRate/an.fftSize;
+  c.beginPath(); c.moveTo(0,h-pb);
+  let pk=-200,pf=0;
+  for(let x=0;x<w;x+=1.5){
+    const f=lo*Math.pow(hi/lo,x/w), b=Math.round(f/binHz), db=data[b];
+    const v=clamp((db+100)/85,0,1); c.lineTo(x,(h-pb)-v*(h-pb-18));
+    if(f>25&&f<200&&db>pk){pk=db;pf=f;}
+  }
+  c.lineTo(w,h-pb);c.closePath();c.fillStyle='rgba(63,208,201,.35)';c.fill();c.strokeStyle='#3FD0C9';c.lineWidth=1.3;c.stroke();
+  if(pk>-90){const m=Math.round(12*Math.log2(pf/32.7032)); $('#peakHz').textContent=pf.toFixed(0)+' Hz ≈ '+NOTES[((m%12)+12)%12]+(Math.floor(m/12)+1);}
+}
+function drawStatic(){ drawBeatOn($('#beatCv'),210,null,false); drawBeatOn($('#heroCv'),190,null,true); $('#beatMs').textContent='1 beat = '+(60000/S.bpm).toFixed(1)+' ms @ '+S.bpm; if(!S.playing)drawSpec(); }
+function frame(){
+  if(S.playing&&AC){
+    const now=AC.currentTime, beat=60/S.bpm;
+    while(beatQueue.length>1&&beatQueue[1].t<=now)beatQueue.shift();
+    const cur=beatQueue[0];
+    if(cur&&cur.t<=now){
+      const ph=clamp((now-cur.t)/beat,0,1);
+      drawBeatOn($('#beatCv'),210,ph,false); drawBeatOn($('#heroCv'),190,ph,true);
+      $$('#lit i').forEach((el,i)=>el.classList.toggle('on',i===cur.i%4));
+      $$('#sequence button').forEach((el,i)=>el.classList.toggle('playing',S.P.mode==='pattern'&&i===(cur.i%4)*4+Math.min(3,Math.floor(ph*4))));
+    }
+    drawSpec();
+  }
+  requestAnimationFrame(frame);
+}
+
+/* readouts + tables */
+function renderReadout(){
+  const P=S.P,B=60000/S.bpm,k=kickNote(), rec=P.hold+8+P.rel, win=k.f>=43&&k.f<=62;
+  const pill=(ok,a,b)=>`<span class="pill ${ok?'ok':'warn'}">${ok?a:b}</span>`;
+  $('#readout').innerHTML=[
+    ['Kick note',`${k.name} <small>${k.f.toFixed(1)} Hz</small>`,pill(win,'in window','outside 43–62')],
+    ['Body',`${P.kdec} <small>ms · ${Math.round(P.kdec/B*100)}% beat</small>`,pill(P.kdec/B<=.62,'room for rumble','crowds the tail')],
+    ['gated','swell'].includes(P.mode)?['Gain shape',`${P.mode==='gated'?'Window':'Rising'} <small>per beat</small>`,'']:['Pump recovers',`${Math.round(rec)} <small>ms · ${Math.round(rec/B*100)}%</small>`,pill(rec/B<=.85,'breathes','slow recovery')],
+    ['Reverb',`${P.size.toFixed(1)} <small>s · ${(P.size*1000/B).toFixed(1)} beats</small>`,'']
+  ].map(([a,b,c])=>`<div><div class="k">${a}</div><div class="v">${b}</div>${c}</div>`).join('');
+}
+function renderKeyOpts(){
+  const degs=[['Root',0],['Fifth',7],['Fourth',5]];
+  const opts=degs.map(([d,o])=>{const n=(S.key+o)%12, x=noteInWindow(n); return {d,o,...x};});
+  const best=opts.reduce((a,b)=>Math.abs(Math.log2(b.f/50))<Math.abs(Math.log2(a.f/50))?b:a);
+  $('#keyOpts').innerHTML=opts.map(x=>{
+    const v=x.f>=43&&x.f<=62?'<span class="pill ok">in window</span>':(x.f>=38&&x.f<=70?'<span class="pill warn">usable</span>':'<span class="pill">compare by ear</span>');
+    return `<tr class="${S.tune===x.o?'hl':''}"><td>${x.d}${x===best?' <span class="pill hot">near 50 Hz</span>':''}</td><td class="num">${x.name}</td><td class="num">${x.f.toFixed(1)}</td><td>${v}</td><td><button class="btn sm ghost" data-tune="${x.o}">Use</button></td></tr>`;
+  }).join('');
+}
+const NOTE_CHAR=[
+ ['C1','Very low fundamental; needs suitable playback and careful level balance.','Deep designs; compare C2 too'],
+ ['C#1','Very low; use harmonics and envelope to preserve definition.','Deep systems; compare C#2'],
+ ['D1','Sub-heavy; the harmonics may carry most of the audible identity.','Deep kicks or drones'],
+ ['D#1','Borderline. Deep and heavy, hard to hear on small speakers.','Very deep dub'],
+ ['E1','Deep; small speakers may rely on its higher harmonics.','Dub, deep, big rooms'],
+ ['F1','Very deep and full. Needs drive to translate.','Deep, hypnotic'],
+ ['F#1','Deep and solid. A common rumble choice.','Hypnotic, warehouse'],
+ ['G1','Centre of the window. Deep enough to feel, high enough to hear.','Almost anything'],
+ ['G#1','Punchy sub that translates well.','Warehouse, peak-time'],
+ ['A1','Tight and deep. Very common in techno and easy to mix.','Peak-time, rolling'],
+ ['A#1','Punchy, more knock than boom.','Driving, hard'],
+ ['B1','Top of the window. Punchy with less sub weight.','Hard, minimal'],
+ ['C2','Above the window. Bouncy and knocky.','Hard techno 145+'],
+ ['C#2','Higher and more knock-focused. Compare body length as well as pitch.','Bouncy or percussive designs'],
+ ['D2','Higher kick body; leaves room for a deeper tail or bassline.','Punchy or layered designs'],
+ ['D#2','High in this comparison; more audible pitch and less deep weight.','Deliberately pitched low drums']
+];
+function renderNoteTable(){
+  const cur=kickNote().name;
+  $('#noteTable').innerHTML=NOTE_CHAR.map(([nm,ch,use],i)=>{
+    const f=32.7032*Math.pow(2,i/12), n=i%12, inW=f>=43&&f<=62;
+    return `<tr class="${nm===cur?'hl':''}"><td class="num">${nm}${inW?' <span class="pill ok">window</span>':''}</td><td class="num">${f.toFixed(1)}</td><td>${ch}</td><td>${use}</td><td><button class="btn sm ghost" data-setkey="${n}">Make key</button></td></tr>`;
+  }).join('');
+}
+function renderBpmTable(){
+  let list=[120,124,126,128,130,132,134,136,138,140,145,150,160];
+  if(!list.includes(S.bpm)){list.push(S.bpm);list.sort((a,b)=>a-b);}
+  $('#bpmTable').innerHTML=list.map(b=>{
+    const B=60000/b;
+    return `<tr class="${b===S.bpm?'hl':''}"><td class="num">${b}</td><td class="num">${B.toFixed(1)} ms</td><td class="num">${(B/4).toFixed(1)} ms</td><td class="num">${(B/8).toFixed(1)} ms</td><td class="num">${Math.round(B*.35)}–${Math.round(B*.55)} ms</td><td class="num">${Math.round(B*.4)}–${Math.round(B*.6)} ms</td><td class="num">${(B*3/1000).toFixed(1)}–${(B*9/1000).toFixed(1)} s</td></tr>`;
+  }).join('');
+}
+function renderCards(){
+  $('#presetCards').innerHTML=PRESETS.map(p=>`<button class="pg" data-preset="${p.id}"><span class="rn">${MODES[p.mode].name} · ${p.bpm} BPM</span><h4>${p.name}</h4><p>${p.desc}</p></button>`).join('');
+  renderLibrary();
+}
+function renderLibrary(){
+  const q=$('#styleSearch').value.trim().toLowerCase(),family=$('#styleFamily').value;
+  const list=PRESETS.filter(p=>(family==='all'||p.family===family)&&[p.name,p.desc,p.family,p.chain,p.where,MODES[p.mode].name].join(' ').toLowerCase().includes(q));
+  $('#typeCards').innerHTML=list.map(p=>`<article class="pg ${S.preset===p.id?'on':''}" data-study="${p.id}"><span class="meta">${p.family} / ${String(PRESETS.indexOf(p)+1).padStart(2,'0')}</span><h4>${p.name}</h4><p>${p.desc}</p><div class="preview-bars" aria-hidden="true">${Array.from({length:16},(_,i)=>`<i style="height:${p.mode==='pattern'?3+p.pattern[i]*8:p.mode==='broken'?3+[0,0,2,0,0,1,0,2,0,0,1,0,0,2,0,1][i]*8:4+Math.round(15*(i%4)/3)}px"></i>`).join('')}</div><div class="chain">${p.chain}</div><p class="note" style="margin-top:10px">${p.bpm} BPM · ${p.kdec} ms body · ${p.size} s space<br>HP ${p.hpf} / LP ${p.lpf} Hz · ${p.rel} ms recovery control</p><div class="foot"><span class="rn">${MODES[p.mode].name}</span><button class="btn sm hot" data-load="${p.id}" aria-label="Load and play ${p.name}">Load &amp; play ↗</button></div></article>`).join('');
+  $('#styleCount').textContent=list.length+' / '+PRESETS.length+' studies';$('#styleEmpty').hidden=list.length>0;
+}
+const FIX=[
+ ['Muddy, woolly rumble','Energy piling up at 200–400 Hz; reverb too bright','Lower LP to 160–220 Hz → shorten decay → cut 250–350 Hz on the return'],
+ ['Kick lost its punch','Rumble present during the transient','Deeper duck with ≤1 ms attack → add 5–15 ms pre-delay → −2 dB bell on the rumble at the kick note'],
+ ['Low end feels static','Pump too slow or too shallow','Shorter release so the swell peaks before the next kick → more depth → try rolling 16ths'],
+ ['Vanishes on laptop or earbuds','Nothing above ~100 Hz','More drive before the filter → raise LP to 280–350 Hz → parallel saturated copy high-passed at 100 Hz'],
+ ['Overwhelming in the car or club','Too much sustained sub','HP at 35–40 Hz → lower the level 2–3 dB → shorter reverb decay'],
+ ['Fights the bassline','Two sounds competing for 40–120 Hz','Let the rumble be the bass → sidechain the rumble from the bassline → tune both to the root and LP the rumble lower'],
+ ['Sounds out of key','Kick untuned, or the chords moved','Re-tune on the settled body → keep the rumble on the root → use Recipe C for moving harmony'],
+ ['Thin or wobbly in mono','Stereo reverb in the sub','Utility Bass Mono at 120 Hz → mono the whole return → no width effects before the filter'],
+ ['Clicks at every kick','Duck is a hard cut','Attack 0.1–1 ms instead of 0 → smooth the shaper curve → duck floor around −30 dB instead of −∞'],
+ ['Master limiter pumps by itself','Low end too loud in total','Rumble peak 4–10 dB under the kick → judge the combined low end, not each part soloed']
+];
+const NUMBERS=[['Kick note','43–62','Hz'],['Kick body','35–55','% of a beat'],['Pre-delay','5–25','ms'],['Reverb','1.5–4.5','s'],['High-pass','25–40','Hz'],['Low-pass','150–300','Hz'],['Mono below','100–150','Hz'],['Gain reduction','12–24','dB'],['Rumble vs kick','−4 to −10','dB peak'],['Drive','before','the filter']];
+const MOVES=[
+ ['Intro','Open the filter','Start with the LP around 90 Hz so the rumble is felt, not heard. Sweep it to 250 Hz over 16–32 bars.'],
+ ['Every 8 bars','Drop one beat','Mute the send on beat 4 of bar 8. The gap makes bar 1 of the next phrase hit harder.'],
+ ['Build','Stretch the tail','Automate decay longer and drive higher across the build. The rumble gets bigger and messier.'],
+ ['Breakdown','Kill it, keep a ghost','Mute the rumble but leave a reversed or frozen kick tail. Silence in the sub makes the return feel huge.'],
+ ['Drop','Choose the arrival','Bring the rumble back on beat 1 for weight, or leave the first kick bare and let the tail enter afterwards for contrast.'],
+ ['Peak section','Switch the style','Go from tail to rolling for 16–32 bars by adding a 16th shaper, then back.'],
+ ['Harmony change','Move the note','Resample (Recipe B) and transpose per section: root for 32 bars, fifth for 8.'],
+ ['Tension','Ride the resonance','Slowly raise LP cutoff and resonance. A whistling rumble adds tension without adding parts.']
+];
+const ABL_CHECKS=['Kick tuned to the key on its settled body','Reverb 100% wet, reverb low cut off','Drive placed before the filters','HP at 25–40 Hz, LP under 300 Hz','Lows mono below ~120 Hz','Pump recovers before the next kick','Rumble peaks 4–10 dB under the kick','Checked in mono','Checked on a small speaker or earbuds','A/B against a reference track at equal loudness'];
+const SPLICE_CHECKS=['Starts instantly, transient right at the start','One clear low peak between 40 and 65 Hz after ~50 ms','Body under ~400 ms at 130 BPM','Dry: no reverb or room baked in','Low end centred, not wide','Still sounds good quiet and soloed','Key labelled, or easy to measure'];
+const CHIPS={
+ body:['techno kick','kick body','sub kick','tonal kick','tuned kick','analog kick','909 kick','dry kick','deep kick','kick one shot'],
+ top:['kick top','kick click','kick transient','punchy kick','clicky kick'],
+ ref:['rumble kick','rumble loop','techno rumble','kick rumble loop','sub rumble'],
+ neg:['reverb','processed','wet','808 (rings too long)','trap kick']
+};
+function renderChecks(el,items,key){
+  let st={}; try{st=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){st={};}
+  el.innerHTML=items.map((t,i)=>`<label class="${st[i]?'done':''}"><input type="checkbox" data-i="${i}" ${st[i]?'checked':''}><span>${t}</span></label>`).join('');
+  el.addEventListener('change',e=>{
+    const i=e.target.dataset.i; if(i==null)return; st[i]=e.target.checked; e.target.parentElement.classList.toggle('done',e.target.checked);
+    try{localStorage.setItem(key,JSON.stringify(st));}catch(err){}
+  });
+}
+function renderStatics(){
+  $('#fixTable').innerHTML=FIX.map(([a,b,c])=>`<tr><td><b>${a}</b></td><td>${b}</td><td>${c.split(' → ').map((x,i)=>`<span class="pill ${i===0?'hot':''}" style="margin:0 4px 4px 0">${i+1}</span>${x}`).join('<br>')}</td></tr>`).join('');
+  $('#numbers').innerHTML=NUMBERS.map(([k,v,u])=>`<div><div class="k">${k}</div><div class="v">${v} <small>${u}</small></div></div>`).join('');
+  $('#moves').innerHTML=MOVES.map(([w,t,p])=>`<div class="move"><div class="when">${w}</div><h4>${t}</h4><p>${p}</p></div>`).join('');
+  renderChecks($('#checks'),ABL_CHECKS,'fg17-ableton');
+  renderChecks($('#spliceChecks'),SPLICE_CHECKS,'fg17-splice');
+  $$('[data-chips]').forEach(el=>{
+    const neg=el.dataset.chips==='neg';
+    el.innerHTML=CHIPS[el.dataset.chips].map(c=>neg?`<span class="chip neg">${c}</span>`:`<button class="chip" data-copy="${c}">${c}</button>`).join('');
+  });
+}
+async function copyText(t,btn){
+  let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true;}catch(e){
+    const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+    try{ok=document.execCommand('copy');}catch(err){} ta.remove();
+  }
+  if(ok){btn.classList.add('copied');setTimeout(()=>btn.classList.remove('copied'),900);toast('Copied "'+t+'"');}
+  else toast('Copy blocked: search for "'+t+'"');
+}
+
+/* ---------- one-track recipes & creative field notes ---------- */
+const RACKS={
+ fx:{title:'Audio Effect Rack / the simplest complete rumble',route:'Simpler → Audio Effect Rack\n  DRY: Utility\n  WET: Reverb → Saturator → EQ Eight → Compressor → Utility',steps:[['Load and tune one kick','Put Simpler on a MIDI track. Choose One-Shot, turn Warp off for the initial audition, then trim and tune the settled body. Program four notes per bar.'],['Split the audio inside the track','Drop an Audio Effect Rack after Simpler. Show its chain list and create two chains, DRY and WET. Leave DRY clear except for Utility; keep both chains active over the same Chain Selector range.'],['Build the wet lane','On WET: Reverb 100% wet, decay around 1.5 s → Saturator around +3 dB with output compensation → EQ high-pass around 30 Hz and low-pass around 250 Hz. Add Compressor and Utility. Start the wet-chain level at −18 dB.'],['Duck from the clean lane','Enable the wet Compressor’s external sidechain and select this track’s DRY chain audio tap. Try ratio 6:1, attack 2 ms, release 140 ms, adjusting threshold for a clear gap. Listen to the attack rather than chasing a fixed gain-reduction number.'],['Save the complete instrument','For macros that include Simpler tuning as well as the effect controls, group Simpler and its effect rack into an outer Instrument Rack. Map the useful controls there and save that outer rack.']],watch:'A reverb rumble may not have one stable fundamental. Tuning Simpler changes its excitation; still check the processed tail by ear.'},
+ instrument:{title:'Instrument Rack / kick, sub and texture under one roof',route:'MIDI → Instrument Rack\n  KICK: Simpler → Utility\n  SUB: Operator / Drift / another Simpler → EQ → duck\n  TEXTURE: another source → Reverb 100% → drive → EQ → duck',steps:[['Start with three parallel instrument chains','Create an Instrument Rack and put a source instrument in each chain. A single chain holds one instrument followed by effects; parallel chains are how you layer several instruments.'],['Choose how MIDI reaches the layers','For simultaneous layers, give the chains overlapping Key zones and matching active Chain Selector zones. For independent rhythms in the same clip, use separate one-note Key zones and transpose each chain internally to its desired sound pitch.'],['Give each layer a job','Keep the kick transient clear. Set the sub to a short mono envelope. High-pass the texture around 120–180 Hz as a starting point so it adds character without another deep fundamental. Turn the sub down before adding texture.'],['Make the sub answer the kick','Independent Key zones let one MIDI clip play the kick on one note and sub replies on another. If all layers trigger together, delay or shape the sub onset inside its chain and duck its output from the KICK chain.'],['Tune and perform','Calibrate each source, map a shared relative transpose plus independent trim controls, then make Tight / Rolling / Destroyed macro variations. Listen to the three layers in mono.']],watch:'Do not pitch-shift the entire output just to tune the sub: that shifts the kick click, reverb texture and everything else too.'},
+ pad:{title:'Drum Rack / one pad triggers a whole instrument',route:'MIDI note → Drum Rack pad\n  nested Instrument Rack\n    KICK instrument + effects\n    SUB instrument + effects\n    TEXTURE instrument + effects\n  → same track output',steps:[['Put an Instrument Rack on one pad','Create a Drum Rack, drag an Instrument Rack onto your chosen pad and build the KICK / SUB / TEXTURE chains inside it. One pad now triggers all enabled layers.'],['Keep their jobs separate','Short kick in the first chain, low synth or tail sample in the second, high-passed noise or room in the third. A separate Audio Effect Rack after the kick instrument can generate a classic dry/wet rumble within that chain.'],['Tune inside the pad','The pad receives a particular MIDI note. Moving the incoming note usually selects another pad, so tune using the instrument parameters or a Pitch device inside the pad instead. Check the outgoing Play note and octave settings.'],['Expose a small control panel','Map the inner rack’s important controls, then map its macros outward where available to make one convenient outer panel. Leave Choke at None unless you deliberately want another pad to stop this sound.'],['Build variations on other pads','Duplicate the finished setup to a different pad for a tight, long or metallic variant. Sequence those pads in one MIDI clip. Avoid firing all deep variants together unless that is intentional.']],watch:'One pad triggers all its layers together. For independently placed kick and rumble events, put them on separate pads or use separate Key zones in an Instrument Rack.'},
+ return:{title:'Drum Rack / the rumble lives in an internal return',route:'Drum Rack\n  KICK pad ───────────────→ Rack output\n       └─ send A → internal RUMBLE return\n                    Reverb 100% → drive → EQ → duck\n                    → Rack output',steps:[['Create the internal return','Inside Drum Rack, reveal its chain list and Return section. Add a return chain containing Reverb, Saturator, EQ, Compressor and Utility. Name it RUMBLE.'],['Feed it from the kick pad','Show the Send section and raise the kick chain’s send to RUMBLE. Leave other pad sends down initially. Keep Reverb fully wet and bring the return up gradually.'],['Keep output inside the rack','Set the internal return’s Audio To to the rack output. This keeps the whole instrument on the same track rather than routing to a global Return track.'],['Use the dry kick as detector','Select the dry kick pad’s chain tap in the return Compressor’s sidechain chooser. If the desired nested tap is unavailable, use the drawn gain-envelope alternative described below.'],['Try a second excitation source','Send a quiet tom or click from another pad to the same internal return. Its rhythm changes what excites the reverb, while the original kick can continue controlling the duck.']],watch:'Internal Drum Rack sends are post-fader: changing a pad’s chain level also changes how hard it feeds the return. Rebalance drive and send after major level changes.'}
+};
+function showRack(id){const r=RACKS[id];if(!r)return;$$('[data-rack]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.rack===id));$('#rackRecipe').innerHTML=`<h3>${r.title}</h3><div class="routing">${r.route}</div><ol class="steps">${r.steps.map(([h,p])=>`<li><div><h4>${h}</h4><p>${p}</p></div></li>`).join('')}</ol><div class="callout"><b>Check this:</b> ${r.watch}</div>`;}
+const EXPERIMENTS=[
+ ['01 / Found sound','The freight elevator','steel','Use a field recording as the room’s personality, with a simple mono sub underneath.',['Record a lift, radiator or heavy door. Use your own recording or a sample you can reuse. Trim one interesting scrape.','Load it in Simpler, soften the edges, pitch down 7–12 semitones and high-pass around 120 Hz. Add a short room and duck it from the kick.','Blend beneath a stable sub. Automate sample start very slightly for changing mechanical detail.'],'The recording supplies texture; it does not have to supply trustworthy sub-bass.'],
+ ['02 / Reverse gravity','An inhale before impact','undertow','A real reversed tail makes the next kick feel like a release of pressure.',['Print a wet kick tail without its ducking envelope or dry transient. Reverse a short section.','Place its loudest point just before a kick; fade it down over the last 5–15 ms. Keep the next transient clear.','Use it only on beat four every second or fourth bar. Compare a high-passed version against a full-band version.'],'The browser study uses a rising envelope; build this recipe with reversed audio in Live.'],
+ ['03 / Spectral movement','A vowel in the concrete','ceramic','Let a narrow midrange band speak while the bottom remains steady.',['Split off a texture lane and high-pass it near 150 Hz. Add two broad EQ peaks around 350 and 700 Hz.','Move those peaks slowly in opposite directions. Add restrained saturation, then level-match.','Bring the lane in for the last four bars of a phrase and remove it on the drop.'],'If the texture gets louder instead of more interesting, lower it before adding more resonance.'],
+ ['04 / Rhythm illusion','The missing downbeat','fracture','Your ear fills in the weight when the rumble refuses the obvious rhythm.',['Print a short tail, load it onto a separate Drum Rack pad and use 3–10 ms edge fades.','Trigger sixteenth steps 3, 6, 8, 11 and 14. Leave the downbeats to the kick. Accent only two replies.','Remove the last reply in every second bar. Keep ducking if tails overlap the kick.'],'Shorten the source before adding swing; a long wash can erase the syncopation.'],
+ ['05 / Parallel damage','Clean cellar, ruined ceiling','relay','Make the aggression live above the sub instead of flattening the whole low end.',['Keep one dark rumble chain stable. Duplicate its wet signal into a second effects lane.','High-pass the new lane around 150 Hz, distort it hard, then low-pass around 800 Hz. Add a cleanup high-pass after distortion if needed.','Blend it quietly and automate that lane’s level for impact. Check mono and compare at equal loudness.'],'Parallel filters overlap and shift phase; these are creative layers, not a perfect crossover.'],
+ ['06 / Pitch as structure','A tail that changes its mind','orbit','Give the upper tail a different note without destabilizing the kick.',['Use a mono synth for the tonal rumble layer and high-pass a separate reverb texture.','Keep the synth on the root through most of a phrase. Move one reply to a fifth or octave at the turnaround.','Check the actual chord under that reply. If it fights the harmony, use an octave or remove it.'],'A diffuse room need not read as a note. Use the synth layer when harmony must be explicit.'],
+ ['07 / Time smear','Stretch the room, cut the floor','abyss','Turn a tiny room into an evolving bed, then sculpt it into rhythmic pieces.',['Print one wet tail, make a duplicate and experiment with Warp stretching to four or eight times its duration.','Find a section with useful movement. Remove excessive sub and give it a smooth gain envelope.','Chop two contrasting slices into a one-bar call and response. Keep a short, stable sub underneath only if needed.'],'Stretch algorithms create different artifacts. Audition several modes; extra length is not automatically extra weight.'],
+ ['08 / Controlled instability','Two rooms, one pulse','ghost','Alternate personalities while the kick remains completely familiar.',['Build a small, gritty room and a longer, dark room on separate wet chains.','Automate their levels so one leads for a bar, then the other answers. Keep the sum roughly level.','Duck both from the same dry kick. Leave reverb tails running for overlap, then try hard separation.'],'Start with complementary frequency ranges so the overlap does not double the sub.']
+];
+function renderExperiments(){$('#experimentCards').innerHTML=EXPERIMENTS.map(([tag,name,preset,idea,steps,check])=>`<article class="panel experiment"><div class="eyebrow">${tag}</div><h3>${name}</h3><p>${idea}</p><button class="btn sm ghost" data-load="${preset}">Audition starting mood ↗</button><details><summary>Build the experiment</summary><ol>${steps.map(s=>`<li>${s}</li>`).join('')}</ol><p class="note"><b>Listen for:</b> ${check}</p></details></article>`).join('');}
+const CHALLENGES=[['Make the silence heavier than the sound.','Use only two rumble events per bar. Give them different lengths. Keep the kick unchanged, and make the second bar answer the first.'],['Make a room sound like an instrument.','Print one tail. Find a pitched slice, play a three-note reply and remove the original reverb. Can the groove still feel like one low-end sound?'],['Get meaner without getting louder.','Store A. Add grit only above 150 Hz, reduce that layer until the total loudness matches A, then compare. Keep the version with the clearer kick.'],['One source. Three distances.','Use the same kick to build a tiny dry room, a mid-sized room and a distant wash. Sequence them across a 16-bar section; preserve the source tuning.'],['Let the top move and the bottom stay.','Keep one sub note unchanged. Add a high-passed texture and automate only its pitch or filter. Make eight bars of motion with one stable fundamental.'],['Lose one habit.','If you always use long reverb, start at 0.6 s. If you always use heavy drive, start clean. Solve the groove with note placement before adding either back.']];
+let challengeIndex=0,storedA=null;
+function renderSequence(){
+  const P=S.P;
+  $('#sequence').innerHTML=P.pattern.map((v,i)=>`<button data-step="${i}" data-level="${v}" aria-label="Step ${i+1}: ${['off','soft','accent'][v]}" aria-pressed="${v>0}">${String(i+1).padStart(2,'0')}<span aria-hidden="true">${['·','▪','■'][v]}</span></button>`).join('');
+  $('#swing').value=P.swing;$('#swingV').textContent=P.swing+'%';$('#gate').value=P.gate;$('#gateV').textContent=P.gate+'% step';$('#subTune').value=P.subTune;
+  $('#enablePattern').textContent=P.mode==='pattern'?'Pattern enabled':'Enable pattern';$('#enablePattern').setAttribute('aria-pressed',P.mode==='pattern');
+}
+function takeSnapshot(){return structuredClone({bpm:S.bpm,key:S.key,tune:S.tune,preset:S.preset,P:S.P});}
+function restoreSnapshot(x){Object.assign(S,structuredClone(x));syncCtrls();syncTransport();applyLive();queueIR();refreshAll();renderLibrary();$('#heroCap').textContent=S.playing?(presetById(S.preset)?.name||'Custom'):'press play';}
+function customChanged(){S.preset='custom';syncCtrls();applyLive();queueIR();refreshAll();renderLibrary();if(S.playing)$('#heroCap').textContent='Custom';}
+function saveFile(name,text,type){const u=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);}
+function validateSession(x){
+  if(!x||x.format!=='rumble-lab'||x.version!==2||!x.state||!x.state.P)throw Error('Choose a Rumble Lab version 2 session.');
+  const s=x.state,p=s.P;
+  const num=(v,lo,hi)=>typeof v==='number'&&Number.isFinite(v)&&v>=lo&&v<=hi;
+  if(!num(s.bpm,118,165)||!Number.isInteger(s.bpm)||!Number.isInteger(s.key)||!num(s.key,0,11)||![0,5,7].includes(s.tune)||!Object.hasOwn(MODES,p.mode))throw Error('Invalid tempo, key or motion mode.');
+  for(const c of CTRLS.flatMap(g=>g.items))if(!num(p[c.k],c.min,c.max))throw Error('Invalid control: '+c.l);
+  if(!Array.isArray(p.pattern)||p.pattern.length!==16||!p.pattern.every(v=>[0,1,2].includes(v))||!num(p.swing,0,45)||!num(p.gate,15,95)||![-12,0,7,12].includes(p.subTune))throw Error('Invalid pattern settings.');
+  const clean={};for(const c of CTRLS.flatMap(g=>g.items))clean[c.k]=p[c.k];Object.assign(clean,{mode:p.mode,pattern:[...p.pattern],swing:p.swing,gate:p.gate,subTune:p.subTune});
+  const preset=presetById(s.preset);const exact=preset&&Object.keys(clean).every(k=>JSON.stringify(clean[k])===JSON.stringify(preset[k]));
+  return {bpm:s.bpm,key:s.key,tune:s.tune,preset:exact?preset.id:'custom',P:clean};
+}
+function buildNotes(){const p=S.P,k=kickNote();return `# Rumble Lab / ${presetById(S.preset)?.name||'Custom study'}\n\n${S.bpm} BPM | kick ${k.name} (${k.f.toFixed(2)} Hz) | ${MODES[p.mode].name}\n\nBrowser studies illustrate sound and timing, not exact Ableton device values.\n\n## Controls\n${CTRLS.map(g=>'### '+g.g+'\n'+g.items.map(c=>'- '+c.l+': '+c.f(p[c.k])).join('\n')).join('\n\n')}\n\n## Sub pattern\n16 steps, 0 = off, 1 = soft, 2 = accent\n${p.pattern.join(' ')}\nSwing ${p.swing}%, note length ${p.gate}% of a sixteenth, interval ${p.subTune} semitones.\nThe editable pattern sounds only in Pattern mode.\n\n## One-track build\n${Object.values(RACKS).map(r=>'### '+r.title+'\n\n'+r.route+'\n\n'+r.steps.map(([h,t],i)=>`${i+1}. ${h}: ${t}`).join('\n')+'\n\nCheck: '+r.watch).join('\n\n')}\n\n## Creative experiments\n${EXPERIMENTS.map(([tag,name,preset,idea,steps,check])=>'### '+name+'\n'+idea+'\n'+steps.map((s,i)=>`${i+1}. ${s}`).join('\n')+'\nListen for: '+check).join('\n\n')}\n\nAbleton rack reference: https://www.ableton.com/en/manual/instrument-drum-and-effect-racks/\nRouting: https://www.ableton.com/en/manual/routing-and-i-o/\n`;}
+function bindExpanded(){
+  $('#styleSearch').addEventListener('input',renderLibrary);$('#styleFamily').addEventListener('change',renderLibrary);
+  $$('[data-rack]').forEach(b=>b.addEventListener('click',()=>showRack(b.dataset.rack)));
+  $('#sequence').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b)return;S.P.pattern[+b.dataset.step]=(S.P.pattern[+b.dataset.step]+1)%3;customChanged();$('#sequence').querySelector(`[data-step="${b.dataset.step}"]`).focus();});
+  $('#enablePattern').addEventListener('click',()=>{S.P.mode='pattern';customChanged();});
+  for(const id of ['swing','gate','subTune'])$('#'+id).addEventListener(id==='subTune'?'change':'input',e=>{S.P[id]=+e.target.value;customChanged();});
+  const patterns={roll:[0,1,2,1,0,1,2,1,0,1,2,1,0,1,2,1],skip:[0,0,2,0,0,1,0,2,0,0,1,0,0,2,0,1],sparse:[0,0,2,0,0,0,0,0,0,0,1,0,0,0,0,0],clear:Array(16).fill(0)};
+  $$('[data-pattern]').forEach(b=>b.addEventListener('click',()=>{S.P.pattern=[...patterns[b.dataset.pattern]];S.P.mode='pattern';customChanged();}));
+  $('#storeA').addEventListener('click',()=>{storedA=takeSnapshot();$('#swapA').disabled=false;$('#sessionStatus').textContent='A stored. Make a change, then swap to compare. Output volume stays unchanged.';});
+  $('#swapA').addEventListener('click',()=>{if(!storedA)return;const current=takeSnapshot();restoreSnapshot(storedA);storedA=current;$('#sessionStatus').textContent='Swapped with stored version. Press again to return.';});
+  $('#mutate').addEventListener('click',()=>{const p=PRESETS[Math.floor(Math.random()*PRESETS.length)],keep={};for(const c of CTRLS[0].items)keep[c.k]=S.P[c.k];S.P={...structuredClone(p),...keep};customChanged();$('#sessionStatus').textContent='Exploring '+p.name.toLowerCase()+'. Your kick, tempo and key stayed in place.';});
+  $('#saveSession').addEventListener('click',()=>{saveFile('rumble-session.json',JSON.stringify({format:'rumble-lab',version:2,state:takeSnapshot()},null,2),'application/json');$('#sessionStatus').textContent='Session downloaded. Store this file with your project; A/B memory is not included.';});
+  $('#openSession').addEventListener('click',()=>$('#sessionFile').click());
+  $('#sessionFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>100000)throw Error('Session is unexpectedly large.');const next=validateSession(JSON.parse(await file.text()));restoreSnapshot(next);$('#sessionStatus').textContent='Session loaded. Press Play to audition if stopped.';}catch(err){$('#sessionStatus').textContent='Could not load: '+err.message;}finally{e.target.value='';}});
+  $('#recipeDownload').addEventListener('click',()=>saveFile('rumble-build-notes.md',buildNotes(),'text/markdown;charset=utf-8'));
+  $('#newChallenge').addEventListener('click',()=>{challengeIndex=(challengeIndex+1)%CHALLENGES.length;$('#challengeTitle').textContent=CHALLENGES[challengeIndex][0];$('#challengeText').textContent=CHALLENGES[challengeIndex][1];});
+}
+
+/* ---------- events ---------- */
+function bind(){
+  $('#playBtn').addEventListener('click',()=>S.playing?stop():play());
+  $('#bpm').addEventListener('input',e=>{S.bpm=+e.target.value;$('#bpmV').textContent=S.bpm;refreshAll();});
+  $('#keySel').addEventListener('change',e=>{S.key=+e.target.value;syncTransport();refreshAll();});
+  $('#tuneSel').addEventListener('change',e=>{S.tune=+e.target.value;syncTransport();refreshAll();});
+  $('#presetSel').addEventListener('change',e=>{if(e.target.value!=='custom')loadPreset(e.target.value);else{S.preset='custom';syncCtrls();}});
+  $('#vol').addEventListener('input',e=>{S.vol=+e.target.value;if(LN)LN.out.gain.setTargetAtTime(S.vol,AC.currentTime,.02);});
+  const solo=(which)=>{
+    if(which==='k'){S.soloKick=!S.soloKick;if(S.soloKick)S.soloRum=false;} else {S.soloRum=!S.soloRum;if(S.soloRum)S.soloKick=false;}
+    $('#soloKick').classList.toggle('on',S.soloKick);$('#soloKick').setAttribute('aria-pressed',S.soloKick);
+    $('#soloRum').classList.toggle('on',S.soloRum);$('#soloRum').setAttribute('aria-pressed',S.soloRum);
+    applyLive();
+  };
+  $('#soloKick').addEventListener('click',()=>solo('k'));
+  $('#soloRum').addEventListener('click',()=>solo('r'));
+  $('#ctrlGroups').addEventListener('input',e=>{
+    const k=e.target.dataset.k; if(!k)return;
+    S.P[k]=+e.target.value; S.preset='custom';
+    const it=CTRLS.flatMap(g=>g.items).find(x=>x.k===k); document.querySelector(`b[data-v="${k}"]`).textContent=it.f(S.P[k]);
+    $('#presetSel').value='custom'; $$('[data-preset],[data-study]').forEach(b=>b.classList.remove('on'));if(S.playing)$('#heroCap').textContent='Custom';
+    if(k==='size'||k==='damp')queueIR(); else applyLive();
+    drawStatic(); renderReadout();
+  });
+  $('#modes').addEventListener('click',e=>{const m=e.target.closest('[data-mode]');if(!m)return;S.P.mode=m.dataset.mode;customChanged();});
+  $('#presetCards').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)loadPreset(b.dataset.preset);});
+  $('#typeCards').addEventListener('click',e=>{const b=e.target.closest('[data-load]');if(!b)return;loadPreset(b.dataset.load,true);toast('Loaded '+presetById(b.dataset.load).name);});
+  $('#experimentCards').addEventListener('click',e=>{const b=e.target.closest('[data-load]');if(!b)return;loadPreset(b.dataset.load,true);toast('Loaded starting mood: '+presetById(b.dataset.load).name);});
+  document.addEventListener('click',e=>{
+    const t=e.target.closest('[data-tune]'); if(t){S.tune=+t.dataset.tune;syncTransport();refreshAll();return;}
+    const k=e.target.closest('[data-setkey]'); if(k){S.key=+k.dataset.setkey;S.tune=0;syncTransport();refreshAll();toast('Key set to '+NOTES[S.key]);return;}
+    const c=e.target.closest('[data-copy]'); if(c){copyText(c.dataset.copy,c);return;}
+    const r=e.target.closest('[data-render]'); if(r){render(r.dataset.render);return;}
+  });
+  $$('[data-tabs]').forEach(tl=>{
+    const group=tl.dataset.tabs,tabs=[...tl.querySelectorAll('[data-t]')];
+    tabs.forEach(b=>{const pane=$(`[data-pane="${group}-${b.dataset.t}"]`);b.id=`tab-${group}-${b.dataset.t}`;b.setAttribute('aria-controls',`pane-${group}-${b.dataset.t}`);b.tabIndex=b.getAttribute('aria-selected')==='true'?0:-1;pane.id=`pane-${group}-${b.dataset.t}`;pane.setAttribute('role','tabpanel');pane.setAttribute('aria-labelledby',b.id);});
+    tl.addEventListener('click',e=>{
+      const b=e.target.closest('[data-t]'); if(!b)return; const g=tl.dataset.tabs;
+      $$(`[data-tabs="${g}"] button`).forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;});
+      $$(`[data-pane^="${g}-"]`).forEach(p=>p.hidden=p.dataset.pane!==`${g}-${b.dataset.t}`);
+    });
+    tl.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const i=tabs.indexOf(e.target);const next=e.key==='Home'?0:e.key==='End'?tabs.length-1:(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;tabs[next].click();tabs[next].focus();});
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.code!=='Space')return; const tag=(e.target.tagName||'').toLowerCase();
+    if(['input','select','textarea','button','summary','a'].includes(tag)||e.target.isContentEditable)return;
+    e.preventDefault(); S.playing?stop():play();
+  });
+  let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(drawStatic,120);});
+  if(window.ResizeObserver)new ResizeObserver(entries=>document.documentElement.style.setProperty('--transport-height',Math.ceil(entries[0].target.getBoundingClientRect().height)+'px')).observe($('.transport'));
+}
+
+initSelects(); renderCtrls(); renderCards(); renderStatics(); renderExperiments(); showRack('fx'); bind(); bindExpanded();
+loadPreset('ware');
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawStatic);
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
