@@ -1,5 +1,7 @@
 # Fieldwork — Music CheatSheet
 
+**Try it online: [semedin.github.io/Music-CheatSheet](https://semedin.github.io/Music-CheatSheet/)** — or download this repo as a zip and open `index.html` to use it fully offline.
+
 Offline tools for writing electronic music (house, techno, trance, garage) in Ableton Live:
 MIDI-writing studios, playable sound and drum labs, and field guides that measure what they
 argue. Every page is **one self-contained `.html` file** with its own styles, data and Web Audio
