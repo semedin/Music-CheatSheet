@@ -1,6 +1,6 @@
 # Fieldwork V2.1 — Artist Studies + Sound Bank
 
-Open **index.html**, or refresh the existing studio tab, to use the expansion. The four V2 workbenches remain independent offline HTML files. Each now embeds the full catalog, generators and sound engine; no samples, external scripts or installation are needed.
+Open **studio-v2.html**, or refresh the existing studio tab, to use the expansion. The four V2 workbenches remain independent offline HTML files. Each now embeds the full catalog, generators and sound engine; no samples, external scripts or installation are needed.
 
 ## What is new
 

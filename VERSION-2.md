@@ -2,7 +2,7 @@
 
 **Update: V2.1 adds the Artist Studies + Sound Bank expansion.** The studio now includes 1,760 recipes, 32 artist profiles and 64 synthesized sounds/kits. See [ARTIST-STUDIES.md](ARTIST-STUDIES.md) for the additions. The original 480-recipe library and its 504-file pack described below remain available as the Genre collection. Each page defaults to the Artist Studies library; Reset filters shows both collections.
 
-Open **index.html** to start. Every V2 page is a complete offline application with its own styles, catalog, generator, piano roll, synthesis and exporters. You can copy any one of the four V2 HTML files elsewhere and keep making music; links to the other guides require those files beside it.
+Open **studio-v2.html** to start (or pick it from the home page, `index.html`). Every V2 page is a complete offline application with its own styles, catalog, generator, piano roll, synthesis and exporters. You can copy any one of the four V2 HTML files elsewhere and keep making music; links to the other guides require those files beside it.
 
 ## What changed
 
@@ -12,7 +12,7 @@ V2 adds four workbenches alongside all 16 existing reference pages:
 
 | Page | Starting view |
 | --- | --- |
-| `index.html` | Complete five-part studio and all 480 recipes |
+| `studio-v2.html` | Complete five-part studio and all 480 recipes |
 | `melody-v2.html` | Melody library, phrase development and riffs |
 | `chords-v2.html` | Chord library, harmonic paths and voicing |
 | `bass-v2.html` | Bass library, articulation and kick/bass context |
