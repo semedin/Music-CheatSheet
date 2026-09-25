@@ -20,7 +20,7 @@ const SOURCE_INFO=[
  ['First light','uplifting',9,'minor',[[9,0,4],[5,9,0,4],[9,0,4],[9,0,4]],'Am → Fmaj7 → Am → Am','The melody touches F then E. Let the F harmony bloom in bar two and bring the bass home afterward.'],
  ['Rooted in motion','psy',9,'minor',[[9,0,4],[9,0,4],[9,0,4],[9,0,4]],'Am pedal','The A/C pair implies a minor third. A stable A pedal makes this a useful bass-and-sequence study.'],
  ['Falling satellites','classic',9,'minor',[[9,0,4],[0,4,7],[5,9,0,4],[9,0,4]],'Am → C → Fmaj7 → Am','Follow the descending low notes with economical chord movement; the repeated high C ties the first two bars together.'],
- ['The last horizon','balearic',9,'minor',[[5,9,0],[9,0,4],[2,5,9,7],[9,0,4,11]],'F → Am → Dm(add11) → Am(add9)','The last B is a ninth above A. Keep it light, or resolve it to A in a variation.'}
+ ['The last horizon','balearic',9,'minor',[[5,9,0],[9,0,4],[2,5,9,7],[9,0,4,11]],'F → Am → Dm(add11) → Am(add9)','The last B is a ninth above A. Keep it light, or resolve it to A in a variation.']
 ];
 const ORIGINAL_NAMES=['Event horizon','A thousand suns','Terminal velocity','The return','Redshift','After the rain','Saltwater memory','Somewhere, forever','Pressure system','Cold transmission','Rave architecture','Beyond the strobe','Spiral language','Ancient circuitry','Organism','Parallel consciousness'];
 const TREATMENTS=[

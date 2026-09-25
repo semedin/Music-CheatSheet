@@ -1,5 +1,7 @@
 # Music CheatSheet — Fieldwork V3
 
+**New: [TRANCE / Beyond the ordinary](trance.html).** A standalone red-and-black trance writing room with all 12 supplied MIDI melodies, 16 new studies across eight styles, six treatments per study (168 arranged sketches), suggested chord voicings, chord-top melodies, bass and drums. Includes 24 artist listening perspectives, 16 playable sound recipes, arrangement maps, transposition, part mutes and individual/full MIDI and ZIP exports. Open the HTML directly; the original MIDI files are embedded and downloadable unchanged. See [TRANCE.md](TRANCE.md) for details and validation.
+
 **Upgraded: [The Kit — drum studio](drum-library.html).** A redesigned standalone drum workbench with 48 style studies, 192 pattern takes, nine synthesized kits and per-part Splice search guidance. Includes searchable/favourite patterns, responsive editing, undo/redo, lane mixing, saved sessions, MIDI export and the morph lab. See [DRUM-STUDIO.md](DRUM-STUDIO.md) for workflow and validation.
 
 **Expanded: [Rumble / Low-end laboratory](rumble.html).** 24 playable sound studies, 10 motion modes, an editable sub pattern, A/B comparison, saved sessions and WAV stems. Includes four ways to build a complete rumble instrument on one Ableton track and eight creative DAW experiments. See [RUMBLE.md](RUMBLE.md) for workflow and validation limits.
