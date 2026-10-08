@@ -37,6 +37,9 @@ export const SECTIONS = [
       {file: 'xray.html', title: 'X-Ray — look inside a reference track', edition: 'New',
         text: 'Drop in an MP3, WAV, FLAC or AAC. Get the arrangement in bars, drum pattern and swing, chords, kick note, LUFS and tonal balance; A/B it against your mix; export a skeleton MIDI for Ableton.',
         doc: 'XRAY.md'},
+      {file: 'blueprint.html', title: 'Blueprint — the arrangement and every move in it', edition: 'New',
+        text: 'Drop in a reference track. Get its arrangement drawn bar by bar and every transition move found: filter sweeps with their cutoff traced, risers, rolls, gaps, delay throws, stutters, tape stops, sidechain and width, each with a recipe for Live.',
+        doc: 'BLUEPRINT.md', src: 'blueprint-src'},
     ],
   },
   {
@@ -118,6 +121,7 @@ export const DOCS = [
   {file: 'ARTIST-STUDIES.md', title: 'Artist studies', text: 'The V2 artist roster, sound bank and MIDI pack.'},
   {file: 'TRANCE.md', title: 'Trance notes', text: 'Trance room contents, exports and validation.'},
   {file: 'XRAY.md', title: 'X-Ray notes', text: 'What X-Ray measures, how, and how it was validated.'},
+  {file: 'BLUEPRINT.md', title: 'Blueprint notes', text: 'Every move Blueprint finds, how, and how each detector was validated.'},
   {file: 'DRUM-STUDIO.md', title: 'Drum studio notes', text: 'The Kit: workflow and validation.'},
   {file: 'RUMBLE.md', title: 'Rumble notes', text: 'Rumble lab workflow and validation limits.'},
   {file: 'SOUND-DESIGN-V2.md', title: 'Sound Design V2 notes', text: 'Scope, start-here steps and validation.'},
@@ -140,6 +144,7 @@ export const NAV = [
   {file: 'studio-v2.html', label: 'V2 Studio', match: ['melody-v2.html', 'chords-v2.html', 'bass-v2.html']},
   {file: 'trance.html', label: 'Trance'},
   {file: 'xray.html', label: 'X-Ray'},
+  {file: 'blueprint.html', label: 'Blueprint'},
   {file: 'drum-library.html', label: 'Drums'},
   {file: 'rumble.html', label: 'Rumble'},
   {file: 'serum-v2.html', label: 'Sound design', match: ['serum.html', 'patch-lab.html', 'sampling.html']},
@@ -158,4 +163,5 @@ export const TEMPLATES = [
   'sound-design-src/template.html',
   'drum-library-src/template.html',
   'trance-src/template.html',
+  'blueprint-src/template.html',
 ];

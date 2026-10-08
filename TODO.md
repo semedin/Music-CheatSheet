@@ -90,7 +90,8 @@ Ear training built for this genre, not for conservatory interval drills.
 - **Level exams** (Bronze to Club-ready), unlocked by accuracy over the last 50 answers.
 
 ### 6. `xray.html` — **X-Ray** · look inside a reference track ✅ built
-Shipped: see [XRAY.md](XRAY.md). The next steps for it: tempo maps for live-played tracks, a
+Shipped: see [XRAY.md](XRAY.md). Its companion, **Blueprint** (`blueprint.html`), now draws a reference's
+arrangement and finds every transition move; see [BLUEPRINT.md](BLUEPRINT.md). The next steps for it: tempo maps for live-played tracks, a
 per-section key-change detector, and `.als` export once the folder-wide Live Set exporter exists.
 
 ---

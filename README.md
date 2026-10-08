@@ -9,7 +9,7 @@ synthesis. There is no server, account, install or package manager.
 
 1. Keep every file in **one folder**. Pages link to each other by file name.
 2. Open **[`index.html`](index.html)**, the home page. It lists every page, the notes and the MIDI packs, with search (<kbd>/</kbd>).
-3. Every page has the same top bar: **Home · Motif Studio · V2 Studio · Trance · X-Ray · Drums · Rumble · Sound design · Field guides**.
+3. Every page has the same top bar: **Home · Motif Studio · V2 Studio · Trance · X-Ray · Blueprint · Drums · Rumble · Sound design · Field guides**.
 
 Use headphones or monitors: several labs work below 150 Hz, where laptop speakers are silent.
 
@@ -29,6 +29,7 @@ Use headphones or monitors: several labs work below 150 Hz, where laptop speaker
 | Page | What it is | Notes | Built from |
 |---|---|---|---|
 | [`xray.html`](xray.html) | **X-Ray, look inside a reference track.** Drop in an MP3, WAV, FLAC or AAC. Get tempo, key, the arrangement in bars, drum pattern and swing, chords, kick note, LUFS and tonal balance; A/B it loudness-matched against your mix; export a skeleton MIDI for Ableton. | [XRAY.md](XRAY.md) | hand-edited (tested by `xray-tests.mjs`) |
+| [`blueprint.html`](blueprint.html) | **Blueprint, the arrangement and every move in it.** Drop in a reference track. Get its arrangement drawn bar by bar, every transition move found (filter sweeps with the cutoff traced, risers, rolls, gaps, delay throws, stutters, tape stops, sidechain, width, fades) and a recipe for each in Live; export it as MIDI with CC74 automation. | [BLUEPRINT.md](BLUEPRINT.md) | `blueprint-src/` |
 
 ### Drums & low end
 
@@ -98,6 +99,7 @@ folder yet".
 | `serum-v2.html` | `sound-design-src/` | `node sound-design-src/build.mjs` |
 | `drum-library.html` | `drum-library-src/` | `node drum-library-src/build.mjs` |
 | `trance.html` | `trance-src/` + `material/` | `node trance-src/build.mjs` (`node trance-src/pack.mjs` rebuilds the zip) |
+| `blueprint.html` | `blueprint-src/` + X-Ray's engine from `xray.html` | `node blueprint-src/build.mjs` |
 | `index.html` + top bar everywhere | `site/` | `node site/build.mjs` |
 
 Every other `.html` file is edited directly.
@@ -122,6 +124,7 @@ node v3-src/test.mjs             # V3 Motif Studio engine
 node drum-library-src/test.mjs   # drum studio
 node rumble-tests.mjs            # rumble lab
 node xray-tests.mjs              # X-Ray analysis engine against known answers
+node blueprint-src/test.mjs      # Blueprint's move detectors against a planted demo and an effect-free control
 node trance-src/test.mjs         # trance room
 ```
 
@@ -144,6 +147,7 @@ node trance-src/test.mjs         # trance room
 
 ## Release history
 
+- **Blueprint**: the arrangement of a reference track and every move in its transitions, validated against a planted demo and an effect-free control. See [BLUEPRINT.md](BLUEPRINT.md).
 - **X-Ray**: a reference-track analyser with MP3 support, A/B against your mix and a skeleton MIDI export. See [XRAY.md](XRAY.md).
 - **Trance**: a standalone trance writing room and a 168-sketch MIDI pack. See [TRANCE.md](TRANCE.md).
 - **V3, Motif Studio**: motif-first phrase writing, 69 styles, 120 artist perspectives and two new MIDI packs. See [VERSION-3.md](VERSION-3.md).

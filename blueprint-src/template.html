@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blueprint — the arrangement of a track, and every move in it</title>
+<meta name="description" content="Drop in a reference track. Blueprint draws its arrangement bar by bar and finds every move: filter sweeps with their cutoff traced, risers, rolls, gaps, delay throws, stutters, tape stops, sidechain, width and fades, each with the numbers and a recipe for Ableton.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/*STYLE*/
+</style>
+</head>
+<body>
+<!-- site-nav:start --><div id="site-nav" role="navigation" aria-label="All Fieldwork pages"><style>#site-nav{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:2px;width:100%;padding:6px 12px;overflow-x:auto;background:#171e22;color:#c9cdc2;font:500 13px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;position:relative;z-index:1000;scrollbar-width:thin}#site-nav a{all:unset;display:inline-block;padding:5px 9px;border-radius:4px;color:#c9cdc2;white-space:nowrap;cursor:pointer}#site-nav a:hover{color:#fff;background:#283237}#site-nav a:focus-visible{outline:2px solid #ffc96e;outline-offset:1px}#site-nav a[aria-current=page]{color:#171e22;background:#ffc96e}#site-nav .sn-brand{font-weight:800;letter-spacing:.08em;color:#fff;margin-right:6px}@media print{#site-nav{display:none}}</style><a href="index.html" data-files="index.html" class="sn-brand">FIELDWORK</a><a href="fieldwork-v3.html" data-files="fieldwork-v3.html">Motif Studio</a><a href="studio-v2.html" data-files="studio-v2.html melody-v2.html chords-v2.html bass-v2.html">V2 Studio</a><a href="trance.html" data-files="trance.html">Trance</a><a href="xray.html" data-files="xray.html">X-Ray</a><a href="blueprint.html" data-files="blueprint.html">Blueprint</a><a href="drum-library.html" data-files="drum-library.html">Drums</a><a href="rumble.html" data-files="rumble.html">Rumble</a><a href="serum-v2.html" data-files="serum-v2.html serum.html patch-lab.html sampling.html">Sound design</a><a href="field-guides-v1.html" data-files="field-guides-v1.html groove-cheatsheet.html groove-vol2.html low-end.html melody.html chords.html between.html inkey.html keyboard.html arrangement.html buildorder.html the-move.html disco-house-cheatsheet.html">Field guides</a><script data-site-nav>(()=>{const f=decodeURIComponent(location.pathname.split('/').pop()||'index.html');for(const a of document.querySelectorAll('#site-nav a'))if(a.dataset.files.split(' ').includes(f)){a.setAttribute('aria-current','page');break}})()</script></div><!-- site-nav:end -->
+<header class="hero sheet">
+  <div class="wrap">
+    <div>
+      <h1 class="title">Blueprint<span>The arrangement of a track, drawn to scale, with every move in it.</span></h1>
+      <p class="lede">Drop in a song you want to learn from. Blueprint finds <strong>where every part comes in and out, to the beat</strong>, and <strong>every move in the transitions</strong>: the filter sweep and its cutoff over time, the riser, the roll and when it speeds up, the silence before the drop, the delay throw and its note value. Each one comes with the numbers it was measured from and the steps to rebuild it in Ableton.</p>
+      <div class="titleblock" aria-label="What Blueprint measures">
+        <div><small>Drawn from</small><b>Your file, measured in this page</b></div>
+        <div><small>Scale</small><b>1 square = 1 bar, to the beat</b></div>
+        <div><small>Finds</small><b>19 kinds of move</b></div>
+        <div><small>Hands over</small><b>MIDI, automation, a written plan</b></div>
+      </div>
+    </div>
+    <div>
+      <div class="drop" id="drop">
+        <h2>Drop a track here</h2>
+        <p>Or choose a file. MP3 works as well as WAV for everything Blueprint measures.</p>
+        <div class="acts">
+          <button class="big hot" id="pick" type="button">Choose a track</button>
+          <button class="big" id="demoBtn" type="button">Open the demo track</button>
+          <input type="file" id="file" accept="audio/*,.mp3,.wav,.flac,.m4a,.aac,.ogg,.opus,.aif,.aiff" hidden>
+        </div>
+        <p class="fmt">MP3, WAV, FLAC, AAC/M4A, OGG, Opus. AIFF in Safari.</p>
+        <div class="prog" id="prog" hidden><div class="bar"><i></i></div><div class="lbl"><span class="st">Decoding</span><span class="pc">0%</span></div></div>
+        <div class="err" id="err" hidden></div>
+        <p class="privacy">Nothing is uploaded. The file is decoded and measured on your computer, and the page works offline. The demo is a 96-bar track synthesized in the page with 17 moves planted at known bars, so you can check every finding against the answer.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="transport" id="transport" hidden>
+  <div class="wrap">
+    <button class="tbtn" id="play" type="button" aria-keyshortcuts="Space">Play</button>
+    <button class="tog" id="loopBtn" type="button" title="Loop the selection (L)">Loop</button>
+    <button class="tog" id="clickBtn" type="button" title="Click on the grid (M)">Click</button>
+    <select id="listen" aria-label="Listen to" title="Listen to part of the spectrum">
+      <option value="full">Full mix</option><option value="low">Lows under 250 Hz</option><option value="mids">Mids 250 Hz–4 kHz</option><option value="highs">Highs over 4 kHz</option><option value="side">Side only (width)</option>
+    </select>
+    <select id="speed" aria-label="Playback speed"><option value="1">1×</option><option value="0.75">0.75×</option><option value="0.5">0.5×</option></select>
+    <div class="tpos"><span>bar <b id="tBar">1.1</b></span><span id="tTime">0:00.0</span><span class="chip" id="tSec"></span><span class="mv" id="tMove"></span></div>
+    <span class="grow"></span>
+    <span class="tname" id="tName"></span>
+  </div>
+</div>
+
+<main id="results" hidden>
+<section class="part wrap" id="plan">
+  <div class="head"><h2>The plan</h2><p>The track at a glance: tempo, key, how it's cut into sections, and the moves that define it. <b>Click anything</b> to hear it.</p></div>
+  <div class="facts" id="facts"></div>
+  <div class="strip" id="strip" aria-label="Sections"></div>
+  <div class="panel" id="secPanel"><h3>The sections, and why each is called that</h3><p class="note">Blueprint uses six section types and nothing else. Each has one definition. They are listed in song order; the rules are tried by their number (Drop first, Groove last) and the first that fits names the section. Neighbouring sections of the same type count as one; a change inside them shows up in the phrases. Numbers only count repeats: Drop 2 is the second drop.</p>
+    <dl class="types" id="types"></dl>
+    <div class="tablewrap"><table id="secTable"><thead><tr><th>Bars</th><th>Section</th><th>Why it's called that</th></tr></thead><tbody></tbody></table></div></div>
+  <div class="panel" id="truthPanel" hidden><h3>The demo, checked against its answers</h3><p class="note">Every move planted in the demo, and what Blueprint found. Synthesized from the same code that the tests run.</p><div class="tablewrap"><table class="truth" id="truth"><thead><tr><th>Planted</th><th>Where</th><th>Setting</th><th>Found</th><th>Measured</th></tr></thead><tbody></tbody></table></div></div>
+  <h3 style="font-size:20px;margin:6px 0 10px">Signature moves</h3>
+  <ul class="sig" id="sig"></ul>
+</section>
+
+<section class="part wrap" id="drawing">
+  <div class="head"><h2>The drawing</h2><p>The whole track as an arrangement: sections, every move drawn to length, where each element plays, the filter cutoffs over time and the spectrogram they were read from. <b>Click</b> to play from a bar, <b>drag</b> to loop, <b>click a move</b> to open it below.</p></div>
+  <div class="drawing">
+    <div class="dbar">
+      <label>Zoom <select id="zoom"><option value="1">Whole track</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select></label>
+      <label>Spectrogram <select id="specSrc"><option value="M">Whole mix</option><option value="H">Music only (sustained)</option><option value="P">Drums only (hits)</option></select></label>
+      <span id="dInfo"></span>
+    </div>
+    <div class="scroll" id="scroll"><canvas id="cv" aria-label="Arrangement drawing"></canvas><div class="tip" id="tip" hidden></div></div>
+    <div class="legend" id="legend"></div>
+  </div>
+  <div class="insp" id="insp">
+    <div class="panel" id="inspMain"><p class="empty">Click a move in the drawing, or one of the signature moves above, to see how it was measured and how to rebuild it.</p></div>
+    <div class="panel" id="inspSide"></div>
+  </div>
+</section>
+
+<section class="part wrap" id="transitions">
+  <div class="head"><h2>The transitions</h2><p>Every section change, in order: what leads into it, what comes in and goes out, and <b>the steps to rebuild it</b>, in the order they happen.</p></div>
+  <div id="trs"></div>
+</section>
+
+<section class="part wrap" id="moves">
+  <div class="head"><h2>Every move</h2><p>All the moves Blueprint found, with how sure it is. A move it isn't sure of is still worth checking by ear: <b>click one to loop it</b>.</p></div>
+  <div class="filters" id="cats"></div>
+  <div class="panel tablewrap" style="padding:6px 10px"><table><thead><tr><th>At</th><th>Move</th><th>Measured</th><th>Length</th><th>Sure</th></tr></thead><tbody id="mvRows"></tbody></table></div>
+</section>
+
+<section class="part wrap" id="phrases">
+  <div class="head"><h2>Phrase by phrase</h2><p>The arrangement in eight-bar phrases: what joins, what leaves and what happens at each step. Read down it and you have the structure to copy.</p></div>
+  <div class="panel" id="phr"></div>
+</section>
+
+<section class="part wrap" id="motion">
+  <div class="head"><h2>Mix motion</h2><p>The movement that isn't a single event: how hard the sidechain pumps in each section, how the stereo width breathes, and how tension builds and releases across the track.</p></div>
+  <h3 style="font-size:19px;margin-bottom:10px">Sidechain pump, per section</h3>
+  <p class="note">The level of the 500 Hz–2.5 kHz band over one beat, averaged over beats 1 and 3 of every bar with a kick. A pump drops at the kick and climbs back.</p>
+  <div class="minis" id="pumps"></div>
+  <div class="two" style="margin-top:16px">
+    <div class="panel"><h3>Tension</h3><p class="note">Loudness, brightness, how many parts play and how much noise is rising, folded into one curve.</p><div class="chart"><svg id="tensionSvg" viewBox="0 0 600 150" role="img" aria-label="Tension across the track"></svg></div></div>
+    <div class="panel"><h3>Width of the music</h3><p class="note">The side signal against the mid, in dB, for the sustained parts. Lower is narrower.</p><div class="chart"><svg id="widthSvg" viewBox="0 0 600 150" role="img" aria-label="Stereo width across the track"></svg></div></div>
+  </div>
+</section>
+
+<section class="part wrap" id="export">
+  <div class="head"><h2>Take it to Ableton</h2><p>The plan as files. The MIDI file carries the sections as markers, one track per element with a clip where it plays, the rolls hit for hit, and the filter sweeps as CC74 automation.</p></div>
+  <div class="two">
+    <div class="panel"><h3>Blueprint MIDI</h3><p class="note">Drag it into an empty Live set at the track's tempo. Sections become locators, elements become clips you can replace with your own parts.</p><div class="row"><button class="btn" id="midiBtn" type="button">Download MIDI</button></div></div>
+    <div class="panel"><h3>The written plan</h3><p class="note">Every section, move, transition recipe and phrase as Markdown, or the raw measurements as JSON.</p><div class="row"><button class="btn" id="mdBtn" type="button">Plan (.md)</button><button class="btn ghost" id="jsonBtn" type="button">Data (.json)</button><button class="btn ghost" id="copyBtn" type="button">Copy the transition steps</button></div></div>
+  </div>
+  <div class="panel"><h3>Lining it up in Live</h3><ol class="steps" id="liveSteps"></ol></div>
+</section>
+</main>
+
+<section class="part wrap" id="how">
+  <div class="head"><h2>How it works, and where it can be wrong</h2><p>Blueprint runs on X-Ray's engine for tempo, grid and loudness, and adds its own analysis on top. Everything runs in this page. Each detector is tested against a synthesized track whose moves are known, and against the same track with no moves at all.</p></div>
+  <div class="two">
+    <div class="panel"><h3>Seeing what was filtered</h3><p>The spectrum is read in semitone-wide bands and split into its sustained part (pads, synths, bass, risers) and its hits (drums). Above 1.2 kHz the split runs on a 23 ms window so dense hats count as hits. A filter sweep is first spotted as a spectral edge moving steadily, then confirmed beat by beat: each beat is compared with the same beat of the loop once the filter is open, and fitted with a filter skirt. The cutoff you see is that fit, smoothed over five beats. Checking the music and the drums separately says what the filter is on.</p></div>
+    <div class="panel"><h3>Everything else</h3><p>Risers: a steady climb in a noise-like layer (flat inside each band). Pitch risers and downlifters: a tonal peak that glides, semitone by semitone, instead of stepping. Tape stops: the whole spectrum sliding down frame after frame. Rolls: hits filling a subdivision grid. Delay throws: a chain of synced, steadily decaying repeats after a cut. Gaps, stutters, crashes, booms, reverse swells, sidechain, width and fades each have a measured shape, and a section is only cut where the parts or the moves say so.</p></div>
+  </div>
+  <div class="panel"><h3>Limits</h3><ul class="limits">
+    <li>A lead line and the chords under it can't be told apart in a full mix, so they share one lane.</li>
+    <li>Sidechain pumping is read where nothing else hits on the beat. If a lead or stab plays on every kick, the pump is hidden and isn't reported.</li>
+    <li>The spectrum is read up to 10.5 kHz, so a low-pass counts as open once its cutoff passes about 8 kHz.</li>
+    <li>Cutoffs are where the filter's slope begins, read through the rest of the mix: expect them within about half an octave, and a high-pass under a busy build can read higher.</li>
+    <li>A static filter on a section is reported only when its skirt holds against similar sections. A section that is simply darker by arrangement can't be told from a filtered one.</li>
+    <li>Constant tempo is assumed, as in X-Ray. Check the grid with the click before trusting the rest.</li>
+  </ul></div>
+</section>
+
+<footer class="wrap">Blueprint is part of Fieldwork: one self-contained file, nothing uploaded. Keys: <kbd>Space</kbd> play, <kbd>←</kbd> <kbd>→</kbd> bar (<kbd>Shift</kbd> for 8), <kbd>L</kbd> loop, <kbd>M</kbd> click, <kbd>[</kbd> <kbd>]</kbd> previous and next move.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/*XR*/
+/*SYNTH*/
+/*ENGINE*/
+/*APP*/
+</script>
+</body>
+</html>
