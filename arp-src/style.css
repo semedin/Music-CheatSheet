@@ -399,3 +399,31 @@ h3.mt{margin-top:18px}
 .steps-in b{color:var(--text)}
 #autoBtn.on{background:var(--chord);color:#0A0B0F;border-color:var(--chord)}
 .findbar select{padding:4px 6px}
+
+/* sections and the sound browser */
+.roles{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.roles button,.seg button{font:600 11.5px var(--body);padding:4px 9px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--dim);cursor:pointer}
+.roles button.on,.seg button.on{color:#0A0B0F;background:var(--rc,var(--g));border-color:var(--rc,var(--g))}
+.bankbar{display:grid;grid-template-columns:1fr auto;gap:6px;margin-bottom:8px}
+.bankbar .search{margin:0}
+.bankbar select{width:auto;font-size:12px;padding:6px}
+.rtags{display:inline-flex;gap:3px;margin-left:6px;vertical-align:middle}
+.rtag{font:700 9.5px var(--mono);letter-spacing:.04em;text-transform:uppercase;padding:1px 5px;border-radius:4px;color:#0A0B0F;background:var(--rc)}
+.pitem .en{display:block;height:2px;margin-top:4px;border-radius:2px;background:linear-gradient(90deg,var(--c,var(--g)) var(--e),transparent var(--e)),var(--line)}
+.uses{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--dim)}
+.uses .rchip{font:700 12px var(--body);padding:3px 10px;border-radius:999px;color:#0A0B0F;background:var(--rc);cursor:help}
+.uses .rchip.dim{background:transparent;color:var(--rc);border:1px solid var(--rc)}
+.uses .energy{display:inline-flex;align-items:center;gap:6px;font:12px var(--mono)}
+.uses .energy i{display:inline-block;width:70px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--g) var(--e),var(--panel3) var(--e))}
+.sbrowse{border:1px solid var(--line);border-radius:8px;padding:8px;margin:-2px 0 12px;background:var(--bg2)}
+.sfilters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.seg{display:inline-flex;flex-wrap:wrap;gap:3px}
+.sbrowse .search{margin-bottom:6px;padding:5px 8px;font-size:13px}
+.slist{max-height:230px;overflow:auto;display:grid;gap:3px;scrollbar-width:thin}
+.srow{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center;border:1px solid transparent;border-radius:7px;padding:5px 6px;cursor:pointer}
+.srow:hover{background:var(--panel2);border-color:var(--line)}
+.srow.on{border-color:var(--g);background:var(--g3)}
+.srow b{font-size:13px;font-weight:650;display:block}
+.srow small{font:10.5px var(--mono);color:var(--dim2)}
+.srow .ib{min-width:28px;height:28px;font-size:12px}
+.cand .rtags{margin:6px 0 0}

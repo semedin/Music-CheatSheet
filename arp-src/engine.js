@@ -637,6 +637,95 @@ const OE = (() => {
     return {score: Math.round(100 * axes.reduce((s, a) => s + a.s, 0) / axes.length), axes};
   }
 
+  // ---- sections: what a combo is good for in an arrangement ----
+  // Each section collects points from what the notes, the sound and the automation do. The best one is the primary
+  // section; any other within 60% of it (and at least 1.8 points) is listed too. Energy is a 0-100 summary.
+  const ROLES = {
+    drop: {name: 'Drop', color: '#FF5C8A', desc: 'Short, accented, driving: it locks with the kick and the bass and carries the floor.'},
+    build: {name: 'Build', color: '#FFD166', desc: 'Rising tension: filling, climbing, opening, rolling into the drop.'},
+    break: {name: 'Break', color: '#9D8CFF', desc: 'Long notes and space, the chords on show: works with no kick at all.'},
+    intro: {name: 'Intro & outro', color: '#5CC8FF', desc: 'Sparse, filtered, patient: plays while a DJ mixes in or out.'},
+  };
+  const BUILD_EVOS = new Set(['build', 'into-drop', 'thin', 'add-notes']);
+  function roles(input, m) {
+    const st = normalize(input), snd = OB.SOUNDS_BY_ID[st.sound] || {}, len = snd.len || 'short', en = snd.energy ?? 0.5, tag = new Set(snd.roles || []);
+    if (!m) m = metrics(render(st, {bars: 4, evo: false, fills: false, mutate: false}));
+    const sd = st.steps.filter(sounding), acc = sd.length ? sd.filter(x => x.acc).length / sd.length : 0;
+    const sc = {drop: 0, build: 0, break: 0, intro: 0}, why = {drop: [], build: [], break: [], intro: []};
+    const add = (r, v, txt) => { sc[r] += v; if (txt) why[r].push(txt); };
+    if (m.length <= 0.7) add('drop', 1, 'short notes');
+    if (m.density >= 4) add('drop', 0.6, `${Math.round(m.density)} notes a bar`);
+    if (acc >= 0.1) add('drop', 0.5, 'accents'); else if (m.sync >= 0.5) add('drop', 0.5, 'syncopated');
+    if (en >= 0.6) add('drop', 0.8, `a punchy sound (${snd.name})`);
+    if (tag.has('drop')) add('drop', 0.5);
+    if (BUILD_EVOS.has(st.evo)) add('build', 2.6, `"${EVOS[st.evo].name}" automation`);
+    else if (st.evo === 'slow-open') add('build', 0.8, 'a filter that opens');
+    if (['roll', 'ratchet', 'climb', 'bounce'].includes(st.fill)) add('build', 1.2, `a "${FILLS[st.fill].name}" fill`);
+    if (m.density >= 11) add('build', 0.7, 'every step filled');
+    if (st.echo > 0 && st.echoShift !== '0') add('build', 0.5, 'echoes that climb');
+    if (tag.has('build')) add('build', 0.8, len === 'long' ? `a swelling sound (${snd.name})` : null);
+    if (m.length >= 0.9) add('break', 1.6, 'long notes');
+    if (len === 'long') add('break', 1.1, `a long, held sound (${snd.name})`);
+    if (['chord9', 'spread', 'quartal', 'cluster'].includes(st.pool) || st.steps.some(x => x.type === 'chord')) add('break', 0.4, 'the chords on show');
+    if (m.density <= 6) add('break', 0.4, 'space between the notes');
+    if (['pluck-to-pad', 'breathe'].includes(st.evo)) add('break', 0.5, `"${EVOS[st.evo].name}" automation`);
+    if (tag.has('break')) add('break', 0.8);
+    if (m.density <= 5) add('intro', 0.8, 'few notes');
+    if (en <= 0.5) add('intro', 0.6, 'a gentle sound');
+    if (st.evo === 'slow-open') add('intro', 0.8, 'a filter that opens'); else if (st.cut <= 0.4) add('intro', 0.8, 'filtered dark');
+    if (m.pitches <= 3) add('intro', 0.5, `${m.pitches} pitch${m.pitches > 1 ? 'es' : ''}`);
+    if (tag.has('intro')) add('intro', 0.8);
+    const order = Object.keys(sc).sort((a, b) => sc[b] - sc[a]);
+    const top = order[0], list = order.filter(r => sc[r] >= Math.max(1.8, sc[top] * 0.6));
+    if (!list.length) list.push(top);
+    const energy = Math.round(100 * clamp01(0.3 * Math.min(1, m.density / 12) + 0.16 * m.sync + 0.12 * acc + 0.16 * (1 - Math.min(1, m.length / 2)) + 0.26 * en + (BUILD_EVOS.has(st.evo) ? 0.04 : 0)));
+    return {roles: list, primary: top, scores: sc, why, energy};
+  }
+  // The genre's ranges, adjusted for the section: a break may hold long notes and needs no kick to avoid; a build may
+  // fill every step; an intro may be sparser. The drop is the genre's own fingerprint.
+  function roleTarget(t, role) {
+    if (!t || !role || role === 'drop') return t;
+    const o = JSON.parse(JSON.stringify(t));
+    // outside the drop nothing has to dodge the kick, and long notes are allowed (up to a whole bar)
+    o.density = [Math.min(1, o.density[0]), role === 'build' ? 16 : o.density[1]];
+    o.sync = [0, role === 'break' ? 1 : o.sync[1]];
+    delete o.kick;
+    o.length = [Math.min(0.25, o.length[0]), 16];
+    o.range = [0, o.range[1] + (role === 'intro' ? 0 : 6)];
+    o.leap = [0, o.leap[1] + (role === 'intro' ? 0 : 2)];
+    return o;
+  }
+  // fit against the genre for the section the combo is best at (or the one asked for)
+  function sectionFit(st, m, role) {
+    const g = OB.GENRES[st.genre], r = roles(st, m), use = role || r.primary;
+    return {fit: fit(m, roleTarget(g && g.target, use)), role: use, roles: r};
+  }
+
+  // ---- search words: sections and lengths, then free text ----
+  const STOP = new Set(['good', 'for', 'material', 'sure', 'the', 'a', 'an', 'of', 'and', 'to', 'in', 'some', 'stuff', 'that', 'is', 'are', 'great', 'really', 'very', 'super', 'song', 'part', 'section', 'use', 'used', 'with', 'my', 'me', 'something', 'things', 'thing', 'type', 'kind', 'sounds', 'sound', 'ideas', 'idea', 'please', 'want', 'need', 'like', 'definitely', 'totally', 'perfect', 'best', 'nice', 'cool', 'ones', 'one', 'it', 'on', 'at', 'or']);
+  const ROLE_WORDS = {
+    intro: ['intro', 'intros', 'outro', 'outros', 'opening', 'opener', 'dj', 'mixin', 'warmup', 'ending'],
+    build: ['build', 'builds', 'buildup', 'buildups', 'build-up', 'riser', 'risers', 'rise', 'rising', 'tension', 'predrop', 'pre-drop', 'lift', 'uplift'],
+    break: ['break', 'breaks', 'breakdown', 'breakdowns', 'ambient', 'atmos', 'atmosphere', 'atmospheric', 'emotional', 'interlude', 'bridge', 'calm'],
+    drop: ['drop', 'drops', 'peak', 'peaktime', 'peak-time', 'banger', 'bangers', 'dancefloor', 'floor', 'main', 'energetic'],
+  };
+  const LEN_WORDS = {
+    short: ['short', 'shorter', 'tiny', 'tight', 'staccato', 'percussive', 'hit', 'hits', 'blip', 'blips', 'snappy', 'plucky', 'stabby'],
+    medium: ['medium', 'mid-length'],
+    long: ['long', 'longer', 'sustained', 'sustain', 'held', 'swell', 'swells', 'swelling', 'legato', 'evolving', 'lush', 'pad', 'pads'],
+  };
+  function parseQuery(q) {
+    const out = {roles: new Set(), lens: new Set(), words: []};
+    for (const raw of String(q || '').toLowerCase().split(/[\s,./!?;:()"']+/).filter(Boolean)) {
+      if (STOP.has(raw)) continue;
+      let hit = false;
+      for (const [r, ws] of Object.entries(ROLE_WORDS)) if (ws.includes(raw)) { out.roles.add(r); hit = true; }
+      for (const [l, ws] of Object.entries(LEN_WORDS)) if (ws.includes(raw)) { out.lens.add(l); hit = true; }
+      if (!hit) out.words.push(raw);
+    }
+    return out;
+  }
+
   // ---- the cycle counter ----
   // On one held chord, with nothing evolving: when does the pattern line up with the bar line again?
   function cycle(input) {
@@ -676,10 +765,9 @@ const OE = (() => {
     const st = normalize(input);
     const R = render(st, opts);
     const m = metrics(R);
-    const g = OB.GENRES[st.genre];
-    const f = fit(m, g && g.target);
+    const sf = sectionFit(st, m);
     const c = cycle(st);
-    return {st, R, m, fit: f, cycle: c, cycleText: cycleText(c, st, R.harmony.beats)};
+    return {st, R, m, fit: sf.fit, role: sf.role, roles: sf.roles, cycle: c, cycleText: cycleText(c, st, R.harmony.beats)};
   }
 
   // ---- fixes: candidate edits that move the fingerprint into the genre's range ----
@@ -688,12 +776,13 @@ const OE = (() => {
     const base = normalize(input);
     const g = OB.GENRES[base.genre];
     if (!g) return [];
-    const score = st => { const R = render(st, {evo: false, fills: false, mutate: false, bars: 4}); return fit(metrics(R), g.target); };
+    const role = roles(base).primary, tgt = roleTarget(g.target, role);
+    const score = st => { const R = render(st, {evo: false, fills: false, mutate: false, bars: 4}); return fit(metrics(R), tgt); };
     const now = score(base);
     const bad = now.axes.filter(a => !a.ok).map(a => a.id);
     if (!bad.length) return [];
     const cands = [];
-    const T = g.target;
+    const T = tgt;
     const add = (axis, text, patch) => cands.push({axis, text, patch});
     if (bad.includes('kick') || bad.includes('sync') || bad.includes('density')) {
       for (let k = 1; k < Math.min(base.steps.length, 16); k++) add(bad.includes('kick') ? 'kick' : 'sync', `Rotate the pattern ${k} step${k > 1 ? 's' : ''} later`, {steps: rotate(base.steps, k)});
@@ -716,8 +805,8 @@ const OE = (() => {
       if (dir === 'high') { if (base.octaves > 1) add('range', `Narrow to ${base.octaves - 1} octave${base.octaves > 2 ? 's' : ''}`, {octaves: base.octaves - 1}); add('range', 'Use only 3 notes of the pool', {count: 3}); add('leap', 'Change the order to Up', {order: 'up'}); add('leap', 'Change the order to Converge', {order: 'converge'}); }
       else { add('range', `Widen to ${base.octaves + 1} octaves`, {octaves: Math.min(4, base.octaves + 1)}); add('leap', 'Change the order to Pinky (top-note pedal)', {order: 'pinky'}); add('leap', 'Change the order to Up-down', {order: 'updown'}); add('range', 'Add the 9th to the pool', {pool: 'chord9'}); }
     }
-    if (bad.includes('length')) { const mid = (T.length[0] + T.length[1]) / 2; add('length', `Set the gate to ${Math.round(clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5) * 100)}%`, {gate: +clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5).toFixed(2)}); }
-    if (bad.includes('swing')) { const mid = Math.round((T.swing[0] + T.swing[1]) / 2); add('swing', `Set the swing to ${mid}%`, {swing: mid}); }
+    if (bad.includes('length') && T.length) { const mid = (T.length[0] + T.length[1]) / 2; add('length', `Set the gate to ${Math.round(clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5) * 100)}%`, {gate: +clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5).toFixed(2)}); }
+    if (bad.includes('swing') && T.swing) { const mid = Math.round((T.swing[0] + T.swing[1]) / 2); add('swing', `Set the swing to ${mid}%`, {swing: mid}); }
     const out = [];
     for (const c of cands) {
       const s = score(normalize(Object.assign({}, base, c.patch)));
@@ -776,7 +865,7 @@ const OE = (() => {
     if (r() < 0.5) out[irange(r, [1, len - 1])] = 0;
     return out;
   }
-  const NO_CHORDS = new Set(['acid-303', 'perc-bleep', 'sub-pulse', 'log-drum', 'vox-chop', 'rubber-stab', 'kalimba']);
+  const NO_CHORDS = new Set(['acid-303', 'perc-bleep', 'sub-pulse', 'log-drum', 'vox-chop', 'rubber-stab', 'kalimba', 'laser-zap', 'wood-knock', 'mono-lead', 'reese']);
   function generate(genreId, seed, keep = {}) {
     const g = OB.GENRES[genreId] || OB.GENRES['tech-house'], gen = g.gen, r = rng(seed * 2654435761 + 99);
     const rate = pickW(r, gen.rates), stepLen = RATES[rate].beats;
@@ -806,6 +895,31 @@ const OE = (() => {
       if (st.steps.some(x => x.type === 'chord') && w() < 0.6) { st.strum = +(0.2 + w() * 0.6).toFixed(2); st.strumDir = pickA(w, ['up', 'down', 'alt']); }
       if (w() < 0.15) st.fill = 'bounce';
     }
+    // writing for a section: the same grammar, pushed toward what that section wants
+    if (keep.role) {
+      const w = rng(seed * 13 + 9), thin = p => st.steps.forEach(x => { if (x.type === 'note' && !x.acc && w() < p) x.type = 'rest'; });
+      const pickSound = (want, extra = []) => { if (keep.sound) return; const ok = gen.sounds.concat(extra).filter(id => OB.SOUNDS_BY_ID[id] && OB.SOUNDS_BY_ID[id].roles.includes(want)); if (ok.length) st.sound = pickA(w, ok); };
+      if (keep.role === 'drop') {
+        st.evo = pickA(w, ['none', 'breathe', 'gate-pump', 'none']); st.gate = +(st.gate * 0.85).toFixed(2);
+        if (!st.steps.some(x => x.acc)) { const per = Math.max(1, Math.round(1 / RATES[st.rate].beats)); st.steps.forEach((x, i) => { if (sounding(x) && i % per === 2 % per) x.acc = 1; }); }
+        pickSound('drop');
+      } else if (keep.role === 'build') {
+        st.evo = pickA(w, ['build', 'into-drop', 'thin', 'add-notes']); st.fill = pickA(w, ['roll', 'ratchet', 'bounce', 'climb']); st.fillEvery = 4;
+        st.steps.forEach(x => { if (x.type === 'rest' && w() < 0.3) x.type = 'note'; });
+        pickSound('build', ['string-swell', 'laser-zap', 'supersaw', 'tech-pluck']);
+      } else if (keep.role === 'break') {
+        if (st.rate === '16' && w() < 0.6) { st.rate = '8'; st.steps = st.steps.filter((_, i) => i % 2 === 0); }
+        st.gate = +clamp(st.gate * 2.6, 0.9, 1.5).toFixed(2); thin(0.4);
+        if (!['scale', 'penta'].includes(st.pool)) st.pool = pickA(w, ['chord9', 'spread', 'chord']);
+        st.evo = pickA(w, ['pluck-to-pad', 'breathe', 'none']); st.fill = 'none';
+        pickSound('break', ['warm-pad', 'glass-pad', 'shimmer', 'choir', 'string-swell', 'string-pluck', 'rhodes', 'glass-pluck']);
+      } else if (keep.role === 'intro') {
+        thin(0.4); st.evo = 'slow-open'; st.cut = 0.35; st.fill = 'none';
+        if (w() < 0.4 && !['scale', 'penta'].includes(st.pool)) st.pool = pickA(w, ['root', 'root5']);
+        pickSound('intro', ['bell-tick', 'micro-pluck', 'wood-knock', 'drone', 'perc-bleep', 'sub-pulse']);
+      }
+      if (!st.steps.some(sounding)) st.steps[2 % st.steps.length].type = 'note';
+    }
     // chord hits need a sound that can play chords: mono, percussive and vocal patches get single notes instead
     if (st.steps.some(x => x.type === 'chord') && NO_CHORDS.has(st.sound)) {
       if (keep.sound) st.steps.forEach(x => { if (x.type === 'chord') x.type = 'note'; });
@@ -834,8 +948,8 @@ const OE = (() => {
     for (let i = 0; i < tries; i++) {
       const st = generate(genreId, seed * 1000 + i, keep);
       const R = render(st, {bars: 4, evo: false, fills: false, mutate: false});
-      const m = metrics(R), f = fit(m, g.target);
-      out.push({st, m, fit: f.score, typical: centrality(m, g.target), sig: signature(st)});
+      const m = metrics(R), sf = sectionFit(st, m, keep.role), tgt = roleTarget(g.target, sf.role);
+      out.push({st, m, fit: sf.fit.score, typical: centrality(m, tgt), sig: signature(st), roles: sf.roles, role: sf.role, onRole: !keep.role || sf.roles.roles.includes(keep.role)});
     }
     out.sort((a, b) => (b.fit + 30 * b.typical) - (a.fit + 30 * a.typical) || a.st.seed - b.st.seed);
     // greedy pick for variety: the best remaining candidate, marked down for each pick that shares its sound,
@@ -848,7 +962,7 @@ const OE = (() => {
         const c = pool[i], k = stepsString(c.st.steps);
         if (seen.has(k)) continue;
         const same = (f) => picked.filter(p => f(p.st) === f(c.st)).length;
-        const sc = c.fit + 30 * c.typical - 9 * same(st => st.sound) - 14 * same(kind) - 5 * same(st => st.pool) - (c.m.low > 0.2 && !g.lowOk ? 25 : 0) + (keep.wild ? 7 * Math.min(3, wildness(c.st)) : 0);
+        const sc = c.fit + 30 * c.typical - 9 * same(st => st.sound) - 14 * same(kind) - 5 * same(st => st.pool) - (c.m.low > 0.2 && !g.lowOk ? 25 : 0) + (keep.wild ? 7 * Math.min(3, wildness(c.st)) : 0) - (c.onRole ? 0 : 40);
         if (sc > bs) { bs = sc; bi = i; }
       }
       if (bi < 0) break;
@@ -1084,6 +1198,7 @@ const OE = (() => {
   }
 
   return {RATES, POOLS, ORDERS, EVOS, FILLS, AXES, DEFAULT, DELAY_TIMES, DRUM_NOTES, parseSteps, stepsString, stepChar, sounding, euclid, normalize, harmony,
+    ROLES, roles, roleTarget, sectionFit, parseQuery, ROLE_WORDS, LEN_WORDS,
     pool, extend, orderSeq, render, FEELS, ECHO_SHIFTS, ladder, scaleStep, morse, riffFromNotes, writeOut, feelShift, diatonicChords, renderBass, renderDrums, renderChords, renderArpInput, metrics, fit, cycle, cycleText, analyse, rotate,
     suggestions, generate, find, vary, centrality, liveArp, delayTable, exportMidi, fileStem, pack, unpack, describe, evoAt, chordIndexAt, weight, signature};
 })();

@@ -13,6 +13,7 @@
 
   const S = {st: null, hist: [], fut: [], A: null, side: 'B', aud: null, crate: store.get(KEY_CRATE) || [], filter: 'tech-house', q: '', tool: 'note',
     cands: [], candKind: '', R: null, M: null, ph: null, flashes: [], trail: [], lastFlash: 0, paint: null, importFile: null, importMode: 'chords', importInfo: '',
+    role: 'any', sort: 'bank', sLen: 'all', sRole: 'all', sQ: '', pRoles: null,
     held: new Set(), down: new Set(), liveFresh: true, preLive: undefined, midi: null, draw: false, drawSeq: null, auto: false, autoAt: null, sample: null};
   let actx = null, engine = null, player = null;
 
@@ -53,12 +54,13 @@
     const st = S.st;
     S.R = OE.render(st);
     const mR = OE.render(st, {bars: 4, evo: false, fills: false, mutate: false});
-    const m = OE.metrics(mR), f = OE.fit(m, genre().target), c = OE.cycle(st);
-    S.M = {m, fit: f, cycle: c, cycleText: OE.cycleText(c, st, S.R.harmony.beats), mR};
+    const m = OE.metrics(mR), sf = OE.sectionFit(st, m), f = sf.fit, c = OE.cycle(st);
+    S.M = {m, fit: f, role: sf.role, roles: sf.roles, cycle: c, cycleText: OE.cycleText(c, st, S.R.harmony.beats), mR};
     S.ph = OA.phrase(st, S.R);
     if (player) player.load(S.ph);
     setAccent(genre().color);
     viewTransport(); viewStage(); viewGrid(); viewControls(); drawRollLayer(); orbitStatic(); viewBankActive();
+    document.querySelectorAll('.srow').forEach(r => r.classList.toggle('on', r.dataset.s === st.sound));
     clearTimeout(slowTimer);
     slowTimer = setTimeout(() => { viewMeasure(); viewAbleton(); viewSamples(); store.set(KEY_NOW, OE.pack(st)); }, light ? 140 : 0);
   }
@@ -81,6 +83,8 @@
     $('stName').textContent = st.name;
     $('stWhy').textContent = p ? p.why : st.from === 'generated' ? 'Written by the generator from the genre\'s grammar and measured against its fingerprint.' : st.from === 'variation' ? 'A variation: same key, tempo, harmony and sound; the notes or the rhythm moved.' : st.from === 'import' ? 'Your chords, arpeggiated.' : g.blurb;
     const s = sound();
+    const R0 = S.M.roles;
+    $('stUses').innerHTML = `<span>Use it for</span>` + Object.keys(OE.ROLES).filter(r => R0.roles.includes(r)).sort((a, b) => R0.scores[b] - R0.scores[a]).map((r, i) => `<span class="rchip${i ? ' dim' : ''}" style="--rc:${OE.ROLES[r].color}" title="${esc(OE.ROLES[r].desc + (R0.why[r].length ? ' Here: ' + R0.why[r].join(', ') + '.' : ''))}">${esc(OE.ROLES[r].name)}</span>`).join('') + `<span class="energy" title="Energy: density, syncopation, accents, short notes and how punchy the sound is">energy <i style="--e:${R0.energy}%"></i> ${R0.energy}</span>` + (R0.why[R0.primary].length ? `<span class="hint">${esc(R0.why[R0.primary].join(' · '))}</span>` : '');
     $('stChips').innerHTML = [OT.keyLabel(st.key, st.scale) + ' · ' + OT.camelot(st.key, st.scale), st.bpm + ' BPM', OE.RATES[st.rate].label, OE.POOLS[st.pool].name, st.order === 'turing' ? `Turing ${Math.round(st.lock * 100)}% lock` : OE.ORDERS[st.order].name, s.name, st.evo !== 'none' ? OE.EVOS[st.evo].name : null, st.echo ? `echo ×${st.echo}` : null, st.feel !== 'straight' ? OE.FEELS[st.feel].name : null, st.strum ? 'strum' : null].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('');
     // chord lane
     const h = S.R.harmony;
@@ -353,9 +357,32 @@
     const tabs = [['all', 'All', '#ECEEF5'], ...Object.entries(OB.GENRES).map(([id, g]) => [id, g.name, g.color])];
     $('genreTabs').innerHTML = tabs.map(([id, n, c]) => `<button type="button" role="tab" data-g="${id}" style="--c:${c}" class="${S.filter === id ? 'on' : ''}" aria-selected="${S.filter === id}"><i style="background:${c}"></i>${esc(n)}</button>`).join('');
   }
+  function patternRoles() {
+    if (!S.pRoles) { S.pRoles = {}; for (const p of OB.PATTERNS) S.pRoles[p.id] = OE.roles(OB.stateFor(p)); }
+    return S.pRoles;
+  }
+  // search: section words ("drop", "build", "breakdown"…) and length words ("short", "long", "pads"…) filter by tag,
+  // everything else is matched against the text. "drop material for sure" is just "drop".
   function visiblePatterns() {
-    const q = S.q.trim().toLowerCase();
-    return OB.PATTERNS.filter(p => (S.filter === 'all' || p.genre === S.filter) && (!q || [p.name, p.sub, p.why, p.sound, OB.GENRES[p.genre].name, p.pool, p.order].join(' ').toLowerCase().includes(q)));
+    const q = OE.parseQuery(S.q), PR = patternRoles();
+    const roles = new Set(q.roles); if (S.role !== 'any') roles.add(S.role);
+    const list = OB.PATTERNS.filter(p => {
+      if (S.filter !== 'all' && p.genre !== S.filter) return false;
+      const r = PR[p.id], snd = OB.SOUNDS_BY_ID[p.sound];
+      if (roles.size && ![...roles].some(x => r.roles.includes(x))) return false;
+      if (q.lens.size && !q.lens.has(snd.len)) return false;
+      const text = [p.name, p.sub, p.why, snd.name, snd.family, OB.GENRES[p.genre].name, p.pool, p.order].join(' ').toLowerCase();
+      return q.words.every(w => text.includes(w));
+    });
+    if (S.sort === 'energy-') list.sort((a, b) => PR[b.id].energy - PR[a.id].energy);
+    if (S.sort === 'energy+') list.sort((a, b) => PR[a.id].energy - PR[b.id].energy);
+    if (S.sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+    return list;
+  }
+  const roleTags = rs => `<span class="rtags">${Object.keys(OE.ROLES).filter(r => rs.includes(r)).map(r => `<span class="rtag" style="--rc:${OE.ROLES[r].color}">${r === 'intro' ? 'intro' : r}</span>`).join('')}</span>`;
+  function viewRoleTabs() {
+    const tabs = [['any', 'Any section', '#ECEEF5'], ...Object.entries(OE.ROLES).map(([k, v]) => [k, v.name, v.color])];
+    $('roleTabs').innerHTML = tabs.map(([k, n, c]) => `<button type="button" data-role="${k}" style="--rc:${c}" class="${S.role === k ? 'on' : ''}" title="${esc(k === 'any' ? 'Every pattern' : OE.ROLES[k].desc)}">${esc(n)}</button>`).join('');
   }
   function strip(steps) {
     const st = typeof steps === 'string' ? OE.parseSteps(steps) : steps;
@@ -365,14 +392,35 @@
     const list = visiblePatterns();
     $('bankCount').textContent = `${list.length} of ${OB.PATTERNS.length}`;
     let html = '', lastSub = '';
+    const PR = patternRoles(), grouped = S.sort === 'bank';
     for (const p of list) {
-      const g = OB.GENRES[p.genre], sub = (S.filter === 'all' ? g.name + ' · ' : '') + p.sub;
-      if (sub !== lastSub) { html += `<p class="psub">${esc(sub)}</p>`; lastSub = sub; }
+      const g = OB.GENRES[p.genre], sub = (S.filter === 'all' ? g.name + ' · ' : '') + p.sub, r = PR[p.id];
+      if (grouped && sub !== lastSub) { html += `<p class="psub">${esc(sub)}</p>`; lastSub = sub; }
       const s = OB.SOUNDS_BY_ID[p.sound];
-      html += `<button type="button" class="pitem" data-p="${p.id}" style="--c:${g.color}"><b>${esc(p.name)}</b><small>${p.bpm || Math.round((g.bpm[0] + g.bpm[1]) / 2)} · ${esc(s ? s.name : '')} · ${OE.parseSteps(p.steps).length} steps</small><span class="strip">${strip(p.steps)}</span></button>`;
+      html += `<button type="button" class="pitem" data-p="${p.id}" style="--c:${g.color}"><b>${esc(p.name)}${roleTags(r.roles)}</b><small>${grouped ? '' : esc(g.name) + ' · '}${p.bpm || Math.round((g.bpm[0] + g.bpm[1]) / 2)} · ${esc(s ? s.name : '')} · energy ${r.energy}</small><span class="strip">${strip(p.steps)}</span><span class="en" style="--e:${r.energy}%"></span></button>`;
     }
     $('plist').innerHTML = html || '<p class="empty">Nothing matches.</p>';
     viewBankActive();
+  }
+  // ---------- the sound browser ----------
+  function visibleSounds() {
+    const q = OE.parseQuery(S.sQ);
+    const lens = new Set(q.lens); if (S.sLen !== 'all') lens.add(S.sLen);
+    const roles = new Set(q.roles); if (S.sRole !== 'all') roles.add(S.sRole);
+    return OB.SOUNDS.filter(x => (!lens.size || lens.has(x.len)) && (!roles.size || [...roles].some(r => x.roles.includes(r))) && q.words.every(w => [x.name, x.family, x.desc, x.tags.join(' ')].join(' ').toLowerCase().includes(w)));
+  }
+  function viewSoundBrowser() {
+    const segs = (id, cur, items) => { $(id).innerHTML = items.map(([k, n, c]) => `<button type="button" data-v="${k}" style="--rc:${c || 'var(--g)'}" class="${cur === k ? 'on' : ''}">${esc(n)}</button>`).join(''); };
+    segs('sLen', S.sLen, [['all', 'Any length'], ['short', 'Short'], ['medium', 'Medium'], ['long', 'Long']]);
+    segs('sRole', S.sRole, [['all', 'Any section'], ...Object.entries(OE.ROLES).map(([k, v]) => [k, k === 'intro' ? 'Intro' : v.name, v.color])]);
+    const list = visibleSounds();
+    $('sList').innerHTML = list.map(x => `<div class="srow ${x.id === S.st.sound ? 'on' : ''}" data-s="${x.id}" role="button" tabindex="0" title="${esc(x.desc)}"><span><b>${esc(x.name)}${roleTags(x.roles)}</b><small>${esc(x.family)} · ${x.len} · energy ${Math.round(x.energy * 100)}</small></span><button class="ib" type="button" data-hear="${x.id}" title="Hear one note" aria-label="Hear ${esc(x.name)}">▶</button></div>`).join('') || '<p class="note">No sound matches.</p>';
+  }
+  async function previewSound(id) {
+    const x = OB.SOUNDS_BY_ID[id], st = Object.assign({}, S.st, {sound: id}, x.fx || {});
+    const note = S.st.reg - OT.mod(S.st.reg - S.st.key, 12) + (OT.mod(S.st.reg - S.st.key, 12) > 6 ? 12 : 0);
+    const buf = await OA.renderSample(OE.normalize(st), {notes: [note], hold: {short: 0.2, medium: 0.5, long: 1.6}[x.len], vel: 110, fx: true, maxSec: 6});
+    playBuffer(buf);
   }
   function viewBankActive() { document.querySelectorAll('.pitem').forEach(b => b.classList.toggle('on', b.dataset.p === S.st.from)); }
   function stepPattern(dir) {
@@ -802,7 +850,7 @@
   // ---------- fingerprint ----------
   function viewMeasure() {
     const {m, fit, cycle} = S.M, g = genre();
-    $('fitNum').textContent = fit.score; $('fitGenre').textContent = g.name;
+    $('fitNum').textContent = fit.score; $('fitGenre').textContent = g.name + (S.M.role !== 'drop' ? ' · ' + OE.ROLES[S.M.role].name.toLowerCase() : '');
     // radar
     const svg = $('radar'), cx = 180, cy = 165, R = 120, A = OE.AXES, n = A.length;
     const pt = (i, f) => { const a = -Math.PI / 2 + i / n * Math.PI * 2; return [cx + Math.cos(a) * R * f, cy + Math.sin(a) * R * f]; };
@@ -810,8 +858,9 @@
     let s = '';
     for (const f of [0.25, 0.5, 0.75, 1]) s += `<polygon points="${A.map((_, i) => pt(i, f).join(',')).join(' ')}" fill="none" stroke="#ffffff14"/>`;
     A.forEach((a, i) => { const [x, y] = pt(i, 1); s += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#ffffff10"/>`; });
-    const lo = A.map((a, i) => pt(i, g.target[a.id] ? norm(a, g.target[a.id][0]) : 0));
-    const hi = A.map((a, i) => pt(i, g.target[a.id] ? norm(a, g.target[a.id][1]) : 1));
+    const T = OE.roleTarget(g.target, S.M.role);
+    const lo = A.map((a, i) => pt(i, T[a.id] ? norm(a, T[a.id][0]) : 0));
+    const hi = A.map((a, i) => pt(i, T[a.id] ? norm(a, T[a.id][1]) : 1));
     s += `<path d="M${hi.map(p => p.join(',')).join('L')}Z M${lo.slice().reverse().map(p => p.join(',')).join('L')}Z" fill="var(--g)" fill-opacity=".16" fill-rule="evenodd" stroke="var(--g)" stroke-opacity=".5" stroke-dasharray="3 3"/>`;
     const cur = A.map((a, i) => pt(i, norm(a, m[a.id])));
     s += `<polygon points="${cur.map(p => p.join(',')).join(' ')}" fill="#ffffff10" stroke="#fff" stroke-width="1.6"/>`;
@@ -820,9 +869,9 @@
     svg.innerHTML = s;
     // tiles
     $('tiles').innerHTML = fit.axes.map((ax, i) => {
-      const a = A[i], tr = g.target[a.id];
+      const a = A[i], tr = T[a.id];
       const band = tr ? `<span class="band" style="left:${norm(a, tr[0]) * 100}%;width:${(norm(a, tr[1]) - norm(a, tr[0])) * 100}%"></span>` : '';
-      return `<div class="tile ${ax.na ? 'na' : ax.ok ? '' : 'bad'}" title="${esc(ax.na || a.unit)}"><small>${a.label}</small><b>${a.fmt(m[a.id])}</b><span class="rng">${tr ? `${g.name}: ${a.fmt(tr[0])}–${a.fmt(tr[1])}` : ''}${ax.na ? ' · n/a' : ''}</span><div class="bar">${band}<span class="dot" style="left:${norm(a, m[a.id]) * 100}%"></span></div></div>`;
+      return `<div class="tile ${ax.na ? 'na' : ax.ok ? '' : 'bad'}" title="${esc(ax.na || a.unit)}"><small>${a.label}</small><b>${a.fmt(m[a.id])}</b><span class="rng">${tr ? `${g.name}: ${a.fmt(tr[0])}–${a.fmt(tr[1])}` : `not counted in a ${OE.ROLES[S.M.role].name.toLowerCase()}`}${ax.na ? ' · n/a' : ''}</span><div class="bar">${band}<span class="dot" style="left:${norm(a, m[a.id]) * 100}%"></span></div></div>`;
     }).join('');
     // fixes
     const sug = OE.suggestions(S.st);
@@ -884,6 +933,7 @@
     if ($('keepHarm').checked) Object.assign(keep, {bpm: gid === S.st.genre ? S.st.bpm : undefined, key: S.st.key, scale: S.st.scale, prog: S.st.imported ? undefined : (gid === S.st.genre ? S.st.prog : undefined), imported: S.st.imported || undefined, bars: S.st.bars});
     if ($('keepSound').checked) keep.sound = S.st.sound;
     if ($('wild').checked) keep.wild = true;
+    if ($('findRole').value) keep.role = $('findRole').value;
     for (const k of Object.keys(keep)) if (keep[k] === undefined) delete keep[k];
     const seed = 1 + Math.floor(Math.random() * 1e5);
     const t0 = performance.now();
@@ -891,7 +941,7 @@
     S.candKind = kind;
     for (const c of S.cands) { c.st.ctx = S.st.ctx; c.st.mix = S.st.mix; }
     viewCands();
-    toast(kind === 'vary' ? `8 variations of "${S.st.name}"` : `${S.cands.length} of 140 ideas kept in ${Math.round(performance.now() - t0)} ms`);
+    toast(kind === 'vary' ? `8 variations of "${S.st.name}"` : `${S.cands.length} of 140 ${keep.role ? OE.ROLES[keep.role].name.toLowerCase() + ' ' : ''}ideas kept in ${Math.round(performance.now() - t0)} ms`);
   }
   function viewCands() {
     const box = $('cands');
@@ -899,7 +949,7 @@
     const packed = OE.pack(S.st);
     box.innerHTML = S.cands.map((c, i) => {
       const g = OB.GENRES[c.st.genre], s = OB.SOUNDS_BY_ID[c.st.sound];
-      return `<div class="cand ${OE.pack(c.st) === packed ? 'on' : ''}" data-c="${i}" style="--c:${g.color}" tabindex="0" role="button" aria-label="Audition ${esc(c.st.name)}"><canvas></canvas><span class="sc">${c.fit}</span><h4>${esc(c.what ? c.what : s.name + ' · ' + ({stab: 'chord stabs', pedal: 'pedal riff', riff: 'written riff', arp: OE.ORDERS[c.st.order].name.toLowerCase() + ' arp'})[c.kind || 'arp'])}</h4><p>${esc(OE.POOLS[c.st.pool].name)} · ${OE.RATES[c.st.rate].label} · ${c.st.steps.length} steps · ${c.st.bpm} BPM${c.typical != null ? ' · typical ' + Math.round(c.typical * 100) + '%' : ''}</p><div class="ca"><button class="btn sm" data-play="${i}" type="button">▶ Hear</button><button class="btn sm ghost" data-star="${i}" type="button">★ Save</button></div></div>`;
+      return `<div class="cand ${OE.pack(c.st) === packed ? 'on' : ''}" data-c="${i}" style="--c:${g.color}" tabindex="0" role="button" aria-label="Audition ${esc(c.st.name)}"><canvas></canvas><span class="sc">${c.fit}</span><h4>${esc(c.what ? c.what : s.name + ' · ' + ({stab: 'chord stabs', pedal: 'pedal riff', riff: 'written riff', arp: OE.ORDERS[c.st.order].name.toLowerCase() + ' arp'})[c.kind || 'arp'])}</h4><p>${esc(OE.POOLS[c.st.pool].name)} · ${OE.RATES[c.st.rate].label} · ${c.st.steps.length} steps · ${c.st.bpm} BPM${c.typical != null ? ' · typical ' + Math.round(c.typical * 100) + '%' : ''}</p>${roleTags((c.roles || OE.roles(c.st)).roles)}<div class="ca"><button class="btn sm" data-play="${i}" type="button">▶ Hear</button><button class="btn sm ghost" data-star="${i}" type="button">★ Save</button></div></div>`;
     }).join('');
     box.querySelectorAll('.cand').forEach((el, i) => miniCanvas(el.querySelector('canvas'), S.cands[i].st, OB.GENRES[S.cands[i].st.genre].color));
   }
@@ -1119,8 +1169,9 @@
     S.filter = S.st.genre;
     $('findGenre').value = S.st.genre;
     bindControls();
-    viewBankTabs(); viewBank();
+    viewBankTabs(); viewRoleTabs(); viewBank();
     refresh();
+    viewSoundBrowser();
     viewCands(); viewCrate(); viewRules(); viewGenres();
     // events
     $('play').addEventListener('click', () => togglePlay());
@@ -1128,6 +1179,17 @@
     $('heroPlay').addEventListener('click', () => { togglePlay(); if (player.playing) $('studio').scrollIntoView({behavior: 'smooth'}); });
     $('heroFind').addEventListener('click', () => { $('find').scrollIntoView({behavior: 'smooth'}); runFind('new'); });
     $('genreTabs').addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (!b) return; S.filter = b.dataset.g; viewBankTabs(); viewBank(); });
+    $('roleTabs').addEventListener('click', e => { const b = e.target.closest('[data-role]'); if (!b) return; S.role = b.dataset.role; viewRoleTabs(); viewBank(); });
+    $('bankSort').addEventListener('change', () => { S.sort = $('bankSort').value; viewBank(); });
+    $('sLen').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; S.sLen = b.dataset.v; viewSoundBrowser(); });
+    $('sRole').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; S.sRole = b.dataset.v; viewSoundBrowser(); });
+    $('sSearch').addEventListener('input', () => { S.sQ = $('sSearch').value; viewSoundBrowser(); });
+    $('sList').addEventListener('click', e => {
+      const h = e.target.closest('[data-hear]'); if (h) { e.stopPropagation(); previewSound(h.dataset.hear); return; }
+      const r = e.target.closest('[data-s]'); if (!r) return;
+      const x = OB.SOUNDS_BY_ID[r.dataset.s]; commit(Object.assign({sound: x.id}, x.fx || {}));
+      toast(`${x.name}: ${x.len}, best for ${x.roles.map(k => OE.ROLES[k].name.toLowerCase()).join(' and ')}`);
+    });
     $('search').addEventListener('input', () => { S.q = $('search').value; viewBank(); });
     $('plist').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) loadPattern(b.dataset.p); });
     $('undo').addEventListener('click', undo); $('redo').addEventListener('click', redo);
@@ -1196,7 +1258,7 @@
     let rz = 0;
     addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { drawRollLayer(); drawOrbit(player && player.playing ? player.beat() : null); }); });
     requestAnimationFrame(frame);
-    window.ORBIT_QA = {S, refresh, commit, load, runFind, audition, togglePlay, exportMidi, midiBytes, crateZip, applyImport, importFile, exportWav, toggleSave, midiIn, liveApply, autopilotStep, renderOne, stabsZip, multisampleZip, patchPack, loopWav, stemsZip, get orbitNodes() { return O.nodes; }, get player() { return player; }, get engine() { return engine; }};
+    window.ORBIT_QA = {S, refresh, commit, load, runFind, audition, togglePlay, exportMidi, midiBytes, crateZip, applyImport, importFile, exportWav, toggleSave, midiIn, liveApply, autopilotStep, visiblePatterns, visibleSounds, previewSound, renderOne, stabsZip, multisampleZip, patchPack, loopWav, stemsZip, get orbitNodes() { return O.nodes; }, get player() { return player; }, get engine() { return engine; }};
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

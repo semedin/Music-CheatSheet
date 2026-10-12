@@ -69,7 +69,8 @@
       <span class="count" id="bankCount"></span>
     </div>
     <div class="genres" id="genreTabs" role="tablist" aria-label="Genres"></div>
-    <input class="search" id="search" type="search" placeholder="Search: organ, polymeter, 9th, acid…" aria-label="Search the bank">
+    <div class="roles" id="roleTabs" role="tablist" aria-label="Section"></div>
+    <div class="bankbar"><input class="search" id="search" type="search" placeholder="Search: drop material, acid, break pads…" aria-label="Search the bank"><select id="bankSort" aria-label="Sort the bank"><option value="bank">Bank order</option><option value="energy-">Energy: high to low</option><option value="energy+">Energy: low to high</option><option value="name">A to Z</option></select></div>
     <div class="plist" id="plist"></div>
   </aside>
 
@@ -79,6 +80,7 @@
         <p class="kicker" id="stKicker"></p>
         <h2 id="stName">—</h2>
         <p class="why" id="stWhy"></p>
+        <p class="uses" id="stUses"></p>
       </div>
       <div class="stage-chips" id="stChips"></div>
     </div>
@@ -166,6 +168,11 @@
     <details class="grp" open id="gSound"><summary>Sound</summary>
       <label class="row">Patch<select id="sound"></select></label>
       <p class="sdesc" id="soundDesc"></p>
+      <div class="sbrowse">
+        <div class="sfilters"><span class="seg" id="sLen" role="group" aria-label="Length"></span><span class="seg" id="sRole" role="group" aria-label="Section"></span></div>
+        <input class="search" id="sSearch" type="search" placeholder="Find a sound: pad, pluck, drop, long…" aria-label="Find a sound">
+        <div class="slist" id="sList"></div>
+      </div>
       <label class="sl">Cutoff <output id="cutOut"></output><input id="cut" type="range" min="0" max="1" step="0.01"></label>
       <label class="sl">Resonance <output id="resOut"></output><input id="res" type="range" min="0" max="1" step="0.01"></label>
       <label class="sl">Decay <output id="decOut"></output><input id="dec" type="range" min="0" max="1" step="0.01"></label>
@@ -218,6 +225,7 @@
   <div class="head"><h2>Find me one</h2><p>The generator writes 140 combos from the genre's grammar (rates, pattern shapes, pools, orders, accents, sounds), measures every one against the fingerprint, and keeps the eight that fit best and are most typical, with no two rhythms the same. <b>Click one to hear it.</b> Star the ones that hit.</p></div>
   <div class="findbar panel">
     <label>Genre<select id="findGenre"></select></label>
+    <label>For the<select id="findRole"><option value="">any section</option><option value="drop">drop</option><option value="build">build</option><option value="break">break</option><option value="intro">intro &amp; outro</option></select></label>
     <label class="chk"><input type="checkbox" id="keepHarm" checked> Keep my key, tempo and chords</label>
     <label class="chk"><input type="checkbox" id="keepSound"> Keep my sound</label>
     <label class="chk" title="Let the generator and variations use the unusual tools: stacked 4ths, clusters, Turing loops, echo cascades, feels, strums"><input type="checkbox" id="wild"> Wild card</label>

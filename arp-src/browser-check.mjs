@@ -28,7 +28,7 @@ async function run(width, height, label, fn) {
   await fn(page);
   await page.close();
 }
-const OB_COUNT = 19;
+const OB_COUNT = 37;
 const ok = (label, yes, detail = '') => { report.results.push({label, ok: !!yes, detail}); if (!yes) report.errors.push('FAILED: ' + label + (detail ? ' (' + detail + ')' : '')); };
 
 await run(1440, 1000, 'desktop', async page => {
@@ -216,6 +216,52 @@ await run(1440, 1000, 'desktop', async page => {
   // wild card
   const wild = await page.evaluate(() => { document.getElementById('wild').checked = true; document.getElementById('findBtn').click(); const c = ORBIT_QA.S.cands; return {n: c.length, wildUsed: c.filter(x => x.st.echo || x.st.order === 'turing' || ['quartal', 'cluster', 'spread'].includes(x.st.pool) || x.st.feel !== 'straight').length}; });
   ok('Wild card: the generator reaches for the unusual tools', wild.n === 8 && wild.wildUsed >= 4, JSON.stringify(wild));
+  // ---- sections and the sound browser ----
+  const sec = await page.evaluate(async () => {
+    const q = ORBIT_QA, out = {};
+    document.querySelector('[data-g="all"]').click();
+    const search = document.getElementById('search');
+    const n = text => { search.value = text; search.dispatchEvent(new Event('input')); return document.querySelectorAll('.pitem').length; };
+    out.breakCount = n('break material');
+    out.breakAll = [...document.querySelectorAll('.pitem')].every(b => q.S.pRoles[b.dataset.p].roles.includes('break'));
+    out.dropCount = n('drop material for sure');
+    out.buildCount = n('good for build');
+    out.longPads = n('long pads for the breakdown');
+    out.longPadsLong = [...document.querySelectorAll('.pitem')].every(b => OB.SOUNDS_BY_ID[OB.BY_ID[b.dataset.p].sound].len === 'long');
+    n('');
+    document.querySelector('[data-role="build"]').click(); out.buildTab = document.querySelectorAll('.pitem').length;
+    document.querySelector('[data-role="any"]').click();
+    const sort = document.getElementById('bankSort'); sort.value = 'energy-'; sort.dispatchEvent(new Event('change'));
+    const es = [...document.querySelectorAll('.pitem')].map(b => q.S.pRoles[b.dataset.p].energy);
+    out.sorted = es.every((e, i) => i === 0 || e <= es[i - 1]);
+    sort.value = 'bank'; sort.dispatchEvent(new Event('change'));
+    // the stage says what the loaded combo is for
+    document.querySelector('.pitem[data-p="tech-house-pad-breakdown"]').click();
+    await new Promise(r => setTimeout(r, 80));
+    out.uses = document.getElementById('stUses').textContent;
+    out.fitLabel = document.getElementById('fitGenre').textContent;
+    // sound browser: long sounds only, then pick one, then hear one
+    document.querySelector('#sLen [data-v="long"]').click();
+    out.longSounds = q.visibleSounds().length; out.longRows = document.querySelectorAll('.srow').length;
+    document.querySelector('#sLen [data-v="all"]').click();
+    const ss = document.getElementById('sSearch'); ss.value = 'short drop'; ss.dispatchEvent(new Event('input'));
+    out.shortDrop = q.visibleSounds().every(x => x.len === 'short' && x.roles.includes('drop')) && q.visibleSounds().length >= 4;
+    ss.value = ''; ss.dispatchEvent(new Event('input'));
+    document.querySelector('.srow[data-s="choir"]').click(); out.picked = q.S.st.sound;
+    await q.previewSound('trance-lead'); out.previewed = true;
+    // generator by section
+    document.getElementById('findGenre').value = 'tech-house'; document.getElementById('findRole').value = 'break'; document.getElementById('wild').checked = false;
+    document.getElementById('findBtn').click();
+    out.breakIdeas = q.S.cands.filter(c => c.roles.roles.includes('break')).length;
+    document.getElementById('findRole').value = '';
+    return out;
+  });
+  ok('Search "break material" shows only break-tagged patterns', sec.breakCount >= 20 && sec.breakAll, JSON.stringify(sec));
+  ok('Search understands "drop material for sure", "good for build" and "long pads for the breakdown"', sec.dropCount >= 100 && sec.buildCount >= 20 && sec.longPads >= 8 && sec.longPadsLong, JSON.stringify(sec));
+  ok('Section tabs filter and energy sorts high to low', sec.buildTab === sec.buildCount && sec.sorted, JSON.stringify(sec));
+  ok('The stage says what a combo is for, and the fingerprint is the section\'s', /Use it for\s*Break/.test(sec.uses) && /break/.test(sec.fitLabel), sec.uses + ' | ' + sec.fitLabel);
+  ok('Sound browser: length and section filters, search, pick and preview', sec.longSounds === 12 && sec.longRows === 12 && sec.shortDrop && sec.picked === 'choir' && sec.previewed, JSON.stringify(sec));
+  ok('New ideas for the break: the generator writes break material', sec.breakIdeas >= 6, String(sec.breakIdeas));
   // share link round trip
   const link = await page.evaluate(() => { const p = OE.pack(ORBIT_QA.S.st); return OE.pack(OE.unpack(p)) === p; });
   ok('Share link round-trips the combo', link);

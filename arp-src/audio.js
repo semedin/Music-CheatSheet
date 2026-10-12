@@ -106,6 +106,7 @@ const OA = (() => {
     const drumRev = ctx.createGain(); drumRev.gain.value = 0.06; drumBus.connect(drumRev); drumRev.connect(revSend);
 
     let P = {}, revSize = -1, curSound = null, lastMono = null, spb = 0.5;
+    const voices = [], MAX_VOICES = opts.maxVoices || 40;
     const noise = noiseBuffer(ctx);
 
     function set(st, sound) {
@@ -164,6 +165,10 @@ const OA = (() => {
       vg.gain.setTargetAtTime(0, end, Math.max(0.004, rel / 3));
       const stop = end + rel * 2.2 + 0.03;
       if (s.mono) { if (lastMono && lastMono.end > t) lastMono.g.gain.setTargetAtTime(0, t + 0.004, 0.006); lastMono = {g: vg, end: stop}; }
+      // a cap on overlapping voices: long pads in fast patterns would otherwise pile up; the oldest fades out first
+      for (let i = voices.length - 1; i >= 0; i--) if (voices[i].stop < t) voices.splice(i, 1);
+      while (voices.length >= MAX_VOICES) voices.shift().g.gain.setTargetAtTime(0, t, 0.02);
+      voices.push({g: vg, stop});
       // filter (or the formant bank)
       const F = s.filter, cutMul = Math.pow(2, ((m.cut ?? 0.5) - 0.5) * 5) * (e.acc ? 1.15 : 1);
       const base = Math.min(16000, Math.max(40, F.cut * cutMul * Math.pow(f / 261.6, F.kt || 0)));
@@ -175,6 +180,14 @@ const OA = (() => {
         if (F.a) flt.frequency.exponentialRampToValueAtTime(peakF, t + F.a);
         flt.frequency.setTargetAtTime(base + (peakF - base) * F.s, t + (F.a || 0), Math.max(0.005, F.d * decMul / 3));
       } else flt.frequency.setValueAtTime(base, t);
+      // a slow LFO on the cutoff, for pads and drones that keep moving
+      if (s.lfo) {
+        const lo = ctx.createOscillator(), lg = ctx.createGain();
+        lo.frequency.value = s.lfo.rate;
+        lg.gain.value = base * (Math.pow(2, s.lfo.depth) - 1) * 0.5;
+        lo.connect(lg); lg.connect(flt.frequency);
+        lo.start(t); lo.stop(stop);
+      }
       let head = flt;
       if (s.formants) {
         const sum = ctx.createGain();
@@ -228,9 +241,18 @@ const OA = (() => {
       if (s.noise) {
         const ns = ctx.createBufferSource(), nf = ctx.createBiquadFilter(), ng = ctx.createGain();
         ns.buffer = noise; nf.type = 'highpass'; nf.frequency.value = s.noise.hp;
-        ng.gain.setValueAtTime(s.noise.gain * (0.4 + 0.6 * v), t); ng.gain.setTargetAtTime(0, t, s.noise.decay / 2);
-        ns.connect(nf); nf.connect(ng); ng.connect(vg);
-        ns.start(t, (e.n * 0.0173) % 1.5); ns.stop(t + s.noise.decay * 6 + 0.01);
+        const nl = s.noise.gain * (0.4 + 0.6 * v);
+        if (s.noise.sus) {
+          // held noise (a swell): follows the amp envelope's shape, through the filter so the sweep opens it
+          ns.loop = true;
+          ng.gain.setValueAtTime(nl * s.noise.sus, t);
+          ng.gain.setTargetAtTime(0, end, Math.max(0.004, rel / 3));
+          ns.start(t, (e.n * 0.0173) % 1.5); ns.stop(stop);
+        } else {
+          ng.gain.setValueAtTime(nl, t); ng.gain.setTargetAtTime(0, t, s.noise.decay / 2);
+          ns.start(t, (e.n * 0.0173) % 1.5); ns.stop(t + s.noise.decay * 6 + 0.01);
+        }
+        ns.connect(nf); nf.connect(ng); ng.connect(s.noise.thru ? flt : vg);
       }
       const last = oscs[oscs.length - 1];
       if (last) last.onended = () => { try { vg.disconnect(); flt.disconnect(); } catch (_) {} };

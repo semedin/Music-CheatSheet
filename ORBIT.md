@@ -1,7 +1,7 @@
 # Orbit: notes
 
 [`orbit.html`](orbit.html) is the arpeggio studio: arps, riffs and sequences for twelve genres, from deep tech
-house to trance. Pick a key and a progression (or drop in your own chord MIDI), start from one of 129
+house to trance. Pick a key and a progression (or drop in your own chord MIDI), start from one of 154
 patterns or let the generator write some, hear them on a synthesized sound with drums and a bassline
 under them, check them against the genre's measured fingerprint, and take the MIDI to Ableton.
 
@@ -77,6 +77,29 @@ of the cycle in every other block of 2, 4 or 8 bars.
 - **Autopilot**: while it plays, Orbit moves to its best-fitting variation every 4, 8 or 16 bars. Undo goes back.
 - **Wild card**: lets the generator and the variations reach for all of the above.
 
+## Sections: intro, build, break, drop
+
+Every combo, from the bank, the generator or your own edits, is measured for what it is good for:
+
+| Section | Points for |
+|---|---|
+| Drop | short notes, four or more notes a bar, accents or syncopation, a punchy sound |
+| Build | build automation (Build to the drop, Riser in the last quarter, Thin to full, Add a note), roll / ratchet / climb / bouncing-ball fills, every step filled, climbing echoes, a filter that opens, a swelling sound |
+| Break | long notes, a long held sound, the chords on show (9ths, open voicings, chord hits), space between the notes, Pluck to pad or Breathe |
+| Intro & outro | few notes, a gentle sound, a filter that opens or a dark one, one to three pitches |
+
+The best section is the primary one; any other within 60% of it is listed too. The stage shows them as
+"Use it for", with the reasons, and an **energy** from 0 to 100 (density, syncopation, accents, short notes and
+how punchy the sound is). The bank has section tabs, an energy sort and tags on every pattern, and its search
+understands sections and lengths: "good for build", "break material", "drop material for sure", "short plucks
+for the intro" and "long pads for the breakdown" all work (the filler words are ignored). *Find me one* can
+write for a section: drops keep accents and short gates, builds get build automation and rolling fills,
+breaks get longer notes, 9ths and long sounds, intros thin out and start dark.
+
+The fingerprint follows the section. A drop is measured against the genre's own ranges; outside the drop
+nothing has to dodge the kick and notes may last up to a bar, builds may fill every step, and breaks may leap
+and spread further.
+
 ## The fingerprint
 
 Seven numbers measured from the notes, on a still four-bar loop and the unswung grid:
@@ -92,7 +115,7 @@ Seven numbers measured from the notes, on a still four-bar loop and the unswung 
 | Swing | Swing of the off-16ths (50% straight). Only counted when notes land there. |
 
 Each genre has a range on every axis, set from its conventions and then checked against the bank: every one
-of the 129 patterns sits inside its own genre on all seven axes, and `test.mjs` fails if one drifts out. Fit
+of the 154 patterns sits inside its own genre, for the section it is written for, on all seven axes, and `test.mjs` fails if one drifts out. Fit
 is 100 inside every range and drops with the distance outside. **Fixes** are candidate edits (rotations,
 thinning, Euclidean fills, gate, swing, octaves, order) that are each measured before they are offered, and
 only shown when they raise the fit.
@@ -114,11 +137,20 @@ halftime) without touching its harmony or sound.
 
 ## Sounds and recipes
 
-Nineteen patches: house organ, tech pluck, rubber bleep, Detroit chord stab, percussive blip, acid line,
-hollow square, gated supersaw, glass pluck, dark wide saw, marimba, kalimba, log drum, electric piano,
-house piano, disco saw, vox chop, rave stab and mid pulse. Each has a preview voice (oscillators and
-periodic waves, unison and spread, FM, noise transients, pitch envelopes, formant filters, tremolo,
-vibrato, mono glide), a **Serum 2 recipe** (oscillators, unison, filter, envelopes, FX, and which macro to
+Thirty-seven patches, each tagged with its **length** and the **sections** it suits:
+
+| Length | Patches |
+|---|---|
+| Short (hits and plucks) | house organ, tech pluck, rubber bleep, percussive blip, marimba, log drum, disco saw, mid pulse, micro pluck, wood knock, laser zap, bell tick, funk clav |
+| Medium (notes that ring) | Detroit chord stab, acid line, hollow square, gated supersaw, glass pluck, dark wide saw, kalimba, house piano, vox chop, rave stab, harp pluck, mono lead |
+| Long (pads, swells, held leads) | electric piano, warm pad, glass pad, string swell, choir aah, dark drone, noise swell, Reese, euphoric lead, hoover, gospel organ, shimmer pad |
+
+The sound browser in the Sound panel filters them by length and section, searches them ("short drop", "long
+pads"), and plays one note of any patch before you choose it.
+
+Each has a preview voice (oscillators and periodic waves, unison and spread, FM, noise transients and held
+noise, pitch envelopes, a slow filter LFO, formant filters, tremolo, vibrato, mono glide; at most 40 voices
+overlap, the oldest fading first), a **Serum 2 recipe** (oscillators, unison, filter, envelopes, FX, and which macro to
 MIDI-learn to the exported CC) and an **Ableton recipe** with Live's own instruments. The preview is a sketch
 of the patch; the recipes are the real sound.
 
@@ -138,7 +170,7 @@ current knobs, without the mix bus (no compressor, limiter, sidechain or high-pa
   velocity layers, named `patch_MIDInote_Note(_layer).wav` for mapping in Sampler.
 - **Chord stabs**: the chords of the progression (its voicings) or every chord of the key as triads, 7ths or
   9ths, one file each, with a README of the voicings. For Drum Rack pads, or Simpler's chord-memory trick.
-- **Patch pack**: all 19 patches as C3 one-shots at their own settings, with every Serum 2 and Ableton recipe.
+- **Patch pack**: all 37 patches as C3 one-shots at their own settings, with every Serum 2 and Ableton recipe.
 - **Seamless loops and stems**: the phrase exactly its length to the sample, rendered with the previous pass
   first so the tail of the last bar is already at the start; arp alone, full mix, or four stems (arp, bass,
   drums, pad) in one ZIP.
@@ -170,8 +202,8 @@ number that changes measured on both.
 ## Validation
 
 ```
-node arp-src/test.mjs            # 36 engine checks
-node arp-src/browser-check.mjs   # 32 checks in headless Chromium (needs Playwright); writes arp-src/qa/
+node arp-src/test.mjs            # 41 engine checks
+node arp-src/browser-check.mjs   # 38 checks in headless Chromium (needs Playwright); writes arp-src/qa/
 ```
 
 `test.mjs` checks the engine against answers worked out by hand: roman numerals and chord symbols, Camelot
