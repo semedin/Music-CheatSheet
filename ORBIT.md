@@ -50,6 +50,33 @@ ride, Riser in the last quarter, Thin to full. **Fills** change the last bar of 
 last beat, octave climb, ratchet, roll in, answer in reverse, stutter) and **Change a note** swaps one note
 of the cycle in every other block of 2, 4 or 8 bars.
 
+## Off the beaten track
+
+- **More scales**: melodic minor, Phrygian dominant, Hungarian minor, double harmonic and Locrian, alongside
+  minor, Dorian, Phrygian, harmonic minor, major, Mixolydian and Lydian.
+- **More pools**: *stacked 4ths* (scale notes a fourth apart: open, modern, fits anywhere in the key), *open
+  voicing* (every other chord tone up an octave) and *cluster* (root, 2nd, 3rd and 5th: notes that rub).
+- **Turing order**, after the Music Thing Modular module: a loop of 2–16 pool notes where, each time it comes
+  round, every note has a (100% − lock) chance of changing. Fully locked it is a fixed loop; loosened, it drifts
+  forever. Deterministic per seed, so the same settings give the same drift.
+- **Echo cascade**: MIDI echoes written into the notes, at 1/16 to dotted 1/4, quieter on each repeat and
+  optionally climbing or falling (octaves, fifths, fourths, or scale steps). One note becomes a run. Echoes wrap
+  round the loop and go into the MIDI export; the fingerprint ignores them and measures what you wrote.
+- **Feel**: microtiming per 16th of the beat, on the arp, bass and hats: *Drunk* (Dilla: the "e" and "a" late,
+  the "and" early), *Afro lean*, *Ahead* and *Laid back*. **Strum** spreads chord hits over up to 80 ms, up, down
+  or alternating.
+- **Bouncing-ball fill**: the last beat speeds up 1, 2, 3, 4 notes per step and falls in level.
+- **Text → rhythm**: any word or track name as Morse code (a dot is a note, a dash an accent held two steps).
+- **Write it out** turns any order into a written sequence, then reverse, mirror, step up or down, or rotate it.
+- **Draw** on the orbit: click the pool notes on the inner ring in the order they should play.
+- **Riff import**: drop a single-line MIDI clip (a riff or a melody) and it becomes the step pattern and a
+  written sequence over the key's scale, with its accents, ties and swing. It plays back exactly (notes outside
+  the scale snap to it), and from there you can vary it, fingerprint it or play it on any patch.
+- **Play chords from a MIDI keyboard** (Web MIDI, Chrome and Edge): hold a chord and the arp plays it, with
+  latch; release without latch and the progression comes back.
+- **Autopilot**: while it plays, Orbit moves to its best-fitting variation every 4, 8 or 16 bars. Undo goes back.
+- **Wild card**: lets the generator and the variations reach for all of the above.
+
 ## The fingerprint
 
 Seven numbers measured from the notes, on a still four-bar loop and the unswung grid:
@@ -99,6 +126,23 @@ The mix bus has a high-pass, drive, a width chorus, a sidechain duck from the ki
 filtered feedback loop, a reverb with a generated impulse, a bus compressor and a limiter. Drums, a
 genre bassline and an optional chord pad play under the arp, with their own grooves and patterns.
 
+## Sounds out
+
+The patches as WAV files for Simpler, Sampler and Drum Rack, rendered offline from the same synth, at the
+current knobs, without the mix bus (no compressor, limiter, sidechain or high-pass):
+
+- **One note**: any patch, any note from C0 to C6, held from 80 ms to 4 s, soft/medium/hard, dry or with the
+  delay and reverb. Silence at the end is trimmed, the last 5 ms faded and the peak normalised to −1 dBFS.
+  24-bit or 16-bit, 44.1 or 48 kHz. Each file carries its root note in a `smpl` chunk.
+- **Multisample**: the patch every octave, 6, 3 or 1 semitones across C0–C6, C1–C5 or C2–C4, optionally in two
+  velocity layers, named `patch_MIDInote_Note(_layer).wav` for mapping in Sampler.
+- **Chord stabs**: the chords of the progression (its voicings) or every chord of the key as triads, 7ths or
+  9ths, one file each, with a README of the voicings. For Drum Rack pads, or Simpler's chord-memory trick.
+- **Patch pack**: all 19 patches as C3 one-shots at their own settings, with every Serum 2 and Ableton recipe.
+- **Seamless loops and stems**: the phrase exactly its length to the sample, rendered with the previous pass
+  first so the tail of the last bar is already at the start; arp alone, full mix, or four stems (arp, bass,
+  drums, pad) in one ZIP.
+
 ## Into Ableton
 
 - **MIDI**: 4–64 bars at the session tempo, with swing, accents, ratchets and slides (a slid note overlaps
@@ -126,8 +170,8 @@ number that changes measured on both.
 ## Validation
 
 ```
-node arp-src/test.mjs            # 25 engine checks
-node arp-src/browser-check.mjs   # 17 checks in headless Chromium (needs Playwright); writes arp-src/qa/
+node arp-src/test.mjs            # 36 engine checks
+node arp-src/browser-check.mjs   # 32 checks in headless Chromium (needs Playwright); writes arp-src/qa/
 ```
 
 `test.mjs` checks the engine against answers worked out by hand: roman numerals and chord symbols, Camelot
@@ -138,13 +182,22 @@ lanes and their CC export, fills and mutation. Then the bank: unique ids, valid 
 progressions; every pattern inside its genre on all seven axes; every note in the scale or the chord under
 it; nothing outside the piano and nothing under 165 Hz outside the acid genre. Then the generator (eight
 fitting, distinct, deterministic combos per genre, no chords on mono sounds), variations, fixes, the
-Arpeggiator translation and the full five-track export, byte for byte.
+Arpeggiator translation and the full five-track export, byte for byte. The newer tools are checked the same
+way: the new scales stay in key, stacked 4ths are a fourth apart, a fully locked Turing loop repeats exactly and
+a loose one drifts the same way every time, echoes land at the echo time with the right levels and scale steps
+and wrap round the loop, strum and feel offsets in milliseconds, the bouncing-ball fill's 1-2-3-4, Morse code,
+a riff that comes back note for note with its swing, written-out orders that play the same notes, the chords of
+the key, and wild card mode used only when asked.
 
 `browser-check.mjs` drives the built page: playback and the orbit following it, one pattern per genre, the
 generator and variations, the MIDI export note for note, the crate ZIP, chord import through the file input,
 a WAV render measured for level and clipping, every sound rendering audible audio, a rule A/B and back, a fix
 and its undo, A/B switching, share links, and on a 390 px phone no horizontal scroll and the floating play
-button.
+button. For the samples: a 24-bit one-shot read back from its bytes (peak −1.0 dBFS, trimmed, root key in the
+`smpl` chunk), the stab, multisample and patch-pack ZIPs file by file, a seamless loop exactly two bars long to
+the sample and already sounding at sample 0, and the four stems. For the tools: Turing, write-out and mirror,
+Morse, echoes, the live keyboard with and without latch, drawing a sequence by clicking the orbit, riff import
+through the file input, autopilot and its undo, and wild card.
 
 ## Limits
 

@@ -244,4 +244,94 @@ check('Export: full sketch has five tracks, the arp matches the render, bytes ar
   assert.deepEqual([z[0], z[1], z[2], z[3]], [80, 75, 3, 4]);
 });
 
+// ---- the outside-the-box tools ----
+check('New scales: Phrygian dominant, Hungarian minor, double harmonic, melodic minor and Locrian parse and pool correctly', () => {
+  assert.deepEqual(OT.parseProgression('I II iv', 4, 'phrygdom').chords.map(c => c.name), ['E', 'F', 'Am']);
+  assert.equal(OE.harmony(base({scale: 'locrian', prog: 'i'})).chords[0].name, 'Am');
+  for (const sc of ['melodic', 'phrygdom', 'hungarian', 'dharmonic', 'locrian']) {
+    const st = base({scale: sc, pool: 'penta', steps: 'xxxxxxxxxxxxxxxx', order: 'up', octaves: 2});
+    for (const e of four(st).events) assert(OT.SCALES[sc].st.includes(OT.mod(e.n - 9, 12)), `${sc}: ${OT.noteName(e.n)}`);
+  }
+});
+check('New pools: stacked 4ths are a fourth apart in the scale, the cluster rubs, the open voicing spreads the chord', () => {
+  const p = pool => OE.render(base({pool, steps: 'x', reg: 64}), {bars: 1}).pools[0].base;
+  assert.deepEqual(p('quartal').map(n => n - p('quartal')[0]), [0, 5, 10, 15]);
+  assert.deepEqual(p('cluster').map(n => n - p('cluster')[0]), [0, 2, 3, 7]);
+  const closed = p('chord'), open = p('spread');
+  assert(open[open.length - 1] - open[0] > closed[closed.length - 1] - closed[0] + 6, 'wider than the closed chord');
+});
+check('Turing order: 100% lock is a fixed loop, lower locks drift but stay deterministic', () => {
+  const st = lock => base({order: 'turing', lock, tlen: 6, steps: 'x.x.x.x.x.x.x.x.', reset: 'never', seed: 4, pool: 'chord9', octaves: 2});
+  const bars = R => [0, 1, 2, 3].map(b => R.events.filter(e => e.bar === b).map(e => e.n).join(','));
+  const fixed = OE.render(st(1), {bars: 6});
+  const notes = fixed.events.map(e => e.n);
+  for (let i = 6; i < notes.length; i++) assert.equal(notes[i], notes[i - 6], 'a 6-note loop at full lock');
+  assert.equal(OE.cycle(st(1)).bars, 3, '6 notes over 8 hits a bar: 3 bars');
+  const loose = OE.render(st(0.3), {bars: 4});
+  assert.notDeepEqual(bars(loose).slice(0, 2), bars(fixed).slice(0, 2));
+  assert.deepEqual(bars(loose), bars(OE.render(st(0.3), {bars: 4})), 'same seed, same drift');
+  assert(OE.cycle(st(0.3)).random);
+});
+check('Echo cascade: repeats at the echo time, quieter each time, climbing the scale, wrapped round the loop, exported, not fingerprinted', () => {
+  const st = base({steps: 'x...............', echo: 3, echoTime: '8d', echoFb: 0.5, echoShift: 's1', vel: 100, accent: 0});
+  const R = OE.render(st, {bars: 1}), ev = R.events;
+  assert.deepEqual(ev.map(e => +e.t.toFixed(3)), [0, 0.75, 1.5, 2.25]);
+  assert.deepEqual(ev.map(e => e.v), [100, 50, 25, 13]);
+  for (let i = 1; i < 4; i++) assert.equal(ev[i].n, OE.scaleStep(st, ev[0].n, i));
+  const late = OE.render(base({steps: '..............x.', echo: 2, echoTime: '8d', echoFb: 0.6}), {bars: 1});
+  assert(late.events.some(e => e.echo && e.t < 1), 'an echo past the end wraps to the start');
+  assert.equal(OE.metrics(R).density, 1, 'the fingerprint counts only the written note');
+  assert.equal(OT.readMidi(OE.exportMidi(st, {bars: 1})).tracks.find(t => t.name === 'Orbit Arp').notes.length, 4);
+});
+check('Strum and feel: chord notes spread up to 80 ms in order; Drunk drags the e and the a and pushes the and', () => {
+  const st = base({steps: 'C...............', prog: 'i7', strum: 1, strumDir: 'down', bpm: 120});
+  const ev = OE.render(st, {bars: 1}).events.sort((a, b) => b.n - a.n);
+  near(ev[ev.length - 1].t - ev[0].t, 0.08 * 2, 1e-9, 'full strum in beats at 120');
+  assert(ev.every((e, i) => i === 0 || e.t > ev[i - 1].t), 'down: highest note first');
+  const f = OE.render(base({steps: 'xxxx', feel: 'drunk', bpm: 120}), {bars: 1}).events;
+  near((f[1].t - f[1].gt) * 500, 24, 1e-6, 'the e, ms'); near((f[2].t - f[2].gt) * 500, -10, 1e-6, 'the and, ms'); near((f[3].t - f[3].gt) * 500, 30, 1e-6, 'the a, ms');
+  assert.equal(OE.metrics(OE.render(base({steps: 'xxxx', feel: 'drunk'}), {bars: 4, evo: false})).sync, 0, 'measured on the grid');
+});
+check('Bouncing-ball fill: the last beat plays 1, 2, 3, then 4 notes per step', () => {
+  const R = OE.render(base({steps: 'xxxxxxxxxxxxxxxx', fill: 'bounce', fillEvery: 2, bars: 2}));
+  const lastBeat = R.events.filter(e => e.gt >= 7 - 1e-9);
+  assert.deepEqual([7, 7.25, 7.5, 7.75].map(t => lastBeat.filter(e => e.gt >= t - 1e-9 && e.gt < t + 0.25 - 1e-9).length), [1, 2, 3, 4]);
+});
+check('Morse: "sos" is dot-dot-dot dash-dash-dash dot-dot-dot; words get a longer gap; never longer than 64 steps', () => {
+  assert.equal(OE.morse('SOS'), 'x.x.x..X-.X-.X-..x.x.x');
+  assert.equal(OE.morse('e e'), 'x....x');
+  assert(OE.morse('the quick brown fox jumps over the lazy dog').length <= 64);
+  OE.parseSteps(OE.morse('tech house 2026'));
+});
+check('Riff import: rhythm, accents, ties, pitches and swing come back exactly; notes outside the scale snap', () => {
+  const sw = 0.035;
+  const riff = [{t: 0, d: 0.25, n: 57, v: 100}, {t: 0.75 + sw, d: 0.5, n: 60, v: 124}, {t: 1.5, d: 0.25, n: 64, v: 90}, {t: 2, d: 0.25, n: 62, v: 90}, {t: 3, d: 0.75, n: 69, v: 120}, {t: 4.5, d: 0.2, n: 61, v: 90}];
+  const r = OE.riffFromNotes(riff, base({}));
+  assert.equal(OE.stepsString(r.patch.steps), 'x..X-.x.x...X--...x.............');
+  assert.equal(r.snapped, 1); assert.equal(r.bars, 2); assert.equal(r.swing, 57);
+  const R = OE.render(OE.normalize(Object.assign(base({}), r.patch)), {bars: 2});
+  assert.deepEqual(R.events.map(e => [e.gt, e.n]), [[0, 57], [0.75, 60], [1.5, 64], [2, 62], [3, 69], [4.5, 60]]);
+});
+check('Write it out: every order becomes the same notes as a written sequence', () => {
+  for (const order of ['up', 'converge', 'pinky', 'thumb', 'updown', 'diverge']) {
+    const st = base({order, pool: 'chord9', octaves: 2, steps: 'xxxxxxxxxxxxxxxx', reset: 'never'});
+    const as = OE.render(st, {bars: 2}).events.map(e => e.n), written = OE.render(Object.assign({}, st, {order: 'seq', seq: OE.writeOut(st)}), {bars: 2}).events.map(e => e.n);
+    assert.deepEqual(written, as, order);
+  }
+});
+check('Chords of the key: seven per scale, named, in key; 9ths name their flat 9ths', () => {
+  assert.deepEqual(OE.diatonicChords(base({}), '7th').map(c => c.name), ['Am7', 'Bm7♭5', 'Cmaj7', 'Dm7', 'Em7', 'Fmaj7', 'G7']);
+  assert.deepEqual(OE.diatonicChords(base({scale: 'major', key: 0}), 'triad').map(c => c.name), ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim']);
+  assert.equal(OE.diatonicChords(base({}), '9th')[4].name, 'Em7♭9');
+  for (const c of OE.diatonicChords(base({}), '9th')) for (const n of c.notes) assert(OT.SCALES.minor.st.includes(OT.mod(n - 9, 12)));
+});
+check('Wild card: the generator and variations use the new tools only when asked', () => {
+  const uses = st => st.echo > 0 || st.order === 'turing' || ['quartal', 'cluster', 'spread'].includes(st.pool) || st.feel !== 'straight' || st.strum > 0;
+  assert.equal(OE.find('tech-house', 8, 5).filter(c => uses(c.st)).length, 0);
+  assert(OE.find('tech-house', 8, 5, {wild: true}).filter(c => uses(c.st)).length >= 5);
+  assert(OE.find('tech-house', 8, 5, {wild: true}).every(c => c.fit >= 90));
+  const org = OB.stateFor(OB.BY_ID['tech-house-organ-bounce']);
+  assert.equal(OE.vary(org, 8, 1).filter(v => uses(v.st)).length, 0);
+});
+
 console.log(`\n${checks} checks passed`);

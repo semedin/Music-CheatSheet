@@ -19,7 +19,7 @@ Use headphones or monitors: several labs work below 150 Hz, where laptop speaker
 
 | Page | What it is | Notes | Built from |
 |---|---|---|---|
-| [`orbit.html`](orbit.html) | **Orbit, the arpeggio studio (latest).** Arps, riffs and sequences for 12 genres (41 deep tech house patterns, 129 in all): a note cycle turning against a step pattern, voiced through your key and progression or your own imported chord MIDI. A measured genre fingerprint with fixes, a cycle counter, a generator, 10 evolution lanes exported as CC, 19 sounds with Serum 2 and Ableton recipes, Live's Arpeggiator settings, 12 rules as A/Bs, a crate with ZIP export, MIDI and WAV out. | [ORBIT.md](ORBIT.md) | `arp-src/` |
+| [`orbit.html`](orbit.html) | **Orbit, the arpeggio studio (latest).** Arps, riffs and sequences for 12 genres (41 deep tech house patterns, 129 in all): a note cycle turning against a step pattern, voiced through your key and progression or your own imported chord MIDI. A measured genre fingerprint with fixes, a cycle counter, a generator, 10 evolution lanes exported as CC, 19 sounds with Serum 2 and Ableton recipes, Live's Arpeggiator settings, 12 rules as A/Bs, a crate with ZIP export, MIDI and WAV out. Off-the-wall tools too (Turing loops, echo cascades, feels, stacked 4ths, Morse rhythms, riff import, live MIDI keyboard, autopilot) and **Sounds out**: every patch as WAV one-shots, multisamples, chord stabs, seamless loops and stems for Simpler and Sampler. | [ORBIT.md](ORBIT.md) | `arp-src/` |
 | [`fieldwork-v3.html`](fieldwork-v3.html) | **Motif Studio (V3, latest).** Write a two-bar motif, then grow it into an 8- or 16-bar phrase. 69 styles, 120 artist perspectives, 59 preview voices, 19 drum kits; MIDI and WAV export. | [VERSION-3.md](VERSION-3.md) | `v3-src/` |
 | [`trance.html`](trance.html) | **Trance, beyond the ordinary.** All 12 supplied melodies plus 16 studies across eight trance styles, six treatments each (168 sketches) with chords, bass and drums; 24 artist perspectives, 16 sound recipes, arrangement maps, MIDI and ZIP export. | [TRANCE.md](TRANCE.md) | `trance-src/` |
 | [`studio-v2.html`](studio-v2.html) | **V2 Studio.** 1,760 recipes across 24 genres and 32 artist profiles; five coordinated parts, 48 instruments, 16 drum kits. | [VERSION-2.md](VERSION-2.md), [ARTIST-STUDIES.md](ARTIST-STUDIES.md) | `v2-src/` |
@@ -150,6 +150,7 @@ node arp-src/test.mjs            # Orbit: theory, engine, bank against its genre
 
 ## Release history
 
+- **Orbit 1.1**: Sounds out (WAV one-shots, multisamples, chord stabs, patch pack, seamless loops and stems) and new tools: Turing loops, echo cascades, feels, strum, five more scales, three new pools, Morse rhythms, riff import, live MIDI keyboard, draw on the orbit, autopilot, wild card.
 - **Orbit**: the arpeggio studio, with 129 patterns across 12 genres, a measured genre fingerprint, a generator, chord MIDI import and Serum 2 / Ableton recipes. See [ORBIT.md](ORBIT.md).
 - **Blueprint**: the arrangement of a reference track and every move in its transitions, validated against a planted demo and an effect-free control. See [BLUEPRINT.md](BLUEPRINT.md).
 - **X-Ray**: a reference-track analyser with MP3 support, A/B against your mix and a skeleton MIDI export. See [XRAY.md](XRAY.md).
