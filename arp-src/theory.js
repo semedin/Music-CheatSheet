@@ -15,6 +15,12 @@ const OT = (() => {
     major: {name: 'Major', st: [0, 2, 4, 5, 7, 9, 11], minor: false},
     mixolydian: {name: 'Mixolydian', st: [0, 2, 4, 5, 7, 9, 10], minor: false},
     lydian: {name: 'Lydian', st: [0, 2, 4, 6, 7, 9, 11], minor: false},
+    // further out: each with the pentatonic subset its pentatonic pool uses
+    melodic: {name: 'Melodic minor', st: [0, 2, 3, 5, 7, 9, 11], minor: true, pent: [0, 2, 3, 7, 9]},
+    phrygdom: {name: 'Phrygian dominant', st: [0, 1, 4, 5, 7, 8, 10], minor: true, pent: [0, 1, 4, 7, 8]},
+    hungarian: {name: 'Hungarian minor', st: [0, 2, 3, 6, 7, 8, 11], minor: true, pent: [0, 2, 3, 7, 8]},
+    dharmonic: {name: 'Double harmonic', st: [0, 1, 4, 5, 7, 8, 11], minor: false, pent: [0, 1, 4, 7, 8]},
+    locrian: {name: 'Locrian', st: [0, 1, 3, 5, 6, 8, 10], minor: true, pent: [0, 3, 5, 6, 10]},
   };
 
   // chord qualities: intervals from the root, and how the symbol is written

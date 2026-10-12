@@ -52,6 +52,7 @@
       <button class="ib" id="undo" type="button" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
       <button class="ib" id="redo" type="button" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷</button>
       <button class="ib" id="abBtn" type="button" title="A/B: store this as A, then switch between A and your edits (A)">A/B</button>
+      <button class="ib" id="autoBtn" type="button" title="Autopilot: while it plays, move to the best variation every few bars">Auto</button>
       <button class="ib star" id="saveBtn" type="button" title="Save to the crate (F)" aria-label="Save to the crate">★</button>
       <button class="btn hot sm" id="midiQuick" type="button" title="Download the arp as MIDI (E)">MIDI ↓</button>
       <span class="drag" id="dragChip" draggable="true" title="Drag this into Ableton (Chrome / Edge)">⠿ drag</span>
@@ -82,7 +83,7 @@
       <div class="stage-chips" id="stChips"></div>
     </div>
     <div class="viz">
-      <div class="orbitbox"><canvas id="orbit" aria-label="The orbit: the step pattern on the outer ring, the note cycle in the middle, the notes of the pool inside"></canvas>
+      <div class="orbitbox"><button class="drawbtn" id="drawBtn" type="button" title="Draw the note order: click the pool notes in the order they should play">✎ Draw</button><canvas id="orbit" aria-label="The orbit: the step pattern on the outer ring, the note cycle in the middle, the notes of the pool inside"></canvas>
         <div class="orbit-legend"><span><i class="lg-step"></i>steps</span><span><i class="lg-cycle"></i>note cycle</span><span><i class="lg-pool"></i>pool</span></div></div>
       <div class="rollbox"><canvas id="roll" aria-label="Piano roll of the phrase"></canvas>
         <div class="cyclebar" id="cycleBar"></div></div>
@@ -106,6 +107,7 @@
           <button class="ib" data-pt="clr" type="button" title="Clear">∅</button>
           <button class="ib" data-pt="rnd" type="button" title="New rhythm from the genre's grammar">⚄</button>
         </div>
+        <div class="euc morse"><span>Text → rhythm</span><input id="morseText" type="text" spellcheck="false" placeholder="your track name" aria-label="Text for a Morse rhythm"><button class="btn sm" id="morseGo" type="button" title="Morse code as steps: a dot is a note, a dash an accent held for two steps">Morse</button></div>
         <div class="euc"><span>Euclid</span><input id="eucK" type="number" min="1" max="64" value="5" aria-label="Hits"><span>in</span><input id="eucN" type="number" min="1" max="64" value="16" aria-label="Steps"><span>rot</span><input id="eucR" type="number" min="0" max="63" value="2" aria-label="Rotation"><button class="btn sm" id="eucGo" type="button">Apply</button></div>
       </div>
     </div>
@@ -117,6 +119,11 @@
       <p class="err" id="progErr" hidden></p>
       <div class="row2"><label>Presets<select id="progPreset"></select></label><label>Bars per chord<select id="per"><option value="0.5">½</option><option value="1">1</option><option value="2">2</option><option value="4">4</option></select></label></div>
       <div class="row2"><label>Voicing<select id="voicing"><option value="led">Voice-led</option><option value="root">Root position</option></select></label><label class="chk"><input type="checkbox" id="follow"> Follow chords</label></div>
+      <div class="live">
+        <button class="btn sm" id="liveBtn" type="button" title="Hold chords on a MIDI keyboard and the arp plays them (Chrome and Edge)">🎹 Play chords from a keyboard</button>
+        <label class="chk"><input type="checkbox" id="latch" checked> Latch</label>
+        <span class="hint" id="liveStatus"></span>
+      </div>
       <div class="import">
         <button class="btn sm" id="importBtn" type="button">Import chord MIDI…</button>
         <input type="file" id="midiFile" accept=".mid,.midi,audio/midi" hidden>
@@ -124,6 +131,7 @@
       </div>
       <div class="imported" id="importedBox" hidden>
         <p><b id="impName"></b> <span id="impInfo"></span></p>
+        <label class="row">Read it as<select id="impMode"><option value="chords">Chords: the arp plays them</option><option value="riff">A riff: it becomes the pattern</option></select></label>
         <label class="row" id="impTrackRow" hidden>Track<select id="impTrack"></select></label>
         <div class="row2"><button class="btn sm" id="impToText" type="button">Edit as text</button><button class="btn sm ghost" id="impClear" type="button">Remove import</button></div>
       </div>
@@ -132,6 +140,8 @@
       <div class="row2"><label>Pool<select id="pool"></select></label><label>Use<select id="count"><option value="0">all notes</option><option value="1">1 note</option><option value="2">2 notes</option><option value="3">3 notes</option><option value="4">4 notes</option><option value="5">5 notes</option><option value="6">6 notes</option></select></label></div>
       <div class="row2"><label>Order<select id="order"></select></label><label>Octaves<select id="octaves"><option>1</option><option>2</option><option>3</option><option>4</option></select></label></div>
       <label class="row" id="seqRow">Written sequence <span class="hint">pool indices, 0 = lowest</span><input id="seq" type="text" spellcheck="false" autocomplete="off"></label>
+      <div class="seqtools" id="seqTools"><button class="btn sm" data-sq="write" type="button" title="Turn the current order into a written sequence you can edit">Write it out</button><button class="ib" data-sq="rev" type="button" title="Reverse the sequence">⇆</button><button class="ib" data-sq="inv" type="button" title="Mirror it: the highest note becomes the lowest">⇅</button><button class="ib" data-sq="up" type="button" title="Every note one pool step up">+1</button><button class="ib" data-sq="down" type="button" title="Every note one pool step down">−1</button><button class="ib" data-sq="rot" type="button" title="Start one note later">⟳</button></div>
+      <div id="turingRow"><label class="sl">Lock <output id="lockOut"></output><input id="lock" type="range" min="0" max="1" step="0.01"></label><label class="row">Loop length<select id="tlen"></select></label><p class="sdesc">Each time the loop comes round, every note has a (100% − lock) chance of changing. 100%: a fixed loop. 0%: new notes every time.</p></div>
       <label class="sl">Register <output id="regOut"></output><input id="reg" type="range" min="40" max="88" step="1"></label>
       <div class="row2"><label>Advance on<select id="advance"><option value="note">each note</option><option value="step">each step</option></select></label><label>Restart<select id="reset"><option value="bar">every bar</option><option value="2bar">every 2 bars</option><option value="4bar">every 4 bars</option><option value="chord">on each chord</option><option value="never">never</option></select></label></div>
       <label class="row">Pedal note<select id="pedal"><option value="low">lowest pool note</option><option value="high">highest pool note</option></select></label>
@@ -142,6 +152,16 @@
       <label class="sl">Gate <output id="gateOut"></output><input id="gate" type="range" min="0.05" max="1.5" step="0.01"></label>
       <label class="sl">Accent <output id="accentOut"></output><input id="accent" type="range" min="0" max="40" step="1"></label>
       <label class="sl">Humanise <output id="humanOut"></output><input id="human" type="range" min="0" max="1" step="0.01"></label>
+      <label class="row">Feel<select id="feel"></select></label>
+      <p class="sdesc" id="feelDesc"></p>
+      <div class="row2"><label class="sl" style="margin:0">Strum <output id="strumOut"></output><input id="strum" type="range" min="0" max="1" step="0.01"></label><label>Direction<select id="strumDir"><option value="up">up</option><option value="down">down</option><option value="alt">alternating</option></select></label></div>
+      <p class="sdesc">Strum spreads each chord hit over up to 80 ms.</p>
+    </details>
+    <details class="grp" id="gEcho"><summary>Echo cascade</summary>
+      <p class="sdesc">MIDI echoes written into the notes, not an audio delay: each repeat can climb or fall, so one note becomes a run. They wrap round the loop and go into the MIDI export.</p>
+      <div class="row2"><label>Repeats<select id="echo"><option value="0">off</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>8</option></select></label><label>Every<select id="echoTime"><option value="16">1/16</option><option value="16d">1/16 dotted</option><option value="8t">1/8 triplet</option><option value="8">1/8</option><option value="8d">1/8 dotted</option><option value="4">1/4</option><option value="4d">1/4 dotted</option></select></label></div>
+      <label class="row">Pitch<select id="echoShift"></select></label>
+      <label class="sl">Level per repeat <output id="echoFbOut"></output><input id="echoFb" type="range" min="0.1" max="0.95" step="0.01"></label>
     </details>
     <details class="grp" open id="gSound"><summary>Sound</summary>
       <label class="row">Patch<select id="sound"></select></label>
@@ -200,6 +220,8 @@
     <label>Genre<select id="findGenre"></select></label>
     <label class="chk"><input type="checkbox" id="keepHarm" checked> Keep my key, tempo and chords</label>
     <label class="chk"><input type="checkbox" id="keepSound"> Keep my sound</label>
+    <label class="chk" title="Let the generator and variations use the unusual tools: stacked 4ths, clusters, Turing loops, echo cascades, feels, strums"><input type="checkbox" id="wild"> Wild card</label>
+    <label class="chk" title="While it plays, Orbit moves to its best variation every few bars. Undo goes back."><input type="checkbox" id="auto"> Autopilot every <select id="autoEvery"><option value="4">4</option><option value="8" selected>8</option><option value="16">16</option></select> bars</label>
     <span class="grow"></span>
     <button class="btn hot" id="findBtn" type="button">✦ New ideas</button>
     <button class="btn" id="varyBtn" type="button">⟡ Variations of this one</button>
@@ -248,6 +270,53 @@
   <div class="panel" id="mixCard"></div>
 </section>
 
+<section class="part wrap" id="samples">
+  <div class="head"><h2>Sounds out</h2><p>The patches as WAV files for Simpler, Sampler and Drum Rack: one note, a multisample, the chords of your progression or of the whole key as stabs, seamless loops and stems. <b>Rendered in your browser</b> from the synth you hear, at the current knobs.</p></div>
+  <div class="two">
+    <div class="panel">
+      <h3>One note</h3>
+      <div class="row2"><label>Patch<select id="smpSound"></select></label><label>Note<select id="smpNote"></select></label></div>
+      <div class="row2"><label>Hold<select id="smpHold"><option value="0.08">a hit (80 ms)</option><option value="0.25">a pluck (250 ms)</option><option value="0.5" selected>half a second</option><option value="1">1 second</option><option value="2">2 seconds</option><option value="4">4 seconds</option></select></label><label>Velocity<select id="smpVel"><option value="70">soft</option><option value="100">medium</option><option value="127" selected>hard (accent)</option></select></label></div>
+      <div class="row2"><label>Effects<select id="smpFx"><option value="dry">dry</option><option value="fx">with delay and reverb</option></select></label><label>Format<select id="smpFmt"><option value="24-44100">24-bit, 44.1 kHz</option><option value="24-48000">24-bit, 48 kHz</option><option value="16-44100">16-bit, 44.1 kHz</option></select></label></div>
+      <canvas id="smpWave" class="wave" aria-label="Waveform of the rendered sample"></canvas>
+      <p class="note num" id="smpInfo">Render a note to see it here.</p>
+      <div class="acts"><button class="btn" id="smpPlay" type="button">▶ Render and hear</button><button class="btn hot" id="smpDown" type="button">Download WAV</button></div>
+    </div>
+    <div class="panel">
+      <h3>Multisample</h3>
+      <p class="note">The same patch every few semitones across the keyboard, so it stays natural when you play it far from its root. Each file is named by its note and carries it as its root key.</p>
+      <div class="row2"><label>Range<select id="msRange"><option value="36-84">C1 to C5</option><option value="24-96" selected>C0 to C6</option><option value="48-72">C2 to C4</option></select></label><label>Every<select id="msStep"><option value="12">octave</option><option value="6">6 semitones</option><option value="3" selected>3 semitones</option><option value="1">semitone</option></select></label></div>
+      <label class="chk"><input type="checkbox" id="msLayers"> Two velocity layers (soft and hard)</label>
+      <div class="acts" style="margin-top:10px"><button class="btn" id="msGo" type="button">Download multisample (.zip)</button></div>
+      <h3 class="mt">Every patch</h3>
+      <p class="note">All the patches as one-shots at C3, each at its own settings, with the Serum 2 recipe for each in a text file.</p>
+      <div class="acts"><button class="btn" id="packGo" type="button">Download the patch pack (.zip)</button></div>
+    </div>
+  </div>
+  <div class="two">
+    <div class="panel">
+      <h3>Chord stabs</h3>
+      <p class="note">Each chord as a one-shot on the current patch: put them on Drum Rack pads, or load one into Simpler and play it up and down the keyboard for the classic house "chord memory" trick.</p>
+      <div class="row2"><label>Chords<select id="stabSet"><option value="prog">this progression (its voicings)</option><option value="triad">every chord of the key: triads</option><option value="7th">every chord of the key: 7ths</option><option value="9th">every chord of the key: 9ths</option></select></label><label>Hold<select id="stabHold"><option value="0.12">a stab (120 ms)</option><option value="0.35" selected>350 ms</option><option value="1">1 second</option></select></label></div>
+      <div class="stabs" id="stabList"></div>
+      <div class="acts"><button class="btn" id="stabGo" type="button">Download the stabs (.zip)</button></div>
+    </div>
+    <div class="panel">
+      <h3>Loops and stems</h3>
+      <p class="note">Exactly <span id="loopLen"></span> long, cut so they loop without a click: the tail of the last bar is already at the start. Drop them in Live with warp on and they sit on the grid.</p>
+      <div class="acts"><button class="btn" id="loopArp" type="button">Loop: arp alone</button><button class="btn" id="loopMix" type="button">Loop: full mix</button></div>
+      <div class="acts"><button class="btn hot" id="stemsGo" type="button">Stems: arp, bass, drums, pad (.zip)</button></div>
+      <h3 class="mt">In Live</h3>
+      <ol class="steps-in">
+        <li><b>Simpler:</b> drag the WAV onto an empty MIDI track. Simpler opens in Classic mode with the sample at C3; for the one-notes rendered at C3 that is the original pitch.</li>
+        <li><b>One-Shot mode</b> for stabs and hits that should ring out however short you play them; Classic for anything you hold.</li>
+        <li><b>Sampler</b> for the multisample: drop all the files into the Zone editor and set each zone's root key from its file name.</li>
+        <li><b>Loops and stems:</b> drag them into Arrangement at the session tempo with Warp on (Beats or Complex for the arp).</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
 <section class="part wrap" id="rules">
   <div class="head"><h2>The 12 rules</h2><p>What the arps at the top of the charts have in common, each one an A/B you can hear in the studio, with the number that changes. <b>A</b> breaks the rule, <b>B</b> keeps it.</p></div>
   <div class="rules" id="ruleList"></div>
@@ -266,6 +335,8 @@
   </div>
   <div class="panel"><h3>Limits</h3><ul class="limits">
     <li>The preview synth is a sketch of each patch, not the patch. Build the Serum 2 recipe for the real sound; that is where most of a riff's character comes from.</li>
+    <li>The WAV samples come from the same preview synth: good for sketching, chord-memory tricks and Drum Rack, but the Serum 2 recipe is the real patch.</li>
+    <li>The live keyboard needs Web MIDI (Chrome or Edge). The latency is the browser's: fine for choosing chords, not for tight performance.</li>
     <li>Fit says a combo belongs to the genre, not that it is good. Two combos with a fit of 100 can be a hit and a bore. Your ears decide; the fingerprint keeps you in the right room.</li>
     <li>Chord import reads pitch sets beat by beat. Fast passing notes and melodies on the same track are merged into the chords; pick the chord track when a file has several.</li>
     <li>Evolution lanes are exported as CC74 (cutoff), CC71 (resonance), CC75 (decay) and CC91 (reverb). Map them in Serum 2 with MIDI Learn on the macros, or to any device in Live.</li>

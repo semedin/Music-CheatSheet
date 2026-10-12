@@ -392,6 +392,26 @@ h3.mt{margin-top:18px}
   .toast{bottom:86px}
 }
 
+/* additions: draw on the orbit, live input, seq tools, sounds out */
+.drawbtn{position:absolute;top:8px;right:8px;z-index:2;font:600 12px var(--body);padding:5px 10px;border-radius:999px;border:1px solid var(--line2);background:#0B0D13cc;color:var(--dim);cursor:pointer}
+.drawbtn.on{background:var(--acc);color:#0A0B0F;border-color:var(--acc)}
+.orbitbox.drawing{outline:2px dashed var(--acc);outline-offset:-4px;cursor:crosshair}
+.live{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.live .hint{flex-basis:100%}
+.live #liveBtn.on{background:var(--g);color:#0A0B0F;border-color:var(--g)}
+.seqtools{display:flex;flex-wrap:wrap;gap:4px;margin:-2px 0 10px}
+.morse input{width:150px}
+.wave{width:100%;height:90px;display:block;border-radius:8px;background:var(--bg2);border:1px solid var(--line);margin:4px 0 6px}
+.stabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+.stabs button{font:600 13px var(--body);padding:6px 10px;border-radius:8px;border:1px solid var(--line2);background:var(--panel2);color:var(--text);cursor:pointer}
+.stabs button small{display:block;font:10.5px var(--mono);color:var(--dim2)}
+.stabs button:hover{border-color:var(--g)}
+.steps-in{margin:0;padding-left:20px;color:var(--dim);font-size:14px}
+.steps-in li{margin-bottom:6px}
+.steps-in b{color:var(--text)}
+#autoBtn.on{background:var(--chord);color:#0A0B0F;border-color:var(--chord)}
+.findbar select{padding:4px 6px}
+
 </style>
 </head>
 <body>
@@ -433,6 +453,7 @@ h3.mt{margin-top:18px}
       <button class="ib" id="undo" type="button" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
       <button class="ib" id="redo" type="button" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷</button>
       <button class="ib" id="abBtn" type="button" title="A/B: store this as A, then switch between A and your edits (A)">A/B</button>
+      <button class="ib" id="autoBtn" type="button" title="Autopilot: while it plays, move to the best variation every few bars">Auto</button>
       <button class="ib star" id="saveBtn" type="button" title="Save to the crate (F)" aria-label="Save to the crate">★</button>
       <button class="btn hot sm" id="midiQuick" type="button" title="Download the arp as MIDI (E)">MIDI ↓</button>
       <span class="drag" id="dragChip" draggable="true" title="Drag this into Ableton (Chrome / Edge)">⠿ drag</span>
@@ -463,7 +484,7 @@ h3.mt{margin-top:18px}
       <div class="stage-chips" id="stChips"></div>
     </div>
     <div class="viz">
-      <div class="orbitbox"><canvas id="orbit" aria-label="The orbit: the step pattern on the outer ring, the note cycle in the middle, the notes of the pool inside"></canvas>
+      <div class="orbitbox"><button class="drawbtn" id="drawBtn" type="button" title="Draw the note order: click the pool notes in the order they should play">✎ Draw</button><canvas id="orbit" aria-label="The orbit: the step pattern on the outer ring, the note cycle in the middle, the notes of the pool inside"></canvas>
         <div class="orbit-legend"><span><i class="lg-step"></i>steps</span><span><i class="lg-cycle"></i>note cycle</span><span><i class="lg-pool"></i>pool</span></div></div>
       <div class="rollbox"><canvas id="roll" aria-label="Piano roll of the phrase"></canvas>
         <div class="cyclebar" id="cycleBar"></div></div>
@@ -487,6 +508,7 @@ h3.mt{margin-top:18px}
           <button class="ib" data-pt="clr" type="button" title="Clear">∅</button>
           <button class="ib" data-pt="rnd" type="button" title="New rhythm from the genre's grammar">⚄</button>
         </div>
+        <div class="euc morse"><span>Text → rhythm</span><input id="morseText" type="text" spellcheck="false" placeholder="your track name" aria-label="Text for a Morse rhythm"><button class="btn sm" id="morseGo" type="button" title="Morse code as steps: a dot is a note, a dash an accent held for two steps">Morse</button></div>
         <div class="euc"><span>Euclid</span><input id="eucK" type="number" min="1" max="64" value="5" aria-label="Hits"><span>in</span><input id="eucN" type="number" min="1" max="64" value="16" aria-label="Steps"><span>rot</span><input id="eucR" type="number" min="0" max="63" value="2" aria-label="Rotation"><button class="btn sm" id="eucGo" type="button">Apply</button></div>
       </div>
     </div>
@@ -498,6 +520,11 @@ h3.mt{margin-top:18px}
       <p class="err" id="progErr" hidden></p>
       <div class="row2"><label>Presets<select id="progPreset"></select></label><label>Bars per chord<select id="per"><option value="0.5">½</option><option value="1">1</option><option value="2">2</option><option value="4">4</option></select></label></div>
       <div class="row2"><label>Voicing<select id="voicing"><option value="led">Voice-led</option><option value="root">Root position</option></select></label><label class="chk"><input type="checkbox" id="follow"> Follow chords</label></div>
+      <div class="live">
+        <button class="btn sm" id="liveBtn" type="button" title="Hold chords on a MIDI keyboard and the arp plays them (Chrome and Edge)">🎹 Play chords from a keyboard</button>
+        <label class="chk"><input type="checkbox" id="latch" checked> Latch</label>
+        <span class="hint" id="liveStatus"></span>
+      </div>
       <div class="import">
         <button class="btn sm" id="importBtn" type="button">Import chord MIDI…</button>
         <input type="file" id="midiFile" accept=".mid,.midi,audio/midi" hidden>
@@ -505,6 +532,7 @@ h3.mt{margin-top:18px}
       </div>
       <div class="imported" id="importedBox" hidden>
         <p><b id="impName"></b> <span id="impInfo"></span></p>
+        <label class="row">Read it as<select id="impMode"><option value="chords">Chords: the arp plays them</option><option value="riff">A riff: it becomes the pattern</option></select></label>
         <label class="row" id="impTrackRow" hidden>Track<select id="impTrack"></select></label>
         <div class="row2"><button class="btn sm" id="impToText" type="button">Edit as text</button><button class="btn sm ghost" id="impClear" type="button">Remove import</button></div>
       </div>
@@ -513,6 +541,8 @@ h3.mt{margin-top:18px}
       <div class="row2"><label>Pool<select id="pool"></select></label><label>Use<select id="count"><option value="0">all notes</option><option value="1">1 note</option><option value="2">2 notes</option><option value="3">3 notes</option><option value="4">4 notes</option><option value="5">5 notes</option><option value="6">6 notes</option></select></label></div>
       <div class="row2"><label>Order<select id="order"></select></label><label>Octaves<select id="octaves"><option>1</option><option>2</option><option>3</option><option>4</option></select></label></div>
       <label class="row" id="seqRow">Written sequence <span class="hint">pool indices, 0 = lowest</span><input id="seq" type="text" spellcheck="false" autocomplete="off"></label>
+      <div class="seqtools" id="seqTools"><button class="btn sm" data-sq="write" type="button" title="Turn the current order into a written sequence you can edit">Write it out</button><button class="ib" data-sq="rev" type="button" title="Reverse the sequence">⇆</button><button class="ib" data-sq="inv" type="button" title="Mirror it: the highest note becomes the lowest">⇅</button><button class="ib" data-sq="up" type="button" title="Every note one pool step up">+1</button><button class="ib" data-sq="down" type="button" title="Every note one pool step down">−1</button><button class="ib" data-sq="rot" type="button" title="Start one note later">⟳</button></div>
+      <div id="turingRow"><label class="sl">Lock <output id="lockOut"></output><input id="lock" type="range" min="0" max="1" step="0.01"></label><label class="row">Loop length<select id="tlen"></select></label><p class="sdesc">Each time the loop comes round, every note has a (100% − lock) chance of changing. 100%: a fixed loop. 0%: new notes every time.</p></div>
       <label class="sl">Register <output id="regOut"></output><input id="reg" type="range" min="40" max="88" step="1"></label>
       <div class="row2"><label>Advance on<select id="advance"><option value="note">each note</option><option value="step">each step</option></select></label><label>Restart<select id="reset"><option value="bar">every bar</option><option value="2bar">every 2 bars</option><option value="4bar">every 4 bars</option><option value="chord">on each chord</option><option value="never">never</option></select></label></div>
       <label class="row">Pedal note<select id="pedal"><option value="low">lowest pool note</option><option value="high">highest pool note</option></select></label>
@@ -523,6 +553,16 @@ h3.mt{margin-top:18px}
       <label class="sl">Gate <output id="gateOut"></output><input id="gate" type="range" min="0.05" max="1.5" step="0.01"></label>
       <label class="sl">Accent <output id="accentOut"></output><input id="accent" type="range" min="0" max="40" step="1"></label>
       <label class="sl">Humanise <output id="humanOut"></output><input id="human" type="range" min="0" max="1" step="0.01"></label>
+      <label class="row">Feel<select id="feel"></select></label>
+      <p class="sdesc" id="feelDesc"></p>
+      <div class="row2"><label class="sl" style="margin:0">Strum <output id="strumOut"></output><input id="strum" type="range" min="0" max="1" step="0.01"></label><label>Direction<select id="strumDir"><option value="up">up</option><option value="down">down</option><option value="alt">alternating</option></select></label></div>
+      <p class="sdesc">Strum spreads each chord hit over up to 80 ms.</p>
+    </details>
+    <details class="grp" id="gEcho"><summary>Echo cascade</summary>
+      <p class="sdesc">MIDI echoes written into the notes, not an audio delay: each repeat can climb or fall, so one note becomes a run. They wrap round the loop and go into the MIDI export.</p>
+      <div class="row2"><label>Repeats<select id="echo"><option value="0">off</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>8</option></select></label><label>Every<select id="echoTime"><option value="16">1/16</option><option value="16d">1/16 dotted</option><option value="8t">1/8 triplet</option><option value="8">1/8</option><option value="8d">1/8 dotted</option><option value="4">1/4</option><option value="4d">1/4 dotted</option></select></label></div>
+      <label class="row">Pitch<select id="echoShift"></select></label>
+      <label class="sl">Level per repeat <output id="echoFbOut"></output><input id="echoFb" type="range" min="0.1" max="0.95" step="0.01"></label>
     </details>
     <details class="grp" open id="gSound"><summary>Sound</summary>
       <label class="row">Patch<select id="sound"></select></label>
@@ -581,6 +621,8 @@ h3.mt{margin-top:18px}
     <label>Genre<select id="findGenre"></select></label>
     <label class="chk"><input type="checkbox" id="keepHarm" checked> Keep my key, tempo and chords</label>
     <label class="chk"><input type="checkbox" id="keepSound"> Keep my sound</label>
+    <label class="chk" title="Let the generator and variations use the unusual tools: stacked 4ths, clusters, Turing loops, echo cascades, feels, strums"><input type="checkbox" id="wild"> Wild card</label>
+    <label class="chk" title="While it plays, Orbit moves to its best variation every few bars. Undo goes back."><input type="checkbox" id="auto"> Autopilot every <select id="autoEvery"><option value="4">4</option><option value="8" selected>8</option><option value="16">16</option></select> bars</label>
     <span class="grow"></span>
     <button class="btn hot" id="findBtn" type="button">✦ New ideas</button>
     <button class="btn" id="varyBtn" type="button">⟡ Variations of this one</button>
@@ -629,6 +671,53 @@ h3.mt{margin-top:18px}
   <div class="panel" id="mixCard"></div>
 </section>
 
+<section class="part wrap" id="samples">
+  <div class="head"><h2>Sounds out</h2><p>The patches as WAV files for Simpler, Sampler and Drum Rack: one note, a multisample, the chords of your progression or of the whole key as stabs, seamless loops and stems. <b>Rendered in your browser</b> from the synth you hear, at the current knobs.</p></div>
+  <div class="two">
+    <div class="panel">
+      <h3>One note</h3>
+      <div class="row2"><label>Patch<select id="smpSound"></select></label><label>Note<select id="smpNote"></select></label></div>
+      <div class="row2"><label>Hold<select id="smpHold"><option value="0.08">a hit (80 ms)</option><option value="0.25">a pluck (250 ms)</option><option value="0.5" selected>half a second</option><option value="1">1 second</option><option value="2">2 seconds</option><option value="4">4 seconds</option></select></label><label>Velocity<select id="smpVel"><option value="70">soft</option><option value="100">medium</option><option value="127" selected>hard (accent)</option></select></label></div>
+      <div class="row2"><label>Effects<select id="smpFx"><option value="dry">dry</option><option value="fx">with delay and reverb</option></select></label><label>Format<select id="smpFmt"><option value="24-44100">24-bit, 44.1 kHz</option><option value="24-48000">24-bit, 48 kHz</option><option value="16-44100">16-bit, 44.1 kHz</option></select></label></div>
+      <canvas id="smpWave" class="wave" aria-label="Waveform of the rendered sample"></canvas>
+      <p class="note num" id="smpInfo">Render a note to see it here.</p>
+      <div class="acts"><button class="btn" id="smpPlay" type="button">▶ Render and hear</button><button class="btn hot" id="smpDown" type="button">Download WAV</button></div>
+    </div>
+    <div class="panel">
+      <h3>Multisample</h3>
+      <p class="note">The same patch every few semitones across the keyboard, so it stays natural when you play it far from its root. Each file is named by its note and carries it as its root key.</p>
+      <div class="row2"><label>Range<select id="msRange"><option value="36-84">C1 to C5</option><option value="24-96" selected>C0 to C6</option><option value="48-72">C2 to C4</option></select></label><label>Every<select id="msStep"><option value="12">octave</option><option value="6">6 semitones</option><option value="3" selected>3 semitones</option><option value="1">semitone</option></select></label></div>
+      <label class="chk"><input type="checkbox" id="msLayers"> Two velocity layers (soft and hard)</label>
+      <div class="acts" style="margin-top:10px"><button class="btn" id="msGo" type="button">Download multisample (.zip)</button></div>
+      <h3 class="mt">Every patch</h3>
+      <p class="note">All the patches as one-shots at C3, each at its own settings, with the Serum 2 recipe for each in a text file.</p>
+      <div class="acts"><button class="btn" id="packGo" type="button">Download the patch pack (.zip)</button></div>
+    </div>
+  </div>
+  <div class="two">
+    <div class="panel">
+      <h3>Chord stabs</h3>
+      <p class="note">Each chord as a one-shot on the current patch: put them on Drum Rack pads, or load one into Simpler and play it up and down the keyboard for the classic house "chord memory" trick.</p>
+      <div class="row2"><label>Chords<select id="stabSet"><option value="prog">this progression (its voicings)</option><option value="triad">every chord of the key: triads</option><option value="7th">every chord of the key: 7ths</option><option value="9th">every chord of the key: 9ths</option></select></label><label>Hold<select id="stabHold"><option value="0.12">a stab (120 ms)</option><option value="0.35" selected>350 ms</option><option value="1">1 second</option></select></label></div>
+      <div class="stabs" id="stabList"></div>
+      <div class="acts"><button class="btn" id="stabGo" type="button">Download the stabs (.zip)</button></div>
+    </div>
+    <div class="panel">
+      <h3>Loops and stems</h3>
+      <p class="note">Exactly <span id="loopLen"></span> long, cut so they loop without a click: the tail of the last bar is already at the start. Drop them in Live with warp on and they sit on the grid.</p>
+      <div class="acts"><button class="btn" id="loopArp" type="button">Loop: arp alone</button><button class="btn" id="loopMix" type="button">Loop: full mix</button></div>
+      <div class="acts"><button class="btn hot" id="stemsGo" type="button">Stems: arp, bass, drums, pad (.zip)</button></div>
+      <h3 class="mt">In Live</h3>
+      <ol class="steps-in">
+        <li><b>Simpler:</b> drag the WAV onto an empty MIDI track. Simpler opens in Classic mode with the sample at C3; for the one-notes rendered at C3 that is the original pitch.</li>
+        <li><b>One-Shot mode</b> for stabs and hits that should ring out however short you play them; Classic for anything you hold.</li>
+        <li><b>Sampler</b> for the multisample: drop all the files into the Zone editor and set each zone's root key from its file name.</li>
+        <li><b>Loops and stems:</b> drag them into Arrangement at the session tempo with Warp on (Beats or Complex for the arp).</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
 <section class="part wrap" id="rules">
   <div class="head"><h2>The 12 rules</h2><p>What the arps at the top of the charts have in common, each one an A/B you can hear in the studio, with the number that changes. <b>A</b> breaks the rule, <b>B</b> keeps it.</p></div>
   <div class="rules" id="ruleList"></div>
@@ -647,6 +736,8 @@ h3.mt{margin-top:18px}
   </div>
   <div class="panel"><h3>Limits</h3><ul class="limits">
     <li>The preview synth is a sketch of each patch, not the patch. Build the Serum 2 recipe for the real sound; that is where most of a riff's character comes from.</li>
+    <li>The WAV samples come from the same preview synth: good for sketching, chord-memory tricks and Drum Rack, but the Serum 2 recipe is the real patch.</li>
+    <li>The live keyboard needs Web MIDI (Chrome or Edge). The latency is the browser's: fine for choosing chords, not for tight performance.</li>
     <li>Fit says a combo belongs to the genre, not that it is good. Two combos with a fit of 100 can be a hit and a bore. Your ears decide; the fingerprint keeps you in the right room.</li>
     <li>Chord import reads pitch sets beat by beat. Fast passing notes and melodies on the same track are merged into the chords; pick the chord track when a file has several.</li>
     <li>Evolution lanes are exported as CC74 (cutoff), CC71 (resonance), CC75 (decay) and CC91 (reverb). Map them in Serum 2 with MIDI Learn on the macros, or to any device in Live.</li>
@@ -677,6 +768,12 @@ const OT = (() => {
     major: {name: 'Major', st: [0, 2, 4, 5, 7, 9, 11], minor: false},
     mixolydian: {name: 'Mixolydian', st: [0, 2, 4, 5, 7, 9, 10], minor: false},
     lydian: {name: 'Lydian', st: [0, 2, 4, 6, 7, 9, 11], minor: false},
+    // further out: each with the pentatonic subset its pentatonic pool uses
+    melodic: {name: 'Melodic minor', st: [0, 2, 3, 5, 7, 9, 11], minor: true, pent: [0, 2, 3, 7, 9]},
+    phrygdom: {name: 'Phrygian dominant', st: [0, 1, 4, 5, 7, 8, 10], minor: true, pent: [0, 1, 4, 7, 8]},
+    hungarian: {name: 'Hungarian minor', st: [0, 2, 3, 6, 7, 8, 11], minor: true, pent: [0, 2, 3, 7, 8]},
+    dharmonic: {name: 'Double harmonic', st: [0, 1, 4, 5, 7, 8, 11], minor: false, pent: [0, 1, 4, 7, 8]},
+    locrian: {name: 'Locrian', st: [0, 1, 3, 5, 6, 8, 10], minor: true, pent: [0, 3, 5, 6, 10]},
   };
 
   // chord qualities: intervals from the root, and how the symbol is written
@@ -1919,6 +2016,9 @@ const OE = (() => {
     root5: {name: 'Root + 5th', desc: 'Root, fifth, octave. Techno and acid power.'},
     octave: {name: 'Octaves', desc: 'Root and its octave. The disco bounce.'},
     root: {name: 'Root only', desc: 'One note per chord. Rhythm and sound do all the work.'},
+    quartal: {name: 'Stacked 4ths', desc: 'Scale notes a fourth apart from the root: open, modern, a little cinematic. Fits over anything in the key.'},
+    spread: {name: 'Open voicing', desc: 'The chord spread over two octaves (every other note up an octave): wide leaps from a plain chord.'},
+    cluster: {name: 'Cluster', desc: 'Root, 2nd, 3rd and 5th of the scale: notes a step apart that rub, then resolve.'},
   };
 
   const ORDERS = {
@@ -1934,6 +2034,20 @@ const OE = (() => {
     shuffle: {name: 'Shuffle once', live: 'Random Once'},
     random: {name: 'Random each cycle', live: 'Random'},
     seq: {name: 'Written sequence', live: 'Play Order'},
+    turing: {name: 'Turing (drifting loop)', live: 'Random'},
+  };
+
+  // Microtiming per 16th of the beat, in milliseconds: where each of the four 16ths lands against the grid
+  const FEELS = {
+    straight: {name: 'On the grid', ms: [0, 0, 0, 0]},
+    drunk: {name: 'Drunk (Dilla)', ms: [0, 24, -10, 30], desc: 'The "e" and the "a" drag late and the "and" rushes: the loose, wonky hip-hop feel.'},
+    afro: {name: 'Afro lean', ms: [0, 14, -6, 18], desc: 'The off-16ths lean late, as a hand percussionist plays them.'},
+    push: {name: 'Ahead (pushing)', ms: [-8, -12, -8, -12], desc: 'Everything a few milliseconds early: urgent, driving.'},
+    laid: {name: 'Laid back', ms: [10, 16, 10, 16], desc: 'Everything behind the kick: relaxed, deep.'},
+  };
+  const ECHO_SHIFTS = {
+    '0': 'Same note', '12': 'Up an octave each repeat', '-12': 'Down an octave each repeat', '7': 'Up a fifth each repeat',
+    '5': 'Up a fourth each repeat', s1: 'Up one scale step each repeat', 's-1': 'Down one scale step each repeat', s2: 'Up a scale third each repeat',
   };
 
   // ---- step patterns ----
@@ -2002,6 +2116,7 @@ const OE = (() => {
     sound: 'tech-pluck', cut: 0.55, res: 0.3, dec: 0.5, drive: 0.15, width: 0.45,
     delay: 0.18, delayTime: '8d', fb: 0.38, reverb: 0.18, space: 0.5, duck: 0.45, hp: 160,
     evo: 'none', depth: 1, fill: 'none', fillEvery: 4, mutate: 0,
+    lock: 0.75, tlen: 8, echo: 0, echoTime: '8d', echoFb: 0.55, echoShift: '0', strum: 0, strumDir: 'up', feel: 'straight',
     bars: 8, seed: 1,
     ctx: {drums: true, bass: true, chords: false}, groove: 'house', bassPat: 'offbeat', mix: {arp: 0.8, drums: 0.7, bass: 0.7, chords: 0.45},
   };
@@ -2030,6 +2145,12 @@ const OE = (() => {
     for (const k of ['cut', 'res', 'dec', 'drive', 'width', 'delay', 'fb', 'reverb', 'space', 'duck', 'human', 'depth']) st[k] = clamp01(+st[k]);
     st.fillEvery = [2, 4, 8, 16].includes(+st.fillEvery) ? +st.fillEvery : 4;
     st.mutate = [0, 2, 4, 8].includes(+st.mutate) ? +st.mutate : 0;
+    st.lock = clamp01(+st.lock); st.tlen = clamp(Math.round(+st.tlen || 8), 2, 16);
+    st.echo = clamp(Math.round(+st.echo || 0), 0, 8); st.echoFb = clamp(+st.echoFb, 0.1, 0.95);
+    if (!(st.echoTime in DELAY_TIMES)) st.echoTime = '8d';
+    st.echoShift = String(st.echoShift); if (!(st.echoShift in ECHO_SHIFTS)) st.echoShift = '0';
+    st.strum = clamp01(+st.strum || 0); if (!['up', 'down', 'alt'].includes(st.strumDir)) st.strumDir = 'up';
+    if (!FEELS[st.feel]) st.feel = 'straight';
     Object.defineProperty(st, '_n', {value: true, enumerable: false});
     return st;
   }
@@ -2111,13 +2232,20 @@ const OE = (() => {
         break;
       }
       case 'penta': {
-        const pent = sc.minor ? [0, 3, 5, 7, 10] : [0, 2, 4, 7, 9];
+        const pent = sc.pent || (sc.minor ? [0, 3, 5, 7, 10] : [0, 2, 4, 7, 9]);
         base = [];
         for (let i = 0; i < 12; i++) if (pent.includes(mod(r + i - st.key, 12))) base.push(r + i);
         if (!base.includes(r)) base.unshift(r);
         base = [...new Set(base)].sort((a, b) => a - b).slice(0, 5);
         break;
       }
+      case 'quartal': case 'cluster': {
+        const lad = ladder(st, r - 24, r + 48), i0 = Math.max(0, lad.findIndex(p => p >= r));
+        base = (st.pool === 'quartal' ? [0, 3, 6, 9] : [0, 1, 2, 4]).map(k => lad[i0 + k]);
+        base[0] = r;
+        break;
+      }
+      case 'spread': base = v.map((p, i) => i % 2 ? p + 12 : p); break;
       case 'root5': base = [r, r + 7, r + 12]; break;
       case 'octave': base = [r, r + 12]; break;
       case 'root': base = [r]; break;
@@ -2125,6 +2253,15 @@ const OE = (() => {
     }
     base = [...new Set(base)].sort((a, b) => a - b);
     return {base, chordNotes: v, root: r};
+  }
+  // every pitch of the key's scale between lo and hi
+  function ladder(st, lo, hi) { const sc = OT.SCALES[st.scale].st, out = []; for (let p = lo; p <= hi; p++) if (sc.includes(mod(p - st.key, 12))) out.push(p); return out; }
+  // a pitch moved by scale steps (snapped to the scale first)
+  function scaleStep(st, n, k) {
+    const lad = ladder(st, n - 40, n + 40);
+    let i = 0, best = Infinity;
+    lad.forEach((p, j) => { if (Math.abs(p - n) < best) { best = Math.abs(p - n); i = j; } });
+    return lad[clamp(i + k, 0, lad.length - 1)];
   }
   function extend(base, count, octaves) {
     let b = count > 0 ? base.slice(0, count) : base.slice();
@@ -2151,8 +2288,22 @@ const OE = (() => {
         return o;
       }
       case 'seq': return st.seq.slice();
+      case 'turing': return turing(st, M, cycleIndex);
     }
     return idx;
+  }
+  // The Turing Machine (after the Music Thing Modular module): a loop of tlen pool indices. Each time the loop comes
+  // round, every note has a (1 − lock) chance of being replaced. Lock 100%: a fixed loop. Lock 0%: new notes every time.
+  const TURING = new Map();
+  function turing(st, M, c) {
+    const key = [st.seed, st.lock, st.tlen, M].join('|');
+    let list = TURING.get(key);
+    if (!list) { if (TURING.size > 64) TURING.clear(); list = [Array.from({length: st.tlen}, (_, i) => Math.floor(hash(st.seed, i, 101) * M))]; TURING.set(key, list); }
+    while (list.length <= c) {
+      const prev = list[list.length - 1], k = list.length;
+      list.push(prev.map((x, i) => hash(st.seed, k, i, 103) < 1 - st.lock ? Math.floor(hash(st.seed, k, i, 107) * M * 1.25) : x));
+    }
+    return list[c].slice();
   }
   const pitchAt = (p, i) => p[mod(i, p.length)] + 12 * Math.floor(i / p.length);
 
@@ -2204,6 +2355,7 @@ const OE = (() => {
     roll: {name: 'Roll in', desc: 'The last two beats fill every step, rising in velocity.'},
     answer: {name: 'Answer (reverse)', desc: 'The bar plays the note order backwards: a call and its answer.'},
     stutter: {name: 'Stutter', desc: 'Beat one repeats across the bar.'},
+    bounce: {name: 'Bouncing ball', desc: 'The last beat speeds up like a dropped ball: 1, 2, 3 then 4 notes per step, falling in level.'},
   };
 
   // ---- the render ----
@@ -2236,13 +2388,14 @@ const OE = (() => {
       let si = g % L, s = st.steps[si];
       if (fillBar && st.fill === 'stutter') { const beatStep = Math.floor(beatInBar * spBeat + EPS) % Math.max(1, Math.round(spBeat)); const g0 = Math.round(bar * 4 * spBeat) + beatStep; si = g0 % L; s = st.steps[si]; }
       s = Object.assign({}, s);
-      let roll = 0, reverse = false;
+      let roll = 0, reverse = false, bounce = 0;
       if (fillBar) {
         if (st.fill === 'drop' && beatInBar >= 3 - EPS) s.type = 'rest';
         if (st.fill === 'climb' && beatInBar >= 2 - EPS && s.type === 'note') s.oct += 1;
         if (st.fill === 'ratchet' && beatInBar >= 3 - EPS) { if (s.type === 'rest' || s.type === 'tie') s.type = 'note'; if (s.type === 'note') s.rat = 2; }
         if (st.fill === 'roll' && beatInBar >= 2 - EPS) { if (s.type !== 'chord') { s.type = 'note'; s.oct = 0; s.rat = 1; } roll = (beatInBar - 2) / 2; }
         if (st.fill === 'answer') reverse = true;
+        if (st.fill === 'bounce' && beatInBar >= 3 - EPS) { if (s.type === 'rest' || s.type === 'tie') s.type = 'note'; if (s.type === 'note') { s.rat = clamp(1 + Math.floor((beatInBar - 3) * 4 + EPS), 1, 4); bounce = s.rat; } }
       }
       const P = pools[ci];
       const cnt = ev.cnt > 0 ? ev.cnt : st.count;
@@ -2274,6 +2427,7 @@ const OE = (() => {
       const accVel = s.acc ? st.accent : 0;
       let vel = st.vel + accVel - (s.type === 'chord' ? 4 : 0);
       if (roll) vel = st.vel - 30 + roll * (st.accent + 34);
+      if (bounce) vel -= (bounce - 1) * 9;
       const gl = clamp(st.gate * ev.gate, 0.04, 1.6) * stepLen;
       const n = s.rat || 1, sub = stepLen / n;
       const made = [];
@@ -2293,8 +2447,20 @@ const OE = (() => {
     const triplet = st.rate === '8t' || st.rate === '16t';
     for (const e of events) {
       if (!triplet) e.t = swingTime(e.gt, st.swing);
+      e.t += feelShift(st, e.gt);
       if (st.human) e.t += (hash(st.seed, e.g, e.n, 23) - 0.5) * 2 * (0.012 * st.bpm / 60) * st.human;
       e.t = Math.max(0, e.t);
+    }
+    // strum: a chord hit's notes spread from the lowest up (or the highest down, or alternating), up to 80 ms
+    if (st.strum > 0) {
+      const hits = new Map();
+      for (const e of events) if (e.kind === 'chord') { const k = e.g + ':' + e.gt.toFixed(4); if (!hits.has(k)) hits.set(k, []); hits.get(k).push(e); }
+      let h = 0;
+      for (const list of hits.values()) {
+        list.sort((a, b) => a.n - b.n);
+        const down = st.strumDir === 'down' || (st.strumDir === 'alt' && h++ % 2 === 1), span = st.strum * 0.08 * st.bpm / 60;
+        list.forEach((e, i) => { const f = list.length > 1 ? (down ? list.length - 1 - i : i) / (list.length - 1) : 0; e.t += f * span; e.d = Math.max(0.03, e.d - f * span * 0.5); });
+      }
     }
     events.sort((a, b) => a.t - b.t || a.n - b.n);
     // a slide holds its note into the next one (overlapping it, as a 303 or a legato synth expects) and that note glides in
@@ -2306,7 +2472,31 @@ const OE = (() => {
       e.d = nx.t - e.t + 0.03;
       nx.glideFrom = e.n;
     }
+    // echo cascade: each written note repeats as MIDI notes, quieter each time and optionally climbing or falling.
+    // Repeats that run past the end wrap to the start, so the loop stays seamless.
+    if (st.echo > 0) {
+      const dt = DELAY_TIMES[st.echoTime], src = events.slice();
+      for (const e of src) {
+        let v = e.v;
+        for (let k = 1; k <= st.echo; k++) {
+          v *= st.echoFb;
+          if (v < 6) break;
+          const sh = st.echoShift;
+          const n = sh[0] === 's' ? scaleStep(st, e.n, +sh.slice(1) * k) : e.n + (+sh) * k;
+          if (n < 12 || n > 120) break;
+          events.push(Object.assign({}, e, {t: mod(e.t + k * dt, beats), gt: mod(e.gt + k * dt, beats), d: Math.min(e.d, dt * 0.92), n, v: Math.max(1, Math.round(v)), echo: k, slide: false, glideFrom: undefined, acc: false}));
+        }
+      }
+      events.sort((a, b) => a.t - b.t || a.n - b.n);
+    }
     return {events, harmony: h, pools, beats, bars, stepLen, st};
+  }
+
+  function feelShift(st, gt) {
+    const f = FEELS[st.feel];
+    if (!f || st.feel === 'straight') return 0;
+    const pos = mod(Math.round(mod(gt, 1) / 0.25), 4);
+    return f.ms[pos] / 1000 * st.bpm / 60;
   }
 
   // ---- context parts: bass, drums, chords ----
@@ -2321,7 +2511,7 @@ const OE = (() => {
       if (r > 43) r -= 12;
       const third = c.iv.includes(3) ? 3 : 4;
       const n = ch === 'o' || ch === 'O' ? r + 12 : ch === '5' ? r + 7 : ch === '3' ? r + third : ch === '7' ? r + 10 : r;
-      out.push({t: swingTime(t, st.swing), gt: t, d: step * 0.8, n, v: ch === 'X' || ch === 'O' ? 112 : 96});
+      out.push({t: swingTime(t, st.swing) + feelShift(st, t), gt: t, d: step * 0.8, n, v: ch === 'X' || ch === 'O' ? 112 : 96});
     }
     return out;
   }
@@ -2336,7 +2526,7 @@ const OE = (() => {
         if (ch === '.') continue;
         const gt = b * 4 + i * step;
         const swung = lane === 'h' || lane === 's' || lane === 'o' || lane === 'r' || lane === 't' || lane === 'b';
-        out.push({t: swung ? swingTime(gt, st.swing) : gt, gt, d: 0.1, n: DRUM_NOTES[lane], v: ch === 'X' ? 118 : ch === 'g' ? 60 : 92, lane});
+        out.push({t: swung ? swingTime(gt, st.swing) + feelShift(st, gt) : gt, gt, d: 0.1, n: DRUM_NOTES[lane], v: ch === 'X' ? 118 : ch === 'g' ? 60 : 92, lane});
       }
     }
     return out.sort((a, b) => a.t - b.t);
@@ -2374,7 +2564,7 @@ const OE = (() => {
   ];
   const weight = t => { const q = x => Math.abs(t / x - Math.round(t / x)) < 1e-4; return q(4) ? 4 : q(2) ? 3 : q(1) ? 2 : q(0.5) ? 1 : 0; };
   function metrics(R) {
-    const st = R.st, ev = R.events, bars = R.bars;
+    const st = R.st, ev = R.events.filter(e => !e.echo), bars = R.bars;
     const byOnset = new Map();
     for (const e of ev) { const k = Math.round(e.gt * 1e4); if (!byOnset.has(k)) byOnset.set(k, []); byOnset.get(k).push(e); }
     const onsets = [...byOnset.keys()].sort((a, b) => a - b).map(k => ({t: k / 1e4, es: byOnset.get(k)}));
@@ -2438,7 +2628,7 @@ const OE = (() => {
     const h = harmony(st), P = pool(st, h.chords[0]);
     const M = extend(P.base, st.count, st.octaves).length;
     const seqLen = orderSeq(st, M).length;
-    if (st.order === 'random') return {bars: null, random: true, L, seqLen, stepLen};
+    if (st.order === 'random' || (st.order === 'turing' && st.lock < 1)) return {bars: null, random: true, turing: st.order === 'turing', L, seqLen, stepLen};
     const maxBars = 128;
     let counter = 0, lastBar = -1;
     for (let g = 0; ; g++) {
@@ -2454,6 +2644,7 @@ const OE = (() => {
     }
   }
   function cycleText(c, st, hBeats) {
+    if (c.turing) return `Turing order at ${Math.round(st.lock * 100)}% lock: the ${st.tlen}-note loop drifts as it plays, so it never repeats exactly.`;
     if (c.random) return 'Random order: it never repeats exactly.';
     if (!c.bars) return `Longer than ${c.over} bars: effectively never repeats.`;
     const unit = st.advance === 'step' ? 'step' : 'note';
@@ -2588,6 +2779,16 @@ const OE = (() => {
       groove: g.groove, bassPat: g.bass, bars: keep.bars ?? 8, seed,
     };
     if (keep.imported) st.imported = keep.imported;
+    // wild card: the generator may also reach for the unusual tools
+    if (keep.wild) {
+      const w = rng(seed * 7 + 5);
+      if (w() < 0.3) st.pool = pickA(w, ['quartal', 'cluster', 'spread']);
+      if (w() < 0.25) { st.order = 'turing'; st.lock = +(0.6 + w() * 0.35).toFixed(2); st.tlen = pickA(w, [5, 6, 7, 8, 12]); }
+      if (w() < 0.35) { st.echo = pickA(w, [2, 3, 4]); st.echoTime = pickA(w, ['8d', '16d', '8', '8t']); st.echoShift = pickA(w, ['0', '12', '7', 's1', 's-1', 's2']); st.echoFb = +(0.4 + w() * 0.3).toFixed(2); }
+      if (w() < 0.35) st.feel = pickA(w, ['drunk', 'afro', 'push', 'laid']);
+      if (st.steps.some(x => x.type === 'chord') && w() < 0.6) { st.strum = +(0.2 + w() * 0.6).toFixed(2); st.strumDir = pickA(w, ['up', 'down', 'alt']); }
+      if (w() < 0.15) st.fill = 'bounce';
+    }
     // chord hits need a sound that can play chords: mono, percussive and vocal patches get single notes instead
     if (st.steps.some(x => x.type === 'chord') && NO_CHORDS.has(st.sound)) {
       if (keep.sound) st.steps.forEach(x => { if (x.type === 'chord') x.type = 'note'; });
@@ -2608,7 +2809,8 @@ const OE = (() => {
     }
     return n ? 1 - s / n : 1;
   }
-  function signature(st) { return stepsString(st.steps) + '|' + st.pool + '|' + st.order + '|' + st.rate + '|' + (st.order === 'seq' ? st.seq.join('') : ''); }
+  function signature(st) { return stepsString(st.steps) + '|' + st.pool + '|' + st.order + '|' + st.rate + '|' + (st.order === 'seq' ? st.seq.join('') : '') + '|' + st.echo + st.echoShift + st.feel + Math.round(st.strum * 10); }
+  const wildness = st => (st.echo > 0) + (st.order === 'turing') + ['quartal', 'cluster', 'spread'].includes(st.pool) + (st.feel !== 'straight') + (st.strum > 0) + (st.fill === 'bounce');
   function find(genreId, n = 8, seed = 1, keep = {}, tries = 140) {
     const g = OB.GENRES[genreId];
     const out = [];
@@ -2629,7 +2831,7 @@ const OE = (() => {
         const c = pool[i], k = stepsString(c.st.steps);
         if (seen.has(k)) continue;
         const same = (f) => picked.filter(p => f(p.st) === f(c.st)).length;
-        const sc = c.fit + 30 * c.typical - 9 * same(st => st.sound) - 14 * same(kind) - 5 * same(st => st.pool) - (c.m.low > 0.2 && !g.lowOk ? 25 : 0);
+        const sc = c.fit + 30 * c.typical - 9 * same(st => st.sound) - 14 * same(kind) - 5 * same(st => st.pool) - (c.m.low > 0.2 && !g.lowOk ? 25 : 0) + (keep.wild ? 7 * Math.min(3, wildness(c.st)) : 0);
         if (sc > bs) { bs = sc; bi = i; }
       }
       if (bi < 0) break;
@@ -2641,24 +2843,30 @@ const OE = (() => {
     return picked;
   }
   // Variations of one combo: same harmony, key, tempo and sound; the notes and rhythm moved
-  function vary(input, n = 8, seed = 1) {
+  const WILD_POOLS = new Set(['quartal', 'cluster', 'spread']);
+  function vary(input, n = 8, seed = 1, opts = {}) {
     const base = normalize(input), g = OB.GENRES[base.genre] || OB.GENRES['tech-house'];
     const out = [];
     const r = rng(seed * 7 + 3);
     const ops = [
       ['Rotated', st => { const k = 1 + Math.floor(r() * (st.steps.length - 1)); st.steps = rotate(st.steps, k); return `pattern rotated ${k} step${k > 1 ? 's' : ''}`; }],
-      ['New order', st => { const o = pickA(r, Object.keys(ORDERS).filter(o => o !== st.order && o !== 'random')); st.order = o; if (o === 'seq') st.seq = genSeq(r, irange(r, [3, 6]), 3); return `order: ${ORDERS[o].name}`; }],
+      ['New order', st => { const o = pickA(r, Object.keys(ORDERS).filter(o => o !== st.order && o !== 'random' && (opts.wild || o !== 'turing'))); st.order = o; if (o === 'seq') st.seq = genSeq(r, irange(r, [3, 6]), 3); return `order: ${ORDERS[o].name}`; }],
       ['Accents moved', st => { const every = pickA(r, [3, 5, 6, 7]); st.steps.forEach((s, i) => { s.acc = sounding(s) && i % every === 0 ? 1 : 0; }); return `accent every ${every} steps`; }],
       ['Octave jumps', st => { st.steps.forEach(s => { if (s.type === 'note') s.oct = r() < 0.25 ? 1 : 0; }); return 'octave jumps on a quarter of the notes'; }],
       ['Thinned', st => { let k = 0; st.steps.forEach(s => { if (s.type === 'note' && !s.acc && r() < 0.35) { s.type = 'rest'; k++; } }); return `${k} notes taken out`; }],
       ['Filled', st => { let k = 0; st.steps.forEach(s => { if (s.type === 'rest' && r() < 0.3) { s.type = 'note'; k++; } }); return `${k} rests filled`; }],
-      ['New pool', st => { const p = pickA(r, Object.keys(POOLS).filter(p => p !== st.pool && p !== 'root')); st.pool = p; return `pool: ${POOLS[p].name}`; }],
+      ['New pool', st => { const p = pickA(r, Object.keys(POOLS).filter(p => p !== st.pool && p !== 'root' && (opts.wild || !WILD_POOLS.has(p)))); st.pool = p; return `pool: ${POOLS[p].name}`; }],
       ['Polymeter', st => { const L = pickA(r, [3, 5, 6, 7, 10, 12, 14]); const src = st.steps.filter(sounding).length ? st.steps : parseSteps('x'); st.steps = Array.from({length: L}, (_, i) => Object.assign({}, src[i % src.length])); return `pattern length ${L} steps`; }],
       ['Written riff', st => { st.order = 'seq'; st.seq = genSeq(r, irange(r, [3, 7]), st.pool === 'scale' ? 6 : 3); return `riff ${st.seq.join(' ')}`; }],
       ['Pedal', st => { st.steps.forEach((s, i) => { if (s.type === 'note' && i % 2 === 0) s.type = 'pedal'; }); return 'every other note to the pedal'; }],
       ['Ratchets', st => { st.steps.forEach(s => { if (s.type === 'note' && r() < 0.2) s.rat = 2; }); return 'ratchets on a fifth of the notes'; }],
       ['Halftime', st => { if (st.rate === '16') { st.rate = '8'; return 'rate 1/8'; } st.rate = '16'; return 'rate 1/16'; }],
+      ['Stacked 4ths', st => { st.pool = pickA(r, ['quartal', 'cluster', 'spread']); return `pool: ${POOLS[st.pool].name}`; }],
+      ['Echo cascade', st => { st.echo = pickA(r, [2, 3, 4]); st.echoTime = pickA(r, ['8d', '16d', '8']); st.echoShift = pickA(r, ['12', '7', 's1', 's2', 's-1']); return `echo ×${st.echo}, ${ECHO_SHIFTS[st.echoShift].toLowerCase()}`; }],
+      ['Turing drift', st => { st.order = 'turing'; st.lock = pickA(r, [0.7, 0.8, 0.9]); st.tlen = pickA(r, [5, 6, 7, 8]); return `Turing loop of ${st.tlen}, ${Math.round(st.lock * 100)}% locked`; }],
+      ['Feel', st => { st.feel = pickA(r, ['drunk', 'afro', 'push', 'laid']); return `feel: ${FEELS[st.feel].name.toLowerCase()}`; }],
     ];
+    if (!opts.wild) ops.length = 12;
     for (let i = 0; i < n * 3 && out.length < n; i++) {
       const st = normalize(base);
       st.seed = base.seed * 31 + i + seed;
@@ -2752,6 +2960,85 @@ const OE = (() => {
     return `Orbit_${nm}_${k}_${st.bpm}bpm`;
   }
 
+  // ---- text → rhythm: Morse code, a dot is a note, a dash an accent held for two steps ----
+  const MORSE = {a: '.-', b: '-...', c: '-.-.', d: '-..', e: '.', f: '..-.', g: '--.', h: '....', i: '..', j: '.---', k: '-.-', l: '.-..', m: '--', n: '-.', o: '---', p: '.--.', q: '--.-', r: '.-.', s: '...', t: '-', u: '..-', v: '...-', w: '.--', x: '-..-', y: '-.--', z: '--..',
+    0: '-----', 1: '.----', 2: '..---', 3: '...--', 4: '....-', 5: '.....', 6: '-....', 7: '--...', 8: '---..', 9: '----.'};
+  function morse(text) {
+    const words = String(text || '').toLowerCase().split(/\s+/).filter(Boolean);
+    let out = '';
+    words.forEach((w, wi) => {
+      const letters = [...w].filter(ch => MORSE[ch]);
+      letters.forEach((ch, li) => {
+        out += [...MORSE[ch]].map(sym => sym === '.' ? 'x' : 'X-').join('.');
+        if (li < letters.length - 1) out += '..';
+      });
+      if (wi < words.length - 1 && letters.length) out += '....';
+    });
+    out = out.slice(0, 64).replace(/-$/, '.');
+    return out || 'x';
+  }
+
+  // ---- a written riff (a MIDI clip) → step pattern + written sequence over the key's scale ----
+  // The rhythm is read on the 16th grid (up to 4 bars), held notes become ties, loud notes accents, and each pitch
+  // becomes its index on the scale from the tonic, so the riff plays back exactly (notes outside the scale snap).
+  function riffFromNotes(notes, input) {
+    const st = normalize(Object.assign({}, input, {pool: 'scale', follow: false, count: 0, octaves: 1, imported: null}));
+    const ns = notes.filter(n => n.d > 0.02).slice().sort((a, b) => a.t - b.t || b.n - a.n);
+    if (!ns.length) throw Error('No notes in that clip.');
+    const t0 = Math.floor(ns[0].t / 4 + 1e-6) * 4, end = Math.max(...ns.map(n => n.t + n.d)) - t0;
+    const bars = clamp(Math.ceil(end / 4 - 0.02), 1, 4), L = bars * 16;
+    const meanV = ns.reduce((a, n) => a + n.v, 0) / ns.length;
+    const P = pool(st, tonicChord(st)), base = P.base;
+    const steps = [], seq = [];
+    let snapped = 0, holdUntil = -1;
+    for (let g = 0; g < L; g++) {
+      const t = t0 + g * 0.25;
+      const here = ns.filter(n => n.t >= t - 0.125 && n.t < t + 0.125);
+      if (here.length) {
+        const n = here.sort((a, b) => b.v - a.v || b.n - a.n)[0];
+        let bi = 0, bd = Infinity;
+        for (let i = -35; i <= 42; i++) { const d = Math.abs(pitchAt(base, i) - n.n); if (d < bd) { bd = d; bi = i; } }
+        if (bd > 0) snapped++;
+        seq.push(bi);
+        steps.push({type: 'note', acc: n.v >= Math.max(108, meanV + 12) ? 1 : 0, oct: 0, rat: 1, slide: false, prob: 1});
+        holdUntil = n.t + n.d;
+      } else steps.push({type: holdUntil > t + 0.07 ? 'tie' : 'rest', acc: 0, oct: 0, rat: 1, slide: false, prob: 1});
+    }
+    const lens = ns.slice(0, 64).map(n => n.d);
+    const gate = clamp(lens.reduce((a, b) => a + b, 0) / lens.length / 0.25, 0.1, 1);
+    // its swing: how late the notes near the off-16ths land, as a share of the 8th
+    const offs = ns.map(n => n.t - t0).filter(t => Math.abs(mod(t, 0.5) - 0.25 - 0.03) < 0.09).map(t => mod(t, 0.5) - 0.25);
+    const swing = offs.length ? clamp(Math.round(50 + offs.reduce((a, b) => a + b, 0) / offs.length / 0.5 * 100), 50, 70) : 50;
+    return {patch: {steps, seq: seq.length ? seq : [0], pool: 'scale', follow: false, count: 0, octaves: 1, order: 'seq', rate: '16', advance: 'note', reset: 'never', gate: +Math.min(0.95, gate).toFixed(2),
+      swing, fill: 'none', mutate: 0, evo: input.evo || 'none', echo: 0, strum: 0, feel: 'straight', human: 0},
+      bars, notes: seq.length, snapped, swing};
+  }
+  // the seven chords of the key, stacked in thirds from each scale degree (triads, 7ths or 9ths), voiced near the register
+  function diatonicChords(input, ext = 'triad') {
+    const st = normalize(input), sc = OT.SCALES[st.scale].st, out = [];
+    for (let d = 0; d < 7; d++) {
+      const deg = k => sc[(d + k) % 7] + 12 * Math.floor((d + k) / 7) - sc[d];
+      const iv = [0, deg(2), deg(4)];
+      if (ext !== 'triad') iv.push(deg(6));
+      if (ext === '9th') iv.push(deg(8));
+      const root = mod(st.key + sc[d], 12), w = new Array(12).fill(0);
+      iv.forEach(i => { w[mod(root + i, 12)] = 1; });
+      let q = OT.detectChord(w, root).q;
+      if (OT.Q[q].iv.length !== iv.length || OT.Q[q].iv.some((x, i) => mod(x, 12) !== mod(iv[i], 12))) {
+        const exact = Object.entries(OT.Q).find(([, v]) => v.iv.length === iv.length && v.iv.every((x, i) => x === iv[i]));
+        if (exact) q = exact[0];
+      }
+      const flat9 = ext === '9th' && iv[4] === 13 ? '♭9' : '';
+      out.push({deg: d, root, q, iv, name: OT.chordName(root, q, st.key, st.scale) + flat9, roman: OT.romanFor(root, q, st.key, st.scale) + flat9, notes: OT.voice(root, iv, st.reg, null)});
+    }
+    return out;
+  }
+  // the current order written out as a sequence, so it can be edited note by note
+  function writeOut(input) {
+    const st = normalize(input), h = harmony(st), P = pool(st, h.chords[0]);
+    return orderSeq(st, extend(P.base, st.count, st.octaves).length, 0).slice(0, 64);
+  }
+
   // ---- sharing: a combo as a compact string for the URL ----
   const TYPES = ['rest', 'note', 'chord', 'pedal', 'tie'];
   function pack(input) {
@@ -2780,7 +3067,7 @@ const OE = (() => {
   }
 
   return {RATES, POOLS, ORDERS, EVOS, FILLS, AXES, DEFAULT, DELAY_TIMES, DRUM_NOTES, parseSteps, stepsString, stepChar, sounding, euclid, normalize, harmony,
-    pool, extend, orderSeq, render, renderBass, renderDrums, renderChords, renderArpInput, metrics, fit, cycle, cycleText, analyse, rotate,
+    pool, extend, orderSeq, render, FEELS, ECHO_SHIFTS, ladder, scaleStep, morse, riffFromNotes, writeOut, feelShift, diatonicChords, renderBass, renderDrums, renderChords, renderArpInput, metrics, fit, cycle, cycleText, analyse, rotate,
     suggestions, generate, find, vary, centrality, liveArp, delayTable, exportMidi, fileStem, pack, unpack, describe, evoAt, chordIndexAt, weight, signature};
 })();
 
@@ -2843,7 +3130,8 @@ const OA = (() => {
     const comp = ctx.createDynamicsCompressor();
     comp.threshold.value = -14; comp.knee.value = 8; comp.ratio.value = 2.5; comp.attack.value = 0.006; comp.release.value = 0.15;
     const master = ctx.createGain(); master.gain.value = 0.8;
-    master.connect(comp); comp.connect(limiter); limiter.connect(out);
+    // raw: no bus compressor or limiter, for samples that keep their own dynamics
+    if (opts.raw) master.connect(out); else { master.connect(comp); comp.connect(limiter); limiter.connect(out); }
     const analyser = ctx.createAnalyser(); analyser.fftSize = 2048; analyser.smoothingTimeConstant = 0.78;
     out.connect(analyser);
     if (opts.destination !== false) out.connect(ctx.destination);
@@ -3112,7 +3400,7 @@ const OA = (() => {
             if (fn === 'note') {
               if (ph.st.mute && ph.st.mute.arp) continue;
               engine.note(e, when, sound);
-              flashes.push({time: when, e, abs: off + e.t});
+              if (!e.echo) flashes.push({time: when, e, abs: off + e.t});
               if (e.mod && Math.abs((e.mod.send || 0) - (lastSend ?? -9)) > 0.02) { engine.sendAt(when, e.mod.send || 0); lastSend = e.mod.send || 0; }
             } else engine[fn](e, when);
           }
@@ -3150,36 +3438,96 @@ const OA = (() => {
   }
 
   // ---- offline render to WAV
-  async function render(st, R, {loops = 1, tail = 2.5, solo = false, sampleRate = 44100} = {}) {
+  // parts: which parts play ({arp, bass, drums, chords}); seamless: render one extra loop first and keep only the
+  // last loops, so the tail of the previous pass is already inside the file and it loops without a click or a gap.
+  async function render(st, R, {loops = 1, tail = 2.5, solo = false, sampleRate = 44100, parts = null, seamless = false} = {}) {
     const ph = phrase(st, R);
-    const spb = 60 / st.bpm, dur = loops * ph.beats * spb + tail;
+    const spb = 60 / st.bpm, loopSec = ph.beats * spb;
+    const P = parts || (solo ? {arp: true, bass: false, drums: false, chords: false} : {arp: true, bass: !!st.ctx.bass, drums: !!st.ctx.drums, chords: !!st.ctx.chords});
+    const pre = seamless ? 1 : 0, total = loops + pre;
+    const dur = total * loopSec + (seamless ? 0 : tail);
     const ctx = new OfflineAudioContext(2, Math.ceil(dur * sampleRate), sampleRate);
     const eng = create(ctx);
-    const s2 = Object.assign({}, st, {ctx: solo ? {drums: false, bass: false, chords: false} : st.ctx});
+    const s2 = Object.assign({}, st, {ctx: {drums: P.drums, bass: P.bass, chords: P.chords}, mute: {arp: !P.arp}});
     eng.set(s2, OB.SOUNDS_BY_ID[st.sound]);
-    const t0 = 0.02;
-    for (let l = 0; l < loops; l++) {
+    const t0 = seamless ? 0 : 0.02;
+    for (let l = 0; l < total; l++) {
       const off = l * ph.beats;
-      for (const e of ph.arp) { eng.note(e, t0 + (off + e.t) * spb); if (e.mod) eng.sendAt(t0 + (off + e.t) * spb, e.mod.send || 0); }
-      if (!solo) {
-        if (st.ctx.bass) for (const e of ph.bass) eng.bass(e, t0 + (off + e.t) * spb);
-        if (st.ctx.chords) for (const e of ph.chords) eng.pad(e, t0 + (off + e.t) * spb);
-        if (st.ctx.drums) for (const e of ph.drums) eng.drum(e, t0 + (off + e.t) * spb);
-      } else if ((st.duck || 0) > 0.01) for (const e of ph.drums) if (e.lane === 'k') eng.duck(t0 + (off + e.t) * spb);
+      if (P.arp) for (const e of ph.arp) { eng.note(e, t0 + (off + e.t) * spb); if (e.mod) eng.sendAt(t0 + (off + e.t) * spb, e.mod.send || 0); }
+      if (P.bass) for (const e of ph.bass) eng.bass(e, t0 + (off + e.t) * spb);
+      if (P.chords) for (const e of ph.chords) eng.pad(e, t0 + (off + e.t) * spb);
+      if (P.drums) for (const e of ph.drums) eng.drum(e, t0 + (off + e.t) * spb);
+      else if ((st.duck || 0) > 0.01) for (const e of ph.drums) if (e.lane === 'k') eng.duck(t0 + (off + e.t) * spb);
     }
     const buf = await ctx.startRendering();
+    if (!seamless) return buf;
+    const from = Math.round(pre * loopSec * sampleRate), len = Math.round(loops * loopSec * sampleRate);
+    return slice(buf, from, len);
+  }
+  function slice(buf, from, len) {
+    const out = new AudioBuffer({length: Math.max(1, len), numberOfChannels: buf.numberOfChannels, sampleRate: buf.sampleRate});
+    for (let c = 0; c < buf.numberOfChannels; c++) out.copyToChannel(buf.getChannelData(c).subarray(from, from + len), c);
+    return out;
+  }
+
+  // ---- samples: one note or one chord of a patch, alone, for Simpler and Sampler ----
+  // The patch at the current knobs, through its own drive and width, without the mix bus (no compressor, limiter,
+  // sidechain or high-pass). Optionally with the delay and reverb. Silence at the end is trimmed, the last 5 ms faded,
+  // and the peak normalised to -1 dBFS.
+  async function renderSample(st, {notes = [60], hold = 0.5, vel = 110, fx = false, sampleRate = 44100, normalize = true, maxSec = 12, sound = null} = {}) {
+    const snd = OB.SOUNDS_BY_ID[sound || st.sound];
+    const space = fx ? 0.8 + (st.space ?? 0.5) * 4.2 : 0;
+    const echo = fx && st.delay > 0.01 ? (OE.DELAY_TIMES[st.delayTime] || 0.75) * 60 / st.bpm * Math.ceil(Math.log(0.01) / Math.log(Math.max(0.05, st.fb))) : 0;
+    const dur = Math.min(maxSec, hold + snd.amp.r * 2.5 * Math.sqrt(Math.pow(2, ((st.dec ?? 0.5) - 0.5) * 3)) + Math.max(space, echo) + 0.4);
+    const ctx = new OfflineAudioContext(2, Math.ceil(dur * sampleRate), sampleRate);
+    const eng = create(ctx, {raw: true});
+    eng.set(Object.assign({}, st, {hp: 20, duck: 0, delay: fx ? st.delay : 0, reverb: fx ? st.reverb : 0, mix: {arp: 1}, mute: {}, ctx: {drums: false, bass: false, chords: false}}), snd);
+    const spb = 60 / st.bpm;
+    for (const n of notes) eng.note({n, t: 0, d: hold / spb, v: vel, acc: vel >= 115, mod: {cut: st.cut, res: st.res, dec: st.dec, send: 0}, poly: notes.length, kind: notes.length > 1 ? 'chord' : 'note'}, 0.004, snd);
+    let buf = await ctx.startRendering();
+    buf = trim(buf, -66);
+    if (normalize) gain(buf, -1);
     return buf;
   }
-  function wav(buf) {
-    const ch = buf.numberOfChannels, len = buf.length, sr = buf.sampleRate;
-    const data = new DataView(new ArrayBuffer(44 + len * ch * 2));
-    const w = (o, s) => { for (let i = 0; i < s.length; i++) data.setUint8(o + i, s.charCodeAt(i)); };
-    w(0, 'RIFF'); data.setUint32(4, 36 + len * ch * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  function peakOf(buf) { let p = 0; for (let c = 0; c < buf.numberOfChannels; c++) for (const x of buf.getChannelData(c)) { const a = Math.abs(x); if (a > p) p = a; } return p; }
+  function trim(buf, db) {
+    const thr = Math.pow(10, db / 20) * Math.max(1e-9, peakOf(buf));
+    let last = 0;
+    for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = d.length - 1; i > last; i--) if (Math.abs(d[i]) > thr) { last = i; break; } }
+    const len = Math.min(buf.length, last + Math.round(buf.sampleRate * 0.02));
+    const out = slice(buf, 0, len), fade = Math.min(len, Math.round(buf.sampleRate * 0.005));
+    for (let c = 0; c < out.numberOfChannels; c++) { const d = out.getChannelData(c); for (let i = 0; i < fade; i++) d[len - 1 - i] *= i / fade; }
+    return out;
+  }
+  function gain(buf, db) {
+    const p = peakOf(buf); if (p < 1e-6) return buf;
+    const g = Math.pow(10, db / 20) / p;
+    for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = 0; i < d.length; i++) d[i] *= g; }
+    return buf;
+  }
+
+  // WAV: 16- or 24-bit PCM. With a root note, a 'smpl' chunk carries it, for samplers that read it.
+  function wav(buf, {bits = 16, root = null} = {}) {
+    const ch = buf.numberOfChannels, len = buf.length, sr = buf.sampleRate, B = bits / 8;
+    const dataLen = len * ch * B, smplLen = root != null ? 8 + 36 : 0;
+    const data = new DataView(new ArrayBuffer(44 + dataLen + smplLen));
+    const w = (o, str) => { for (let i = 0; i < str.length; i++) data.setUint8(o + i, str.charCodeAt(i)); };
+    w(0, 'RIFF'); data.setUint32(4, 36 + dataLen + smplLen, true); w(8, 'WAVE'); w(12, 'fmt ');
     data.setUint32(16, 16, true); data.setUint16(20, 1, true); data.setUint16(22, ch, true); data.setUint32(24, sr, true);
-    data.setUint32(28, sr * ch * 2, true); data.setUint16(32, ch * 2, true); data.setUint16(34, 16, true); w(36, 'data'); data.setUint32(40, len * ch * 2, true);
+    data.setUint32(28, sr * ch * B, true); data.setUint16(32, ch * B, true); data.setUint16(34, bits, true); w(36, 'data'); data.setUint32(40, dataLen, true);
     const chans = [...Array(ch)].map((_, i) => buf.getChannelData(i));
     let o = 44;
-    for (let i = 0; i < len; i++) for (let c = 0; c < ch; c++) { const x = Math.max(-1, Math.min(1, chans[c][i])); data.setInt16(o, x < 0 ? x * 32768 : x * 32767, true); o += 2; }
+    for (let i = 0; i < len; i++) for (let c = 0; c < ch; c++) {
+      const x = Math.max(-1, Math.min(1, chans[c][i]));
+      if (bits === 24) { const v = Math.round(x < 0 ? x * 8388608 : x * 8388607); data.setUint8(o, v & 255); data.setUint8(o + 1, (v >> 8) & 255); data.setUint8(o + 2, (v >> 16) & 255); o += 3; }
+      else { data.setInt16(o, x < 0 ? x * 32768 : x * 32767, true); o += 2; }
+    }
+    if (root != null) {
+      w(o, 'smpl'); data.setUint32(o + 4, 36, true);
+      data.setUint32(o + 8, 0, true); data.setUint32(o + 12, 0, true); data.setUint32(o + 16, Math.round(1e9 / sr), true);
+      data.setUint32(o + 20, root, true); data.setUint32(o + 24, 0, true); data.setUint32(o + 28, 0, true); data.setUint32(o + 32, 0, true);
+      data.setUint32(o + 36, 0, true); data.setUint32(o + 40, 0, true);
+    }
     return new Uint8Array(data.buffer);
   }
   // how much of the arp's own energy sits under a frequency, measured on the arp bus
@@ -3192,7 +3540,7 @@ const OA = (() => {
     return all > 1e-12 ? {share: lo / all, db: 10 * Math.log10(Math.max(1e-12, lo / all))} : null;
   }
 
-  return {create, phrase, player, render, wav, lowShare};
+  return {create, phrase, player, render, renderSample, wav, lowShare, peakOf, trim, gain, slice};
 })();
 
 // Orbit, the page: state and history, the bank, the orbit and the piano roll, the step editor, the controls,
@@ -3209,7 +3557,8 @@ const OA = (() => {
   const KEY_NOW = 'orbit.current.v1', KEY_CRATE = 'orbit.crate.v1';
 
   const S = {st: null, hist: [], fut: [], A: null, side: 'B', aud: null, crate: store.get(KEY_CRATE) || [], filter: 'tech-house', q: '', tool: 'note',
-    cands: [], candKind: '', R: null, M: null, ph: null, flashes: [], trail: [], lastFlash: 0, paint: null, importFile: null};
+    cands: [], candKind: '', R: null, M: null, ph: null, flashes: [], trail: [], lastFlash: 0, paint: null, importFile: null, importMode: 'chords', importInfo: '',
+    held: new Set(), down: new Set(), liveFresh: true, preLive: undefined, midi: null, draw: false, drawSeq: null, auto: false, autoAt: null, sample: null};
   let actx = null, engine = null, player = null;
 
   // ---------- helpers ----------
@@ -3256,7 +3605,7 @@ const OA = (() => {
     setAccent(genre().color);
     viewTransport(); viewStage(); viewGrid(); viewControls(); drawRollLayer(); orbitStatic(); viewBankActive();
     clearTimeout(slowTimer);
-    slowTimer = setTimeout(() => { viewMeasure(); viewAbleton(); store.set(KEY_NOW, OE.pack(st)); }, light ? 140 : 0);
+    slowTimer = setTimeout(() => { viewMeasure(); viewAbleton(); viewSamples(); store.set(KEY_NOW, OE.pack(st)); }, light ? 140 : 0);
   }
 
   function viewTransport() {
@@ -3277,7 +3626,7 @@ const OA = (() => {
     $('stName').textContent = st.name;
     $('stWhy').textContent = p ? p.why : st.from === 'generated' ? 'Written by the generator from the genre\'s grammar and measured against its fingerprint.' : st.from === 'variation' ? 'A variation: same key, tempo, harmony and sound; the notes or the rhythm moved.' : st.from === 'import' ? 'Your chords, arpeggiated.' : g.blurb;
     const s = sound();
-    $('stChips').innerHTML = [OT.keyLabel(st.key, st.scale) + ' · ' + OT.camelot(st.key, st.scale), st.bpm + ' BPM', OE.RATES[st.rate].label, OE.POOLS[st.pool].name, OE.ORDERS[st.order].name, s.name, st.evo !== 'none' ? OE.EVOS[st.evo].name : null].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('');
+    $('stChips').innerHTML = [OT.keyLabel(st.key, st.scale) + ' · ' + OT.camelot(st.key, st.scale), st.bpm + ' BPM', OE.RATES[st.rate].label, OE.POOLS[st.pool].name, st.order === 'turing' ? `Turing ${Math.round(st.lock * 100)}% lock` : OE.ORDERS[st.order].name, s.name, st.evo !== 'none' ? OE.EVOS[st.evo].name : null, st.echo ? `echo ×${st.echo}` : null, st.feel !== 'straight' ? OE.FEELS[st.feel].name : null, st.strum ? 'strum' : null].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('');
     // chord lane
     const h = S.R.harmony;
     $('chordLane').innerHTML = h.chords.map((c, i) => `<div class="cc" data-ci="${i}"><b>${esc(c.name)}</b><small>${esc(c.roman)} · ${c.d / 4 >= 1 ? (c.d / 4) + ' bar' + (c.d > 4 ? 's' : '') : c.d + ' beats'} · ${c.notes.map(nn).join(' ')}</small></div>`).join('');
@@ -3362,6 +3711,7 @@ const OA = (() => {
     swing: v => Math.round(v) + '%', gate: v => Math.round(v * 100) + '%', accent: v => '+' + Math.round(v), human: v => pct(v),
     cut: v => pct(v), res: v => pct(v), dec: v => pct(v), drive: v => pct(v), width: v => pct(v),
     delay: v => pct(v), fb: v => pct(v), reverb: v => pct(v), space: v => (0.8 + v * 4.2).toFixed(1) + ' s', duck: v => pct(v), hp: v => Math.round(v) + ' Hz', depth: v => pct(v),
+    lock: v => pct(v), strum: v => Math.round(v * 80) + ' ms', echoFb: v => pct(v),
   };
   function viewControls() {
     const st = S.st, active = document.activeElement;
@@ -3371,7 +3721,10 @@ const OA = (() => {
     $('progErr').hidden = !errs.length; $('progErr').textContent = errs.join(' · ');
     $('prog').disabled = !!st.imported;
     opt($('progPreset'), [['', 'Pick one…'], ...genre().progs.map(p => [p.p, `${p.name}: ${p.p}`]), ...Object.values(OB.GENRES).filter(g => g !== genre()).flatMap(g => g.progs.slice(0, 2).map(p => [p.p, `${g.name}: ${p.p}`]))], '');
-    for (const k of ['per', 'voicing', 'pool', 'count', 'order', 'octaves', 'advance', 'reset', 'pedal', 'rate', 'sound', 'evo', 'fill', 'fillEvery', 'mutate', 'delayTime', 'groove', 'bassPat']) setv(k, st[k]);
+    for (const k of ['per', 'voicing', 'pool', 'count', 'order', 'octaves', 'advance', 'reset', 'pedal', 'rate', 'sound', 'evo', 'fill', 'fillEvery', 'mutate', 'delayTime', 'groove', 'bassPat', 'feel', 'strumDir', 'tlen', 'echo', 'echoTime', 'echoShift']) setv(k, st[k]);
+    $('turingRow').hidden = st.order !== 'turing';
+    document.querySelectorAll('[data-sq]').forEach(b => { b.hidden = (b.dataset.sq === 'write') === (st.order === 'seq'); });
+    $('feelDesc').textContent = OE.FEELS[st.feel].desc || 'Every note on the grid (swing still applies).';
     $('follow').checked = st.follow;
     setv('seq', st.seq.join(' '));
     $('seqRow').hidden = st.order !== 'seq';
@@ -3383,10 +3736,13 @@ const OA = (() => {
     $('evoDesc').textContent = (OE.EVOS[st.evo] || {}).desc || '';
     $('delayMs').textContent = Math.round((OE.DELAY_TIMES[st.delayTime] || 0.75) * 60000 / st.bpm) + ' ms';
     // import box
-    $('importedBox').hidden = !st.imported;
-    if (st.imported) {
-      $('impName').textContent = st.imported.name || 'Imported chords';
-      $('impInfo').textContent = `${st.imported.chords.length} chords over ${st.imported.beats / 4} bars · read as ${OT.keyLabel(st.imported.key, st.imported.scale)}`;
+    const live = st.imported && st.imported.name === 'Live keyboard';
+    $('importedBox').hidden = !S.importFile || live || (S.importMode === 'chords' && !st.imported);
+    if (S.importFile) {
+      $('impName').textContent = S.importFile.name;
+      $('impMode').value = S.importMode;
+      $('impInfo').textContent = S.importMode === 'riff' ? S.importInfo : st.imported ? `${st.imported.chords.length} chords over ${st.imported.beats / 4} bars · read as ${OT.keyLabel(st.imported.key, st.imported.scale)}` : '';
+      $('impToText').hidden = S.importMode === 'riff';
     }
     if ($('expName') !== active) $('expName').value = st.name;
     if (!S.expTouched) $('expBars').value = [4, 8, 16, 32, 64].includes(st.bars) ? st.bars : 8;
@@ -3401,8 +3757,41 @@ const OA = (() => {
     $('prog').addEventListener('input', () => { const r = OT.parseProgression($('prog').value, S.st.key, S.st.scale); if (!r.errors.length) commit({prog: $('prog').value}, {history: false, light: true}); else { $('progErr').hidden = false; $('progErr').textContent = r.errors.join(' · '); } });
     $('prog').addEventListener('change', () => { const r = OT.parseProgression($('prog').value, S.st.key, S.st.scale); if (!r.errors.length) commit({prog: $('prog').value}); });
     $('progPreset').addEventListener('change', () => { if ($('progPreset').value) commit({prog: $('progPreset').value, imported: null}); });
-    for (const k of ['per', 'octaves', 'count', 'fillEvery', 'mutate']) $(k).addEventListener('change', () => commit({[k]: num(k)}));
-    for (const k of ['voicing', 'pool', 'order', 'advance', 'reset', 'pedal', 'rate', 'evo', 'fill', 'delayTime', 'groove', 'bassPat']) $(k).addEventListener('change', () => commit({[k]: $(k).value}));
+    for (const k of ['per', 'octaves', 'count', 'fillEvery', 'mutate', 'tlen', 'echo']) $(k).addEventListener('change', () => commit({[k]: num(k)}));
+    for (const k of ['voicing', 'pool', 'order', 'advance', 'reset', 'pedal', 'rate', 'evo', 'fill', 'delayTime', 'groove', 'bassPat', 'feel', 'strumDir', 'echoTime', 'echoShift']) $(k).addEventListener('change', () => commit({[k]: $(k).value}));
+    // the written sequence, as something to edit
+    document.querySelectorAll('[data-sq]').forEach(b => b.addEventListener('click', () => {
+      const sq = S.st.order === 'seq' ? S.st.seq.slice() : OE.writeOut(S.st), hi = Math.max(...sq), lo = Math.min(...sq);
+      const out = {write: sq, rev: sq.slice().reverse(), inv: sq.map(i => hi + lo - i), up: sq.map(i => i + 1), down: sq.map(i => i - 1), rot: sq.slice(1).concat(sq.slice(0, 1))}[b.dataset.sq];
+      commit({order: 'seq', seq: out});
+      toast(b.dataset.sq === 'write' ? `Written out: ${out.join(' ')}. Edit it freely.` : `Sequence: ${out.join(' ')}`);
+    }));
+    $('morseGo').addEventListener('click', () => { const t = $('morseText').value.trim() || S.st.name; const steps = OE.morse(t); commit({steps}); toast(`"${t}" in Morse: ${steps.length} steps`); });
+    $('morseText').addEventListener('keydown', e => { if (e.key === 'Enter') $('morseGo').click(); });
+    $('impMode').addEventListener('change', () => { if (S.importFile) applyImport(S.importFile, +$('impTrack').value, $('impMode').value); });
+    $('liveBtn').addEventListener('click', liveConnect);
+    $('latch').addEventListener('change', () => { if (!$('latch').checked) { for (const n of [...S.held]) if (!S.down.has(n)) S.held.delete(n); liveApply(); } });
+    $('drawBtn').addEventListener('click', () => {
+      S.draw = !S.draw; S.drawSeq = null;
+      $('drawBtn').classList.toggle('on', S.draw); document.querySelector('.orbitbox').classList.toggle('drawing', S.draw);
+      $('drawBtn').textContent = S.draw ? '✓ Done' : '✎ Draw';
+      if (S.draw) toast('Click the pool notes on the inner ring in the order they should play');
+      if (!player || !player.playing) drawOrbit(null);
+    });
+    $('orbit').addEventListener('click', e => {
+      if (!S.draw || !O.nodes) return;
+      const r = $('orbit').getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      let best = null, bd = Infinity;
+      for (const nd of O.nodes) { const d = Math.hypot(nd.x - x, nd.y - y); if (d < bd) { bd = d; best = nd; } }
+      if (!best || bd > Math.max(22, O.nodeGap * 0.45)) return;
+      if (!S.drawSeq) { S.drawSeq = []; S.hist.push(snapshot()); S.fut.length = 0; }
+      S.drawSeq.push(best.i);
+      commit({order: 'seq', seq: S.drawSeq.slice()}, {history: false});
+      toast('Sequence: ' + S.drawSeq.join(' '));
+    });
+    const syncAuto = on => { S.auto = on; $('auto').checked = on; $('autoBtn').classList.toggle('on', on); S.autoAt = null; if (on) toast(`Autopilot on: a new variation every ${$('autoEvery').value} bars while it plays. Undo goes back.`); };
+    $('auto').addEventListener('change', () => syncAuto($('auto').checked));
+    $('autoBtn').addEventListener('click', () => syncAuto(!S.auto));
     $('sound').addEventListener('change', () => { const s = OB.SOUNDS_BY_ID[$('sound').value]; commit(Object.assign({sound: s.id}, s.fx || {})); });
     $('follow').addEventListener('change', () => commit({follow: $('follow').checked}));
     $('seq').addEventListener('change', () => commit({seq: $('seq').value}));
@@ -3443,14 +3832,14 @@ const OA = (() => {
     // import
     $('importBtn').addEventListener('click', () => $('midiFile').click());
     $('midiFile').addEventListener('change', () => { const f = $('midiFile').files[0]; if (f) importFile(f); $('midiFile').value = ''; });
-    $('impClear').addEventListener('click', () => commit({imported: null, from: S.st.from === 'import' ? null : S.st.from}));
+    $('impClear').addEventListener('click', () => { S.importFile = null; commit({imported: null}); });
     $('impToText').addEventListener('click', () => {
       const imp = S.st.imported; if (!imp) return;
       const per = S.st.per, text = imp.chords.map(c => { const len = c.d / (4 * per); const nm = OT.asciiName(OT.chordName(c.root, c.q, imp.key, imp.scale)).replace('m(add9)', 'madd9').replace('m7♭5', 'm7b5'); return nm + (Math.abs(len - 1) > 0.01 ? ':' + +len.toFixed(2) : ''); }).join(' ');
       commit({imported: null, prog: text, key: imp.key, scale: imp.scale});
       toast('The chords are now text you can edit (the voicing is the page\'s own).');
     });
-    $('impTrack').addEventListener('change', () => { if (S.importFile) applyImport(S.importFile, +$('impTrack').value); });
+    $('impTrack').addEventListener('change', () => { if (S.importFile) applyImport(S.importFile, +$('impTrack').value, S.importMode); });
     // drag & drop anywhere
     addEventListener('dragover', e => { if ([...(e.dataTransfer?.types || [])].includes('Files')) { e.preventDefault(); document.body.classList.add('dropping'); } });
     addEventListener('dragleave', e => { if (!e.relatedTarget) document.body.classList.remove('dropping'); });
@@ -3470,22 +3859,34 @@ const OA = (() => {
       const tracks = mid.tracks.map((t, i) => ({i, t, notes: t.notes.filter(n => n.ch !== 9)})).filter(x => x.notes.length);
       if (!tracks.length) throw Error('No pitched notes in this file.');
       tracks.forEach(x => { x.poly = OT.polyphony(x.notes); });
-      S.importFile = {name: file.name, mid, tracks};
+      S.importFile = {name: file.name.replace(/\.midi?$/i, ''), mid, tracks};
       opt($('impTrack'), tracks.map(x => [x.i, `${x.t.name} (${x.notes.length} notes, ${x.poly.toFixed(1)} at once)`]));
       const best = tracks.slice().sort((a, b) => b.poly - a.poly)[0];
       $('impTrack').value = best.i;
       $('impTrackRow').hidden = tracks.length < 2;
-      applyImport(S.importFile, best.i);
+      // a single line (a riff or a melody) becomes the pattern; anything with chords becomes the harmony
+      applyImport(S.importFile, best.i, best.poly < 1.25 ? 'riff' : 'chords');
     } catch (err) { toast('Could not read that MIDI: ' + err.message); console.error(err); }
   }
-  function applyImport(f, ti) {
+  function applyImport(f, ti, mode = 'chords') {
     const tr = f.tracks.find(x => x.i === ti) || f.tracks[0];
+    S.importMode = mode;
+    if (mode === 'riff') {
+      const k = OT.detectKey(tr.notes);
+      const r = OE.riffFromNotes(tr.notes, Object.assign({}, S.st, {key: k.key, scale: k.scale}));
+      const allowed = [1, 2, 4, 8, 16, 32, 64], bars = allowed.find(b => b >= Math.max(r.bars, S.st.bars)) || 64;
+      S.importInfo = `A riff of ${r.notes} notes over ${r.bars} bar${r.bars > 1 ? 's' : ''}, read in ${OT.keyLabel(k.key, k.scale)}${r.snapped ? `; ${r.snapped} note${r.snapped > 1 ? 's' : ''} outside the scale snapped to it` : ''}. Now vary it, fingerprint it or play it on any patch.`;
+      commit(Object.assign({}, r.patch, {key: k.key, scale: k.scale, imported: null, bars, from: 'import', name: f.name}));
+      toast(`Riff imported: ${r.notes} notes, ${OT.keyLabel(k.key, k.scale)}`);
+      $('gHarmony').open = true;
+      return;
+    }
     const {chords, beats} = OT.chordsFromNotes(tr.notes);
     if (!chords.length) return toast('No chords found in that track.');
     const k = OT.detectKey(tr.notes, chords[0]);
     const bars = beats / 4, allowed = [1, 2, 4, 8, 16, 32, 64];
     const fitBars = allowed.find(b => b >= bars) || 64;
-    const patch = {imported: {name: f.name.replace(/\.midi?$/i, ''), chords, beats, key: k.key, scale: k.scale}, key: k.key, scale: k.scale, bars: Math.max(fitBars, Math.min(S.st.bars, 64)), from: S.st.from};
+    const patch = {imported: {name: f.name, chords, beats, key: k.key, scale: k.scale}, key: k.key, scale: k.scale, bars: Math.max(fitBars, Math.min(S.st.bars, 64)), from: S.st.from};
     if (f.mid.bpm && Math.abs(f.mid.bpm - S.st.bpm) > 0.5 && f.mid.bpm >= 60 && f.mid.bpm <= 200) toast(`${chords.length} chords imported in ${OT.keyLabel(k.key, k.scale)}. The file says ${Math.round(f.mid.bpm)} BPM; the tempo field is yours to change.`);
     else toast(`${chords.length} chords imported, read as ${OT.keyLabel(k.key, k.scale)}.`);
     commit(patch);
@@ -3608,6 +4009,8 @@ const OA = (() => {
     // pool ring with the figure the notes draw
     const r3 = R * 0.5, M = Math.max(1, (lastNote && lastNote.e.pl) || O.poolN || 3);
     const node = i => { const a = ang(((i % M) + M) % M / M); return [cx + Math.cos(a) * r3, cy + Math.sin(a) * r3]; };
+    O.nodes = Array.from({length: M}, (_, i) => { const [x, y] = node(i); return {i, x, y}; });
+    O.nodeGap = M > 1 ? 2 * Math.PI * r3 / M : 60;
     c.beginPath(); c.arc(cx, cy, r3, 0, 7); c.strokeStyle = '#ffffff0c'; c.stroke();
     c.globalCompositeOperation = 'lighter';
     if (pos == null && O.figure && O.figure.length > 1) {
@@ -3648,6 +4051,10 @@ const OA = (() => {
     const bb = pb == null ? 'press play' : `${Math.floor(pb / 4) + 1}.${Math.floor(pb % 4) + 1} · ${ch ? ch.roman : ''}`;
     c.fillText(bb, cx, cy + R * 0.12);
     if (S.M.cycle.bars) { c.fillStyle = ACC; c.fillText(`cycle ${pb == null ? '—' : (Math.floor(pb / 4) % S.M.cycle.bars) + 1} / ${S.M.cycle.bars}`, cx, cy + R * 0.21); }
+    if (S.draw) {
+      c.fillStyle = ACC; c.fillText(S.drawSeq ? S.drawSeq.join(' ') : 'click the notes in order', cx, cy + R * 0.3);
+      if (S.drawSeq) { c.strokeStyle = ACC; c.lineWidth = 2.2; c.beginPath(); S.drawSeq.forEach((i, k) => { const [x, y] = node(i); k ? c.lineTo(x, y) : c.moveTo(x, y); }); c.stroke(); }
+    }
   }
   function currentPool() {
     const tr = S.trail, e = tr.length ? tr[tr.length - 1].e : S.R.events[0];
@@ -3773,7 +4180,154 @@ const OA = (() => {
     const L = S.st.steps.length, cell = Math.floor(pb / OE.RATES[S.st.rate].beats + 1e-6) % L;
     if (cell !== lastCell) { document.querySelector('.cell.now')?.classList.remove('now'); document.querySelector(`.cell[data-i="${cell}"]`)?.classList.add('now'); lastCell = cell; }
     if (now - lowTimer > 0.3) { lowTimer = now; liveRegister(); }
+    if (S.auto) {
+      const every = +$('autoEvery').value * 4, next = Math.ceil((pos + 1e-6) / every) * every;
+      if (next - pos < 0.35 && S.autoAt !== next) { S.autoAt = next; autopilotStep(); }
+    }
   }
+  function autopilotStep() {
+    const v = OE.vary(S.st, 6, 1 + Math.floor(Math.random() * 1e5), {wild: $('wild').checked});
+    if (!v.length) return;
+    v.sort((a, b) => b.fit - a.fit);
+    const pick = v[0];
+    load(Object.assign({}, pick.st, {name: S.st.name.replace(/ · (var|auto).*$/, '') + ' · auto', ctx: S.st.ctx, mix: S.st.mix}));
+    toast(`Autopilot: ${pick.what} · fit ${pick.fit}`);
+  }
+
+  // ---------- live chords from a MIDI keyboard ----------
+  async function liveConnect() {
+    if (S.midi) {
+      for (const i of S.midi.inputs.values()) i.onmidimessage = null;
+      S.midi = null; S.held.clear(); S.down.clear(); liveApply();
+      $('liveBtn').classList.remove('on'); $('liveStatus').textContent = 'Keyboard off.';
+      return;
+    }
+    if (!navigator.requestMIDIAccess) { $('liveStatus').textContent = 'This browser has no Web MIDI: use Chrome or Edge.'; return; }
+    try { S.midi = await navigator.requestMIDIAccess(); } catch (_) { $('liveStatus').textContent = 'MIDI access was refused.'; return; }
+    const bind = () => { let n = 0; for (const i of S.midi.inputs.values()) { i.onmidimessage = ev => midiIn(ev.data); n++; } $('liveStatus').textContent = n ? `Listening to ${n} MIDI input${n > 1 ? 's' : ''}: hold a chord and press play.` : 'No MIDI keyboard found: plug one in.'; };
+    bind(); S.midi.onstatechange = bind;
+    $('liveBtn').classList.add('on');
+  }
+  function midiIn(d) {
+    const type = d[0] & 0xF0, n = d[1], v = d[2];
+    if (type === 0x90 && v > 0) { if (S.liveFresh) { S.held.clear(); S.liveFresh = false; } S.held.add(n); S.down.add(n); }
+    else if (type === 0x80 || (type === 0x90 && v === 0)) { S.down.delete(n); if (!$('latch').checked) S.held.delete(n); if (!S.down.size) S.liveFresh = true; }
+    else return;
+    clearTimeout(S.liveT); S.liveT = setTimeout(liveApply, 25);
+  }
+  function liveApply() {
+    const notes = [...S.held].sort((a, b) => a - b);
+    if (!notes.length) {
+      if (S.preLive !== undefined) { const back = S.preLive; S.preLive = undefined; commit({imported: back}, {history: false, light: true}); }
+      return;
+    }
+    if (S.preLive === undefined) S.preLive = S.st.imported && S.st.imported.name !== 'Live keyboard' ? S.st.imported : null;
+    const w = new Array(12).fill(0); notes.forEach(n => { w[n % 12] += 1; });
+    const det = OT.detectChord(w, notes[0]);
+    commit({imported: {name: 'Live keyboard', chords: [{t: 0, d: 4, notes, root: det.root, q: det.q, iv: OT.Q[det.q].iv.slice()}], beats: 4, key: S.st.key, scale: S.st.scale}}, {history: false, light: true});
+    $('liveStatus').textContent = `Playing ${OT.chordName(det.root, det.q, S.st.key, S.st.scale)}: ${notes.map(nn).join(' ')}${$('latch').checked ? ' (latched)' : ''}`;
+  }
+
+  // ---------- sounds out ----------
+  const slugName = s => OT.asciiName(s).normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
+  const noteFile = n => OT.asciiName(OT.noteName(n)).replace('#', 's');
+  function smpFormat() { const [bits, sr] = $('smpFmt').value.split('-').map(Number); return {bits, sr}; }
+  function smpState(soundId) { return Object.assign({}, S.st, {sound: soundId || $('smpSound').value || S.st.sound}); }
+  function playBuffer(buf) { ensureAudio(); const src = actx.createBufferSource(); src.buffer = buf; src.connect(engine.out); src.start(); }
+  function drawWave(buf) {
+    const cv = $('smpWave'), {dpr, w, h} = sizeCanvas(cv), c = cv.getContext('2d');
+    c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+    const d = buf.getChannelData(0), G = getComputedStyle(document.documentElement).getPropertyValue('--g').trim();
+    c.fillStyle = G; const step = Math.max(1, Math.floor(d.length / w));
+    for (let x = 0; x < w; x++) { let mn = 0, mx = 0; for (let i = x * step; i < (x + 1) * step && i < d.length; i++) { if (d[i] < mn) mn = d[i]; if (d[i] > mx) mx = d[i]; } c.fillRect(x, h / 2 - mx * h / 2, 1, Math.max(1, (mx - mn) * h / 2)); }
+  }
+  async function renderOne() {
+    const {sr} = smpFormat(), note = +$('smpNote').value, st = smpState();
+    const buf = await OA.renderSample(st, {notes: [note], hold: +$('smpHold').value, vel: +$('smpVel').value, fx: $('smpFx').value === 'fx', sampleRate: sr});
+    const snd = OB.SOUNDS_BY_ID[st.sound];
+    S.sample = {buf, note, name: `Orbit_${slugName(snd.name)}_${noteFile(note)}${$('smpFx').value === 'fx' ? '_fx' : ''}`};
+    drawWave(buf);
+    $('smpInfo').textContent = `${snd.name} · ${OT.noteName(note)} (${Math.round(OT.hz(note))} Hz) · ${(buf.length / buf.sampleRate).toFixed(2)} s · peak −1 dBFS · ${$('smpFmt').selectedOptions[0].textContent} · root ${OT.noteName(note)} in the file`;
+    return S.sample;
+  }
+  async function busy(btn, fn) {
+    const t = btn.textContent; btn.disabled = true; btn.textContent = 'Rendering…';
+    try { await fn(msg => { btn.textContent = msg; }); } catch (err) { toast('Could not render: ' + err.message); console.error(err); }
+    btn.disabled = false; btn.textContent = t;
+  }
+  function stabChords() {
+    const set = $('stabSet').value;
+    if (set === 'prog') { const seen = new Set(); return S.R.harmony.chords.filter(c => { const k = c.name + c.notes.join(','); if (seen.has(k)) return false; seen.add(k); return true; }); }
+    return OE.diatonicChords(S.st, set);
+  }
+  function viewSamples() {
+    if (!$('stabList')) return;
+    $('stabList').innerHTML = stabChords().map((c, i) => `<button type="button" data-stab="${i}" title="Hear ${esc(c.name)}">${esc(c.name)}<small>${esc(c.roman)} · ${c.notes.map(nn).join(' ')}</small></button>`).join('');
+    $('loopLen').textContent = `${S.st.bars} bars at ${S.st.bpm} BPM (${(S.st.bars * 4 * 60 / S.st.bpm).toFixed(2)} s)`;
+  }
+  async function stabBuffer(c) { const {sr} = smpFormat(); return OA.renderSample(smpState(), {notes: c.notes, hold: +$('stabHold').value, vel: 110, fx: $('smpFx').value === 'fx', sampleRate: sr}); }
+  const rootOf = c => c.notes[0] - OT.mod(c.notes[0] - c.root, 12);
+  const keyTag = () => OT.asciiName(OT.pcName(S.st.key, S.st.key, S.st.scale)).replace('#', 's') + (OT.SCALES[S.st.scale].minor ? 'm' : '');
+  async function stabsZip(report) {
+    const {bits} = smpFormat(), list = stabChords(), files = [], snd = OB.SOUNDS_BY_ID[smpState().sound];
+    for (const [i, c] of list.entries()) { report(`Chord ${i + 1} of ${list.length}…`); const b = await stabBuffer(c); files.push({name: `${String(i + 1).padStart(2, '0')}_${slugName(c.name)}_${slugName(snd.name)}.wav`, bytes: OA.wav(b, {bits, root: rootOf(c)})}); }
+    const lines = list.map((c, i) => `${i + 1}. ${OT.asciiName(c.name)} (${c.roman}): ${c.notes.map(n => OT.asciiName(OT.noteName(n))).join(' ')}`);
+    files.push({name: 'README.txt', bytes: new TextEncoder().encode([`ORBIT CHORD STABS · ${snd.name} · ${OT.asciiName(OT.keyLabel(S.st.key, S.st.scale))} (${OT.camelot(S.st.key, S.st.scale)})`, '', ...lines, '', 'One chord per file. Drum Rack: drop the files on the pads. Simpler: load one chord and play it up and down the keyboard (chord memory). Each file carries its chord root as its root key.', ''].join('\n'))});
+    download(OT.zip(files), `Orbit_stabs_${slugName(snd.name)}_${keyTag()}.zip`, 'application/zip');
+    toast(`${list.length} chord stabs in one ZIP`);
+    return files;
+  }
+  async function multisampleZip(report) {
+    const {bits, sr} = smpFormat(), [lo, hi] = $('msRange').value.split('-').map(Number), step = +$('msStep').value, st = smpState(), snd = OB.SOUNDS_BY_ID[st.sound];
+    const layers = $('msLayers').checked ? [[70, 'soft'], [127, 'hard']] : [[+$('smpVel').value, '']];
+    const notes = []; for (let n = lo; n <= hi; n += step) notes.push(n);
+    const files = []; let k = 0;
+    for (const n of notes) for (const [v, tag] of layers) {
+      report(`Note ${++k} of ${notes.length * layers.length}…`);
+      const b = await OA.renderSample(st, {notes: [n], hold: +$('smpHold').value, vel: v, fx: $('smpFx').value === 'fx', sampleRate: sr});
+      files.push({name: `${slugName(snd.name)}_${String(n).padStart(3, '0')}_${noteFile(n)}${tag ? '_' + tag : ''}.wav`, bytes: OA.wav(b, {bits, root: n})});
+    }
+    const text = [`ORBIT MULTISAMPLE · ${snd.name}`, '', `${notes.length} notes from ${OT.asciiName(OT.noteName(lo))} to ${OT.asciiName(OT.noteName(hi))}, every ${step} semitone${step > 1 ? 's' : ''}${layers.length > 1 ? ', two velocity layers (soft = 70, hard = 127)' : ''}.`,
+      'File names: patch_MIDInote_Note(_layer).wav, C3 = MIDI 60 as in Live. Each file carries its root key.', "In Live's Sampler: drop the files into the Zone editor, then set each zone's root key and key range from its name.", '', 'The patch in Serum 2:', ...snd.serum.map(x => '- ' + x), ''];
+    files.push({name: 'README.txt', bytes: new TextEncoder().encode(text.join('\n'))});
+    download(OT.zip(files), `Orbit_multisample_${slugName(snd.name)}.zip`, 'application/zip');
+    toast(`${files.length - 1} samples in one ZIP`);
+    return files;
+  }
+  async function patchPack(report) {
+    const {bits, sr} = smpFormat(), files = [];
+    for (const [i, snd] of OB.SOUNDS.entries()) {
+      report(`Patch ${i + 1} of ${OB.SOUNDS.length}…`);
+      const st = OE.normalize(Object.assign({}, OE.DEFAULT, snd.fx || {}, {sound: snd.id, bpm: S.st.bpm, key: S.st.key, scale: S.st.scale}));
+      const b = await OA.renderSample(st, {notes: [60], hold: 0.5, vel: 110, sampleRate: sr});
+      files.push({name: `${String(i + 1).padStart(2, '0')}_${slugName(snd.name)}_C3.wav`, bytes: OA.wav(b, {bits, root: 60})});
+    }
+    const text = ['ORBIT PATCH PACK', '', 'Every patch as a one-shot at C3 (MIDI 60), half a second held, at its own settings, dry.', ''];
+    OB.SOUNDS.forEach((x, i) => text.push(`${i + 1}. ${x.name} (${x.family}): ${x.desc}`, 'Serum 2:', ...x.serum.map(l => '  - ' + l), 'Ableton:', ...x.live.map(l => '  - ' + l), ''));
+    files.push({name: 'RECIPES.txt', bytes: new TextEncoder().encode(text.join('\n'))});
+    download(OT.zip(files), `Orbit_patch_pack_${OB.SOUNDS.length}.zip`, 'application/zip');
+    toast(`${OB.SOUNDS.length} patches in one ZIP`);
+    return files;
+  }
+  async function loopWav(full) {
+    const {bits, sr} = smpFormat();
+    const buf = await OA.render(S.st, OE.render(S.st), {loops: 1, seamless: true, sampleRate: sr, parts: full ? null : {arp: true, bass: false, drums: false, chords: false}});
+    download(OA.wav(buf, {bits}), `${OE.fileStem(S.st)}_${S.st.bars}bars_${full ? 'mix' : 'arp'}_loop.wav`, 'audio/wav');
+    toast(`Seamless ${S.st.bars}-bar loop: exactly ${(buf.length / buf.sampleRate).toFixed(3)} s`);
+    return buf;
+  }
+  async function stemsZip(report) {
+    const {bits, sr} = smpFormat(), R = OE.render(S.st), files = [];
+    for (const part of ['arp', 'bass', 'drums', 'chords']) {
+      report(`Stem: ${part === 'chords' ? 'pad' : part}…`);
+      const buf = await OA.render(S.st, R, {loops: 1, seamless: true, sampleRate: sr, parts: {arp: part === 'arp', bass: part === 'bass', drums: part === 'drums', chords: part === 'chords'}});
+      files.push({name: `${OE.fileStem(S.st)}_${part === 'chords' ? 'pad' : part}.wav`, bytes: OA.wav(buf, {bits})});
+    }
+    download(OT.zip(files), `${OE.fileStem(S.st)}_${S.st.bars}bars_stems.zip`, 'application/zip');
+    toast('Four seamless stems in one ZIP');
+    return files;
+  }
+
   function scope() {
     const cv = $('scope'); if (!cv || !cv.offsetParent) return;
     const {dpr, w, h} = sizeCanvas(cv), c = cv.getContext('2d');
@@ -3819,6 +4373,7 @@ const OA = (() => {
     const sug = OE.suggestions(S.st);
     const bad = fit.axes.filter(a => !a.ok);
     $('fixes').innerHTML = !bad.length ? `<p class="ok-msg">Every measurement sits inside ${esc(g.name)}'s range.</p>` : sug.length ? sug.map((x, i) => `<div class="fix"><span>${esc(x.text)}<small>${OE.AXES.find(a => a.id === x.axis)?.label || x.axis} · fit ${x.score}</small></span><button class="btn sm" data-fix="${i}" type="button">Apply</button></div>`).join('') : `<p class="note">Out of range on ${bad.map(a => OE.AXES.find(x => x.id === a.id).label.toLowerCase()).join(', ')}, and no single small edit fixes it. Try the generator for this genre.</p>`;
+    if (S.st.echo) $('fixes').insertAdjacentHTML('beforeend', '<p class="note" style="margin-top:8px">The echo cascade is not counted: the fingerprint measures the notes you wrote.</p>');
     $('fixes').querySelectorAll('[data-fix]').forEach(b => b.addEventListener('click', () => { const x = sug[+b.dataset.fix]; commit(x.patch); toast(x.text); }));
     // cycle
     $('cycleText').innerHTML = esc(S.M.cycleText).replace(/(\d+ bars?)/g, '<b>$1</b>');
@@ -3873,10 +4428,11 @@ const OA = (() => {
     const keep = {};
     if ($('keepHarm').checked) Object.assign(keep, {bpm: gid === S.st.genre ? S.st.bpm : undefined, key: S.st.key, scale: S.st.scale, prog: S.st.imported ? undefined : (gid === S.st.genre ? S.st.prog : undefined), imported: S.st.imported || undefined, bars: S.st.bars});
     if ($('keepSound').checked) keep.sound = S.st.sound;
+    if ($('wild').checked) keep.wild = true;
     for (const k of Object.keys(keep)) if (keep[k] === undefined) delete keep[k];
     const seed = 1 + Math.floor(Math.random() * 1e5);
     const t0 = performance.now();
-    S.cands = kind === 'vary' ? OE.vary(S.st, 8, seed).map(v => Object.assign(v, {typical: null})) : OE.find(gid, 8, seed, keep);
+    S.cands = kind === 'vary' ? OE.vary(S.st, 8, seed, {wild: $('wild').checked}).map(v => Object.assign(v, {typical: null})) : OE.find(gid, 8, seed, keep);
     S.candKind = kind;
     for (const c of S.cands) { c.st.ctx = S.st.ctx; c.st.mix = S.st.mix; }
     viewCands();
@@ -3996,6 +4552,8 @@ const OA = (() => {
       <table class="kv">${la.settings.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('')}</table>
       ${la.reasons.length ? `<p class="note" style="margin-top:10px"><b>Why not exact:</b> ${la.reasons.map(esc).join(' ')}</p>` : ''}
       ${la.notes.length ? `<p class="note">${la.notes.map(esc).join(' ')}</p>` : ''}
+      ${st.echo ? `<p class="note">The echo cascade is written into the MIDI as real notes. To keep it live instead, play the plain arp into a MIDI echo device (Live Suite's Note Echo) at the same time and pitch.</p>` : ''}
+      ${st.order === 'turing' ? '<p class="note">A Turing loop is different on every pass: the MIDI export is one take of it. Export a few and keep the best.</p>' : ''}
       <p class="note">MIDI effect chain for the same idea played live: <b>Arpeggiator → Scale</b> (base ${esc(OT.pcName(st.key, st.key, st.scale))}, ${esc(OT.SCALES[st.scale].name)}) <b>→ Velocity</b> (Random 6, for life) <b>→ Note Length</b> (gate ${Math.round(st.gate * 100)}%).</p>`;
     const e = OE.EVOS[st.evo], lanes = [['cut', 74, 'Cutoff'], ['res', 71, 'Resonance'], ['dec', 75, 'Decay'], ['send', 91, 'Reverb']].filter(([k]) => e[k]);
     $('serumCard').innerHTML = `<p class="tag">Serum 2 · ${esc(s.family)}</p><h3>${esc(s.name)}</h3><p class="note">${esc(s.desc)}</p><ol>${s.serum.map(x => `<li>${esc(x)}</li>`).join('')}</ol>
@@ -4088,6 +4646,11 @@ const OA = (() => {
     opt($('groove'), Object.entries(OB.GROOVES).map(([k, v]) => [k, v.name]));
     opt($('bassPat'), Object.entries(OB.BASS).map(([k, v]) => [k, v.name]));
     opt($('findGenre'), Object.entries(OB.GENRES).map(([k, v]) => [k, v.name]));
+    opt($('feel'), Object.entries(OE.FEELS).map(([k, v]) => [k, v.name]));
+    opt($('echoShift'), Object.entries(OE.ECHO_SHIFTS));
+    opt($('tlen'), [2, 3, 4, 5, 6, 7, 8, 10, 12, 16].map(n => [n, n + ' notes']));
+    $('smpSound').innerHTML = '<option value="">the current patch</option>' + OB.SOUNDS.map(x => `<option value="${x.id}">${esc(x.name)}</option>`).join('');
+    opt($('smpNote'), Array.from({length: 73}, (_, i) => 24 + i).map(n => [n, OT.noteName(n) + (n === 60 ? " (Live's root)" : '')]), 60);
     const fams = [...new Set(OB.SOUNDS.map(s => s.family))];
     $('sound').innerHTML = fams.map(f => `<optgroup label="${esc(f)}">${OB.SOUNDS.filter(s => s.family === f).map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('')}</optgroup>`).join('');
     $('stats').innerHTML = [[OB.PATTERNS.length, 'patterns', `${OB.PATTERNS.filter(p => p.genre === 'tech-house').length} tech house`], [Object.keys(OB.GENRES).length, 'genres', 'each measured'], [OB.SOUNDS.length, 'sounds', 'Serum 2 + Live recipes'], [Object.keys(OE.EVOS).length - 1, 'evolutions', 'exported as CC']].map(([n, l, s]) => `<div><dt>${l}</dt><dd>${n}<small>${esc(s)}</small></dd></div>`).join('');
@@ -4126,6 +4689,16 @@ const OA = (() => {
     $('wavArp').addEventListener('click', () => exportWav(true));
     $('wavMix').addEventListener('click', () => exportWav(false));
     $('shareBtn').addEventListener('click', share);
+    $('smpPlay').addEventListener('click', () => busy($('smpPlay'), async () => { const smp = await renderOne(); playBuffer(smp.buf); }));
+    $('smpDown').addEventListener('click', () => busy($('smpDown'), async () => { const smp = await renderOne(); download(OA.wav(smp.buf, {bits: smpFormat().bits, root: smp.note}), smp.name + '.wav', 'audio/wav'); toast('One-shot downloaded: drag it onto a MIDI track for Simpler'); }));
+    $('msGo').addEventListener('click', () => busy($('msGo'), multisampleZip));
+    $('packGo').addEventListener('click', () => busy($('packGo'), patchPack));
+    $('stabGo').addEventListener('click', () => busy($('stabGo'), stabsZip));
+    $('stabSet').addEventListener('change', viewSamples);
+    $('stabList').addEventListener('click', async e => { const b = e.target.closest('[data-stab]'); if (!b) return; const c = stabChords()[+b.dataset.stab]; playBuffer(await stabBuffer(c)); });
+    $('loopArp').addEventListener('click', () => busy($('loopArp'), () => loopWav(false)));
+    $('loopMix').addEventListener('click', () => busy($('loopMix'), () => loopWav(true)));
+    $('stemsGo').addEventListener('click', () => busy($('stemsGo'), stemsZip));
     $('expBars').addEventListener('change', () => { S.expTouched = true; });
     $('expName').addEventListener('change', () => commit({name: $('expName').value || 'Untitled arp'}));
     $('findBtn').addEventListener('click', () => runFind('new'));
@@ -4168,7 +4741,7 @@ const OA = (() => {
     let rz = 0;
     addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { drawRollLayer(); drawOrbit(player && player.playing ? player.beat() : null); }); });
     requestAnimationFrame(frame);
-    window.ORBIT_QA = {S, refresh, commit, load, runFind, audition, togglePlay, exportMidi, midiBytes, crateZip, applyImport, importFile, exportWav, toggleSave, get player() { return player; }, get engine() { return engine; }};
+    window.ORBIT_QA = {S, refresh, commit, load, runFind, audition, togglePlay, exportMidi, midiBytes, crateZip, applyImport, importFile, exportWav, toggleSave, midiIn, liveApply, autopilotStep, renderOne, stabsZip, multisampleZip, patchPack, loopWav, stemsZip, get orbitNodes() { return O.nodes; }, get player() { return player; }, get engine() { return engine; }};
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
