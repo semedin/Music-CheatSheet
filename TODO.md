@@ -8,7 +8,7 @@ page can't show its claim with a meter, a counter or an A/B, it isn't ready yet.
 
 ## Where the gaps are
 
-Today the folder covers **writing parts** (V2, V3, Trance), **drums and low end** (The Kit, Rumble,
+Today the folder covers **writing parts** (V2, V3, Trance, Orbit for arps), **drums and low end** (The Kit, Rumble,
 Low End, Groove), **sound design** (Serum, Patch, The Cut) and **arranging** (Arc, Build Order,
 The Move). It has almost nothing on:
 
@@ -132,7 +132,7 @@ copies), arrangement maps and a MIDI pack.
 | `garage.html` | **2-Step** | The skipped-kick shuffle lab, organ and bassline wobble bass, vocal-chop rhythm generator, and speed garage and UK bassline variants. |
 | `breaks.html` | **Break Surgery** | Synthesized breakbeats you chop, re-sequence and ghost at 160–175 BPM. The jungle edit grid, Reese at speed, and a "time-stretch vs repitch" A/B. |
 | `amapiano.html` | **Log Drum** | Log drum synthesis (the pitch-bent, filtered decay), shaker grids, 3:2 and 6:8-over-4/4 polyrhythm lab, and the "slow build that never drops". |
-| `melodic.html` | **Afterglow** | Melodic techno and progressive house: arps that evolve for 64 bars (gate, octave and note-count drift), long-form energy curves, and the 7-minute build. |
+| `melodic.html` | **Afterglow** | Melodic techno and progressive house: long-form energy curves and the 7-minute build. (The 64-bar evolving arp itself now lives in [Orbit](orbit.html): gate, octave, note-count and cutoff lanes, exported as CC.) |
 
 ---
 

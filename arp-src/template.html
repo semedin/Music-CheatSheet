@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit — the arpeggio studio</title>
+<meta name="description" content="Write club-grade arpeggios, riffs and sequences for twelve genres, from deep tech house to trance: a key and progression or your own chord MIDI in, a measured genre fingerprint, a generator, Serum 2 and Ableton recipes, and MIDI out.">
+<meta name="theme-color" content="#07080c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/*STYLE*/
+</style>
+</head>
+<body>
+<!-- site-nav:start --><div id="site-nav" role="navigation" aria-label="All Fieldwork pages"><style>#site-nav{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:2px;width:100%;padding:6px 12px;overflow-x:auto;background:#171e22;color:#c9cdc2;font:500 13px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;position:relative;z-index:1000;scrollbar-width:thin}#site-nav a{all:unset;display:inline-block;padding:5px 9px;border-radius:4px;color:#c9cdc2;white-space:nowrap;cursor:pointer}#site-nav a:hover{color:#fff;background:#283237}#site-nav a:focus-visible{outline:2px solid #ffc96e;outline-offset:1px}#site-nav a[aria-current=page]{color:#171e22;background:#ffc96e}#site-nav .sn-brand{font-weight:800;letter-spacing:.08em;color:#fff;margin-right:6px}@media print{#site-nav{display:none}}</style><a href="index.html" data-files="index.html" class="sn-brand">FIELDWORK</a><a href="fieldwork-v3.html" data-files="fieldwork-v3.html">Motif Studio</a><a href="orbit.html" data-files="orbit.html">Arps</a><a href="studio-v2.html" data-files="studio-v2.html melody-v2.html chords-v2.html bass-v2.html">V2 Studio</a><a href="trance.html" data-files="trance.html">Trance</a><a href="xray.html" data-files="xray.html">X-Ray</a><a href="blueprint.html" data-files="blueprint.html">Blueprint</a><a href="drum-library.html" data-files="drum-library.html">Drums</a><a href="rumble.html" data-files="rumble.html">Rumble</a><a href="serum-v2.html" data-files="serum-v2.html serum.html patch-lab.html sampling.html">Sound design</a><a href="field-guides-v1.html" data-files="field-guides-v1.html groove-cheatsheet.html groove-vol2.html low-end.html melody.html chords.html between.html inkey.html keyboard.html arrangement.html buildorder.html the-move.html disco-house-cheatsheet.html">Field guides</a><script data-site-nav>(()=>{const f=decodeURIComponent(location.pathname.split('/').pop()||'index.html');for(const a of document.querySelectorAll('#site-nav a'))if(a.dataset.files.split(' ').includes(f)){a.setAttribute('aria-current','page');break}})()</script></div><!-- site-nav:end -->
+<header class="hero">
+  <div class="orbits" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="eyebrow">Fieldwork · the arpeggio studio</p>
+      <h1 class="title">ORBIT</h1>
+      <p class="lede">Arpeggios, riffs and sequences that sound like the records at the top of the chart: <strong>a note cycle turning against a step pattern</strong>, voiced through your chords, played on a real sound, moving over 64 bars. Pick a key and a progression or <strong>drop in your own chord MIDI</strong>, find a combo that hits, and <strong>drag the MIDI into Ableton</strong>.</p>
+      <div class="cta">
+        <button class="btn hot big" id="heroPlay" type="button"><span class="ico">▶</span> Play</button>
+        <button class="btn big" id="heroFind" type="button">✦ Find me one</button>
+        <a class="btn big ghost" href="#rules">The 12 rules</a>
+      </div>
+    </div>
+    <dl class="stats" id="stats" aria-label="What is inside"></dl>
+  </div>
+</header>
+
+<div class="transport" id="transport">
+  <div class="tin">
+    <button class="tplay" id="play" type="button" aria-keyshortcuts="Space" title="Play / stop (Space)"><span class="ico">▶</span><span class="lbl">Play</span></button>
+    <label class="tf"><span>BPM</span><input id="bpm" type="number" min="60" max="200" step="1" inputmode="numeric"></label>
+    <label class="tf"><span>Key</span><select id="key"></select></label>
+    <label class="tf"><span>Scale</span><select id="scale"></select></label>
+    <label class="tf"><span>Bars</span><select id="bars"><option>1</option><option>2</option><option>4</option><option>8</option><option>16</option><option>32</option><option>64</option></select></label>
+    <div class="ctxs" role="group" aria-label="Parts under the arp">
+      <button class="tog" data-ctx="drums" type="button" title="Drums under the arp">Drums</button>
+      <button class="tog" data-ctx="bass" type="button" title="Bassline under the arp">Bass</button>
+      <button class="tog" data-ctx="chords" type="button" title="A soft chord pad under the arp">Pad</button>
+    </div>
+    <div class="tpos"><b id="tBar">1.1</b><span id="tChord" class="chip"></span></div>
+    <canvas id="scope" width="160" height="34" aria-hidden="true"></canvas>
+    <span class="grow"></span>
+    <div class="tname"><span class="gdot"></span><span id="tName">—</span><span class="fitchip" id="tFit" title="Genre fit"></span></div>
+    <div class="tacts">
+      <button class="ib" id="undo" type="button" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
+      <button class="ib" id="redo" type="button" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷</button>
+      <button class="ib" id="abBtn" type="button" title="A/B: store this as A, then switch between A and your edits (A)">A/B</button>
+      <button class="ib star" id="saveBtn" type="button" title="Save to the crate (F)" aria-label="Save to the crate">★</button>
+      <button class="btn hot sm" id="midiQuick" type="button" title="Download the arp as MIDI (E)">MIDI ↓</button>
+      <span class="drag" id="dragChip" draggable="true" title="Drag this into Ableton (Chrome / Edge)">⠿ drag</span>
+    </div>
+  </div>
+  <div class="audition" id="auditionBar" hidden><span id="auditionText"></span><button class="btn sm" id="auditionKeep" type="button">Keep this</button><button class="btn sm ghost" id="auditionBack" type="button">Back to my arp</button></div>
+</div>
+
+<main>
+<section class="studio wrap-wide" id="studio" aria-label="Studio">
+  <aside class="bank panel" id="bank" aria-label="Pattern bank">
+    <div class="bank-head">
+      <h2>Bank</h2>
+      <span class="count" id="bankCount"></span>
+    </div>
+    <div class="genres" id="genreTabs" role="tablist" aria-label="Genres"></div>
+    <input class="search" id="search" type="search" placeholder="Search: organ, polymeter, 9th, acid…" aria-label="Search the bank">
+    <div class="plist" id="plist"></div>
+  </aside>
+
+  <div class="stage">
+    <div class="stage-head">
+      <div>
+        <p class="kicker" id="stKicker"></p>
+        <h2 id="stName">—</h2>
+        <p class="why" id="stWhy"></p>
+      </div>
+      <div class="stage-chips" id="stChips"></div>
+    </div>
+    <div class="viz">
+      <div class="orbitbox"><canvas id="orbit" aria-label="The orbit: the step pattern on the outer ring, the note cycle in the middle, the notes of the pool inside"></canvas>
+        <div class="orbit-legend"><span><i class="lg-step"></i>steps</span><span><i class="lg-cycle"></i>note cycle</span><span><i class="lg-pool"></i>pool</span></div></div>
+      <div class="rollbox"><canvas id="roll" aria-label="Piano roll of the phrase"></canvas>
+        <div class="cyclebar" id="cycleBar"></div></div>
+    </div>
+    <div class="chordlane" id="chordLane" aria-label="Chords"></div>
+    <div class="steps panel" id="stepsPanel">
+      <div class="steps-head">
+        <h3>Steps <span class="num" id="stepLen"></span></h3>
+        <div class="tools" id="tools" role="toolbar" aria-label="Step tools"></div>
+      </div>
+      <div class="grid" id="grid" aria-label="Step pattern"></div>
+      <div class="steps-foot">
+        <div class="pt">
+          <button class="ib" data-pt="len-" type="button" title="One step shorter">−</button>
+          <button class="ib" data-pt="len+" type="button" title="One step longer">+</button>
+          <button class="ib" data-pt="rotl" type="button" title="Rotate one step earlier">⟲</button>
+          <button class="ib" data-pt="rotr" type="button" title="Rotate one step later">⟳</button>
+          <button class="ib" data-pt="rev" type="button" title="Reverse">⇆</button>
+          <button class="ib" data-pt="inv" type="button" title="Invert notes and rests">◐</button>
+          <button class="ib" data-pt="dbl" type="button" title="Double the length">×2</button>
+          <button class="ib" data-pt="clr" type="button" title="Clear">∅</button>
+          <button class="ib" data-pt="rnd" type="button" title="New rhythm from the genre's grammar">⚄</button>
+        </div>
+        <div class="euc"><span>Euclid</span><input id="eucK" type="number" min="1" max="64" value="5" aria-label="Hits"><span>in</span><input id="eucN" type="number" min="1" max="64" value="16" aria-label="Steps"><span>rot</span><input id="eucR" type="number" min="0" max="63" value="2" aria-label="Rotation"><button class="btn sm" id="eucGo" type="button">Apply</button></div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="controls" id="controls" aria-label="Controls">
+    <details class="grp" open id="gHarmony"><summary>Harmony</summary>
+      <label class="row">Progression<input id="prog" type="text" spellcheck="false" autocomplete="off" placeholder="i VI III VII  ·  Am7 Fmaj7 C G"></label>
+      <p class="err" id="progErr" hidden></p>
+      <div class="row2"><label>Presets<select id="progPreset"></select></label><label>Bars per chord<select id="per"><option value="0.5">½</option><option value="1">1</option><option value="2">2</option><option value="4">4</option></select></label></div>
+      <div class="row2"><label>Voicing<select id="voicing"><option value="led">Voice-led</option><option value="root">Root position</option></select></label><label class="chk"><input type="checkbox" id="follow"> Follow chords</label></div>
+      <div class="import">
+        <button class="btn sm" id="importBtn" type="button">Import chord MIDI…</button>
+        <input type="file" id="midiFile" accept=".mid,.midi,audio/midi" hidden>
+        <span class="hint">or drop a .mid anywhere</span>
+      </div>
+      <div class="imported" id="importedBox" hidden>
+        <p><b id="impName"></b> <span id="impInfo"></span></p>
+        <label class="row" id="impTrackRow" hidden>Track<select id="impTrack"></select></label>
+        <div class="row2"><button class="btn sm" id="impToText" type="button">Edit as text</button><button class="btn sm ghost" id="impClear" type="button">Remove import</button></div>
+      </div>
+    </details>
+    <details class="grp" open id="gNotes"><summary>Notes</summary>
+      <div class="row2"><label>Pool<select id="pool"></select></label><label>Use<select id="count"><option value="0">all notes</option><option value="1">1 note</option><option value="2">2 notes</option><option value="3">3 notes</option><option value="4">4 notes</option><option value="5">5 notes</option><option value="6">6 notes</option></select></label></div>
+      <div class="row2"><label>Order<select id="order"></select></label><label>Octaves<select id="octaves"><option>1</option><option>2</option><option>3</option><option>4</option></select></label></div>
+      <label class="row" id="seqRow">Written sequence <span class="hint">pool indices, 0 = lowest</span><input id="seq" type="text" spellcheck="false" autocomplete="off"></label>
+      <label class="sl">Register <output id="regOut"></output><input id="reg" type="range" min="40" max="88" step="1"></label>
+      <div class="row2"><label>Advance on<select id="advance"><option value="note">each note</option><option value="step">each step</option></select></label><label>Restart<select id="reset"><option value="bar">every bar</option><option value="2bar">every 2 bars</option><option value="4bar">every 4 bars</option><option value="chord">on each chord</option><option value="never">never</option></select></label></div>
+      <label class="row">Pedal note<select id="pedal"><option value="low">lowest pool note</option><option value="high">highest pool note</option></select></label>
+    </details>
+    <details class="grp" open id="gRhythm"><summary>Rhythm</summary>
+      <label class="row">Rate<select id="rate"></select></label>
+      <label class="sl">Swing <output id="swingOut"></output><input id="swing" type="range" min="50" max="72" step="1"></label>
+      <label class="sl">Gate <output id="gateOut"></output><input id="gate" type="range" min="0.05" max="1.5" step="0.01"></label>
+      <label class="sl">Accent <output id="accentOut"></output><input id="accent" type="range" min="0" max="40" step="1"></label>
+      <label class="sl">Humanise <output id="humanOut"></output><input id="human" type="range" min="0" max="1" step="0.01"></label>
+    </details>
+    <details class="grp" open id="gSound"><summary>Sound</summary>
+      <label class="row">Patch<select id="sound"></select></label>
+      <p class="sdesc" id="soundDesc"></p>
+      <label class="sl">Cutoff <output id="cutOut"></output><input id="cut" type="range" min="0" max="1" step="0.01"></label>
+      <label class="sl">Resonance <output id="resOut"></output><input id="res" type="range" min="0" max="1" step="0.01"></label>
+      <label class="sl">Decay <output id="decOut"></output><input id="dec" type="range" min="0" max="1" step="0.01"></label>
+      <label class="sl">Drive <output id="driveOut"></output><input id="drive" type="range" min="0" max="1" step="0.01"></label>
+      <label class="sl">Width <output id="widthOut"></output><input id="width" type="range" min="0" max="1" step="0.01"></label>
+    </details>
+    <details class="grp" id="gSpace"><summary>Space &amp; mix</summary>
+      <div class="row2"><label>Delay time<select id="delayTime"><option value="16">1/16</option><option value="16d">1/16 dotted</option><option value="8t">1/8 triplet</option><option value="8">1/8</option><option value="8d">1/8 dotted</option><option value="4">1/4</option><option value="4d">1/4 dotted</option></select></label><span class="num ms" id="delayMs"></span></div>
+      <label class="sl">Delay <output id="delayOut"></output><input id="delay" type="range" min="0" max="0.8" step="0.01"></label>
+      <label class="sl">Feedback <output id="fbOut"></output><input id="fb" type="range" min="0" max="0.85" step="0.01"></label>
+      <label class="sl">Reverb <output id="reverbOut"></output><input id="reverb" type="range" min="0" max="0.8" step="0.01"></label>
+      <label class="sl">Room <output id="spaceOut"></output><input id="space" type="range" min="0" max="1" step="0.01"></label>
+      <label class="sl">Sidechain <output id="duckOut"></output><input id="duck" type="range" min="0" max="1" step="0.01"></label>
+      <label class="sl">High-pass <output id="hpOut"></output><input id="hp" type="range" min="20" max="600" step="1"></label>
+      <div class="mixes">
+        <label class="sl">Arp <input data-mix="arp" type="range" min="0" max="1" step="0.01"></label>
+        <label class="sl">Drums <input data-mix="drums" type="range" min="0" max="1" step="0.01"></label>
+        <label class="sl">Bass <input data-mix="bass" type="range" min="0" max="1" step="0.01"></label>
+        <label class="sl">Pad <input data-mix="chords" type="range" min="0" max="1" step="0.01"></label>
+      </div>
+      <div class="row2"><label>Drums<select id="groove"></select></label><label>Bassline<select id="bassPat"></select></label></div>
+    </details>
+    <details class="grp" open id="gEvolve"><summary>Evolve</summary>
+      <label class="row">Evolution<select id="evo"></select></label>
+      <p class="sdesc" id="evoDesc"></p>
+      <label class="sl">Depth <output id="depthOut"></output><input id="depth" type="range" min="0" max="1" step="0.01"></label>
+      <div class="row2"><label>Fill<select id="fill"></select></label><label>every<select id="fillEvery"><option value="2">2 bars</option><option value="4">4 bars</option><option value="8">8 bars</option><option value="16">16 bars</option></select></label></div>
+      <div class="row2"><label>Change a note<select id="mutate"><option value="0">never</option><option value="2">every 2 bars</option><option value="4">every 4 bars</option><option value="8">every 8 bars</option></select></label><label>Seed<span class="seedrow"><input id="seed" type="number" min="1" max="99999"><button class="ib" id="reseed" type="button" title="New seed (shuffles, mutations, humanise)">⚄</button></span></label></div>
+    </details>
+  </aside>
+</section>
+
+<section class="part wrap" id="measure">
+  <div class="head"><h2>The fingerprint</h2><p>Seven numbers measured from the notes you just wrote, against the range this genre's arps sit in. <b>Inside the band, it belongs.</b> Outside it, the fixes below are the smallest edits that bring it back, each checked before it is offered.</p></div>
+  <div class="fp">
+    <div class="panel radarbox"><svg id="radar" viewBox="0 0 360 340" role="img" aria-label="Fingerprint radar"></svg>
+      <div class="fitbig"><b id="fitNum">—</b><span>fit with <em id="fitGenre"></em></span></div></div>
+    <div class="fpside">
+      <div class="tiles" id="tiles"></div>
+      <div class="panel fixes"><h3>Fixes</h3><div id="fixes"></div></div>
+    </div>
+  </div>
+  <div class="two">
+    <div class="panel"><h3>The cycle counter</h3><p class="note">On one held chord, with nothing evolving: how long until the pattern and the note cycle line up with the bar line again. The longer the cycle, the less the loop sounds like a loop.</p><p class="cycletext" id="cycleText"></p><div class="cyclegrid" id="cycleGrid"></div></div>
+    <div class="panel"><h3>Register and the bass</h3><p class="note">Arp notes under 165 Hz (E2 in Live) share the space the bass owns. Measured on the notes, and while it plays, on the arp's actual output after its high-pass.</p><div class="reg" id="regBox"></div></div>
+  </div>
+</section>
+
+<section class="part wrap" id="find">
+  <div class="head"><h2>Find me one</h2><p>The generator writes 140 combos from the genre's grammar (rates, pattern shapes, pools, orders, accents, sounds), measures every one against the fingerprint, and keeps the eight that fit best and are most typical, with no two rhythms the same. <b>Click one to hear it.</b> Star the ones that hit.</p></div>
+  <div class="findbar panel">
+    <label>Genre<select id="findGenre"></select></label>
+    <label class="chk"><input type="checkbox" id="keepHarm" checked> Keep my key, tempo and chords</label>
+    <label class="chk"><input type="checkbox" id="keepSound"> Keep my sound</label>
+    <span class="grow"></span>
+    <button class="btn hot" id="findBtn" type="button">✦ New ideas</button>
+    <button class="btn" id="varyBtn" type="button">⟡ Variations of this one</button>
+  </div>
+  <div class="cands" id="cands"></div>
+</section>
+
+<section class="part wrap" id="crate">
+  <div class="head"><h2>The crate</h2><p>Everything you starred, kept in this browser. Export them all at once as a ZIP of MIDI files (arp, chords and the Arpeggiator input for each), with a text file of every setting.</p></div>
+  <div class="cratebar panel">
+    <span id="crateCount"></span><span class="grow"></span>
+    <button class="btn" id="crateZip" type="button">Download all (.zip)</button>
+    <button class="btn ghost" id="sessionOut" type="button">Save session (.json)</button>
+    <button class="btn ghost" id="sessionInBtn" type="button">Open session…</button>
+    <input type="file" id="sessionIn" accept=".json,application/json" hidden>
+  </div>
+  <div class="cratelist" id="crateList"></div>
+</section>
+
+<section class="part wrap" id="ableton">
+  <div class="head"><h2>Take it to Ableton</h2><p>The arp as MIDI with its swing, accents, slides and evolution (as CC automation), the chords and the Arpeggiator input on their own tracks, and the patch recipe for Serum 2 and for Live's own instruments.</p></div>
+  <div class="two">
+    <div class="panel">
+      <h3>MIDI</h3>
+      <div class="row2"><label>Length<select id="expBars"><option value="4">4 bars</option><option value="8">8 bars</option><option value="16">16 bars</option><option value="32">32 bars</option><option value="64">64 bars</option></select></label><label>Name<input id="expName" type="text" spellcheck="false"></label></div>
+      <div class="parts">
+        <label class="chk"><input type="checkbox" data-part="arp" checked disabled> Arp</label>
+        <label class="chk"><input type="checkbox" data-part="chords"> Chords</label>
+        <label class="chk"><input type="checkbox" data-part="input"> Arpeggiator input</label>
+        <label class="chk"><input type="checkbox" data-part="bass"> Bass</label>
+        <label class="chk"><input type="checkbox" data-part="drums"> Drums</label>
+        <label class="chk"><input type="checkbox" id="expCC" checked> Evolution as CC</label>
+      </div>
+      <div class="acts"><button class="btn hot" id="midiBtn" type="button">Download MIDI</button><span class="drag big" id="dragChip2" draggable="true" title="Drag into Ableton (Chrome / Edge)">⠿ Drag into Live</span></div>
+      <p class="note" id="midiNote"></p>
+      <h3 class="mt">Audio</h3>
+      <div class="acts"><button class="btn" id="wavArp" type="button">WAV: arp alone</button><button class="btn" id="wavMix" type="button">WAV: with drums &amp; bass</button><button class="btn ghost" id="shareBtn" type="button">Copy a link to this combo</button></div>
+      <p class="note">Rendered in your browser from the same synth you hear, two loops plus the tail. Good for sampling and for checking, but the real sound is the Serum 2 patch.</p>
+    </div>
+    <div class="panel" id="arpCard"></div>
+  </div>
+  <div class="two">
+    <div class="panel recipe" id="serumCard"></div>
+    <div class="panel recipe" id="liveCard"></div>
+  </div>
+  <div class="panel" id="mixCard"></div>
+</section>
+
+<section class="part wrap" id="rules">
+  <div class="head"><h2>The 12 rules</h2><p>What the arps at the top of the charts have in common, each one an A/B you can hear in the studio, with the number that changes. <b>A</b> breaks the rule, <b>B</b> keeps it.</p></div>
+  <div class="rules" id="ruleList"></div>
+</section>
+
+<section class="part wrap" id="genres">
+  <div class="head"><h2>Twelve genres, twelve jobs</h2><p>The same arp means something different in each genre. Here is what it does, how it is measured and what to reach for.</p></div>
+  <div class="gcards" id="gcards"></div>
+</section>
+
+<section class="part wrap" id="how">
+  <div class="head"><h2>How it works, and where it can be wrong</h2></div>
+  <div class="two">
+    <div class="panel"><h3>The model</h3><p>An arp here is two cycles turning against each other. The <b>note cycle</b> is the pool (chord tones, scale, pentatonic, fifths…) put in an order. The <b>step pattern</b> says which 16ths (or 8ths, triplets, 32nds) play, which are accents, chord hits, pedal notes, ties, ratchets, slides or octave jumps. The cycle advances on each note (like Ableton's Arpeggiator) or on each step (like a hardware step sequencer). When their lengths differ, the pattern rotates against the bar: the cycle counter says how long it takes to come back.</p><p>Chords are voiced near the register and <b>voice-led</b>: each chord takes the inversion closest to the last one. Imported chords keep their own voicing, moved whole octaves to the register.</p></div>
+    <div class="panel"><h3>The measurements</h3><p><b>Syncopation</b> is the share of notes whose next stronger beat position has no note of its own. <b>Kick clash</b> is the share that start on a quarter note, where a four-on-the-floor kick sits. <b>Leap</b> is the average jump between consecutive notes (the top note of a chord hit). <b>Length</b> is the average note in 16ths. Swing is the off-16th delay as a percentage of the 8th, and only counts when notes land there. Measurements use the unswung grid and a still, four-bar loop.</p><p>The genre ranges were set from each genre's conventions and checked against every pattern in the bank: all of them sit inside their own genre's band, and the tests fail if one drifts out.</p></div>
+  </div>
+  <div class="panel"><h3>Limits</h3><ul class="limits">
+    <li>The preview synth is a sketch of each patch, not the patch. Build the Serum 2 recipe for the real sound; that is where most of a riff's character comes from.</li>
+    <li>Fit says a combo belongs to the genre, not that it is good. Two combos with a fit of 100 can be a hit and a bore. Your ears decide; the fingerprint keeps you in the right room.</li>
+    <li>Chord import reads pitch sets beat by beat. Fast passing notes and melodies on the same track are merged into the chords; pick the chord track when a file has several.</li>
+    <li>Evolution lanes are exported as CC74 (cutoff), CC71 (resonance), CC75 (decay) and CC91 (reverb). Map them in Serum 2 with MIDI Learn on the macros, or to any device in Live.</li>
+    <li>Ableton's Arpeggiator plays every step at one velocity with no rests; most patterns here need the MIDI export to be exact. The Arpeggiator card says which ones can be rebuilt with it.</li>
+    <li>Bank patterns are original studies of each genre's conventions, written for this page. They are not transcriptions of anyone's record, and the artist names describe a direction, not a source.</li>
+  </ul></div>
+</section>
+</main>
+
+<footer class="wrap foot">Orbit is part of Fieldwork: one self-contained file, every sound synthesized in the page, nothing uploaded. Keys: <kbd>Space</kbd> play · <kbd>←</kbd> <kbd>→</kbd> previous / next pattern · <kbd>G</kbd> new ideas · <kbd>F</kbd> save · <kbd>E</kbd> MIDI · <kbd>A</kbd> A/B · <kbd>Ctrl</kbd>+<kbd>Z</kbd> undo.</footer>
+<button class="fab" id="fab" type="button" aria-label="Play or stop">▶</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/*THEORY*/
+/*SOUNDS*/
+/*BANK*/
+/*ENGINE*/
+/*AUDIO*/
+/*APP*/
+</script>
+</body>
+</html>

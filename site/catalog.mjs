@@ -12,7 +12,10 @@ export const SECTIONS = [
     title: 'Write ideas',
     blurb: 'Studios that generate, edit and export MIDI. Start here when you want notes to drag into Ableton.',
     pages: [
-      {file: 'fieldwork-v3.html', title: 'Motif Studio', edition: 'V3', badge: 'Latest',
+      {file: 'orbit.html', title: 'Orbit — the arpeggio studio', edition: 'New', badge: 'Latest',
+        text: 'Arps, riffs and sequences for 12 genres, 41 of them deep tech house: a note cycle against a step pattern, your key and progression or your own chord MIDI, a measured genre fingerprint, a generator, 19 sounds with Serum 2 and Ableton recipes, MIDI out.',
+        doc: 'ORBIT.md', src: 'arp-src'},
+      {file: 'fieldwork-v3.html', title: 'Motif Studio', edition: 'V3',
         text: 'Write a two-bar motif, then grow it into an 8- or 16-bar phrase. 69 styles, 120 artist perspectives, 59 preview voices and 19 drum kits.',
         doc: 'VERSION-3.md', src: 'v3-src'},
       {file: 'trance.html', title: 'Trance — beyond the ordinary', edition: 'New',
@@ -116,6 +119,7 @@ export const SECTIONS = [
 export const DOCS = [
   {file: 'README.md', title: 'README', text: 'What is in this folder and how it fits together.'},
   {file: 'TODO.md', title: 'TODO: pages to build', text: 'Ranked wish list of new pages and folder-wide features.'},
+  {file: 'ORBIT.md', title: 'Orbit notes', text: 'The arpeggio studio: the model, the fingerprint, the generator and how it was validated.'},
   {file: 'VERSION-3.md', title: 'Fieldwork V3 notes', text: 'Motif Studio workflow, design decisions and limits.'},
   {file: 'VERSION-2.md', title: 'Fieldwork V2 notes', text: 'V2 workflow, catalog structure and Ableton setup.'},
   {file: 'ARTIST-STUDIES.md', title: 'Artist studies', text: 'The V2 artist roster, sound bank and MIDI pack.'},
@@ -141,6 +145,7 @@ export const DOWNLOADS = [
 export const NAV = [
   {file: 'index.html', label: 'Home'},
   {file: 'fieldwork-v3.html', label: 'Motif Studio'},
+  {file: 'orbit.html', label: 'Arps'},
   {file: 'studio-v2.html', label: 'V2 Studio', match: ['melody-v2.html', 'chords-v2.html', 'bass-v2.html']},
   {file: 'trance.html', label: 'Trance'},
   {file: 'xray.html', label: 'X-Ray'},
@@ -164,4 +169,5 @@ export const TEMPLATES = [
   'drum-library-src/template.html',
   'trance-src/template.html',
   'blueprint-src/template.html',
+  'arp-src/template.html',
 ];
