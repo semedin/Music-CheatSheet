@@ -99,6 +99,10 @@ The mix bus has a high-pass, drive, a width chorus, a sidechain duck from the ki
 filtered feedback loop, a reverb with a generated impulse, a bus compressor and a limiter. Drums, a
 genre bassline and an optional chord pad play under the arp, with their own grooves and patterns.
 
+## Into Pocket
+
+**Open in Pocket** carries this combo to `pocket.html` in a local URL fragment: the rendered riff, original patch/effects, timing, evolution and source chord path are retained. Pocket adds a foundation beneath it. No upload or shared browser storage is required. A plain MIDI export does not contain the synth patch; use this handoff or paste an Orbit share link into Pocket for the complete source.
+
 ## Into Ableton
 
 - **MIDI**: 4–64 bars at the session tempo, with swing, accents, ratchets and slides (a slid note overlaps

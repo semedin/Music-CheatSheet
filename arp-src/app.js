@@ -51,6 +51,7 @@
   function refresh(light = false) {
     const st = S.st;
     S.R = OE.render(st);
+    if ($('pocketSend')) $('pocketSend').href = 'pocket.html#orbit=' + OE.pack(st);
     const mR = OE.render(st, {bars: 4, evo: false, fills: false, mutate: false});
     const m = OE.metrics(mR), f = OE.fit(m, genre().target), c = OE.cycle(st);
     S.M = {m, fit: f, cycle: c, cycleText: OE.cycleText(c, st, S.R.harmony.beats), mR};
@@ -922,6 +923,7 @@
       if (!S.A) { S.A = snapshot(); S.side = 'B'; toast('Stored as A. Edit freely, then press A/B to compare (Shift-click to clear).'); viewTransport(); return; }
       const cur = snapshot(); S.st = OE.normalize(JSON.parse(S.A)); S.A = cur; S.side = S.side === 'A' ? 'B' : 'A'; refresh(); toast('Now playing ' + S.side);
     });
+    $('pocketSend').addEventListener('click', () => { $('pocketSend').href = 'pocket.html#orbit=' + OE.pack(S.st); });
     $('midiQuick').addEventListener('click', () => exportMidi(true));
     $('midiBtn').addEventListener('click', () => exportMidi(false));
     $('dragChip').addEventListener('dragstart', e => dragStart(e, true));

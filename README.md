@@ -19,6 +19,7 @@ Use headphones or monitors: several labs work below 150 Hz, where laptop speaker
 
 | Page | What it is | Notes | Built from |
 |---|---|---|---|
+| [`pocket.html`](pocket.html) | **Pocket, a foundation for your riff.** Send a riff directly from Orbit with its patch and harmony intact. Riff-derived house foundations or root-led rave support, 16-bar development, bass-step edits, MIDI and WAV stems. | [POCKET.md](POCKET.md) | `pocket-src/` |
 | [`orbit.html`](orbit.html) | **Orbit, the arpeggio studio (latest).** Arps, riffs and sequences for 12 genres (41 deep tech house patterns, 129 in all): a note cycle turning against a step pattern, voiced through your key and progression or your own imported chord MIDI. A measured genre fingerprint with fixes, a cycle counter, a generator, 10 evolution lanes exported as CC, 19 sounds with Serum 2 and Ableton recipes, Live's Arpeggiator settings, 12 rules as A/Bs, a crate with ZIP export, MIDI and WAV out. | [ORBIT.md](ORBIT.md) | `arp-src/` |
 | [`fieldwork-v3.html`](fieldwork-v3.html) | **Motif Studio (V3, latest).** Write a two-bar motif, then grow it into an 8- or 16-bar phrase. 69 styles, 120 artist perspectives, 59 preview voices, 19 drum kits; MIDI and WAV export. | [VERSION-3.md](VERSION-3.md) | `v3-src/` |
 | [`trance.html`](trance.html) | **Trance, beyond the ordinary.** All 12 supplied melodies plus 16 studies across eight trance styles, six treatments each (168 sketches) with chords, bass and drums; 24 artist perspectives, 16 sound recipes, arrangement maps, MIDI and ZIP export. | [TRANCE.md](TRANCE.md) | `trance-src/` |
@@ -101,6 +102,7 @@ folder yet".
 | `drum-library.html` | `drum-library-src/` | `node drum-library-src/build.mjs` |
 | `trance.html` | `trance-src/` + `material/` | `node trance-src/build.mjs` (`node trance-src/pack.mjs` rebuilds the zip) |
 | `blueprint.html` | `blueprint-src/` + X-Ray's engine from `xray.html` | `node blueprint-src/build.mjs` |
+| `pocket.html` | `pocket-src/` + Orbit theory/MIDI helpers | `node pocket-src/build.mjs` |
 | `orbit.html` | `arp-src/` | `node arp-src/build.mjs` |
 | `index.html` + top bar everywhere | `site/` | `node site/build.mjs` |
 
@@ -128,8 +130,11 @@ node rumble-tests.mjs            # rumble lab
 node xray-tests.mjs              # X-Ray analysis engine against known answers
 node blueprint-src/test.mjs      # Blueprint's move detectors against a planted demo and an effect-free control
 node trance-src/test.mjs         # trance room
+node pocket-src/test.mjs         # Pocket responses, timing, import/export and session validation
 node arp-src/test.mjs            # Orbit: theory, engine, bank against its genres, generator, export
 ```
+
+`pocket-src/browser-check.mjs` checks Pocket with Playwright and saves QA artifacts under `/tmp/pocket-qa`.
 
 `v3-src/browser-check.mjs`, `drum-library-src/browser-check.mjs`,
 `sound-design-src/check.mjs`, `trance-src/check.mjs` and `arp-src/browser-check.mjs` (Playwright) drive a real browser and write reports into each `qa/` folder.

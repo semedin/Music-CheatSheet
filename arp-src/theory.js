@@ -346,7 +346,7 @@ const OT = (() => {
       pos = end;
       for (const q of on.values()) for (const n of q) if (tick / ppq > n.t) notes.push({...n, d: tick / ppq - n.t});
       notes.sort((a, b) => a.t - b.t || a.n - b.n);
-      tracks.push({name: name || 'Track ' + (tr + 1), notes, cc, drums: notes.length > 0 && notes.every(n => n.ch === 9)});
+      tracks.push({name: name || 'Track ' + (tr + 1), beats: tick / ppq, notes, cc, drums: notes.length > 0 && notes.every(n => n.ch === 9)});
     }
     return {ppq, bpm, format, tracks};
   }

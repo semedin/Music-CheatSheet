@@ -12,6 +12,9 @@ export const SECTIONS = [
     title: 'Write ideas',
     blurb: 'Studios that generate, edit and export MIDI. Start here when you want notes to drag into Ableton.',
     pages: [
+      {file: 'pocket.html', title: 'Pocket — a foundation for your riff', edition: 'New', badge: 'Latest',
+        text: 'Keep your Orbit riff’s patch and harmony. Eight foundations that follow its accents, rests and chords, with a rave mode for dense arps, 16-bar development, bass edits, MIDI and WAV stems.',
+        doc: 'POCKET.md', src: 'pocket-src'},
       {file: 'orbit.html', title: 'Orbit — the arpeggio studio', edition: 'New', badge: 'Latest',
         text: 'Arps, riffs and sequences for 12 genres, 41 of them deep tech house: a note cycle against a step pattern, your key and progression or your own chord MIDI, a measured genre fingerprint, a generator, 19 sounds with Serum 2 and Ableton recipes, MIDI out.',
         doc: 'ORBIT.md', src: 'arp-src'},
@@ -119,6 +122,7 @@ export const SECTIONS = [
 export const DOCS = [
   {file: 'README.md', title: 'README', text: 'What is in this folder and how it fits together.'},
   {file: 'TODO.md', title: 'TODO: pages to build', text: 'Ranked wish list of new pages and folder-wide features.'},
+  {file: 'POCKET.md', title: 'Pocket notes', text: 'Writing a foundation around a riff: composition, sound, exports and limits.'},
   {file: 'ORBIT.md', title: 'Orbit notes', text: 'The arpeggio studio: the model, the fingerprint, the generator and how it was validated.'},
   {file: 'VERSION-3.md', title: 'Fieldwork V3 notes', text: 'Motif Studio workflow, design decisions and limits.'},
   {file: 'VERSION-2.md', title: 'Fieldwork V2 notes', text: 'V2 workflow, catalog structure and Ableton setup.'},
@@ -146,6 +150,7 @@ export const NAV = [
   {file: 'index.html', label: 'Home'},
   {file: 'fieldwork-v3.html', label: 'Motif Studio'},
   {file: 'orbit.html', label: 'Arps'},
+  {file: 'pocket.html', label: 'Pocket'},
   {file: 'studio-v2.html', label: 'V2 Studio', match: ['melody-v2.html', 'chords-v2.html', 'bass-v2.html']},
   {file: 'trance.html', label: 'Trance'},
   {file: 'xray.html', label: 'X-Ray'},
@@ -170,4 +175,5 @@ export const TEMPLATES = [
   'trance-src/template.html',
   'blueprint-src/template.html',
   'arp-src/template.html',
+  'pocket-src/template.html',
 ];
