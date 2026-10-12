@@ -13,7 +13,7 @@ export const SECTIONS = [
     blurb: 'Studios that generate, edit and export MIDI. Start here when you want notes to drag into Ableton.',
     pages: [
       {file: 'orbit.html', title: 'Orbit — the arpeggio studio', edition: 'New', badge: 'Latest',
-        text: 'Arps, riffs and sequences for 12 genres, 41 of them deep tech house: a note cycle against a step pattern, your key and progression or your own chord MIDI, a measured genre fingerprint, a generator, 19 sounds with Serum 2 and Ableton recipes, MIDI out, and every patch as WAV samples for Simpler and Sampler.',
+        text: 'Arps, riffs and sequences for 12 genres, 49 of them deep tech house, tagged and searchable by section (intro, build, break, drop): a note cycle against a step pattern, your key and progression or your own chord MIDI, a measured genre fingerprint, a generator, 37 short and long sounds with Serum 2 and Ableton recipes, MIDI out, and every patch as WAV samples.',
         doc: 'ORBIT.md', src: 'arp-src'},
       {file: 'fieldwork-v3.html', title: 'Motif Studio', edition: 'V3',
         text: 'Write a two-bar motif, then grow it into an 8- or 16-bar phrase. 69 styles, 120 artist perspectives, 59 preview voices and 19 drum kits.',

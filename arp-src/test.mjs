@@ -148,10 +148,10 @@ check(`Bank: ${OB.PATTERNS.length} patterns, unique ids, every step string valid
   }
   for (const g of Object.values(OB.GENRES)) for (const q of g.progs) assert.equal(OT.parseProgression(q.p, OT.pcOf(g.key), g.scale).errors.length, 0, g.name + ' ' + q.p);
 });
-check('Bank vs fingerprint: every pattern sits inside its own genre on every axis', () => {
+check('Bank vs fingerprint: every pattern sits inside its own genre, for the section it is written for, on every axis', () => {
   const out = [];
   for (const p of OB.PATTERNS) {
-    const st = OE.normalize(OB.stateFor(p)), f = OE.fit(OE.metrics(four(st)), OB.GENRES[p.genre].target);
+    const st = OE.normalize(OB.stateFor(p)), f = OE.sectionFit(st, OE.metrics(four(st))).fit;
     const bad = f.axes.filter(a => !a.ok);
     if (bad.length) out.push(`${p.id}: ${bad.map(a => `${a.id}=${(+a.v).toFixed(2)} [${a.lo}, ${a.hi}]`).join(' ')}`);
   }
@@ -173,8 +173,11 @@ check('Bank vs register: no arp outside the piano, and only the acid genre lives
     if (!OB.GENRES[p.genre].lowOk) assert(m.low <= 0.2, `${p.id}: ${Math.round(m.low * 100)}% under 165 Hz`);
   }
 });
-check('Sounds: every patch has a Serum 2 and an Ableton recipe and valid synth settings', () => {
-  assert(OB.SOUNDS.length >= 18);
+check('Sounds: every patch has a Serum 2 and an Ableton recipe, a length, sections, an energy and valid synth settings', () => {
+  assert(OB.SOUNDS.length >= 36);
+  assert.equal(new Set(OB.SOUNDS.map(x => x.id)).size, OB.SOUNDS.length);
+  for (const len of ['short', 'medium', 'long']) assert(OB.SOUNDS.filter(x => x.len === len).length >= 10, len);
+  for (const x of OB.SOUNDS) { assert(['short', 'medium', 'long'].includes(x.len) && x.roles.length && x.roles.every(r => OE.ROLES[r]) && x.energy >= 0 && x.energy <= 1, x.id + ' tags'); }
   for (const s of OB.SOUNDS) {
     assert(s.serum.length >= 3 && s.live.length >= 2, s.id + ' recipes');
     assert(s.osc.length && s.filter && s.amp && s.level > 0, s.id + ' synth');
@@ -332,6 +335,53 @@ check('Wild card: the generator and variations use the new tools only when asked
   assert(OE.find('tech-house', 8, 5, {wild: true}).every(c => c.fit >= 90));
   const org = OB.stateFor(OB.BY_ID['tech-house-organ-bounce']);
   assert.equal(OE.vary(org, 8, 1).filter(v => uses(v.st)).length, 0);
+});
+
+// ---- sections ----
+check('Sections: written breaks read as breaks, risers as builds, riffs as drops, sparse openers as intros', () => {
+  const prim = id => OE.roles(OB.stateFor(OB.BY_ID[id])).primary, has = (id, r) => OE.roles(OB.stateFor(OB.BY_ID[id])).roles.includes(r);
+  for (const id of ['tech-house-pad-breakdown', 'tech-house-choir-break', 'tech-house-gospel-organ-break', 'melodic-techno-shimmer-break', 'progressive-pad-swell-break', 'trance-string-breakdown', 'deep-rhodes-broken-chord', 'deep-gospel-break']) assert.equal(prim(id), 'break', id);
+  for (const id of ['tech-house-string-rise', 'tech-house-noise-swell', 'tech-house-zap-fills', 'melodic-techno-drone-build', 'hard-techno-hoover-rise', 'tech-house-roll-in-stab']) assert.equal(prim(id), 'build', id);
+  for (const id of ['tech-house-organ-bounce', 'tech-house-acid-roller', 'tech-house-swung-stab-roll', 'trance-euphoric-gate', 'hard-techno-hoover-anthem', 'nu-disco-clav-funk', 'tech-house-rolling-16ths']) assert.equal(prim(id), 'drop', id);
+  for (const id of ['tech-house-micro-intro', 'melodic-techno-drone-intro', 'minimal-micro-plucks', 'progressive-harp-intro']) assert.equal(prim(id), 'intro', id);
+  assert(has('tech-house-gate-riser', 'build'), 'the gate riser is also a build');
+  const n = r => OB.PATTERNS.filter(p => OE.roles(OB.stateFor(p)).roles.includes(r)).length;
+  for (const r of ['drop', 'build', 'break', 'intro']) assert(n(r) >= 20, `${r}: ${n(r)}`);
+});
+check('Sections: energy orders a pad break below a drop riff below a hoover anthem; reasons are given', () => {
+  const r = id => OE.roles(OB.stateFor(OB.BY_ID[id]));
+  assert(r('tech-house-pad-breakdown').energy < r('tech-house-organ-bounce').energy && r('tech-house-organ-bounce').energy < r('hard-techno-hoover-anthem').energy);
+  assert(r('tech-house-pad-breakdown').why.break.includes('long notes'));
+  assert(r('tech-house-string-rise').why.build.some(w => /Build to the drop/.test(w)));
+});
+check('Sections: a break may hold long notes on the beat; the drop keeps the genre fingerprint', () => {
+  const t = OB.GENRES['tech-house'].target;
+  assert.deepEqual(OE.roleTarget(t, 'drop'), t);
+  const b = OE.roleTarget(t, 'break');
+  assert(!b.kick && b.length[1] >= 16 && b.density[0] <= 1);
+  const pad = OE.normalize(OB.stateFor(OB.BY_ID['tech-house-pad-breakdown'])), m = OE.metrics(four(pad));
+  assert(OE.fit(m, t).score < 100, 'against the drop it does not fit');
+  assert.equal(OE.sectionFit(pad, m).fit.score, 100, 'as a break it does');
+});
+check('Search words: "good for build", "break material", "drop material for sure", "short plucks for the intro"', () => {
+  const q = x => { const r = OE.parseQuery(x); return [[...r.roles].join(','), [...r.lens].join(','), r.words.join(' ')]; };
+  assert.deepEqual(q('good for build'), ['build', '', '']);
+  assert.deepEqual(q('break material'), ['break', '', '']);
+  assert.deepEqual(q('drop material for sure'), ['drop', '', '']);
+  assert.deepEqual(q('short plucks for the intro'), ['intro', 'short', 'plucks']);
+  assert.deepEqual(q('long pads for the breakdown'), ['break', 'long', '']);
+  assert.deepEqual(q('acid riser'), ['build', '', 'acid']);
+});
+check('Generator by section: eight drop, build, break and intro ideas per genre, each tagged for its section and fitting it', () => {
+  for (const g of ['tech-house', 'melodic-techno', 'trance', 'deep']) for (const role of ['drop', 'build', 'break', 'intro']) {
+    const c = OE.find(g, 8, 11, {role});
+    assert.equal(c.length, 8, `${g} ${role}`);
+    const on = c.filter(x => x.roles.roles.includes(role)).length;
+    assert(on >= 6, `${g} ${role}: ${on} of 8 tagged ${role}`);
+    assert(c.every(x => x.fit >= 85), `${g} ${role}: ${c.map(x => x.fit)}`);
+  }
+  const br = OE.find('tech-house', 8, 3, {role: 'break'});
+  assert(br.filter(x => OB.SOUNDS_BY_ID[x.st.sound].len !== 'short').length >= 5, 'breaks reach for longer sounds');
 });
 
 console.log(`\n${checks} checks passed`);

@@ -412,6 +412,34 @@ h3.mt{margin-top:18px}
 #autoBtn.on{background:var(--chord);color:#0A0B0F;border-color:var(--chord)}
 .findbar select{padding:4px 6px}
 
+/* sections and the sound browser */
+.roles{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.roles button,.seg button{font:600 11.5px var(--body);padding:4px 9px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--dim);cursor:pointer}
+.roles button.on,.seg button.on{color:#0A0B0F;background:var(--rc,var(--g));border-color:var(--rc,var(--g))}
+.bankbar{display:grid;grid-template-columns:1fr auto;gap:6px;margin-bottom:8px}
+.bankbar .search{margin:0}
+.bankbar select{width:auto;font-size:12px;padding:6px}
+.rtags{display:inline-flex;gap:3px;margin-left:6px;vertical-align:middle}
+.rtag{font:700 9.5px var(--mono);letter-spacing:.04em;text-transform:uppercase;padding:1px 5px;border-radius:4px;color:#0A0B0F;background:var(--rc)}
+.pitem .en{display:block;height:2px;margin-top:4px;border-radius:2px;background:linear-gradient(90deg,var(--c,var(--g)) var(--e),transparent var(--e)),var(--line)}
+.uses{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--dim)}
+.uses .rchip{font:700 12px var(--body);padding:3px 10px;border-radius:999px;color:#0A0B0F;background:var(--rc);cursor:help}
+.uses .rchip.dim{background:transparent;color:var(--rc);border:1px solid var(--rc)}
+.uses .energy{display:inline-flex;align-items:center;gap:6px;font:12px var(--mono)}
+.uses .energy i{display:inline-block;width:70px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--g) var(--e),var(--panel3) var(--e))}
+.sbrowse{border:1px solid var(--line);border-radius:8px;padding:8px;margin:-2px 0 12px;background:var(--bg2)}
+.sfilters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.seg{display:inline-flex;flex-wrap:wrap;gap:3px}
+.sbrowse .search{margin-bottom:6px;padding:5px 8px;font-size:13px}
+.slist{max-height:230px;overflow:auto;display:grid;gap:3px;scrollbar-width:thin}
+.srow{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center;border:1px solid transparent;border-radius:7px;padding:5px 6px;cursor:pointer}
+.srow:hover{background:var(--panel2);border-color:var(--line)}
+.srow.on{border-color:var(--g);background:var(--g3)}
+.srow b{font-size:13px;font-weight:650;display:block}
+.srow small{font:10.5px var(--mono);color:var(--dim2)}
+.srow .ib{min-width:28px;height:28px;font-size:12px}
+.cand .rtags{margin:6px 0 0}
+
 </style>
 </head>
 <body>
@@ -470,7 +498,8 @@ h3.mt{margin-top:18px}
       <span class="count" id="bankCount"></span>
     </div>
     <div class="genres" id="genreTabs" role="tablist" aria-label="Genres"></div>
-    <input class="search" id="search" type="search" placeholder="Search: organ, polymeter, 9th, acid…" aria-label="Search the bank">
+    <div class="roles" id="roleTabs" role="tablist" aria-label="Section"></div>
+    <div class="bankbar"><input class="search" id="search" type="search" placeholder="Search: drop material, acid, break pads…" aria-label="Search the bank"><select id="bankSort" aria-label="Sort the bank"><option value="bank">Bank order</option><option value="energy-">Energy: high to low</option><option value="energy+">Energy: low to high</option><option value="name">A to Z</option></select></div>
     <div class="plist" id="plist"></div>
   </aside>
 
@@ -480,6 +509,7 @@ h3.mt{margin-top:18px}
         <p class="kicker" id="stKicker"></p>
         <h2 id="stName">—</h2>
         <p class="why" id="stWhy"></p>
+        <p class="uses" id="stUses"></p>
       </div>
       <div class="stage-chips" id="stChips"></div>
     </div>
@@ -567,6 +597,11 @@ h3.mt{margin-top:18px}
     <details class="grp" open id="gSound"><summary>Sound</summary>
       <label class="row">Patch<select id="sound"></select></label>
       <p class="sdesc" id="soundDesc"></p>
+      <div class="sbrowse">
+        <div class="sfilters"><span class="seg" id="sLen" role="group" aria-label="Length"></span><span class="seg" id="sRole" role="group" aria-label="Section"></span></div>
+        <input class="search" id="sSearch" type="search" placeholder="Find a sound: pad, pluck, drop, long…" aria-label="Find a sound">
+        <div class="slist" id="sList"></div>
+      </div>
       <label class="sl">Cutoff <output id="cutOut"></output><input id="cut" type="range" min="0" max="1" step="0.01"></label>
       <label class="sl">Resonance <output id="resOut"></output><input id="res" type="range" min="0" max="1" step="0.01"></label>
       <label class="sl">Decay <output id="decOut"></output><input id="dec" type="range" min="0" max="1" step="0.01"></label>
@@ -619,6 +654,7 @@ h3.mt{margin-top:18px}
   <div class="head"><h2>Find me one</h2><p>The generator writes 140 combos from the genre's grammar (rates, pattern shapes, pools, orders, accents, sounds), measures every one against the fingerprint, and keeps the eight that fit best and are most typical, with no two rhythms the same. <b>Click one to hear it.</b> Star the ones that hit.</p></div>
   <div class="findbar panel">
     <label>Genre<select id="findGenre"></select></label>
+    <label>For the<select id="findRole"><option value="">any section</option><option value="drop">drop</option><option value="build">build</option><option value="break">break</option><option value="intro">intro &amp; outro</option></select></label>
     <label class="chk"><input type="checkbox" id="keepHarm" checked> Keep my key, tempo and chords</label>
     <label class="chk"><input type="checkbox" id="keepSound"> Keep my sound</label>
     <label class="chk" title="Let the generator and variations use the unusual tools: stacked 4ths, clusters, Turing loops, echo cascades, feels, strums"><input type="checkbox" id="wild"> Wild card</label>
@@ -1522,7 +1558,344 @@ const OSND = [
       'Then Saturator and Echo at 3/16 with the filter on.',
     ],
   },
+  // ---- shorter ----
+  {
+    id: 'micro-pluck', name: 'Micro pluck', family: 'Pluck', tags: ['minimal', 'tech-house', 'techno'],
+    desc: 'A 70 ms saw blip with a snapping filter: the tiniest pluck there is, for fast minimal riffs.',
+    osc: [{wave: 'saw', gain: 0.7}, {wave: 'square', gain: 0.3, oct: 1}], noise: {gain: 0.06, decay: 0.004, hp: 5000},
+    filter: {type: 'lowpass', cut: 1800, q: 2, env: 3.5, a: 0, d: 0.04, s: 0, kt: 0.6},
+    amp: {a: 0.001, d: 0.07, s: 0, r: 0.03}, drive: 0.2, level: 0.6,
+    fx: {delay: 0.22, delayTime: '16d', reverb: 0.1, space: 0.3, width: 0.3},
+    serum: [
+      'Osc A: Default (saw). Osc B: Basic Shapes on Square, +12 st, 30%.',
+      'Env 1 (amp): A 0, D 70 ms, S −inf, R 30 ms. Shorter than you think.',
+      'Filter: MG Low 24, cutoff ~1.8 kHz, res 20%. Env 2 → cutoff +55%, D 40 ms, S 0.',
+      'Noise: a click sample at 6% for the transient. FX: Delay 3/32 (1/16 dotted) 22%, small Room.',
+    ],
+    live: [
+      'Drift: Shape 1 saw, Shape 2 pulse +12 st at −10 dB. Env 1 decay 70 ms, sustain 0.',
+      'Low-pass at 1.8 kHz, Env 2 → filter 70%, decay 40 ms. Then Echo at 3/16.',
+    ],
+  },
+  {
+    id: 'wood-knock', name: 'Wood knock', family: 'Percussion', tags: ['afro', 'minimal', 'deep', 'techno'],
+    desc: 'A tuned woodblock: FM knock with a tiny pitch blip. Melodic percussion for grooves and intros.',
+    osc: [{wave: 'sine', gain: 1}], fm: {ratio: 3.4, index: 3, decay: 0.015, sustain: 0}, pitch: {amt: 3, decay: 0.01},
+    noise: {gain: 0.1, decay: 0.006, hp: 1500},
+    filter: {type: 'lowpass', cut: 6000, q: 0.6, env: 0, a: 0, d: 0.1, s: 1, kt: 0},
+    amp: {a: 0.001, d: 0.09, s: 0, r: 0.04}, drive: 0.1, level: 0.75,
+    fx: {delay: 0.14, delayTime: '8d', reverb: 0.12, space: 0.35, width: 0.25},
+    serum: [
+      'Osc A: Sine, Warp FM (from B) 35%. Osc B: Sine at +21 st (about ratio 3.4), level 0.',
+      'Env 2 → Osc A warp +40%, D 15 ms. Env 3 → pitch +3 st, D 10 ms.',
+      'Env 1 (amp): A 0, D 90 ms, S −inf. Noise: a short click at 10%.',
+    ],
+    live: [
+      'Operator: A Sine; B Sine coarse 3, fine 400, −12 dB, decay 15 ms. Pitch Env +3 st, 10 ms. A decay 90 ms.',
+      'Or Collision: Mallet + Resonator set to Beam, Decay short.',
+    ],
+  },
+  {
+    id: 'laser-zap', name: 'Laser zap', family: 'FX', tags: ['tech-house', 'techno', 'hard-techno', 'trance'],
+    desc: 'Two octaves of pitch drop in 60 ms: the zap that punctuates builds and drop fills.',
+    osc: [{wave: 'sine', gain: 0.85}, {wave: 'saw', gain: 0.2}], pitch: {amt: 24, decay: 0.06},
+    filter: {type: 'lowpass', cut: 6000, q: 0.8, env: 0, a: 0, d: 0.1, s: 1, kt: 0},
+    amp: {a: 0.001, d: 0.18, s: 0, r: 0.05}, drive: 0.3, level: 0.55,
+    fx: {delay: 0.25, delayTime: '8d', reverb: 0.2, space: 0.5, width: 0.4},
+    serum: [
+      'Osc A: Sine. Osc B: Default (saw) at 20%.',
+      'Env 2 → Osc A and B coarse pitch +24 st, A 0, D 60 ms, S 0: the zap.',
+      'Env 1 (amp): A 0, D 180 ms, S −inf. FX: Distortion (Tube 30%), Delay 1/8 dotted 25%.',
+    ],
+    live: [
+      'Operator: A Sine with Pitch Env +24 st, decay 60 ms. A decay 180 ms. Saturator after.',
+      'For a longer laser, raise the Pitch Env decay to 200 ms and add Echo at 1/8 dotted with a little feedback.',
+    ],
+  },
+  {
+    id: 'bell-tick', name: 'Bell tick', family: 'Mallet', tags: ['progressive', 'deep', 'melodic-techno', 'minimal'],
+    desc: 'A short, high, metallic FM tick: glints on top of a groove or an intro.',
+    osc: [{wave: 'sine', gain: 1}], fm: {ratio: 7.1, index: 2.5, decay: 0.02, sustain: 0},
+    filter: {type: 'lowpass', cut: 9000, q: 0.5, env: 0, a: 0, d: 0.1, s: 1, kt: 0},
+    amp: {a: 0.001, d: 0.25, s: 0, r: 0.1}, drive: 0, level: 0.5,
+    fx: {delay: 0.28, delayTime: '8d', reverb: 0.3, space: 0.6, width: 0.5},
+    serum: [
+      'Osc A: Sine, Warp FM (from B) 30%. Osc B: Sine at +34 st (ratio about 7.1), level 0.',
+      'Env 2 → Osc A warp +35%, D 20 ms. Env 1 (amp): A 0, D 250 ms, S −inf.',
+      'FX: Delay 1/8 dotted 28%, Reverb Plate 30%.',
+    ],
+    live: [
+      'Operator: A Sine; B Sine coarse 7, −14 dB, decay 20 ms into A. A decay 250 ms.',
+      'Then a Delay send at 1/8 dotted and a plate reverb: the tick should mostly live in its echoes.',
+    ],
+  },
+  {
+    id: 'clav', name: 'Funk clav', family: 'Keys', tags: ['nu-disco', 'garage', 'deep'],
+    desc: 'A narrow pulse through a bright band-pass: the clavinet chop of funk, disco and garage.',
+    osc: [{wave: 'pulse25', gain: 0.9}],
+    filter: {type: 'bandpass', cut: 1800, q: 3, env: 1.5, a: 0, d: 0.05, s: 0.3, kt: 0.6},
+    amp: {a: 0.001, d: 0.12, s: 0.1, r: 0.03}, drive: 0.15, level: 0.6,
+    fx: {delay: 0.08, delayTime: '16', reverb: 0.08, space: 0.3, width: 0.2},
+    serum: [
+      'Osc A: Basic Shapes on Square, Warp PWM 50% (a 25% pulse).',
+      'Filter: Band 12 at ~1.8 kHz, res 35%. Env 2 → cutoff +25%, D 50 ms, S 30%.',
+      'Env 1 (amp): A 0, D 120 ms, S −20 dB, R 30 ms. Velocity → Env 2 amount for funk dynamics.',
+    ],
+    live: [
+      'Analog: Osc 1 Rectangle, PW 25%. Fil 1 BP12 at 1.8 kHz, resonance 0.4, env 0.4, decay 50 ms.',
+      'Or Electric with the Clavinet-style settings: hard mallet, short damper.',
+    ],
+  },
+  {
+    id: 'string-pluck', name: 'Harp pluck', family: 'Pluck', tags: ['progressive', 'melodic-techno', 'trance', 'deep'],
+    desc: 'A bright string pluck that rings and darkens: breakdown arps and intros.',
+    osc: [{wave: 'saw', gain: 0.6, voices: 2, spread: 4}, {wave: 'triangle', gain: 0.3, oct: 1}], noise: {gain: 0.06, decay: 0.008, hp: 3000},
+    filter: {type: 'lowpass', cut: 3000, q: 0.8, env: 2, a: 0, d: 0.09, s: 0.05, kt: 0.5},
+    amp: {a: 0.001, d: 0.45, s: 0, r: 0.3}, drive: 0, level: 0.5,
+    fx: {delay: 0.24, delayTime: '8d', reverb: 0.3, space: 0.65, width: 0.5},
+    serum: [
+      'Osc A: Default (saw), unison 2, detune 0.04. Osc B: Basic Shapes on Triangle, +12 st, 30%.',
+      'Filter: MG Low 12 at ~3 kHz, key track 50%. Env 2 → cutoff +30%, D 90 ms, S 5%.',
+      'Env 1 (amp): A 0, D 450 ms, S −inf, R 300 ms. FX: Reverb Hall 2.5 s at 30%, Delay 1/8 dotted.',
+    ],
+    live: [
+      'Wavetable: Osc 1 saw, Osc 2 triangle +12 st. Filter LP 12 at 3 kHz, Env 2 decay 90 ms.',
+      'Or Collision: Mallet + Resonator (String), Decay 450 ms.',
+    ],
+  },
+  // ---- medium ----
+  {
+    id: 'mono-lead', name: 'Mono lead', family: 'Lead', tags: ['tech-house', 'nu-disco', 'acid', 'techno'],
+    desc: 'Saw and square in mono with a little glide and vibrato: the classic analogue lead.',
+    osc: [{wave: 'saw', gain: 0.6}, {wave: 'square', gain: 0.35, semi: 0.08}], mono: true, glide: 0.04, vib: {rate: 5.2, depth: 0.1},
+    filter: {type: 'lowpass', cut: 2500, q: 1.2, env: 1, a: 0, d: 0.3, s: 0.5, kt: 0.5},
+    amp: {a: 0.005, d: 0.3, s: 0.7, r: 0.15}, drive: 0.25, level: 0.4,
+    fx: {delay: 0.2, delayTime: '8d', reverb: 0.15, space: 0.45, width: 0.3},
+    serum: [
+      'Osc A: Default (saw). Osc B: Basic Shapes on Square, fine +8 cents, 35%. Voicing: Mono, Legato, Porta 40 ms.',
+      'Filter: MG Low 24 at ~2.5 kHz, res 20%. Env 2 → cutoff +20%, D 300 ms, S 50%.',
+      'Env 1 (amp): A 5 ms, D 300 ms, S −3 dB, R 150 ms. LFO 1 (5.2 Hz) → pitch ±10 cents, delayed in.',
+    ],
+    live: [
+      'Analog or Drift in Mono, Glide 40 ms. Osc 1 saw, Osc 2 square detuned +8 cents.',
+      'LP24 at 2.5 kHz, env 0.3, sustain 50%. LFO → pitch, small amount, for vibrato.',
+    ],
+  },
+  // ---- longer ----
+  {
+    id: 'warm-pad', name: 'Warm pad', family: 'Pad', tags: ['deep', 'progressive', 'melodic-techno', 'tech-house'],
+    desc: 'Five detuned saws, slow to rise, filtered warm and slowly moving. The breakdown bed.',
+    osc: [{wave: 'saw', gain: 0.45, voices: 5, spread: 18}, {wave: 'sine', gain: 0.2, oct: -1}],
+    filter: {type: 'lowpass', cut: 1100, q: 0.8, env: 0.6, a: 0.8, d: 1.5, s: 0.6, kt: 0.3}, lfo: {rate: 0.15, depth: 0.4},
+    amp: {a: 0.7, d: 1.2, s: 0.8, r: 1.4}, drive: 0.05, level: 0.32,
+    fx: {delay: 0.1, delayTime: '8d', reverb: 0.4, space: 0.8, width: 0.8},
+    serum: [
+      'Osc A: Default (saw), unison 5, detune 0.18, blend 70, width 100%. Sub: Sine −1 oct at 20%.',
+      'Env 1 (amp): A 700 ms, D 1.2 s, S −2 dB, R 1.4 s.',
+      'Filter: MG Low 12, cutoff ~1.1 kHz. Env 2 → cutoff +15%, A 800 ms, D 1.5 s, S 60%. LFO 1 (0.15 Hz, triangle) → cutoff +12%.',
+      'FX: Chorus 30%, Reverb Hall 4 s at 40%, EQ low cut 150 Hz. Sidechain it to the kick when the drums return.',
+    ],
+    live: [
+      'Wavetable: Osc 1 saw, Unison Classic 5 voices 35%. Sub −1 oct at −14 dB. Amp attack 700 ms, release 1.4 s.',
+      'Filter LP12 at 1.1 kHz, LFO 1 (0.15 Hz) → frequency 15%. Then Chorus-Ensemble and a long Hybrid Reverb.',
+    ],
+  },
+  {
+    id: 'glass-pad', name: 'Glass pad', family: 'Pad', tags: ['progressive', 'melodic-techno', 'trance', 'deep'],
+    desc: 'An FM bell that blooms into a pad: shimmering and cold, for breakdowns that float.',
+    osc: [{wave: 'sine', gain: 1}], fm: {ratio: 2, index: 1.2, decay: 1.5, sustain: 0.5}, vib: {rate: 4.5, depth: 0.08},
+    filter: {type: 'lowpass', cut: 6000, q: 0.5, env: 0, a: 0, d: 0.1, s: 1, kt: 0},
+    amp: {a: 0.5, d: 2, s: 0.6, r: 1.8}, drive: 0, level: 0.42,
+    fx: {delay: 0.15, delayTime: '4d', reverb: 0.45, space: 0.9, width: 0.7},
+    serum: [
+      'Osc A: Sine, Warp FM (from B) 25%. Osc B: Sine +12 st (ratio 2), level 0.',
+      'Env 2 → Osc A warp +20%, A 0, D 1.5 s, S 50%: the bell fades into the pad.',
+      'Env 1 (amp): A 500 ms, D 2 s, S −4 dB, R 1.8 s. LFO 1 (4.5 Hz) → pitch ±8 cents.',
+      'FX: Chorus 25%, Reverb Hall 5 s at 45%.',
+    ],
+    live: [
+      'Operator: A Sine; B Sine coarse 2 at −16 dB into A with a 1.5 s decay. A attack 500 ms, release 1.8 s.',
+      'Then Chorus-Ensemble and Hybrid Reverb (long hall).',
+    ],
+  },
+  {
+    id: 'string-swell', name: 'String swell', family: 'Strings', tags: ['trance', 'progressive', 'melodic-techno', 'hard-techno'],
+    desc: 'An ensemble of saws that swells in over a second: builds that lift and breakdowns that soar.',
+    osc: [{wave: 'saw', gain: 0.45, voices: 6, spread: 14}, {wave: 'saw', gain: 0.25, oct: -1, voices: 2, spread: 8}], vib: {rate: 5, depth: 0.08},
+    filter: {type: 'lowpass', cut: 2400, q: 0.6, env: 0.8, a: 1.2, d: 2, s: 0.7, kt: 0.3},
+    amp: {a: 1, d: 1, s: 0.9, r: 1.2}, drive: 0, level: 0.3,
+    fx: {delay: 0.1, delayTime: '8d', reverb: 0.4, space: 0.85, width: 0.85},
+    serum: [
+      'Osc A: Default (saw), unison 6, detune 0.14, width 100%. Osc B: saw −12 st, unison 2, 25%.',
+      'Env 1 (amp): A 1 s, D 1 s, S −1 dB, R 1.2 s. The attack is the swell.',
+      'Filter: MG Low 12 at ~2.4 kHz. Env 2 → cutoff +20%, A 1.2 s, D 2 s, S 70%.',
+      'LFO 1 (5 Hz) → pitch ±8 cents for the ensemble wobble. FX: Chorus 35%, Reverb Hall 4 s at 40%.',
+    ],
+    live: [
+      'Wavetable: Osc 1 saw, Unison Shimmer 6 voices 30%; Osc 2 saw −12 st. Amp attack 1 s, release 1.2 s.',
+      'Or a String Ensemble preset in Live\'s Orchestral packs, with Chorus-Ensemble on top.',
+    ],
+  },
+  {
+    id: 'choir', name: 'Choir aah', family: 'Vocal', tags: ['deep', 'progressive', 'trance', 'melodic-techno'],
+    desc: 'Saws shaped by "aah" formants, slow to bloom: a synthesized choir for emotional breaks.',
+    osc: [{wave: 'saw', gain: 0.75, voices: 4, spread: 12}], formants: [[700, 8, 1], [1100, 9, 0.6], [2600, 10, 0.25]], vib: {rate: 5.2, depth: 0.12},
+    filter: {type: 'lowpass', cut: 5000, q: 0.5, env: 0, a: 0, d: 0.1, s: 1, kt: 0},
+    amp: {a: 0.6, d: 1, s: 0.85, r: 1.2}, drive: 0, level: 1.1,
+    fx: {delay: 0.1, delayTime: '4', reverb: 0.5, space: 0.9, width: 0.7},
+    serum: [
+      'Osc A: Default (saw), unison 4, detune 0.12. Filter: Formant-I on "A" (or two Band 12 filters at 700 Hz and 1.1 kHz in parallel).',
+      'Env 1 (amp): A 600 ms, D 1 s, S −1.5 dB, R 1.2 s. LFO 1 (5.2 Hz) → pitch ±12 cents.',
+      'FX: Chorus 30%, Reverb Hall 5 s at 50%. A real choir sample in Serum 2\'s Multisample oscillator is even better.',
+    ],
+    live: [
+      'Wavetable: saw into the Vowel filter ("a"), or Auto Filter in Vowel mode. Amp attack 600 ms.',
+      'Or a choir from Live\'s packs, with a long reverb send.',
+    ],
+  },
+  {
+    id: 'drone', name: 'Dark drone', family: 'Pad', tags: ['techno', 'melodic-techno', 'hard-techno', 'minimal'],
+    desc: 'A low, resonant saw drone with a filter that breathes over seconds: intros and long builds.',
+    osc: [{wave: 'saw', gain: 0.55, voices: 3, spread: 8}, {wave: 'sine', gain: 0.4, oct: -1}],
+    filter: {type: 'lowpass', cut: 380, q: 3, env: 0.5, a: 2, d: 3, s: 0.7, kt: 0.4}, lfo: {rate: 0.08, depth: 0.7},
+    amp: {a: 1.5, d: 2, s: 0.9, r: 2.5}, drive: 0.4, level: 0.45,
+    fx: {delay: 0.15, delayTime: '4d', reverb: 0.35, space: 0.85, width: 0.6},
+    serum: [
+      'Osc A: Default (saw), unison 3, detune 0.08. Sub: Sine −1 oct at 40%.',
+      'Filter: MG Low 24 at ~380 Hz, res 35%, drive 30%. LFO 1 (0.08 Hz, sine) → cutoff +25%.',
+      'Env 1 (amp): A 1.5 s, D 2 s, S −1 dB, R 2.5 s. FX: Distortion (Tube 40%), Reverb Hall 6 s at 35%.',
+    ],
+    live: [
+      'Analog: two saws detuned, Fil 1 LP24 at 380 Hz, resonance 0.5, LFO → filter. Amp attack 1.5 s.',
+      'Then Roar or Saturator and a long reverb: automate the filter over 32 bars.',
+    ],
+  },
+  {
+    id: 'noise-riser', name: 'Noise swell', family: 'FX', tags: ['tech-house', 'trance', 'progressive', 'techno', 'hard-techno'],
+    desc: 'Filtered noise and a saw that rise together under an opening filter: the build in one note.',
+    osc: [{wave: 'saw', gain: 0.3, voices: 2, spread: 20}], pitch: {amt: -12, decay: 2.5},
+    noise: {gain: 0.55, sus: 1, hp: 300, thru: true},
+    filter: {type: 'lowpass', cut: 400, q: 2, env: 4, a: 2.5, d: 1, s: 1, kt: 0},
+    amp: {a: 1.8, d: 0.5, s: 1, r: 0.8}, drive: 0.2, level: 0.42,
+    fx: {delay: 0.2, delayTime: '8d', reverb: 0.45, space: 0.9, width: 0.8},
+    serum: [
+      'Noise oscillator: white noise at 55%, through Filter 1. Osc A: Default (saw), unison 2, detune 0.2, at 30%.',
+      'Env 3 → master pitch −12 st, D 2.5 s: the note rises an octave as it plays.',
+      'Filter: MG Low 12 at ~400 Hz. Env 2 → cutoff +80%, A 2.5 s, S 100%: it opens over the build.',
+      'Env 1 (amp): A 1.8 s, S 0 dB, R 800 ms. Hold it for a bar or more. FX: Reverb Hall 5 s at 45%.',
+    ],
+    live: [
+      'Wavetable: Osc 1 saw, plus the Noise oscillator at −6 dB. Pitch mod: Env 3 from −12 st up over 2.5 s.',
+      'Filter LP12 at 400 Hz, Env 2 attack 2.5 s → frequency 80%. Automate it longer by hand for 16-bar builds.',
+    ],
+  },
+  {
+    id: 'reese', name: 'Reese', family: 'Bass-lead', tags: ['garage', 'techno', 'hard-techno', 'tech-house'],
+    desc: 'Two saws detuned wide against each other, slowly phasing: the dark, moving drop sound.',
+    osc: [{wave: 'saw', gain: 0.6, voices: 2, spread: 30}, {wave: 'sine', gain: 0.4, oct: -1}],
+    filter: {type: 'lowpass', cut: 900, q: 1.5, env: 0.3, a: 0, d: 0.3, s: 0.8, kt: 0.3}, lfo: {rate: 0.3, depth: 0.5},
+    amp: {a: 0.01, d: 0.5, s: 0.85, r: 0.2}, drive: 0.5, level: 0.4,
+    fx: {delay: 0.08, delayTime: '8', reverb: 0.08, space: 0.3, width: 0.5},
+    serum: [
+      'Osc A: Default (saw), unison 2, detune 0.3 (wide), blend 100. Sub: Sine −1 oct at 40%.',
+      'Filter: MG Low 24 at ~900 Hz, res 25%. LFO 1 (0.3 Hz) → cutoff +15% for the slow movement.',
+      'Env 1 (amp): A 10 ms, D 500 ms, S −1.5 dB, R 200 ms. FX: Distortion (Tube 50%), Multiband Compressor (OTT) 25%.',
+      'Keep the sub mono (Sub osc, not unison) and high-pass the unison layer at 120 Hz.',
+    ],
+    live: [
+      'Analog: Osc 1 and Osc 2 saws, Osc 2 detuned +0.3 semitones. LP24 at 900 Hz, LFO → filter.',
+      'Then Saturator, and Utility on a duplicate below 120 Hz set to mono.',
+    ],
+  },
+  {
+    id: 'trance-lead', name: 'Euphoric lead', family: 'Lead', tags: ['trance', 'hard-techno', 'progressive'],
+    desc: 'Seven saws and an octave square, held with vibrato: the drop lead that hands go up for.',
+    osc: [{wave: 'saw', gain: 0.45, voices: 7, spread: 26}, {wave: 'square', gain: 0.15, oct: 1}], vib: {rate: 5.5, depth: 0.15},
+    filter: {type: 'lowpass', cut: 5000, q: 0.7, env: 0.4, a: 0, d: 0.5, s: 0.8, kt: 0.2},
+    amp: {a: 0.02, d: 0.4, s: 0.85, r: 0.5}, drive: 0.1, level: 0.28,
+    fx: {delay: 0.25, delayTime: '8d', reverb: 0.4, space: 0.85, width: 0.9},
+    serum: [
+      'Osc A: Default (saw), unison 7, detune 0.22, blend 80, width 100%. Osc B: Basic Shapes on Square, +12 st, 15%.',
+      'Env 1 (amp): A 20 ms, D 400 ms, S −1.5 dB, R 500 ms. LFO 1 (5.5 Hz) → pitch ±15 cents, faded in over 300 ms.',
+      'Filter: MG Low 12 at ~5 kHz. FX: Hyper/Dimension 25%, Delay 1/8 dotted 25%, Reverb Hall 4 s at 40%.',
+    ],
+    live: [
+      'Wavetable: Osc 1 saw, Unison Shimmer 8 voices 45%; Osc 2 square +12 st at −16 dB. Amp release 500 ms.',
+      'LFO → pitch for vibrato. Then a ping-pong delay and a big hall.',
+    ],
+  },
+  {
+    id: 'hoover-long', name: 'Hoover', family: 'Lead', tags: ['hard-techno', 'techno', 'trance'],
+    desc: 'The 90s hoover: wide detuned pulses with a pitch scoop, held and huge. Drops that start riots.',
+    osc: [{wave: 'pulse25', gain: 0.5, voices: 4, spread: 36}, {wave: 'saw', gain: 0.4, voices: 2, spread: 24, oct: -1}], pitch: {amt: -3, decay: 0.12},
+    filter: {type: 'lowpass', cut: 2600, q: 1, env: 0.8, a: 0, d: 0.4, s: 0.6, kt: 0.3},
+    amp: {a: 0.02, d: 0.3, s: 0.8, r: 0.35}, drive: 0.5, level: 0.28,
+    fx: {delay: 0.12, delayTime: '8d', reverb: 0.25, space: 0.6, width: 0.8},
+    serum: [
+      'Osc A: Basic Shapes on Square, Warp PWM 50%, unison 4, detune 0.35. Osc B: saw −12 st, unison 2, detune 0.25.',
+      'Env 3 → master pitch −3 st, D 120 ms: the scoop up into every note.',
+      'Filter: MG Low 12 at ~2.6 kHz. Env 1 (amp): A 20 ms, S −2 dB, R 350 ms.',
+      'FX: Chorus 40%, Distortion (Hard Clip 45%), Reverb Hall 25%. Portamento 30 ms in Legato for the classic slides.',
+    ],
+    live: [
+      'Wavetable: Osc 1 square (position 75%), Unison Classic 4 voices 60%; Osc 2 saw −12 st. Pitch mod −3 st, 120 ms.',
+      'Chorus-Ensemble, then Roar (or Saturator) and a reverb send.',
+    ],
+  },
+  {
+    id: 'organ-sustain', name: 'Gospel organ', family: 'Organ', tags: ['deep', 'garage', 'nu-disco', 'tech-house'],
+    desc: 'A held drawbar organ with a Leslie-style wobble: soulful breaks and big piano-house drops.',
+    osc: [{wave: 'organ', gain: 0.9}, {wave: 'sine', gain: 0.3, oct: 1}], trem: {rate: 6, depth: 0.2},
+    filter: {type: 'lowpass', cut: 4500, q: 0.6, env: 0, a: 0, d: 0.1, s: 1, kt: 0},
+    amp: {a: 0.01, d: 0.2, s: 0.9, r: 0.15}, drive: 0.2, level: 0.45,
+    fx: {delay: 0.08, delayTime: '8d', reverb: 0.25, space: 0.55, width: 0.5},
+    serum: [
+      'Osc A: Sine. Osc B: Sine +12 st at 70%. Osc C: Sine +19 st at 45%: three drawbars, held.',
+      'Env 1 (amp): A 10 ms, S −1 dB, R 150 ms.',
+      'LFO 1 (6 Hz) → pan ±30% and → volume −2 dB for the rotary-speaker wobble. FX: Distortion (Tube 20%), Reverb Plate 25%.',
+    ],
+    live: [
+      'Operator, algorithm 11: Sines at coarse 1, 2 and 3. Long sustain. Auto Pan at 6 Hz, 25%.',
+      'Or a Hammond-style preset with a Rotary effect, Saturator after.',
+    ],
+  },
+  {
+    id: 'shimmer', name: 'Shimmer pad', family: 'Pad', tags: ['melodic-techno', 'progressive', 'deep', 'trance'],
+    desc: 'Sine, octave and double-octave partials, slow to rise, drowned in reverb: the light at the end of the break.',
+    osc: [{wave: 'sine', gain: 0.7}, {wave: 'triangle', gain: 0.35, oct: 1}, {wave: 'sine', gain: 0.15, oct: 2}], vib: {rate: 4, depth: 0.06},
+    filter: {type: 'lowpass', cut: 7000, q: 0.5, env: 0, a: 0, d: 0.1, s: 1, kt: 0}, lfo: {rate: 0.2, depth: 0.3},
+    amp: {a: 0.9, d: 2, s: 0.7, r: 2.2}, drive: 0, level: 0.5,
+    fx: {delay: 0.2, delayTime: '4d', reverb: 0.6, space: 0.95, width: 0.9},
+    serum: [
+      'Osc A: Sine. Osc B: Basic Shapes on Triangle, +12 st, 35%. Osc C: Sine +24 st at 15%.',
+      'Env 1 (amp): A 900 ms, D 2 s, S −3 dB, R 2.2 s.',
+      'FX: Chorus 30%, Delay 1/4 dotted 20%, Reverb Hall 8 s at 60% with the reverb\'s high end lifted: that is the shimmer.',
+    ],
+    live: [
+      'Operator: A Sine, B Triangle coarse 2, C Sine coarse 4, all side by side (algorithm 11). Attack 900 ms.',
+      'Hybrid Reverb on a long Shimmer algorithm, 60% wet.',
+    ],
+  },
 ];
+
+// Length, best sections and energy for every patch: what the browser filters and the section tags use.
+// len: short (hits and plucks), medium (notes that ring), long (pads, swells, held leads)
+const OSND_META = {
+  'organ-stab': ['short', ['drop'], 0.7], 'tech-pluck': ['short', ['drop', 'build'], 0.65], 'rubber-stab': ['short', ['drop', 'intro'], 0.55],
+  'chord-stab': ['medium', ['drop', 'break'], 0.6], 'perc-bleep': ['short', ['intro', 'drop'], 0.45], 'acid-303': ['medium', ['drop', 'build'], 0.85],
+  'hollow-square': ['medium', ['drop', 'build'], 0.7], 'supersaw': ['medium', ['drop', 'build'], 0.9], 'glass-pluck': ['medium', ['break', 'intro'], 0.4],
+  'dark-saw': ['medium', ['build', 'drop'], 0.6], 'marimba': ['short', ['intro', 'break'], 0.4], 'kalimba': ['medium', ['break', 'intro'], 0.35],
+  'log-drum': ['short', ['drop'], 0.6], 'rhodes': ['long', ['break'], 0.35], 'house-piano': ['medium', ['drop', 'break'], 0.6],
+  'disco-saw': ['short', ['drop'], 0.7], 'vox-chop': ['medium', ['drop', 'break'], 0.6], 'rave-hoover': ['medium', ['drop', 'build'], 0.95],
+  'sub-pulse': ['short', ['intro', 'drop'], 0.5],
+  'micro-pluck': ['short', ['intro', 'drop'], 0.5], 'wood-knock': ['short', ['intro', 'drop'], 0.45], 'laser-zap': ['short', ['build', 'drop'], 0.75],
+  'bell-tick': ['short', ['intro', 'break'], 0.35], 'clav': ['short', ['drop'], 0.65], 'string-pluck': ['medium', ['break', 'intro'], 0.4],
+  'mono-lead': ['medium', ['drop'], 0.7], 'warm-pad': ['long', ['break', 'intro'], 0.25], 'glass-pad': ['long', ['break', 'intro'], 0.2],
+  'string-swell': ['long', ['build', 'break'], 0.5], 'choir': ['long', ['break'], 0.3], 'drone': ['long', ['intro', 'build'], 0.3],
+  'noise-riser': ['long', ['build'], 0.65], 'reese': ['long', ['drop'], 0.75], 'trance-lead': ['long', ['drop'], 0.9],
+  'hoover-long': ['long', ['drop', 'build'], 0.95], 'organ-sustain': ['long', ['break', 'drop'], 0.5], 'shimmer': ['long', ['break', 'intro'], 0.15],
+};
+for (const snd of OSND) { const m = OSND_META[snd.id]; if (!m) throw Error('No length/section tags for sound ' + snd.id); [snd.len, snd.roles, snd.energy] = m; }
 
 // Orbit bank: twelve genres (what the arp's job is, the fingerprint it's measured against, a grammar the generator
 // writes from), the drum grooves and basslines that play under it, and the hand-written patterns.
@@ -1574,7 +1947,7 @@ const OB = (() => {
       gen: {bpm: [124, 128], keys: [5, 7, 9, 2, 10], scales: {minor: 4, dorian: 2, phrygian: 1}, rates: {'16': 1}, lengths: {16: 6, 32: 2, 12: 1, 6: 1, 5: 1}, shapes: {offbeat: 5, euclid: 3, tresillo: 1, sparse: 1}, hits: [4, 9],
         pools: {scale: 3, chord: 2, root5: 2, root: 1, penta: 2, chord9: 1}, orders: {seq: 5, up: 1, pinky: 1, thumb: 1, updown: 1}, seqLen: [2, 5], octaves: {1: 6, 2: 1}, count: {0: 2, 2: 1, 3: 2},
         advance: {note: 3, step: 1}, reset: {bar: 4, never: 1, '2bar': 1}, gate: [0.22, 0.55], swing: [54, 58], accent: 0.3, oct: 0.1, ratchet: 0.04, chordHit: 0.06, pedal: 0.1,
-        sounds: ['organ-stab', 'tech-pluck', 'rubber-stab', 'perc-bleep', 'chord-stab', 'vox-chop', 'sub-pulse'], evos: ['slow-open', 'breathe', 'none', 'gate-pump'], fills: ['none', 'drop', 'ratchet', 'climb'], reg: [58, 68]},
+        sounds: ['organ-stab', 'tech-pluck', 'rubber-stab', 'perc-bleep', 'chord-stab', 'vox-chop', 'sub-pulse', 'micro-pluck', 'mono-lead'], evos: ['slow-open', 'breathe', 'none', 'gate-pump'], fills: ['none', 'drop', 'ratchet', 'climb'], reg: [58, 68]},
     },
     'melodic-techno': {
       name: 'Melodic techno', color: '#8F7CFF', bpm: [122, 126], groove: 'melodic', bass: 'melodic', key: 'A', scale: 'minor',
@@ -1600,7 +1973,7 @@ const OB = (() => {
       gen: {bpm: [120, 124], keys: [2, 9, 4, 7, 11], scales: {minor: 3, major: 1, dorian: 1}, rates: {'16': 4, '8': 2}, lengths: {16: 5, 8: 2, 12: 1}, shapes: {euclid: 3, full: 2, tresillo: 2}, hits: [5, 12],
         pools: {chord: 3, chord9: 3, scale: 1, triad: 1}, orders: {up: 3, updown: 2, seq: 2, converge: 1, pinky: 1}, seqLen: [3, 6], octaves: {2: 3, 1: 2}, count: {0: 3, 3: 1},
         advance: {note: 4, step: 1}, reset: {chord: 2, never: 1, bar: 2}, gate: [0.3, 0.75], swing: [50, 53], accent: 0.2, oct: 0.05, ratchet: 0, chordHit: 0.02, pedal: 0.05,
-        sounds: ['glass-pluck', 'tech-pluck', 'supersaw', 'dark-saw'], evos: ['pluck-to-pad', 'slow-open', 'build', 'breathe'], fills: ['none', 'climb', 'none'], reg: [60, 70]},
+        sounds: ['glass-pluck', 'tech-pluck', 'supersaw', 'dark-saw', 'string-pluck'], evos: ['pluck-to-pad', 'slow-open', 'build', 'breathe'], fills: ['none', 'climb', 'none'], reg: [60, 70]},
     },
     trance: {
       name: 'Trance', color: '#FF5CA8', bpm: [136, 140], groove: 'trance', bass: 'rolling', key: 'A', scale: 'minor',
@@ -1613,7 +1986,7 @@ const OB = (() => {
       gen: {bpm: [136, 140], keys: [9, 2, 6, 11, 4], scales: {minor: 4, harmonic: 1}, rates: {'16': 1}, lengths: {16: 5, 8: 1, 12: 1}, shapes: {full: 6, euclid: 1}, hits: [11, 16],
         pools: {chord: 3, root5: 2, triad: 2, chord9: 1}, orders: {up: 3, seq: 3, updown: 1, pinky: 1}, seqLen: [3, 8], octaves: {2: 4, 1: 1, 3: 1}, count: {0: 3, 3: 1},
         advance: {note: 4, step: 1}, reset: {bar: 2, chord: 2, never: 1}, gate: [0.35, 0.6], swing: [50, 51], accent: 0.2, accentEvery: [2, 4, 0], oct: 0.18, ratchet: 0, chordHit: 0, pedal: 0.04,
-        sounds: ['supersaw', 'hollow-square', 'glass-pluck'], evos: ['build', 'slow-open', 'none'], fills: ['roll', 'climb', 'none'], reg: [62, 72]},
+        sounds: ['supersaw', 'hollow-square', 'glass-pluck', 'trance-lead', 'string-pluck'], evos: ['build', 'slow-open', 'none'], fills: ['roll', 'climb', 'none'], reg: [62, 72]},
     },
     afro: {
       name: 'Afro house', color: '#FFB547', bpm: [118, 123], groove: 'afro', bass: 'afro', key: 'G', scale: 'minor',
@@ -1626,7 +1999,7 @@ const OB = (() => {
       gen: {bpm: [118, 123], keys: [7, 9, 2, 4, 0], scales: {minor: 2, dorian: 2, phrygian: 1}, rates: {'16': 4, '16t': 2}, lengths: {16: 5, 12: 2, 6: 1, 32: 1}, shapes: {tresillo: 5, euclid: 3, offbeat: 1}, hits: [4, 8],
         pools: {penta: 4, scale: 2, chord: 1, chord9: 1}, orders: {seq: 4, up: 1, updown: 1, converge: 1}, seqLen: [3, 6], octaves: {1: 3, 2: 2}, count: {0: 1},
         advance: {note: 3, step: 1}, reset: {bar: 2, never: 1, '2bar': 1}, gate: [0.3, 0.8], swing: [52, 57], accent: 0.25, oct: 0.08, ratchet: 0.03, chordHit: 0, pedal: 0.08,
-        sounds: ['marimba', 'kalimba', 'log-drum', 'tech-pluck', 'vox-chop'], evos: ['none', 'breathe', 'slow-open'], fills: ['none', 'answer', 'drop'], reg: [60, 70], static: 0.3},
+        sounds: ['marimba', 'kalimba', 'log-drum', 'tech-pluck', 'vox-chop', 'wood-knock'], evos: ['none', 'breathe', 'slow-open'], fills: ['none', 'answer', 'drop'], reg: [60, 70], static: 0.3},
     },
     deep: {
       name: 'Deep & organic house', color: '#4FE3B0', bpm: [118, 122], groove: 'deep', bass: 'deep', key: 'C', scale: 'dorian',
@@ -1639,7 +2012,7 @@ const OB = (() => {
       gen: {bpm: [118, 122], keys: [0, 5, 2, 9, 7], scales: {dorian: 3, minor: 2}, rates: {'16': 3, '8': 2}, lengths: {16: 5, 32: 2, 8: 1}, shapes: {euclid: 3, sparse: 2, tresillo: 2, offbeat: 2}, hits: [3, 7],
         pools: {chord9: 4, chord: 3}, orders: {up: 3, updown: 2, converge: 1, seq: 1}, seqLen: [3, 5], octaves: {1: 3, 2: 2}, count: {0: 1},
         advance: {note: 4, step: 1}, reset: {chord: 3, bar: 1}, gate: [0.7, 1.4], swing: [53, 58], accent: 0.2, oct: 0.04, ratchet: 0, chordHit: 0.12, pedal: 0.04,
-        sounds: ['rhodes', 'chord-stab', 'house-piano', 'glass-pluck', 'marimba'], evos: ['none', 'breathe', 'pluck-to-pad'], fills: ['none', 'drop'], reg: [58, 68], per: [1, 2]},
+        sounds: ['rhodes', 'chord-stab', 'house-piano', 'glass-pluck', 'marimba', 'bell-tick'], evos: ['none', 'breathe', 'pluck-to-pad'], fills: ['none', 'drop'], reg: [58, 68], per: [1, 2]},
     },
     techno: {
       name: 'Techno', color: '#A9B4C8', bpm: [128, 135], groove: 'techno', bass: 'sub', key: 'F', scale: 'phrygian',
@@ -1652,7 +2025,7 @@ const OB = (() => {
       gen: {bpm: [128, 135], keys: [5, 7, 9, 4, 1], scales: {phrygian: 3, minor: 3}, rates: {'16': 6, '8': 1}, lengths: {16: 3, 3: 2, 5: 2, 7: 2, 12: 1}, shapes: {euclid: 4, full: 2, offbeat: 2}, hits: [2, 10],
         pools: {root5: 3, root: 2, scale: 2, chord: 1}, orders: {seq: 3, up: 2, updown: 1}, seqLen: [2, 4], octaves: {1: 4, 2: 1}, count: {0: 2, 2: 2},
         advance: {note: 2, step: 2}, reset: {never: 3, bar: 2}, gate: [0.25, 0.55], swing: [50, 52], accent: 0.25, accentEvery: [3, 5, 0], oct: 0.1, ratchet: 0.03, chordHit: 0, pedal: 0.1,
-        sounds: ['sub-pulse', 'dark-saw', 'perc-bleep', 'chord-stab', 'acid-303'], evos: ['dark-ride', 'breathe', 'slow-open'], fills: ['none', 'drop', 'stutter'], reg: [52, 64]},
+        sounds: ['sub-pulse', 'dark-saw', 'perc-bleep', 'chord-stab', 'acid-303', 'micro-pluck'], evos: ['dark-ride', 'breathe', 'slow-open'], fills: ['none', 'drop', 'stutter'], reg: [52, 64]},
     },
     acid: {
       name: 'Acid', color: '#FFE14D', bpm: [125, 135], groove: 'techno', bass: 'offbeat', key: 'A', scale: 'minor',
@@ -1678,7 +2051,7 @@ const OB = (() => {
       gen: {bpm: [115, 122], keys: [4, 9, 2, 0, 7], scales: {minor: 3, major: 1, dorian: 1}, rates: {'16': 3, '8': 2}, lengths: {16: 5, 8: 2}, shapes: {gallop: 3, full: 3, euclid: 1}, hits: [6, 14],
         pools: {octave: 3, chord: 2, root5: 1, triad: 1}, orders: {up: 3, updown: 1, seq: 2, down: 1}, seqLen: [2, 4], octaves: {1: 2, 2: 2}, count: {0: 1},
         advance: {note: 4}, reset: {bar: 2, chord: 2}, gate: [0.3, 0.7], swing: [50, 55], accent: 0.2, oct: 0.12, ratchet: 0, chordHit: 0.05, pedal: 0,
-        sounds: ['disco-saw', 'house-piano', 'tech-pluck', 'supersaw'], evos: ['breathe', 'none', 'slow-open'], fills: ['none', 'climb', 'roll'], reg: [52, 64]},
+        sounds: ['disco-saw', 'house-piano', 'tech-pluck', 'supersaw', 'clav', 'mono-lead'], evos: ['breathe', 'none', 'slow-open'], fills: ['none', 'climb', 'roll'], reg: [52, 64]},
     },
     garage: {
       name: 'UK garage & bass house', color: '#3DFFD0', bpm: [128, 134], groove: 'garage', bass: 'garage', key: 'F', scale: 'minor',
@@ -1691,7 +2064,7 @@ const OB = (() => {
       gen: {bpm: [128, 134], keys: [5, 7, 9, 0], scales: {minor: 3, dorian: 2}, rates: {'16': 1}, lengths: {16: 5, 32: 2}, shapes: {twostep: 4, offbeat: 3, euclid: 1}, hits: [4, 8],
         pools: {scale: 2, chord: 2, chord9: 1, penta: 2, root: 1}, orders: {seq: 4, up: 1, pinky: 1}, seqLen: [2, 5], octaves: {1: 4, 2: 1}, count: {0: 2, 3: 1},
         advance: {note: 3}, reset: {bar: 3, '2bar': 1}, gate: [0.25, 0.6], swing: [59, 65], accent: 0.3, oct: 0.1, ratchet: 0.05, chordHit: 0.12, pedal: 0.05,
-        sounds: ['organ-stab', 'vox-chop', 'rubber-stab', 'chord-stab', 'rhodes'], evos: ['none', 'breathe', 'gate-pump'], fills: ['none', 'drop', 'ratchet'], reg: [58, 68]},
+        sounds: ['organ-stab', 'vox-chop', 'rubber-stab', 'chord-stab', 'rhodes', 'clav'], evos: ['none', 'breathe', 'gate-pump'], fills: ['none', 'drop', 'ratchet'], reg: [58, 68]},
     },
     'hard-techno': {
       name: 'Hard techno & neo-rave', color: '#FF4D4D', bpm: [145, 155], groove: 'hard', bass: 'hard', key: 'F#', scale: 'minor',
@@ -1704,7 +2077,7 @@ const OB = (() => {
       gen: {bpm: [145, 155], keys: [6, 9, 4, 1], scales: {minor: 4, harmonic: 1, phrygian: 1}, rates: {'16': 1}, lengths: {16: 6, 8: 1, 12: 1}, shapes: {full: 4, offbeat: 2, euclid: 2}, hits: [8, 16],
         pools: {chord: 3, root5: 2, triad: 2}, orders: {up: 3, seq: 3, pinky: 1}, seqLen: [3, 6], octaves: {2: 3, 1: 2}, count: {0: 3, 3: 1},
         advance: {note: 4}, reset: {bar: 2, chord: 2}, gate: [0.3, 0.55], swing: [50, 51], accent: 0.25, accentEvery: [2, 4, 0], oct: 0.15, ratchet: 0.03, chordHit: 0.05, pedal: 0.05,
-        sounds: ['rave-hoover', 'supersaw', 'hollow-square', 'acid-303'], evos: ['build', 'slow-open', 'none'], fills: ['roll', 'climb', 'none'], reg: [60, 70]},
+        sounds: ['rave-hoover', 'supersaw', 'hollow-square', 'acid-303', 'hoover-long'], evos: ['build', 'slow-open', 'none'], fills: ['roll', 'climb', 'none'], reg: [60, 70]},
     },
     minimal: {
       name: 'Minimal & rominimal', color: '#B7C8A0', bpm: [124, 127], groove: 'minimal', bass: 'minimal', key: 'G', scale: 'minor',
@@ -1717,7 +2090,7 @@ const OB = (() => {
       gen: {bpm: [124, 127], keys: [7, 9, 2, 5], scales: {minor: 2, dorian: 2, phrygian: 1}, rates: {'16': 1}, lengths: {32: 5, 16: 2, 24: 1}, shapes: {sparse: 4, euclid: 2, offbeat: 2}, hits: [3, 7],
         pools: {root: 2, root5: 2, penta: 2, scale: 1}, orders: {seq: 3, up: 1}, seqLen: [2, 4], octaves: {1: 1}, count: {0: 1, 2: 1},
         advance: {note: 2, step: 1}, reset: {'2bar': 3, never: 1}, gate: [0.2, 0.45], swing: [55, 60], accent: 0.3, oct: 0.08, ratchet: 0.06, chordHit: 0, pedal: 0.1,
-        sounds: ['perc-bleep', 'rubber-stab', 'sub-pulse', 'marimba'], evos: ['none', 'breathe'], fills: ['none', 'drop'], reg: [58, 68]},
+        sounds: ['perc-bleep', 'rubber-stab', 'sub-pulse', 'marimba', 'micro-pluck', 'wood-knock'], evos: ['none', 'breathe'], fills: ['none', 'drop'], reg: [58, 68]},
     },
   };
 
@@ -1920,6 +2293,51 @@ const OB = (() => {
     ['Swing blips', '.x...x.x...x..x.', {pool: 'root', order: 'up', swing: 60}, 'A single pitch on swung off-16ths: the shuffle does everything.'],
     ['Dub minimal', '...x..........x.......x.........', {sound: 'chord-stab', pool: 'chord', order: 'up', prog: 'i7', delay: 0.45, fb: 0.6, reverb: 0.35}, 'Three dub chord tones in two bars, with the delay filling the room.'],
     ['Tick-tock', '..x..x....x..x....x..x....x..x..', {sound: 'marimba', pool: 'penta', seq: [0, 2, 1, 3, 0, 2, 4, 1], mutate: 8}, 'A soft marimba ticking in pairs across two bars.'],
+  ]);
+
+  // ===== BREAKS, BUILDS AND INTROS: written for the sections around the drop =====
+  group(TH, 'Breaks & builds', {sound: 'warm-pad', pool: 'chord9', order: 'up', swing: 54, gate: 1.4, reg: 62, bpm: 126, key: 'F', prog: 'i9 iv9', reset: 'chord', duck: 0.15}, [
+    ['Pad breakdown', 'x.x.', {rate: '4', per: 2, evo: 'breathe'}, 'Half notes on a slow, warm pad, two bars a chord: the break where the kick drops out and the chords take over.'],
+    ['Choir break', 'x...x...', {rate: '8', sound: 'choir', pool: 'chord', prog: 'i VI', gate: 1.5}, 'A synthesized choir walking up the chord in half notes. Pure emotion before the drop comes back.'],
+    ['Gospel organ break', 'C.......C.......', {sound: 'organ-sustain', pool: 'chord', prog: 'i7 iv7', gate: 1.5}, 'Held organ chords with a Leslie wobble, two a bar: the soulful break of piano house, in tech house.'],
+    ['String rise', 'xxxxxxxx', {rate: '8', sound: 'string-swell', pool: 'chord', octaves: 2, gate: 0.9, evo: 'build', fill: 'roll', fillEvery: 4, bars: 16, prog: 'i VI', duck: 0.3}, 'Swelling strings in 8ths through two octaves while the build automation climbs: sixteen bars of lift.'],
+    ['Noise swell', 'x...', {rate: '4', sound: 'noise-riser', pool: 'root', gate: 1.5, evo: 'into-drop', bars: 8, prog: 'i', duck: 0}, 'One long swell a beat on the root, the filter opening into the last bars: a riser you can play in key.'],
+    ['Zap fills', '..x...x...x..xx.', {sound: 'laser-zap', pool: 'root5', order: 'up', gate: 0.4, fill: 'bounce', fillEvery: 4, evo: 'build', prog: 'i', reg: 66, duck: 0.4}, 'Laser zaps on the off-beats, bouncing into every fourth bar: build energy without a single chord.'],
+    ['Micro intro', '..x....x..x.....', {sound: 'micro-pluck', pool: 'root', gate: 0.3, evo: 'slow-open', cut: 0.35, prog: 'i', reg: 66, duck: 0.3}, 'Three tiny plucks a bar, dark at first: the DJ-friendly intro version of a riff.'],
+    ['Reese riff', 'x-..x-.x..x-..x.', {sound: 'reese', pool: 'root5', order: 'seq', seq: [0, 0, 1, 0, 2, 0], gate: 0.9, prog: 'i', reg: 64, duck: 0.5, swing: 56}, 'A detuned Reese held across two steps at a time: the dark, moving drop riff of bass-house-leaning tech house.'],
+  ]);
+  group('melodic-techno', 'Breaks & builds', {sound: 'shimmer', pool: 'chord9', order: 'up', octaves: 2, gate: 1.5, reg: 62, bpm: 124, key: 'A', prog: 'i VI III VII', reset: 'chord', swing: 50, duck: 0.15}, [
+    ['Drone intro', 'x...', {rate: '4', sound: 'drone', pool: 'root5', octaves: 1, evo: 'slow-open', prog: 'i', cut: 0.3}, 'A low drone on the root and fifth, one note a beat, the filter opening over the phrase: how a melodic techno set begins.'],
+    ['Shimmer break', 'x...x.x.', {rate: '8'}, 'Shimmering partials over the four-chord journey, two octaves of 9ths: the breakdown that floats.'],
+    ['Glass pad journey', 'xxxx', {rate: '4', sound: 'glass-pad', pool: 'chord', octaves: 1, gate: 1.4}, 'FM bells blooming into pads, a chord tone each beat: the long, cold breakdown.'],
+    ['Drone build', 'xxxx', {rate: '4', sound: 'drone', pool: 'root', octaves: 1, gate: 1.2, evo: 'build', bars: 16, prog: 'i', fill: 'roll', fillEvery: 4}, 'One note, one drone, sixteen bars of filter, gate and density climbing: tension with no melody at all.'],
+  ]);
+  group('progressive', 'Breaks & builds', {sound: 'string-pluck', pool: 'chord9', order: 'up', octaves: 2, gate: 0.5, reg: 64, bpm: 122, key: 'D', prog: 'i VI III VII', reset: 'chord', delay: 0.3}, [
+    ['Harp intro', 'x..x..x.x..x..x.', {evo: 'slow-open', cut: 0.4}, 'A bright harp pluck in a 3+3+2 rhythm, opening slowly: the first sixteen bars of a progressive track.'],
+    ['Pad swell break', 'x.x.', {rate: '4', sound: 'warm-pad', octaves: 1, gate: 1.5, evo: 'breathe'}, 'Warm pad chords in half notes, breathing every four bars: the breakdown bed under a vocal.'],
+  ]);
+  group('trance', 'Breaks & builds', {sound: 'trance-lead', pool: 'chord', order: 'up', octaves: 2, gate: 0.55, reg: 64, bpm: 138, key: 'A', prog: 'i VI III VII', reset: 'chord', swing: 50}, [
+    ['Euphoric gate', 'xxxxxxxxxxxxxxxx', {evo: 'none'}, 'The euphoric lead gated into 16ths through the anthem progression: the moment the drop lands.'],
+    ['String breakdown', 'xxxx', {rate: '4', sound: 'string-swell', octaves: 1, gate: 1.5, duck: 0}, 'Swelling strings, a chord tone a beat: the breakdown before the lead comes in.'],
+  ]);
+  group('hard-techno', 'Breaks & builds', {sound: 'hoover-long', pool: 'chord', order: 'up', octaves: 1, gate: 0.6, reg: 64, bpm: 150, key: 'F#', prog: 'i VI VII v', reset: 'chord', swing: 50, hp: 220}, [
+    ['Hoover anthem', 'x.xx.x.xx.xx.x.x', {evo: 'none'}, 'The 90s hoover, held and scooping, in a pushing rhythm: drops that start riots.'],
+    ['Hoover rise', 'xxxxxxxxxxxxxxxx', {evo: 'build', fill: 'roll', fillEvery: 4, bars: 16, gate: 0.45}, 'Every 16th on the hoover while the build automation climbs: sixteen bars of pressure.'],
+  ]);
+  group('nu-disco', 'Funk & intros', {sound: 'clav', pool: 'chord', order: 'up', octaves: 1, gate: 0.4, reg: 62, bpm: 118, key: 'E', prog: 'i VII VI VII', reset: 'chord', swing: 54}, [
+    ['Clav funk', 'x.xx.x.xx.x..x.x', {}, 'A funk clav chopping through the chords: the disco rhythm section in one part.'],
+    ['Mono lead hook', 'x.x.xx.x', {rate: '8', sound: 'mono-lead', pool: 'scale', order: 'seq', seq: [0, 2, 4, 2, 6, 4], gate: 0.7, reg: 62, prog: 'i VII VI VII', follow: false}, 'A singing analogue mono lead playing a written hook over the progression.'],
+  ]);
+  group('deep', 'Intros & breaks', {sound: 'bell-tick', pool: 'chord9', order: 'up', octaves: 1, gate: 0.5, reg: 66, bpm: 120, key: 'C', scale: 'dorian', prog: 'i9 iv9', reset: 'chord', swing: 56}, [
+    ['Bell intro', '..x...x...x..x..', {evo: 'slow-open', cut: 0.4}, 'Glinting bell ticks on the off-beats, opening slowly: the intro before the Rhodes arrives.'],
+    ['Gospel break', 'C...............', {sound: 'organ-sustain', pool: 'chord', gate: 1.5, prog: 'i7 iv9 VII7 III7'}, 'A held organ chord a bar through a soulful turnaround: the deep house break.'],
+  ]);
+  group('afro', 'Grooves & intros', {sound: 'wood-knock', pool: 'penta', order: 'seq', octaves: 1, gate: 0.5, reg: 64, bpm: 121, key: 'G', swing: 55, reset: 'bar'}, [
+    ['Wood knock groove', 'x..x..x...x.x...', {seq: [0, 2, 1, 3, 2]}, 'Tuned woodblocks on the son clave: a percussion part and a melody at once.'],
+    ['Choir lift', 'x.......x.......', {sound: 'choir', pool: 'chord9', order: 'up', gate: 1.5, prog: 'i7 iv7'}, 'A slow choir over the Afro groove, two notes a bar: the spiritual break.'],
+  ]);
+  group('minimal', 'Intros', {sound: 'micro-pluck', pool: 'root5', order: 'seq', octaves: 1, gate: 0.25, reg: 66, bpm: 125, key: 'G', prog: 'i', reset: '2bar', swing: 58, human: 0.4}, [
+    ['Micro plucks', '..x.......x..x.......x....x.....', {seq: [0, 1, 0, 1, 0], evo: 'slow-open', cut: 0.4}, 'Five tiny plucks across two bars, opening slowly: patience, again.'],
   ]);
 
   const BY_ID = Object.fromEntries(PATTERNS.map(p => [p.id, p]));
@@ -2620,6 +3038,95 @@ const OE = (() => {
     return {score: Math.round(100 * axes.reduce((s, a) => s + a.s, 0) / axes.length), axes};
   }
 
+  // ---- sections: what a combo is good for in an arrangement ----
+  // Each section collects points from what the notes, the sound and the automation do. The best one is the primary
+  // section; any other within 60% of it (and at least 1.8 points) is listed too. Energy is a 0-100 summary.
+  const ROLES = {
+    drop: {name: 'Drop', color: '#FF5C8A', desc: 'Short, accented, driving: it locks with the kick and the bass and carries the floor.'},
+    build: {name: 'Build', color: '#FFD166', desc: 'Rising tension: filling, climbing, opening, rolling into the drop.'},
+    break: {name: 'Break', color: '#9D8CFF', desc: 'Long notes and space, the chords on show: works with no kick at all.'},
+    intro: {name: 'Intro & outro', color: '#5CC8FF', desc: 'Sparse, filtered, patient: plays while a DJ mixes in or out.'},
+  };
+  const BUILD_EVOS = new Set(['build', 'into-drop', 'thin', 'add-notes']);
+  function roles(input, m) {
+    const st = normalize(input), snd = OB.SOUNDS_BY_ID[st.sound] || {}, len = snd.len || 'short', en = snd.energy ?? 0.5, tag = new Set(snd.roles || []);
+    if (!m) m = metrics(render(st, {bars: 4, evo: false, fills: false, mutate: false}));
+    const sd = st.steps.filter(sounding), acc = sd.length ? sd.filter(x => x.acc).length / sd.length : 0;
+    const sc = {drop: 0, build: 0, break: 0, intro: 0}, why = {drop: [], build: [], break: [], intro: []};
+    const add = (r, v, txt) => { sc[r] += v; if (txt) why[r].push(txt); };
+    if (m.length <= 0.7) add('drop', 1, 'short notes');
+    if (m.density >= 4) add('drop', 0.6, `${Math.round(m.density)} notes a bar`);
+    if (acc >= 0.1) add('drop', 0.5, 'accents'); else if (m.sync >= 0.5) add('drop', 0.5, 'syncopated');
+    if (en >= 0.6) add('drop', 0.8, `a punchy sound (${snd.name})`);
+    if (tag.has('drop')) add('drop', 0.5);
+    if (BUILD_EVOS.has(st.evo)) add('build', 2.6, `"${EVOS[st.evo].name}" automation`);
+    else if (st.evo === 'slow-open') add('build', 0.8, 'a filter that opens');
+    if (['roll', 'ratchet', 'climb', 'bounce'].includes(st.fill)) add('build', 1.2, `a "${FILLS[st.fill].name}" fill`);
+    if (m.density >= 11) add('build', 0.7, 'every step filled');
+    if (st.echo > 0 && st.echoShift !== '0') add('build', 0.5, 'echoes that climb');
+    if (tag.has('build')) add('build', 0.8, len === 'long' ? `a swelling sound (${snd.name})` : null);
+    if (m.length >= 0.9) add('break', 1.6, 'long notes');
+    if (len === 'long') add('break', 1.1, `a long, held sound (${snd.name})`);
+    if (['chord9', 'spread', 'quartal', 'cluster'].includes(st.pool) || st.steps.some(x => x.type === 'chord')) add('break', 0.4, 'the chords on show');
+    if (m.density <= 6) add('break', 0.4, 'space between the notes');
+    if (['pluck-to-pad', 'breathe'].includes(st.evo)) add('break', 0.5, `"${EVOS[st.evo].name}" automation`);
+    if (tag.has('break')) add('break', 0.8);
+    if (m.density <= 5) add('intro', 0.8, 'few notes');
+    if (en <= 0.5) add('intro', 0.6, 'a gentle sound');
+    if (st.evo === 'slow-open') add('intro', 0.8, 'a filter that opens'); else if (st.cut <= 0.4) add('intro', 0.8, 'filtered dark');
+    if (m.pitches <= 3) add('intro', 0.5, `${m.pitches} pitch${m.pitches > 1 ? 'es' : ''}`);
+    if (tag.has('intro')) add('intro', 0.8);
+    const order = Object.keys(sc).sort((a, b) => sc[b] - sc[a]);
+    const top = order[0], list = order.filter(r => sc[r] >= Math.max(1.8, sc[top] * 0.6));
+    if (!list.length) list.push(top);
+    const energy = Math.round(100 * clamp01(0.3 * Math.min(1, m.density / 12) + 0.16 * m.sync + 0.12 * acc + 0.16 * (1 - Math.min(1, m.length / 2)) + 0.26 * en + (BUILD_EVOS.has(st.evo) ? 0.04 : 0)));
+    return {roles: list, primary: top, scores: sc, why, energy};
+  }
+  // The genre's ranges, adjusted for the section: a break may hold long notes and needs no kick to avoid; a build may
+  // fill every step; an intro may be sparser. The drop is the genre's own fingerprint.
+  function roleTarget(t, role) {
+    if (!t || !role || role === 'drop') return t;
+    const o = JSON.parse(JSON.stringify(t));
+    // outside the drop nothing has to dodge the kick, and long notes are allowed (up to a whole bar)
+    o.density = [Math.min(1, o.density[0]), role === 'build' ? 16 : o.density[1]];
+    o.sync = [0, role === 'break' ? 1 : o.sync[1]];
+    delete o.kick;
+    o.length = [Math.min(0.25, o.length[0]), 16];
+    o.range = [0, o.range[1] + (role === 'intro' ? 0 : 6)];
+    o.leap = [0, o.leap[1] + (role === 'intro' ? 0 : 2)];
+    return o;
+  }
+  // fit against the genre for the section the combo is best at (or the one asked for)
+  function sectionFit(st, m, role) {
+    const g = OB.GENRES[st.genre], r = roles(st, m), use = role || r.primary;
+    return {fit: fit(m, roleTarget(g && g.target, use)), role: use, roles: r};
+  }
+
+  // ---- search words: sections and lengths, then free text ----
+  const STOP = new Set(['good', 'for', 'material', 'sure', 'the', 'a', 'an', 'of', 'and', 'to', 'in', 'some', 'stuff', 'that', 'is', 'are', 'great', 'really', 'very', 'super', 'song', 'part', 'section', 'use', 'used', 'with', 'my', 'me', 'something', 'things', 'thing', 'type', 'kind', 'sounds', 'sound', 'ideas', 'idea', 'please', 'want', 'need', 'like', 'definitely', 'totally', 'perfect', 'best', 'nice', 'cool', 'ones', 'one', 'it', 'on', 'at', 'or']);
+  const ROLE_WORDS = {
+    intro: ['intro', 'intros', 'outro', 'outros', 'opening', 'opener', 'dj', 'mixin', 'warmup', 'ending'],
+    build: ['build', 'builds', 'buildup', 'buildups', 'build-up', 'riser', 'risers', 'rise', 'rising', 'tension', 'predrop', 'pre-drop', 'lift', 'uplift'],
+    break: ['break', 'breaks', 'breakdown', 'breakdowns', 'ambient', 'atmos', 'atmosphere', 'atmospheric', 'emotional', 'interlude', 'bridge', 'calm'],
+    drop: ['drop', 'drops', 'peak', 'peaktime', 'peak-time', 'banger', 'bangers', 'dancefloor', 'floor', 'main', 'energetic'],
+  };
+  const LEN_WORDS = {
+    short: ['short', 'shorter', 'tiny', 'tight', 'staccato', 'percussive', 'hit', 'hits', 'blip', 'blips', 'snappy', 'plucky', 'stabby'],
+    medium: ['medium', 'mid-length'],
+    long: ['long', 'longer', 'sustained', 'sustain', 'held', 'swell', 'swells', 'swelling', 'legato', 'evolving', 'lush', 'pad', 'pads'],
+  };
+  function parseQuery(q) {
+    const out = {roles: new Set(), lens: new Set(), words: []};
+    for (const raw of String(q || '').toLowerCase().split(/[\s,./!?;:()"']+/).filter(Boolean)) {
+      if (STOP.has(raw)) continue;
+      let hit = false;
+      for (const [r, ws] of Object.entries(ROLE_WORDS)) if (ws.includes(raw)) { out.roles.add(r); hit = true; }
+      for (const [l, ws] of Object.entries(LEN_WORDS)) if (ws.includes(raw)) { out.lens.add(l); hit = true; }
+      if (!hit) out.words.push(raw);
+    }
+    return out;
+  }
+
   // ---- the cycle counter ----
   // On one held chord, with nothing evolving: when does the pattern line up with the bar line again?
   function cycle(input) {
@@ -2659,10 +3166,9 @@ const OE = (() => {
     const st = normalize(input);
     const R = render(st, opts);
     const m = metrics(R);
-    const g = OB.GENRES[st.genre];
-    const f = fit(m, g && g.target);
+    const sf = sectionFit(st, m);
     const c = cycle(st);
-    return {st, R, m, fit: f, cycle: c, cycleText: cycleText(c, st, R.harmony.beats)};
+    return {st, R, m, fit: sf.fit, role: sf.role, roles: sf.roles, cycle: c, cycleText: cycleText(c, st, R.harmony.beats)};
   }
 
   // ---- fixes: candidate edits that move the fingerprint into the genre's range ----
@@ -2671,12 +3177,13 @@ const OE = (() => {
     const base = normalize(input);
     const g = OB.GENRES[base.genre];
     if (!g) return [];
-    const score = st => { const R = render(st, {evo: false, fills: false, mutate: false, bars: 4}); return fit(metrics(R), g.target); };
+    const role = roles(base).primary, tgt = roleTarget(g.target, role);
+    const score = st => { const R = render(st, {evo: false, fills: false, mutate: false, bars: 4}); return fit(metrics(R), tgt); };
     const now = score(base);
     const bad = now.axes.filter(a => !a.ok).map(a => a.id);
     if (!bad.length) return [];
     const cands = [];
-    const T = g.target;
+    const T = tgt;
     const add = (axis, text, patch) => cands.push({axis, text, patch});
     if (bad.includes('kick') || bad.includes('sync') || bad.includes('density')) {
       for (let k = 1; k < Math.min(base.steps.length, 16); k++) add(bad.includes('kick') ? 'kick' : 'sync', `Rotate the pattern ${k} step${k > 1 ? 's' : ''} later`, {steps: rotate(base.steps, k)});
@@ -2699,8 +3206,8 @@ const OE = (() => {
       if (dir === 'high') { if (base.octaves > 1) add('range', `Narrow to ${base.octaves - 1} octave${base.octaves > 2 ? 's' : ''}`, {octaves: base.octaves - 1}); add('range', 'Use only 3 notes of the pool', {count: 3}); add('leap', 'Change the order to Up', {order: 'up'}); add('leap', 'Change the order to Converge', {order: 'converge'}); }
       else { add('range', `Widen to ${base.octaves + 1} octaves`, {octaves: Math.min(4, base.octaves + 1)}); add('leap', 'Change the order to Pinky (top-note pedal)', {order: 'pinky'}); add('leap', 'Change the order to Up-down', {order: 'updown'}); add('range', 'Add the 9th to the pool', {pool: 'chord9'}); }
     }
-    if (bad.includes('length')) { const mid = (T.length[0] + T.length[1]) / 2; add('length', `Set the gate to ${Math.round(clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5) * 100)}%`, {gate: +clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5).toFixed(2)}); }
-    if (bad.includes('swing')) { const mid = Math.round((T.swing[0] + T.swing[1]) / 2); add('swing', `Set the swing to ${mid}%`, {swing: mid}); }
+    if (bad.includes('length') && T.length) { const mid = (T.length[0] + T.length[1]) / 2; add('length', `Set the gate to ${Math.round(clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5) * 100)}%`, {gate: +clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5).toFixed(2)}); }
+    if (bad.includes('swing') && T.swing) { const mid = Math.round((T.swing[0] + T.swing[1]) / 2); add('swing', `Set the swing to ${mid}%`, {swing: mid}); }
     const out = [];
     for (const c of cands) {
       const s = score(normalize(Object.assign({}, base, c.patch)));
@@ -2759,7 +3266,7 @@ const OE = (() => {
     if (r() < 0.5) out[irange(r, [1, len - 1])] = 0;
     return out;
   }
-  const NO_CHORDS = new Set(['acid-303', 'perc-bleep', 'sub-pulse', 'log-drum', 'vox-chop', 'rubber-stab', 'kalimba']);
+  const NO_CHORDS = new Set(['acid-303', 'perc-bleep', 'sub-pulse', 'log-drum', 'vox-chop', 'rubber-stab', 'kalimba', 'laser-zap', 'wood-knock', 'mono-lead', 'reese']);
   function generate(genreId, seed, keep = {}) {
     const g = OB.GENRES[genreId] || OB.GENRES['tech-house'], gen = g.gen, r = rng(seed * 2654435761 + 99);
     const rate = pickW(r, gen.rates), stepLen = RATES[rate].beats;
@@ -2789,6 +3296,31 @@ const OE = (() => {
       if (st.steps.some(x => x.type === 'chord') && w() < 0.6) { st.strum = +(0.2 + w() * 0.6).toFixed(2); st.strumDir = pickA(w, ['up', 'down', 'alt']); }
       if (w() < 0.15) st.fill = 'bounce';
     }
+    // writing for a section: the same grammar, pushed toward what that section wants
+    if (keep.role) {
+      const w = rng(seed * 13 + 9), thin = p => st.steps.forEach(x => { if (x.type === 'note' && !x.acc && w() < p) x.type = 'rest'; });
+      const pickSound = (want, extra = []) => { if (keep.sound) return; const ok = gen.sounds.concat(extra).filter(id => OB.SOUNDS_BY_ID[id] && OB.SOUNDS_BY_ID[id].roles.includes(want)); if (ok.length) st.sound = pickA(w, ok); };
+      if (keep.role === 'drop') {
+        st.evo = pickA(w, ['none', 'breathe', 'gate-pump', 'none']); st.gate = +(st.gate * 0.85).toFixed(2);
+        if (!st.steps.some(x => x.acc)) { const per = Math.max(1, Math.round(1 / RATES[st.rate].beats)); st.steps.forEach((x, i) => { if (sounding(x) && i % per === 2 % per) x.acc = 1; }); }
+        pickSound('drop');
+      } else if (keep.role === 'build') {
+        st.evo = pickA(w, ['build', 'into-drop', 'thin', 'add-notes']); st.fill = pickA(w, ['roll', 'ratchet', 'bounce', 'climb']); st.fillEvery = 4;
+        st.steps.forEach(x => { if (x.type === 'rest' && w() < 0.3) x.type = 'note'; });
+        pickSound('build', ['string-swell', 'laser-zap', 'supersaw', 'tech-pluck']);
+      } else if (keep.role === 'break') {
+        if (st.rate === '16' && w() < 0.6) { st.rate = '8'; st.steps = st.steps.filter((_, i) => i % 2 === 0); }
+        st.gate = +clamp(st.gate * 2.6, 0.9, 1.5).toFixed(2); thin(0.4);
+        if (!['scale', 'penta'].includes(st.pool)) st.pool = pickA(w, ['chord9', 'spread', 'chord']);
+        st.evo = pickA(w, ['pluck-to-pad', 'breathe', 'none']); st.fill = 'none';
+        pickSound('break', ['warm-pad', 'glass-pad', 'shimmer', 'choir', 'string-swell', 'string-pluck', 'rhodes', 'glass-pluck']);
+      } else if (keep.role === 'intro') {
+        thin(0.4); st.evo = 'slow-open'; st.cut = 0.35; st.fill = 'none';
+        if (w() < 0.4 && !['scale', 'penta'].includes(st.pool)) st.pool = pickA(w, ['root', 'root5']);
+        pickSound('intro', ['bell-tick', 'micro-pluck', 'wood-knock', 'drone', 'perc-bleep', 'sub-pulse']);
+      }
+      if (!st.steps.some(sounding)) st.steps[2 % st.steps.length].type = 'note';
+    }
     // chord hits need a sound that can play chords: mono, percussive and vocal patches get single notes instead
     if (st.steps.some(x => x.type === 'chord') && NO_CHORDS.has(st.sound)) {
       if (keep.sound) st.steps.forEach(x => { if (x.type === 'chord') x.type = 'note'; });
@@ -2817,8 +3349,8 @@ const OE = (() => {
     for (let i = 0; i < tries; i++) {
       const st = generate(genreId, seed * 1000 + i, keep);
       const R = render(st, {bars: 4, evo: false, fills: false, mutate: false});
-      const m = metrics(R), f = fit(m, g.target);
-      out.push({st, m, fit: f.score, typical: centrality(m, g.target), sig: signature(st)});
+      const m = metrics(R), sf = sectionFit(st, m, keep.role), tgt = roleTarget(g.target, sf.role);
+      out.push({st, m, fit: sf.fit.score, typical: centrality(m, tgt), sig: signature(st), roles: sf.roles, role: sf.role, onRole: !keep.role || sf.roles.roles.includes(keep.role)});
     }
     out.sort((a, b) => (b.fit + 30 * b.typical) - (a.fit + 30 * a.typical) || a.st.seed - b.st.seed);
     // greedy pick for variety: the best remaining candidate, marked down for each pick that shares its sound,
@@ -2831,7 +3363,7 @@ const OE = (() => {
         const c = pool[i], k = stepsString(c.st.steps);
         if (seen.has(k)) continue;
         const same = (f) => picked.filter(p => f(p.st) === f(c.st)).length;
-        const sc = c.fit + 30 * c.typical - 9 * same(st => st.sound) - 14 * same(kind) - 5 * same(st => st.pool) - (c.m.low > 0.2 && !g.lowOk ? 25 : 0) + (keep.wild ? 7 * Math.min(3, wildness(c.st)) : 0);
+        const sc = c.fit + 30 * c.typical - 9 * same(st => st.sound) - 14 * same(kind) - 5 * same(st => st.pool) - (c.m.low > 0.2 && !g.lowOk ? 25 : 0) + (keep.wild ? 7 * Math.min(3, wildness(c.st)) : 0) - (c.onRole ? 0 : 40);
         if (sc > bs) { bs = sc; bi = i; }
       }
       if (bi < 0) break;
@@ -3067,6 +3599,7 @@ const OE = (() => {
   }
 
   return {RATES, POOLS, ORDERS, EVOS, FILLS, AXES, DEFAULT, DELAY_TIMES, DRUM_NOTES, parseSteps, stepsString, stepChar, sounding, euclid, normalize, harmony,
+    ROLES, roles, roleTarget, sectionFit, parseQuery, ROLE_WORDS, LEN_WORDS,
     pool, extend, orderSeq, render, FEELS, ECHO_SHIFTS, ladder, scaleStep, morse, riffFromNotes, writeOut, feelShift, diatonicChords, renderBass, renderDrums, renderChords, renderArpInput, metrics, fit, cycle, cycleText, analyse, rotate,
     suggestions, generate, find, vary, centrality, liveArp, delayTable, exportMidi, fileStem, pack, unpack, describe, evoAt, chordIndexAt, weight, signature};
 })();
@@ -3179,6 +3712,7 @@ const OA = (() => {
     const drumRev = ctx.createGain(); drumRev.gain.value = 0.06; drumBus.connect(drumRev); drumRev.connect(revSend);
 
     let P = {}, revSize = -1, curSound = null, lastMono = null, spb = 0.5;
+    const voices = [], MAX_VOICES = opts.maxVoices || 40;
     const noise = noiseBuffer(ctx);
 
     function set(st, sound) {
@@ -3237,6 +3771,10 @@ const OA = (() => {
       vg.gain.setTargetAtTime(0, end, Math.max(0.004, rel / 3));
       const stop = end + rel * 2.2 + 0.03;
       if (s.mono) { if (lastMono && lastMono.end > t) lastMono.g.gain.setTargetAtTime(0, t + 0.004, 0.006); lastMono = {g: vg, end: stop}; }
+      // a cap on overlapping voices: long pads in fast patterns would otherwise pile up; the oldest fades out first
+      for (let i = voices.length - 1; i >= 0; i--) if (voices[i].stop < t) voices.splice(i, 1);
+      while (voices.length >= MAX_VOICES) voices.shift().g.gain.setTargetAtTime(0, t, 0.02);
+      voices.push({g: vg, stop});
       // filter (or the formant bank)
       const F = s.filter, cutMul = Math.pow(2, ((m.cut ?? 0.5) - 0.5) * 5) * (e.acc ? 1.15 : 1);
       const base = Math.min(16000, Math.max(40, F.cut * cutMul * Math.pow(f / 261.6, F.kt || 0)));
@@ -3248,6 +3786,14 @@ const OA = (() => {
         if (F.a) flt.frequency.exponentialRampToValueAtTime(peakF, t + F.a);
         flt.frequency.setTargetAtTime(base + (peakF - base) * F.s, t + (F.a || 0), Math.max(0.005, F.d * decMul / 3));
       } else flt.frequency.setValueAtTime(base, t);
+      // a slow LFO on the cutoff, for pads and drones that keep moving
+      if (s.lfo) {
+        const lo = ctx.createOscillator(), lg = ctx.createGain();
+        lo.frequency.value = s.lfo.rate;
+        lg.gain.value = base * (Math.pow(2, s.lfo.depth) - 1) * 0.5;
+        lo.connect(lg); lg.connect(flt.frequency);
+        lo.start(t); lo.stop(stop);
+      }
       let head = flt;
       if (s.formants) {
         const sum = ctx.createGain();
@@ -3301,9 +3847,18 @@ const OA = (() => {
       if (s.noise) {
         const ns = ctx.createBufferSource(), nf = ctx.createBiquadFilter(), ng = ctx.createGain();
         ns.buffer = noise; nf.type = 'highpass'; nf.frequency.value = s.noise.hp;
-        ng.gain.setValueAtTime(s.noise.gain * (0.4 + 0.6 * v), t); ng.gain.setTargetAtTime(0, t, s.noise.decay / 2);
-        ns.connect(nf); nf.connect(ng); ng.connect(vg);
-        ns.start(t, (e.n * 0.0173) % 1.5); ns.stop(t + s.noise.decay * 6 + 0.01);
+        const nl = s.noise.gain * (0.4 + 0.6 * v);
+        if (s.noise.sus) {
+          // held noise (a swell): follows the amp envelope's shape, through the filter so the sweep opens it
+          ns.loop = true;
+          ng.gain.setValueAtTime(nl * s.noise.sus, t);
+          ng.gain.setTargetAtTime(0, end, Math.max(0.004, rel / 3));
+          ns.start(t, (e.n * 0.0173) % 1.5); ns.stop(stop);
+        } else {
+          ng.gain.setValueAtTime(nl, t); ng.gain.setTargetAtTime(0, t, s.noise.decay / 2);
+          ns.start(t, (e.n * 0.0173) % 1.5); ns.stop(t + s.noise.decay * 6 + 0.01);
+        }
+        ns.connect(nf); nf.connect(ng); ng.connect(s.noise.thru ? flt : vg);
       }
       const last = oscs[oscs.length - 1];
       if (last) last.onended = () => { try { vg.disconnect(); flt.disconnect(); } catch (_) {} };
@@ -3558,6 +4113,7 @@ const OA = (() => {
 
   const S = {st: null, hist: [], fut: [], A: null, side: 'B', aud: null, crate: store.get(KEY_CRATE) || [], filter: 'tech-house', q: '', tool: 'note',
     cands: [], candKind: '', R: null, M: null, ph: null, flashes: [], trail: [], lastFlash: 0, paint: null, importFile: null, importMode: 'chords', importInfo: '',
+    role: 'any', sort: 'bank', sLen: 'all', sRole: 'all', sQ: '', pRoles: null,
     held: new Set(), down: new Set(), liveFresh: true, preLive: undefined, midi: null, draw: false, drawSeq: null, auto: false, autoAt: null, sample: null};
   let actx = null, engine = null, player = null;
 
@@ -3598,12 +4154,13 @@ const OA = (() => {
     const st = S.st;
     S.R = OE.render(st);
     const mR = OE.render(st, {bars: 4, evo: false, fills: false, mutate: false});
-    const m = OE.metrics(mR), f = OE.fit(m, genre().target), c = OE.cycle(st);
-    S.M = {m, fit: f, cycle: c, cycleText: OE.cycleText(c, st, S.R.harmony.beats), mR};
+    const m = OE.metrics(mR), sf = OE.sectionFit(st, m), f = sf.fit, c = OE.cycle(st);
+    S.M = {m, fit: f, role: sf.role, roles: sf.roles, cycle: c, cycleText: OE.cycleText(c, st, S.R.harmony.beats), mR};
     S.ph = OA.phrase(st, S.R);
     if (player) player.load(S.ph);
     setAccent(genre().color);
     viewTransport(); viewStage(); viewGrid(); viewControls(); drawRollLayer(); orbitStatic(); viewBankActive();
+    document.querySelectorAll('.srow').forEach(r => r.classList.toggle('on', r.dataset.s === st.sound));
     clearTimeout(slowTimer);
     slowTimer = setTimeout(() => { viewMeasure(); viewAbleton(); viewSamples(); store.set(KEY_NOW, OE.pack(st)); }, light ? 140 : 0);
   }
@@ -3626,6 +4183,8 @@ const OA = (() => {
     $('stName').textContent = st.name;
     $('stWhy').textContent = p ? p.why : st.from === 'generated' ? 'Written by the generator from the genre\'s grammar and measured against its fingerprint.' : st.from === 'variation' ? 'A variation: same key, tempo, harmony and sound; the notes or the rhythm moved.' : st.from === 'import' ? 'Your chords, arpeggiated.' : g.blurb;
     const s = sound();
+    const R0 = S.M.roles;
+    $('stUses').innerHTML = `<span>Use it for</span>` + Object.keys(OE.ROLES).filter(r => R0.roles.includes(r)).sort((a, b) => R0.scores[b] - R0.scores[a]).map((r, i) => `<span class="rchip${i ? ' dim' : ''}" style="--rc:${OE.ROLES[r].color}" title="${esc(OE.ROLES[r].desc + (R0.why[r].length ? ' Here: ' + R0.why[r].join(', ') + '.' : ''))}">${esc(OE.ROLES[r].name)}</span>`).join('') + `<span class="energy" title="Energy: density, syncopation, accents, short notes and how punchy the sound is">energy <i style="--e:${R0.energy}%"></i> ${R0.energy}</span>` + (R0.why[R0.primary].length ? `<span class="hint">${esc(R0.why[R0.primary].join(' · '))}</span>` : '');
     $('stChips').innerHTML = [OT.keyLabel(st.key, st.scale) + ' · ' + OT.camelot(st.key, st.scale), st.bpm + ' BPM', OE.RATES[st.rate].label, OE.POOLS[st.pool].name, st.order === 'turing' ? `Turing ${Math.round(st.lock * 100)}% lock` : OE.ORDERS[st.order].name, s.name, st.evo !== 'none' ? OE.EVOS[st.evo].name : null, st.echo ? `echo ×${st.echo}` : null, st.feel !== 'straight' ? OE.FEELS[st.feel].name : null, st.strum ? 'strum' : null].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('');
     // chord lane
     const h = S.R.harmony;
@@ -3898,9 +4457,32 @@ const OA = (() => {
     const tabs = [['all', 'All', '#ECEEF5'], ...Object.entries(OB.GENRES).map(([id, g]) => [id, g.name, g.color])];
     $('genreTabs').innerHTML = tabs.map(([id, n, c]) => `<button type="button" role="tab" data-g="${id}" style="--c:${c}" class="${S.filter === id ? 'on' : ''}" aria-selected="${S.filter === id}"><i style="background:${c}"></i>${esc(n)}</button>`).join('');
   }
+  function patternRoles() {
+    if (!S.pRoles) { S.pRoles = {}; for (const p of OB.PATTERNS) S.pRoles[p.id] = OE.roles(OB.stateFor(p)); }
+    return S.pRoles;
+  }
+  // search: section words ("drop", "build", "breakdown"…) and length words ("short", "long", "pads"…) filter by tag,
+  // everything else is matched against the text. "drop material for sure" is just "drop".
   function visiblePatterns() {
-    const q = S.q.trim().toLowerCase();
-    return OB.PATTERNS.filter(p => (S.filter === 'all' || p.genre === S.filter) && (!q || [p.name, p.sub, p.why, p.sound, OB.GENRES[p.genre].name, p.pool, p.order].join(' ').toLowerCase().includes(q)));
+    const q = OE.parseQuery(S.q), PR = patternRoles();
+    const roles = new Set(q.roles); if (S.role !== 'any') roles.add(S.role);
+    const list = OB.PATTERNS.filter(p => {
+      if (S.filter !== 'all' && p.genre !== S.filter) return false;
+      const r = PR[p.id], snd = OB.SOUNDS_BY_ID[p.sound];
+      if (roles.size && ![...roles].some(x => r.roles.includes(x))) return false;
+      if (q.lens.size && !q.lens.has(snd.len)) return false;
+      const text = [p.name, p.sub, p.why, snd.name, snd.family, OB.GENRES[p.genre].name, p.pool, p.order].join(' ').toLowerCase();
+      return q.words.every(w => text.includes(w));
+    });
+    if (S.sort === 'energy-') list.sort((a, b) => PR[b.id].energy - PR[a.id].energy);
+    if (S.sort === 'energy+') list.sort((a, b) => PR[a.id].energy - PR[b.id].energy);
+    if (S.sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+    return list;
+  }
+  const roleTags = rs => `<span class="rtags">${Object.keys(OE.ROLES).filter(r => rs.includes(r)).map(r => `<span class="rtag" style="--rc:${OE.ROLES[r].color}">${r === 'intro' ? 'intro' : r}</span>`).join('')}</span>`;
+  function viewRoleTabs() {
+    const tabs = [['any', 'Any section', '#ECEEF5'], ...Object.entries(OE.ROLES).map(([k, v]) => [k, v.name, v.color])];
+    $('roleTabs').innerHTML = tabs.map(([k, n, c]) => `<button type="button" data-role="${k}" style="--rc:${c}" class="${S.role === k ? 'on' : ''}" title="${esc(k === 'any' ? 'Every pattern' : OE.ROLES[k].desc)}">${esc(n)}</button>`).join('');
   }
   function strip(steps) {
     const st = typeof steps === 'string' ? OE.parseSteps(steps) : steps;
@@ -3910,14 +4492,35 @@ const OA = (() => {
     const list = visiblePatterns();
     $('bankCount').textContent = `${list.length} of ${OB.PATTERNS.length}`;
     let html = '', lastSub = '';
+    const PR = patternRoles(), grouped = S.sort === 'bank';
     for (const p of list) {
-      const g = OB.GENRES[p.genre], sub = (S.filter === 'all' ? g.name + ' · ' : '') + p.sub;
-      if (sub !== lastSub) { html += `<p class="psub">${esc(sub)}</p>`; lastSub = sub; }
+      const g = OB.GENRES[p.genre], sub = (S.filter === 'all' ? g.name + ' · ' : '') + p.sub, r = PR[p.id];
+      if (grouped && sub !== lastSub) { html += `<p class="psub">${esc(sub)}</p>`; lastSub = sub; }
       const s = OB.SOUNDS_BY_ID[p.sound];
-      html += `<button type="button" class="pitem" data-p="${p.id}" style="--c:${g.color}"><b>${esc(p.name)}</b><small>${p.bpm || Math.round((g.bpm[0] + g.bpm[1]) / 2)} · ${esc(s ? s.name : '')} · ${OE.parseSteps(p.steps).length} steps</small><span class="strip">${strip(p.steps)}</span></button>`;
+      html += `<button type="button" class="pitem" data-p="${p.id}" style="--c:${g.color}"><b>${esc(p.name)}${roleTags(r.roles)}</b><small>${grouped ? '' : esc(g.name) + ' · '}${p.bpm || Math.round((g.bpm[0] + g.bpm[1]) / 2)} · ${esc(s ? s.name : '')} · energy ${r.energy}</small><span class="strip">${strip(p.steps)}</span><span class="en" style="--e:${r.energy}%"></span></button>`;
     }
     $('plist').innerHTML = html || '<p class="empty">Nothing matches.</p>';
     viewBankActive();
+  }
+  // ---------- the sound browser ----------
+  function visibleSounds() {
+    const q = OE.parseQuery(S.sQ);
+    const lens = new Set(q.lens); if (S.sLen !== 'all') lens.add(S.sLen);
+    const roles = new Set(q.roles); if (S.sRole !== 'all') roles.add(S.sRole);
+    return OB.SOUNDS.filter(x => (!lens.size || lens.has(x.len)) && (!roles.size || [...roles].some(r => x.roles.includes(r))) && q.words.every(w => [x.name, x.family, x.desc, x.tags.join(' ')].join(' ').toLowerCase().includes(w)));
+  }
+  function viewSoundBrowser() {
+    const segs = (id, cur, items) => { $(id).innerHTML = items.map(([k, n, c]) => `<button type="button" data-v="${k}" style="--rc:${c || 'var(--g)'}" class="${cur === k ? 'on' : ''}">${esc(n)}</button>`).join(''); };
+    segs('sLen', S.sLen, [['all', 'Any length'], ['short', 'Short'], ['medium', 'Medium'], ['long', 'Long']]);
+    segs('sRole', S.sRole, [['all', 'Any section'], ...Object.entries(OE.ROLES).map(([k, v]) => [k, k === 'intro' ? 'Intro' : v.name, v.color])]);
+    const list = visibleSounds();
+    $('sList').innerHTML = list.map(x => `<div class="srow ${x.id === S.st.sound ? 'on' : ''}" data-s="${x.id}" role="button" tabindex="0" title="${esc(x.desc)}"><span><b>${esc(x.name)}${roleTags(x.roles)}</b><small>${esc(x.family)} · ${x.len} · energy ${Math.round(x.energy * 100)}</small></span><button class="ib" type="button" data-hear="${x.id}" title="Hear one note" aria-label="Hear ${esc(x.name)}">▶</button></div>`).join('') || '<p class="note">No sound matches.</p>';
+  }
+  async function previewSound(id) {
+    const x = OB.SOUNDS_BY_ID[id], st = Object.assign({}, S.st, {sound: id}, x.fx || {});
+    const note = S.st.reg - OT.mod(S.st.reg - S.st.key, 12) + (OT.mod(S.st.reg - S.st.key, 12) > 6 ? 12 : 0);
+    const buf = await OA.renderSample(OE.normalize(st), {notes: [note], hold: {short: 0.2, medium: 0.5, long: 1.6}[x.len], vel: 110, fx: true, maxSec: 6});
+    playBuffer(buf);
   }
   function viewBankActive() { document.querySelectorAll('.pitem').forEach(b => b.classList.toggle('on', b.dataset.p === S.st.from)); }
   function stepPattern(dir) {
@@ -4347,7 +4950,7 @@ const OA = (() => {
   // ---------- fingerprint ----------
   function viewMeasure() {
     const {m, fit, cycle} = S.M, g = genre();
-    $('fitNum').textContent = fit.score; $('fitGenre').textContent = g.name;
+    $('fitNum').textContent = fit.score; $('fitGenre').textContent = g.name + (S.M.role !== 'drop' ? ' · ' + OE.ROLES[S.M.role].name.toLowerCase() : '');
     // radar
     const svg = $('radar'), cx = 180, cy = 165, R = 120, A = OE.AXES, n = A.length;
     const pt = (i, f) => { const a = -Math.PI / 2 + i / n * Math.PI * 2; return [cx + Math.cos(a) * R * f, cy + Math.sin(a) * R * f]; };
@@ -4355,8 +4958,9 @@ const OA = (() => {
     let s = '';
     for (const f of [0.25, 0.5, 0.75, 1]) s += `<polygon points="${A.map((_, i) => pt(i, f).join(',')).join(' ')}" fill="none" stroke="#ffffff14"/>`;
     A.forEach((a, i) => { const [x, y] = pt(i, 1); s += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#ffffff10"/>`; });
-    const lo = A.map((a, i) => pt(i, g.target[a.id] ? norm(a, g.target[a.id][0]) : 0));
-    const hi = A.map((a, i) => pt(i, g.target[a.id] ? norm(a, g.target[a.id][1]) : 1));
+    const T = OE.roleTarget(g.target, S.M.role);
+    const lo = A.map((a, i) => pt(i, T[a.id] ? norm(a, T[a.id][0]) : 0));
+    const hi = A.map((a, i) => pt(i, T[a.id] ? norm(a, T[a.id][1]) : 1));
     s += `<path d="M${hi.map(p => p.join(',')).join('L')}Z M${lo.slice().reverse().map(p => p.join(',')).join('L')}Z" fill="var(--g)" fill-opacity=".16" fill-rule="evenodd" stroke="var(--g)" stroke-opacity=".5" stroke-dasharray="3 3"/>`;
     const cur = A.map((a, i) => pt(i, norm(a, m[a.id])));
     s += `<polygon points="${cur.map(p => p.join(',')).join(' ')}" fill="#ffffff10" stroke="#fff" stroke-width="1.6"/>`;
@@ -4365,9 +4969,9 @@ const OA = (() => {
     svg.innerHTML = s;
     // tiles
     $('tiles').innerHTML = fit.axes.map((ax, i) => {
-      const a = A[i], tr = g.target[a.id];
+      const a = A[i], tr = T[a.id];
       const band = tr ? `<span class="band" style="left:${norm(a, tr[0]) * 100}%;width:${(norm(a, tr[1]) - norm(a, tr[0])) * 100}%"></span>` : '';
-      return `<div class="tile ${ax.na ? 'na' : ax.ok ? '' : 'bad'}" title="${esc(ax.na || a.unit)}"><small>${a.label}</small><b>${a.fmt(m[a.id])}</b><span class="rng">${tr ? `${g.name}: ${a.fmt(tr[0])}–${a.fmt(tr[1])}` : ''}${ax.na ? ' · n/a' : ''}</span><div class="bar">${band}<span class="dot" style="left:${norm(a, m[a.id]) * 100}%"></span></div></div>`;
+      return `<div class="tile ${ax.na ? 'na' : ax.ok ? '' : 'bad'}" title="${esc(ax.na || a.unit)}"><small>${a.label}</small><b>${a.fmt(m[a.id])}</b><span class="rng">${tr ? `${g.name}: ${a.fmt(tr[0])}–${a.fmt(tr[1])}` : `not counted in a ${OE.ROLES[S.M.role].name.toLowerCase()}`}${ax.na ? ' · n/a' : ''}</span><div class="bar">${band}<span class="dot" style="left:${norm(a, m[a.id]) * 100}%"></span></div></div>`;
     }).join('');
     // fixes
     const sug = OE.suggestions(S.st);
@@ -4429,6 +5033,7 @@ const OA = (() => {
     if ($('keepHarm').checked) Object.assign(keep, {bpm: gid === S.st.genre ? S.st.bpm : undefined, key: S.st.key, scale: S.st.scale, prog: S.st.imported ? undefined : (gid === S.st.genre ? S.st.prog : undefined), imported: S.st.imported || undefined, bars: S.st.bars});
     if ($('keepSound').checked) keep.sound = S.st.sound;
     if ($('wild').checked) keep.wild = true;
+    if ($('findRole').value) keep.role = $('findRole').value;
     for (const k of Object.keys(keep)) if (keep[k] === undefined) delete keep[k];
     const seed = 1 + Math.floor(Math.random() * 1e5);
     const t0 = performance.now();
@@ -4436,7 +5041,7 @@ const OA = (() => {
     S.candKind = kind;
     for (const c of S.cands) { c.st.ctx = S.st.ctx; c.st.mix = S.st.mix; }
     viewCands();
-    toast(kind === 'vary' ? `8 variations of "${S.st.name}"` : `${S.cands.length} of 140 ideas kept in ${Math.round(performance.now() - t0)} ms`);
+    toast(kind === 'vary' ? `8 variations of "${S.st.name}"` : `${S.cands.length} of 140 ${keep.role ? OE.ROLES[keep.role].name.toLowerCase() + ' ' : ''}ideas kept in ${Math.round(performance.now() - t0)} ms`);
   }
   function viewCands() {
     const box = $('cands');
@@ -4444,7 +5049,7 @@ const OA = (() => {
     const packed = OE.pack(S.st);
     box.innerHTML = S.cands.map((c, i) => {
       const g = OB.GENRES[c.st.genre], s = OB.SOUNDS_BY_ID[c.st.sound];
-      return `<div class="cand ${OE.pack(c.st) === packed ? 'on' : ''}" data-c="${i}" style="--c:${g.color}" tabindex="0" role="button" aria-label="Audition ${esc(c.st.name)}"><canvas></canvas><span class="sc">${c.fit}</span><h4>${esc(c.what ? c.what : s.name + ' · ' + ({stab: 'chord stabs', pedal: 'pedal riff', riff: 'written riff', arp: OE.ORDERS[c.st.order].name.toLowerCase() + ' arp'})[c.kind || 'arp'])}</h4><p>${esc(OE.POOLS[c.st.pool].name)} · ${OE.RATES[c.st.rate].label} · ${c.st.steps.length} steps · ${c.st.bpm} BPM${c.typical != null ? ' · typical ' + Math.round(c.typical * 100) + '%' : ''}</p><div class="ca"><button class="btn sm" data-play="${i}" type="button">▶ Hear</button><button class="btn sm ghost" data-star="${i}" type="button">★ Save</button></div></div>`;
+      return `<div class="cand ${OE.pack(c.st) === packed ? 'on' : ''}" data-c="${i}" style="--c:${g.color}" tabindex="0" role="button" aria-label="Audition ${esc(c.st.name)}"><canvas></canvas><span class="sc">${c.fit}</span><h4>${esc(c.what ? c.what : s.name + ' · ' + ({stab: 'chord stabs', pedal: 'pedal riff', riff: 'written riff', arp: OE.ORDERS[c.st.order].name.toLowerCase() + ' arp'})[c.kind || 'arp'])}</h4><p>${esc(OE.POOLS[c.st.pool].name)} · ${OE.RATES[c.st.rate].label} · ${c.st.steps.length} steps · ${c.st.bpm} BPM${c.typical != null ? ' · typical ' + Math.round(c.typical * 100) + '%' : ''}</p>${roleTags((c.roles || OE.roles(c.st)).roles)}<div class="ca"><button class="btn sm" data-play="${i}" type="button">▶ Hear</button><button class="btn sm ghost" data-star="${i}" type="button">★ Save</button></div></div>`;
     }).join('');
     box.querySelectorAll('.cand').forEach((el, i) => miniCanvas(el.querySelector('canvas'), S.cands[i].st, OB.GENRES[S.cands[i].st.genre].color));
   }
@@ -4664,8 +5269,9 @@ const OA = (() => {
     S.filter = S.st.genre;
     $('findGenre').value = S.st.genre;
     bindControls();
-    viewBankTabs(); viewBank();
+    viewBankTabs(); viewRoleTabs(); viewBank();
     refresh();
+    viewSoundBrowser();
     viewCands(); viewCrate(); viewRules(); viewGenres();
     // events
     $('play').addEventListener('click', () => togglePlay());
@@ -4673,6 +5279,17 @@ const OA = (() => {
     $('heroPlay').addEventListener('click', () => { togglePlay(); if (player.playing) $('studio').scrollIntoView({behavior: 'smooth'}); });
     $('heroFind').addEventListener('click', () => { $('find').scrollIntoView({behavior: 'smooth'}); runFind('new'); });
     $('genreTabs').addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (!b) return; S.filter = b.dataset.g; viewBankTabs(); viewBank(); });
+    $('roleTabs').addEventListener('click', e => { const b = e.target.closest('[data-role]'); if (!b) return; S.role = b.dataset.role; viewRoleTabs(); viewBank(); });
+    $('bankSort').addEventListener('change', () => { S.sort = $('bankSort').value; viewBank(); });
+    $('sLen').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; S.sLen = b.dataset.v; viewSoundBrowser(); });
+    $('sRole').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; S.sRole = b.dataset.v; viewSoundBrowser(); });
+    $('sSearch').addEventListener('input', () => { S.sQ = $('sSearch').value; viewSoundBrowser(); });
+    $('sList').addEventListener('click', e => {
+      const h = e.target.closest('[data-hear]'); if (h) { e.stopPropagation(); previewSound(h.dataset.hear); return; }
+      const r = e.target.closest('[data-s]'); if (!r) return;
+      const x = OB.SOUNDS_BY_ID[r.dataset.s]; commit(Object.assign({sound: x.id}, x.fx || {}));
+      toast(`${x.name}: ${x.len}, best for ${x.roles.map(k => OE.ROLES[k].name.toLowerCase()).join(' and ')}`);
+    });
     $('search').addEventListener('input', () => { S.q = $('search').value; viewBank(); });
     $('plist').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) loadPattern(b.dataset.p); });
     $('undo').addEventListener('click', undo); $('redo').addEventListener('click', redo);
@@ -4741,7 +5358,7 @@ const OA = (() => {
     let rz = 0;
     addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { drawRollLayer(); drawOrbit(player && player.playing ? player.beat() : null); }); });
     requestAnimationFrame(frame);
-    window.ORBIT_QA = {S, refresh, commit, load, runFind, audition, togglePlay, exportMidi, midiBytes, crateZip, applyImport, importFile, exportWav, toggleSave, midiIn, liveApply, autopilotStep, renderOne, stabsZip, multisampleZip, patchPack, loopWav, stemsZip, get orbitNodes() { return O.nodes; }, get player() { return player; }, get engine() { return engine; }};
+    window.ORBIT_QA = {S, refresh, commit, load, runFind, audition, togglePlay, exportMidi, midiBytes, crateZip, applyImport, importFile, exportWav, toggleSave, midiIn, liveApply, autopilotStep, visiblePatterns, visibleSounds, previewSound, renderOne, stabsZip, multisampleZip, patchPack, loopWav, stemsZip, get orbitNodes() { return O.nodes; }, get player() { return player; }, get engine() { return engine; }};
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
