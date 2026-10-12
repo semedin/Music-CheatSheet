@@ -1,0 +1,92 @@
+{
+  "page": "orbit.html",
+  "results": [
+    {
+      "label": "Bank lists every pattern",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Play schedules notes and the orbit follows them",
+      "ok": true,
+      "detail": "{\"playing\":true,\"trail\":4,\"now\":true}"
+    },
+    {
+      "label": "One pattern from each of the 12 genres loads and plays at fit 100",
+      "ok": true,
+      "detail": "true,true,true,true,true,true,true,true,true,true,true,true"
+    },
+    {
+      "label": "New ideas: eight candidates, all fitting",
+      "ok": true,
+      "detail": "100,100,100,100,100,100,100,100"
+    },
+    {
+      "label": "Clicking a candidate auditions it",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Variations: eight",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "MIDI export: five tracks, the arp note for note",
+      "ok": true,
+      "detail": "{\"name\":\"Orbit_Tech-house-idea-3_Gm_128bpm_8bars.mid\",\"tracks\":[\"Orbit Arp\",\"Chords\",\"Arp input (for Live's Arpeggiator)\",\"Bass\",\"Drums\"],\"arp\":60,\"want\":60}"
+    },
+    {
+      "label": "Crate: two saved, two rows, a ZIP comes out",
+      "ok": true,
+      "detail": "{\"n\":2,\"pk\":true,\"rows\":2,\"size\":8620}"
+    },
+    {
+      "label": "Chord import: picks the chord track, finds Am7 Fmaj7 C G in A minor",
+      "ok": true,
+      "detail": "{\"names\":[\"Am7\",\"Fmaj7\",\"C\",\"G\"],\"key\":\"A natural minor\",\"lane\":4,\"box\":true,\"track\":false}"
+    },
+    {
+      "label": "WAV render: a RIFF file, audible and not clipped",
+      "ok": true,
+      "detail": "{\"riff\":\"RIFF\",\"peak\":0.72723388671875,\"rms\":0.1624241391910638}"
+    },
+    {
+      "label": "All 19 sounds render audible audio",
+      "ok": true,
+      "detail": "organ-stab:0.7508 tech-pluck:0.7817 rubber-stab:0.7053 chord-stab:0.5852 perc-bleep:0.7953 acid-303:0.7964 hollow-square:0.4733 supersaw:0.5917 glass-pluck:0.7021 dark-saw:0.7433 marimba:0.7482 kalimba:0.82 log-drum:0.7687 rhodes:0.6801 house-piano:0.8173 disco-saw:0.7935 vox-chop:0.6744 rave-hoover:0.65 sub-pulse:0.755"
+    },
+    {
+      "label": "Rule A/B auditions, measures, and goes back to your arp",
+      "ok": true,
+      "detail": "{\"before\":\"Organ bounce\",\"during\":{\"bar\":true,\"name\":\"Rule 2 · A: On the kick\",\"kick\":0.6},\"after\":\"Organ bounce\"}"
+    },
+    {
+      "label": "A fix raises the fit and undo takes it back",
+      "ok": true,
+      "detail": "{\"before\":86,\"after\":100,\"undone\":true}"
+    },
+    {
+      "label": "A/B swaps between the stored A and the edit",
+      "ok": true,
+      "detail": "{\"A\":57,\"B\":50}"
+    },
+    {
+      "label": "Share link round-trips the combo",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "label": "Phone (390 px): no horizontal scroll",
+      "ok": true,
+      "detail": "390 vs 390"
+    },
+    {
+      "label": "Phone: the floating button plays",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "status": "passed"
+}

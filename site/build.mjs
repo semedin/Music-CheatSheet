@@ -74,6 +74,7 @@ ${navBlock()}
 <h1>Everything in Fieldwork, in one place.</h1>
 <p class="lede">${pageCount} standalone pages: studios that write MIDI, labs you can play, and field guides that measure what they argue. Every page works offline from this folder.</p>
 <div class="start">
+<a href="orbit.html"><small>Write an arp or a riff</small><b>Orbit</b></a>
 <a href="fieldwork-v3.html"><small>Write an idea</small><b>Motif Studio</b></a>
 <a href="drum-library.html"><small>Program drums</small><b>The Kit</b></a>
 <a href="serum-v2.html"><small>Design a sound</small><b>Sound Design V2</b></a>

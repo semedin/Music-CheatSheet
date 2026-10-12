@@ -8,7 +8,7 @@ a{color:inherit}
 .eyebrow{margin:0 0 12px;font:600 12px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
 h1{margin:0;max-width:18ch;font-size:clamp(34px,6vw,64px);line-height:1.02;letter-spacing:-.02em}
 .lede{max-width:62ch;margin:18px 0 28px;color:#c9cdc2;font-size:18px}
-.start{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;max-width:820px}
+.start{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;max-width:880px}
 .start a{display:block;padding:16px 18px;border:1px solid #3a464c;border-radius:8px;text-decoration:none;background:#1f282d;transition:border-color .15s,background .15s}
 .start a:hover,.start a:focus-visible{border-color:var(--gold);background:#263036;outline:none}
 .start small{display:block;color:#9ea69b;font-size:13px}

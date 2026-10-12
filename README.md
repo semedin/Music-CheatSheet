@@ -9,7 +9,7 @@ synthesis. There is no server, account, install or package manager.
 
 1. Keep every file in **one folder**. Pages link to each other by file name.
 2. Open **[`index.html`](index.html)**, the home page. It lists every page, the notes and the MIDI packs, with search (<kbd>/</kbd>).
-3. Every page has the same top bar: **Home · Motif Studio · V2 Studio · Trance · X-Ray · Blueprint · Drums · Rumble · Sound design · Field guides**.
+3. Every page has the same top bar: **Home · Motif Studio · Arps · V2 Studio · Trance · X-Ray · Blueprint · Drums · Rumble · Sound design · Field guides**.
 
 Use headphones or monitors: several labs work below 150 Hz, where laptop speakers are silent.
 
@@ -19,6 +19,7 @@ Use headphones or monitors: several labs work below 150 Hz, where laptop speaker
 
 | Page | What it is | Notes | Built from |
 |---|---|---|---|
+| [`orbit.html`](orbit.html) | **Orbit, the arpeggio studio (latest).** Arps, riffs and sequences for 12 genres (41 deep tech house patterns, 129 in all): a note cycle turning against a step pattern, voiced through your key and progression or your own imported chord MIDI. A measured genre fingerprint with fixes, a cycle counter, a generator, 10 evolution lanes exported as CC, 19 sounds with Serum 2 and Ableton recipes, Live's Arpeggiator settings, 12 rules as A/Bs, a crate with ZIP export, MIDI and WAV out. | [ORBIT.md](ORBIT.md) | `arp-src/` |
 | [`fieldwork-v3.html`](fieldwork-v3.html) | **Motif Studio (V3, latest).** Write a two-bar motif, then grow it into an 8- or 16-bar phrase. 69 styles, 120 artist perspectives, 59 preview voices, 19 drum kits; MIDI and WAV export. | [VERSION-3.md](VERSION-3.md) | `v3-src/` |
 | [`trance.html`](trance.html) | **Trance, beyond the ordinary.** All 12 supplied melodies plus 16 studies across eight trance styles, six treatments each (168 sketches) with chords, bass and drums; 24 artist perspectives, 16 sound recipes, arrangement maps, MIDI and ZIP export. | [TRANCE.md](TRANCE.md) | `trance-src/` |
 | [`studio-v2.html`](studio-v2.html) | **V2 Studio.** 1,760 recipes across 24 genres and 32 artist profiles; five coordinated parts, 48 instruments, 16 drum kits. | [VERSION-2.md](VERSION-2.md), [ARTIST-STUDIES.md](ARTIST-STUDIES.md) | `v2-src/` |
@@ -100,6 +101,7 @@ folder yet".
 | `drum-library.html` | `drum-library-src/` | `node drum-library-src/build.mjs` |
 | `trance.html` | `trance-src/` + `material/` | `node trance-src/build.mjs` (`node trance-src/pack.mjs` rebuilds the zip) |
 | `blueprint.html` | `blueprint-src/` + X-Ray's engine from `xray.html` | `node blueprint-src/build.mjs` |
+| `orbit.html` | `arp-src/` | `node arp-src/build.mjs` |
 | `index.html` + top bar everywhere | `site/` | `node site/build.mjs` |
 
 Every other `.html` file is edited directly.
@@ -126,10 +128,11 @@ node rumble-tests.mjs            # rumble lab
 node xray-tests.mjs              # X-Ray analysis engine against known answers
 node blueprint-src/test.mjs      # Blueprint's move detectors against a planted demo and an effect-free control
 node trance-src/test.mjs         # trance room
+node arp-src/test.mjs            # Orbit: theory, engine, bank against its genres, generator, export
 ```
 
 `v3-src/browser-check.mjs`, `drum-library-src/browser-check.mjs`,
-`sound-design-src/check.mjs` and `trance-src/check.mjs` drive a real browser and write reports into each `qa/` folder.
+`sound-design-src/check.mjs`, `trance-src/check.mjs` and `arp-src/browser-check.mjs` (Playwright) drive a real browser and write reports into each `qa/` folder.
 
 ## Conventions
 
@@ -139,7 +142,7 @@ node trance-src/test.mjs         # trance room
   links need a connection.
 - **MIDI export** is written byte by byte in JavaScript and downloaded as a `Blob`, so it
   works from `file://`.
-- **Saving.** The V2 Studio, drum studio, Rumble, Sound Design V2 and Trance keep sessions, notes or
+- **Saving.** The V2 Studio, drum studio, Rumble, Sound Design V2, Trance and Orbit keep sessions, notes or
   favourites in `localStorage`, and several studios export/import session files. The V1
   guides keep everything in memory only.
 - **Browsers.** Everything works in current Chrome, Edge, Firefox and Safari. Audio starts
@@ -147,6 +150,7 @@ node trance-src/test.mjs         # trance room
 
 ## Release history
 
+- **Orbit**: the arpeggio studio, with 129 patterns across 12 genres, a measured genre fingerprint, a generator, chord MIDI import and Serum 2 / Ableton recipes. See [ORBIT.md](ORBIT.md).
 - **Blueprint**: the arrangement of a reference track and every move in its transitions, validated against a planted demo and an effect-free control. See [BLUEPRINT.md](BLUEPRINT.md).
 - **X-Ray**: a reference-track analyser with MP3 support, A/B against your mix and a skeleton MIDI export. See [XRAY.md](XRAY.md).
 - **Trance**: a standalone trance writing room and a 168-sketch MIDI pack. See [TRANCE.md](TRANCE.md).
