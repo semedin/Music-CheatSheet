@@ -17,7 +17,7 @@ The Move). It has almost nothing on:
 | Mixing, space (reverb/delay), loudness | Users can write an idea here but can't finish it. |
 | Ear training | Every guide says "listen for it" but nothing teaches you to hear it. |
 | Performance and jamming | Everything is step-edited; nothing is played live. |
-| Vocals | Mentioned in The Cut, never taught. |
+| Vocals | Mentioned in The Cut. Talk now turns your own spoken line into hooks; singing, formant synthesis and vocoding are still missing. |
 | Genre rooms beyond trance and disco house | Garage, breaks, acid, dub techno and amapiano appear only as rows in the Pattern Bank. |
 
 ---
@@ -132,6 +132,7 @@ copies), arrangement maps and a MIDI pack.
 | `garage.html` | **2-Step** | The skipped-kick shuffle lab, organ and bassline wobble bass, vocal-chop rhythm generator, and speed garage and UK bassline variants. |
 | `breaks.html` | **Break Surgery** | Synthesized breakbeats you chop, re-sequence and ghost at 160–175 BPM. The jungle edit grid, Reese at speed, and a "time-stretch vs repitch" A/B. |
 | `amapiano.html` | **Log Drum** | Log drum synthesis (the pitch-bent, filtered decay), shaker grids, 3:2 and 6:8-over-4/4 polyrhythm lab, and the "slow build that never drops". |
+| `talk.html` | **Talk** ✅ built | The tech house room: talking formant bass and mic-to-hook. See [TALK.md](TALK.md). Next: the bass answering the vocal's pitch, a vowel drawn per note, and a Live Set export. |
 | `melodic.html` | **Afterglow** | Melodic techno and progressive house: long-form energy curves and the 7-minute build. (The 64-bar evolving arp itself now lives in [Orbit](orbit.html): gate, octave, note-count and cutoff lanes, exported as CC.) |
 
 ---
@@ -139,6 +140,7 @@ copies), arrangement maps and a MIDI pack.
 ## Tier 5: go somewhere new
 
 ### 9. `voice.html` — **Voice** · vocals without a singer
+Talk's mic booth covers chopping, pitching and placing your own spoken line. This page is still the place for vocals with no recording at all.
 - A **formant synthesizer** that speaks vowels and simple syllables, so chops, "oh-ah" pads and
   one-word hooks work with no samples.
 - **Chop-to-hook.** Slice a synthesized phrase, re-sequence it rhythmically and export a Simpler

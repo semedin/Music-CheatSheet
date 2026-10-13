@@ -1,0 +1,120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#141117"><title>Talk — tech house bass and hooks · Fieldwork</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>/*STYLE*/</style></head><body>
+<!-- site-nav:start --><div id="site-nav" role="navigation" aria-label="All Fieldwork pages"><style>#site-nav{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:2px;width:100%;padding:6px 12px;overflow-x:auto;background:#171e22;color:#c9cdc2;font:500 13px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;position:relative;z-index:1000;scrollbar-width:thin}#site-nav a{all:unset;display:inline-block;padding:5px 9px;border-radius:4px;color:#c9cdc2;white-space:nowrap;cursor:pointer}#site-nav a:hover{color:#fff;background:#283237}#site-nav a:focus-visible{outline:2px solid #ffc96e;outline-offset:1px}#site-nav a[aria-current=page]{color:#171e22;background:#ffc96e}#site-nav .sn-brand{font-weight:800;letter-spacing:.08em;color:#fff;margin-right:6px}@media print{#site-nav{display:none}}</style><a href="index.html" data-files="index.html" class="sn-brand">FIELDWORK</a><a href="fieldwork-v3.html" data-files="fieldwork-v3.html">Motif Studio</a><a href="orbit.html" data-files="orbit.html">Arps</a><a href="pocket.html" data-files="pocket.html">Pocket</a><a href="talk.html" data-files="talk.html">Tech House</a><a href="studio-v2.html" data-files="studio-v2.html melody-v2.html chords-v2.html bass-v2.html">V2 Studio</a><a href="trance.html" data-files="trance.html">Trance</a><a href="xray.html" data-files="xray.html">X-Ray</a><a href="blueprint.html" data-files="blueprint.html">Blueprint</a><a href="drum-library.html" data-files="drum-library.html">Drums</a><a href="rumble.html" data-files="rumble.html">Rumble</a><a href="serum-v2.html" data-files="serum-v2.html serum.html patch-lab.html sampling.html">Sound design</a><a href="field-guides-v1.html" data-files="field-guides-v1.html groove-cheatsheet.html groove-vol2.html low-end.html melody.html chords.html between.html inkey.html keyboard.html arrangement.html buildorder.html the-move.html disco-house-cheatsheet.html">Field guides</a><script data-site-nav>(()=>{const f=decodeURIComponent(location.pathname.split('/').pop()||'index.html');for(const a of document.querySelectorAll('#site-nav a'))if(a.dataset.files.split(' ').includes(f)){a.setAttribute('aria-current','page');break}})()</script></div><!-- site-nav:end -->
+<main>
+<header class="hero">
+  <div>
+    <p class="eyebrow">FIELDWORK / 009 &nbsp;·&nbsp; TECH HOUSE ROOM</p>
+    <h1>Make the bass <em>talk.</em><br>Then say the hook.</h1>
+    <p class="intro">In tech house the bassline is the lead and the vocal is one line said with attitude. This room builds both: a bass that says <b>wah</b>, <b>ow</b> and <b>yeah</b> through a formant filter, and a mic booth that turns three words of yours into eight chart-style hooks. Then it makes the two take turns.</p>
+    <div class="hero-actions"><button id="hero-play" class="play big">▶ Hear the room</button><a class="ghost" href="#hook">Skip to the mic ↓</a></div>
+  </div>
+  <div class="mouth-art" aria-hidden="true"><svg viewBox="0 0 260 260"><g id="art-bars"></g></svg></div>
+</header>
+
+<section id="bass" aria-labelledby="bass-title">
+  <div class="section-heading"><div><p class="eyebrow">01 / THE TALKING BASS</p><h2 id="bass-title">Fourteen loops that never touch the kick.</h2></div>
+    <p class="aside">Every loop obeys one grammar: no note starts on a kick, notes never overlap, and the words go where the phrase answers itself. The tests check all fourteen, and every generated loop, against it.</p></div>
+  <div id="studies" class="studies" role="list"></div>
+</section>
+
+<section class="studio" aria-labelledby="studio-title">
+  <div class="studio-head"><div><p class="eyebrow">THE LOOP THAT CARRIES FIVE MINUTES</p><h2 id="studio-title">Offbeat rubber</h2><p id="study-feel"></p></div>
+    <div class="say" id="say" aria-label="Hear the bass say a word"></div></div>
+  <div class="transport">
+    <button id="play" class="play">▶ Play</button>
+    <span id="pos" class="pos">BAR 01 / 16</span>
+    <label>Tempo<input id="bpm" type="number" min="100" max="140" step="1"><small>BPM</small></label>
+    <label>Key<select id="key"></select></label>
+    <label>Phrase<select id="bars"><option value="8">8 bars</option><option value="16">16 bars</option><option value="32">32 bars</option></select></label>
+    <label>Drums<select id="kit"></select></label>
+    <div class="mutes" id="mutes"></div>
+  </div>
+  <div class="timeline-wrap"><svg id="timeline" viewBox="0 0 1100 250" preserveAspectRatio="none" role="img" aria-label="The phrase: bass notes with their words, the vocal and the kick"></svg></div>
+  <div class="studio-grid">
+    <div class="knobs">
+      <h3>The voice</h3>
+      <label class="slider"><span>Mouth <output id="mouth-o"></output></span><input id="mouth" type="range" min="0" max="100"><small>How far the formants open. Low is a closed "oo"; high is a shouting "aah".</small></label>
+      <label class="slider"><span>Drive <output id="drive-o"></output></span><input id="drive" type="range" min="0" max="100"><small>Saturation before the mouth. More harmonics for the formants to shape.</small></label>
+      <label class="slider"><span>Sub <output id="sub-o"></output></span><input id="sub" type="range" min="0" max="100"><small>A clean sine underneath. The talking happens above 95 Hz.</small></label>
+      <label class="slider"><span>Note length <output id="gate-o"></output></span><input id="gate" type="range" min="30" max="100"><small>For the short notes. Talking notes always hold.</small></label>
+      <label class="slider"><span>Swing <output id="swing-o"></output></span><input id="swing" type="range" min="50" max="70"><small>Late 16ths, applied to bass, drums and vocal alike.</small></label>
+    </div>
+    <div class="moves-box">
+      <h3>Keep it alive <span class="muted">— same loop, eight moves across the phrase</span></h3>
+      <div id="moves" class="moves"></div>
+    </div>
+  </div>
+  <div class="readouts" id="readouts"></div>
+  <p class="meter-note">These count notes and time, measured on the phrase you are hearing. They say whether the rules held, not whether it bangs. That part is your ears.</p>
+</section>
+
+<section id="hook" aria-labelledby="hook-title">
+  <div class="section-heading"><div><p class="eyebrow">02 / SAY THE HOOK</p><h2 id="hook-title">Three words. Eight hooks.</h2></div>
+    <p class="aside">Say a short line into your mic: "turn it up", "let me see you move", your own. It never leaves this page. A robot can say one for you while you try it out.</p></div>
+  <div class="booth">
+    <div class="mic-col">
+      <button id="rec" class="mic" aria-pressed="false"><span class="dot"></span><b>Record</b><small>up to 5 s · click again to stop</small></button>
+      <div class="level"><i id="level"></i></div>
+      <label class="file-button">Load an audio file<input id="file" type="file" accept="audio/*"></label>
+      <label>Or a robot says<select id="demo"></select></label>
+      <ul class="tips"><li><b>2–5 syllables.</b> A command or a question.</li><li><b>Say it, don't sing it.</b> Attitude beats pitch.</li><li><b>Leave a gap between words</b> so the chop finds them.</li><li><b>Close to the mic,</b> quiet room.</li></ul>
+    </div>
+    <div class="wave-col">
+      <div class="wave-head"><b id="take-name">Robot: "turn it up"</b><span class="muted">Click a syllable to hear it</span></div>
+      <svg id="wave" viewBox="0 0 800 160" preserveAspectRatio="none" role="img" aria-label="Waveform with detected syllables"></svg>
+      <label class="slider inline"><span>Split <output id="split-o"></output></span><input id="split" type="range" min="0" max="100"><small>Too few syllables? Push it up. Words cut in half? Pull it down.</small></label>
+      <div class="readouts small" id="voice-readouts"></div>
+    </div>
+  </div>
+  <div class="treat-head"><h3>Pick a treatment <span class="muted">— each one plays in the loop above, in time</span></h3>
+    <label class="toggle"><input id="room" type="checkbox"><span>Bass makes room for the vocal</span></label></div>
+  <div id="treatments" class="treatments"></div>
+</section>
+
+<section class="bottom-grid">
+  <article class="panel">
+    <p class="eyebrow">03 / TAKE IT TO ABLETON</p><h2>Everything you hear, as files.</h2>
+    <div class="exports">
+      <button id="x-midi" class="outline">MIDI · bass, drums, vocal syllables</button>
+      <button id="x-mix" class="outline">WAV · full mix</button>
+      <button id="x-stems" class="outline">ZIP · stems + MIDI</button>
+      <button id="x-hook" class="outline">WAV · this hook, 2 bars</button>
+      <button id="x-hooks" class="outline">ZIP · all eight hooks + syllables</button>
+    </div>
+    <ol class="steps">
+      <li><b>Bass MIDI</b> carries pitch bend (set your synth's bend range to ±12), CC74 for the mouth and CC1 for the vowel. Map them in Serum 2 or Live's Auto Filter.</li>
+      <li><b>Vocal syllables:</b> drag the <code>syllable-*.wav</code> files together onto the C1 pad of a Drum Rack. They fill C1, C♯1, D1… in order, so the vocal MIDI plays your hook. Pitched treatments (Mantra, Chipmunk, Tuned) need their rendered WAV instead.</li>
+      <li><b>Stems</b> have the sidechain pump baked into the bass. Leave headroom: the preview bus is not a master.</li>
+    </ol>
+  </article>
+  <article class="panel">
+    <p class="eyebrow">04 / BUILD IT IN YOUR SYNTH</p><h2>The talking bass, in Serum 2.</h2>
+    <ol class="steps">
+      <li><b>Osc A:</b> saw, 2 unison voices, detune ~0.12. <b>Osc B:</b> square, −1 octave, level ~50%. <b>Sub:</b> sine, on its own, no filter.</li>
+      <li><b>Filter:</b> one of the <b>Formant</b> types, drive ~40%. MIDI-learn its frequency to <b>CC74</b> (the mouth) and its vowel control to <b>CC1</b>. The exported MIDI already moves both.</li>
+      <li><b>Env 2 → filter freq</b> +20%, decay 250 ms: the "w" at the start of a word.</li>
+      <li><b>Pitch:</b> bend range ±12, portamento off. The drop stabs are written as bend.</li>
+      <li><b>FX:</b> Distortion (tube, ~30%) before an EQ that high-passes the character at 95 Hz. Leave the sub dry.</li>
+      <li>In <b>Live</b> without Serum: Operator saw → Auto Filter. Use a vowel/formant type if your version has one, otherwise band-pass, and map it to the same CCs.</li>
+    </ol>
+  </article>
+  <article class="panel">
+    <p class="eyebrow">05 / WRITING THE LINE</p><h2>What a chart hook does.</h2>
+    <ol class="steps">
+      <li><b>It is an instruction or a question.</b> "Turn it up", "Where you at", "Move your body". The crowd is the subject.</li>
+      <li><b>It ends on an open vowel.</b> "up" stops; "go-o" can be held, chopped and pitched.</li>
+      <li><b>It fits in one bar</b> and repeats at least four times before it changes.</li>
+      <li><b>It takes turns with the bass.</b> When one talks, the other listens: try <b>Call &amp; response</b> with <b>Bass makes room</b>.</li>
+      <li><b>Recorded vocals you didn't make need a licence.</b> Your own voice, or a pack you own, is safe to release.</li>
+    </ol>
+  </article>
+</section>
+<footer><span>FIELDWORK / TALK</span><p>Original studies. Your ears make the decisions. Pair it with <a href="orbit.html">Orbit</a> for the riff and <a href="low-end.html">Low End</a> for the kick.</p><a href="TALK.md">Notes &amp; limits ↗</a></footer>
+</main>
+<div id="status" role="status" aria-live="polite"></div>
+<script>/*THEORY*/
+/*ENGINE*/
+/*AUDIO*/
+/*APP*/</script></body></html>

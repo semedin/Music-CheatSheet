@@ -443,7 +443,7 @@ h3.mt{margin-top:18px}
 </style>
 </head>
 <body>
-<!-- site-nav:start --><div id="site-nav" role="navigation" aria-label="All Fieldwork pages"><style>#site-nav{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:2px;width:100%;padding:6px 12px;overflow-x:auto;background:#171e22;color:#c9cdc2;font:500 13px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;position:relative;z-index:1000;scrollbar-width:thin}#site-nav a{all:unset;display:inline-block;padding:5px 9px;border-radius:4px;color:#c9cdc2;white-space:nowrap;cursor:pointer}#site-nav a:hover{color:#fff;background:#283237}#site-nav a:focus-visible{outline:2px solid #ffc96e;outline-offset:1px}#site-nav a[aria-current=page]{color:#171e22;background:#ffc96e}#site-nav .sn-brand{font-weight:800;letter-spacing:.08em;color:#fff;margin-right:6px}@media print{#site-nav{display:none}}</style><a href="index.html" data-files="index.html" class="sn-brand">FIELDWORK</a><a href="fieldwork-v3.html" data-files="fieldwork-v3.html">Motif Studio</a><a href="orbit.html" data-files="orbit.html">Arps</a><a href="pocket.html" data-files="pocket.html">Pocket</a><a href="studio-v2.html" data-files="studio-v2.html melody-v2.html chords-v2.html bass-v2.html">V2 Studio</a><a href="trance.html" data-files="trance.html">Trance</a><a href="xray.html" data-files="xray.html">X-Ray</a><a href="blueprint.html" data-files="blueprint.html">Blueprint</a><a href="drum-library.html" data-files="drum-library.html">Drums</a><a href="rumble.html" data-files="rumble.html">Rumble</a><a href="serum-v2.html" data-files="serum-v2.html serum.html patch-lab.html sampling.html">Sound design</a><a href="field-guides-v1.html" data-files="field-guides-v1.html groove-cheatsheet.html groove-vol2.html low-end.html melody.html chords.html between.html inkey.html keyboard.html arrangement.html buildorder.html the-move.html disco-house-cheatsheet.html">Field guides</a><script data-site-nav>(()=>{const f=decodeURIComponent(location.pathname.split('/').pop()||'index.html');for(const a of document.querySelectorAll('#site-nav a'))if(a.dataset.files.split(' ').includes(f)){a.setAttribute('aria-current','page');break}})()</script></div><!-- site-nav:end -->
+<!-- site-nav:start --><div id="site-nav" role="navigation" aria-label="All Fieldwork pages"><style>#site-nav{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:2px;width:100%;padding:6px 12px;overflow-x:auto;background:#171e22;color:#c9cdc2;font:500 13px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;position:relative;z-index:1000;scrollbar-width:thin}#site-nav a{all:unset;display:inline-block;padding:5px 9px;border-radius:4px;color:#c9cdc2;white-space:nowrap;cursor:pointer}#site-nav a:hover{color:#fff;background:#283237}#site-nav a:focus-visible{outline:2px solid #ffc96e;outline-offset:1px}#site-nav a[aria-current=page]{color:#171e22;background:#ffc96e}#site-nav .sn-brand{font-weight:800;letter-spacing:.08em;color:#fff;margin-right:6px}@media print{#site-nav{display:none}}</style><a href="index.html" data-files="index.html" class="sn-brand">FIELDWORK</a><a href="fieldwork-v3.html" data-files="fieldwork-v3.html">Motif Studio</a><a href="orbit.html" data-files="orbit.html">Arps</a><a href="pocket.html" data-files="pocket.html">Pocket</a><a href="talk.html" data-files="talk.html">Tech House</a><a href="studio-v2.html" data-files="studio-v2.html melody-v2.html chords-v2.html bass-v2.html">V2 Studio</a><a href="trance.html" data-files="trance.html">Trance</a><a href="xray.html" data-files="xray.html">X-Ray</a><a href="blueprint.html" data-files="blueprint.html">Blueprint</a><a href="drum-library.html" data-files="drum-library.html">Drums</a><a href="rumble.html" data-files="rumble.html">Rumble</a><a href="serum-v2.html" data-files="serum-v2.html serum.html patch-lab.html sampling.html">Sound design</a><a href="field-guides-v1.html" data-files="field-guides-v1.html groove-cheatsheet.html groove-vol2.html low-end.html melody.html chords.html between.html inkey.html keyboard.html arrangement.html buildorder.html the-move.html disco-house-cheatsheet.html">Field guides</a><script data-site-nav>(()=>{const f=decodeURIComponent(location.pathname.split('/').pop()||'index.html');for(const a of document.querySelectorAll('#site-nav a'))if(a.dataset.files.split(' ').includes(f)){a.setAttribute('aria-current','page');break}})()</script></div><!-- site-nav:end -->
 <header class="hero">
   <div class="orbits" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="wrap hero-in">
@@ -1084,6 +1084,7 @@ const OT = (() => {
       const ch = tr.ch || 0, tn = ascii(tr.name || 'Track');
       const ev = [{tick: 0, order: -3, bytes: [255, 3, ...vlq(tn.length), ...tn]}];
       for (const c of tr.cc || []) ev.push({tick: Math.max(0, Math.round(c.t * ppq)), order: -1, bytes: [176 + ch, c.cc & 127, Math.max(0, Math.min(127, Math.round(c.v)))]});
+      for (const p of tr.pb || []) { const v = Math.max(0, Math.min(16383, Math.round(p.v) + 8192)); ev.push({tick: Math.max(0, Math.round(p.t * ppq)), order: -2, bytes: [224 + ch, v & 127, v >> 7]}); }
       for (const n of tr.notes) {
         const a = Math.max(0, Math.round(n.t * ppq));
         let b = Math.max(a + 1, Math.round((n.t + n.d) * ppq));
@@ -1121,6 +1122,7 @@ const OT = (() => {
       const end = pos + size;
       let tick = 0, status = 0, name = '';
       const on = new Map(), notes = [], cc = [];
+      let pb = null;
       while (pos < end) {
         if (++events > 300000) throw Error('This MIDI file has too many events.');
         tick += rv();
@@ -1137,12 +1139,13 @@ const OT = (() => {
           if (type === 144 && d2 > 0) { if (!on.has(key)) on.set(key, []); on.get(key).push({t: tick / ppq, n: d1, v: d2, ch}); }
           else if (type === 128 || type === 144) { const n = on.get(key)?.shift(); if (n && tick / ppq > n.t) notes.push({...n, d: tick / ppq - n.t}); }
           else if (type === 176) cc.push({t: tick / ppq, cc: d1, v: d2, ch});
+          else if (type === 224) (pb ||= []).push({t: tick / ppq, v: d2 * 128 + d1 - 8192, ch});
         }
       }
       pos = end;
       for (const q of on.values()) for (const n of q) if (tick / ppq > n.t) notes.push({...n, d: tick / ppq - n.t});
       notes.sort((a, b) => a.t - b.t || a.n - b.n);
-      tracks.push({name: name || 'Track ' + (tr + 1), beats: tick / ppq, notes, cc, drums: notes.length > 0 && notes.every(n => n.ch === 9)});
+      tracks.push({name: name || 'Track ' + (tr + 1), beats: tick / ppq, notes, cc, ...(pb ? {pb} : {}), drums: notes.length > 0 && notes.every(n => n.ch === 9)});
     }
     return {ppq, bpm, format, tracks};
   }

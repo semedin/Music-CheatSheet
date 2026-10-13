@@ -12,6 +12,9 @@ export const SECTIONS = [
     title: 'Write ideas',
     blurb: 'Studios that generate, edit and export MIDI. Start here when you want notes to drag into Ableton.',
     pages: [
+      {file: 'talk.html', title: 'Talk — tech house bass and hooks', edition: 'New', badge: 'Latest',
+        text: 'Make the bass talk: 14 tech house loops through a formant filter that says wah, ow and yeah, eight moves that keep one loop alive for a whole drop, and a mic booth that turns your three words into eight chart-style hooks, chopped, pitched and taking turns with the bass. MIDI with bend and CCs, WAV stems.',
+        doc: 'TALK.md', src: 'talk-src'},
       {file: 'pocket.html', title: 'Pocket — a foundation for your riff', edition: 'New', badge: 'Latest',
         text: 'Keep your Orbit riff’s patch and harmony. Eight foundations that follow its accents, rests and chords, with a rave mode for dense arps, 16-bar development, bass edits, MIDI and WAV stems.',
         doc: 'POCKET.md', src: 'pocket-src'},
@@ -122,6 +125,7 @@ export const SECTIONS = [
 export const DOCS = [
   {file: 'README.md', title: 'README', text: 'What is in this folder and how it fits together.'},
   {file: 'TODO.md', title: 'TODO: pages to build', text: 'Ranked wish list of new pages and folder-wide features.'},
+  {file: 'TALK.md', title: 'Talk notes', text: 'The tech house room: the talking bass, the hook booth, what is measured and the limits.'},
   {file: 'POCKET.md', title: 'Pocket notes', text: 'Writing a foundation around a riff: composition, sound, exports and limits.'},
   {file: 'ORBIT.md', title: 'Orbit notes', text: 'The arpeggio studio: the model, the fingerprint, the generator and how it was validated.'},
   {file: 'VERSION-3.md', title: 'Fieldwork V3 notes', text: 'Motif Studio workflow, design decisions and limits.'},
@@ -151,6 +155,7 @@ export const NAV = [
   {file: 'fieldwork-v3.html', label: 'Motif Studio'},
   {file: 'orbit.html', label: 'Arps'},
   {file: 'pocket.html', label: 'Pocket'},
+  {file: 'talk.html', label: 'Tech House'},
   {file: 'studio-v2.html', label: 'V2 Studio', match: ['melody-v2.html', 'chords-v2.html', 'bass-v2.html']},
   {file: 'trance.html', label: 'Trance'},
   {file: 'xray.html', label: 'X-Ray'},
@@ -176,4 +181,5 @@ export const TEMPLATES = [
   'blueprint-src/template.html',
   'arp-src/template.html',
   'pocket-src/template.html',
+  'talk-src/template.html',
 ];
