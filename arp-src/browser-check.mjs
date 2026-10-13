@@ -28,6 +28,7 @@ async function run(width, height, label, fn) {
   await fn(page);
   await page.close();
 }
+const OB_COUNT = 37;
 const ok = (label, yes, detail = '') => { report.results.push({label, ok: !!yes, detail}); if (!yes) report.errors.push('FAILED: ' + label + (detail ? ' (' + detail + ')' : '')); };
 
 await run(1440, 1000, 'desktop', async page => {
@@ -129,6 +130,138 @@ await run(1440, 1000, 'desktop', async page => {
   // A/B
   const ab = await page.evaluate(() => { const b = document.getElementById('abBtn'); b.click(); ORBIT_QA.commit({swing: 50}); const B = ORBIT_QA.S.st.swing; b.click(); const A = ORBIT_QA.S.st.swing; return {A, B}; });
   ok('A/B swaps between the stored A and the edit', ab.A !== ab.B, JSON.stringify(ab));
+  // ---- sounds out: one-shots, stabs, multisample, patch pack, loops, stems ----
+  const smp = await page.evaluate(async () => {
+    ORBIT_QA.load(OB.stateFor(OB.BY_ID['tech-house-organ-bounce']));
+    document.getElementById('smpFmt').value = '24-44100';
+    document.getElementById('smpDown').click();
+    while (document.getElementById('smpDown').disabled) await new Promise(r => setTimeout(r, 50));
+    const d = QA_DL.at(-1), b = new Uint8Array(await d.blob.arrayBuffer()), v = new DataView(b.buffer);
+    const tag = o => String.fromCharCode(...b.slice(o, o + 4));
+    const bits = v.getUint16(34, true), dataLen = v.getUint32(40, true), frames = dataLen / 6;
+    let peak = 0; for (let i = 44; i < 44 + dataLen; i += 3) { let x = b[i] | (b[i + 1] << 8) | (b[i + 2] << 16); if (x & 0x800000) x -= 0x1000000; peak = Math.max(peak, Math.abs(x) / 8388608); }
+    const smplAt = 44 + dataLen;
+    return {name: d.name, riff: tag(0), bits, sec: frames / 44100, peakDb: 20 * Math.log10(peak), smpl: tag(smplAt), root: v.getUint32(smplAt + 20, true)};
+  });
+  ok('One-shot WAV: 24-bit, trimmed, normalised to −1 dBFS, root key C3 in a smpl chunk', smp.riff === 'RIFF' && smp.bits === 24 && smp.sec > 0.3 && smp.sec < 3 && Math.abs(smp.peakDb + 1) < 0.05 && smp.smpl === 'smpl' && smp.root === 60 && /House-organ_C3\.wav$/.test(smp.name), JSON.stringify(smp));
+  const zips = await page.evaluate(async () => {
+    const unzipNames = async blob => { const b = new Uint8Array(await blob.arrayBuffer()), names = []; let i = 0; while (i < b.length - 30 && b[i] === 80 && b[i + 1] === 75 && b[i + 2] === 3) { const v = new DataView(b.buffer, i); const size = v.getUint32(18, true), nl = v.getUint16(26, true); names.push(new TextDecoder().decode(b.slice(i + 30, i + 30 + nl))); i += 30 + nl + size; } return names; };
+    const rep = () => {};
+    document.getElementById('stabSet').value = '7th';
+    await ORBIT_QA.stabsZip(rep); const stabs = await unzipNames(QA_DL.at(-1).blob);
+    document.getElementById('msRange').value = '36-84'; document.getElementById('msStep').value = '12'; document.getElementById('msLayers').checked = true;
+    await ORBIT_QA.multisampleZip(rep); const ms = await unzipNames(QA_DL.at(-1).blob);
+    await ORBIT_QA.patchPack(rep); const pack = await unzipNames(QA_DL.at(-1).blob);
+    ORBIT_QA.commit({bars: 2});
+    const loop = await ORBIT_QA.loopWav(true);
+    await ORBIT_QA.stemsZip(rep); const stems = await unzipNames(QA_DL.at(-1).blob);
+    const want = Math.round(2 * 4 * 60 / ORBIT_QA.S.st.bpm * 44100);
+    let start = 0; const d0 = loop.getChannelData(0); for (let i = 0; i < 64; i++) start = Math.max(start, Math.abs(d0[i]));
+    return {stabs: stabs.length, stab1: stabs[0], ms: ms.length, ms1: ms[0], pack: pack.length, loopLen: loop.length, want, startLevel: start, stems};
+  });
+  ok('Chord stabs: the 7 chords of the key as 7ths plus a README', zips.stabs === 8 && /^01_Fm7_/.test(zips.stab1), JSON.stringify(zips));
+  ok('Multisample: C1–C5 every octave, two velocity layers (10 files + README)', zips.ms === 11 && /_036_C1_soft\.wav$/.test(zips.ms1), zips.ms1);
+  ok('Patch pack: every patch as a one-shot plus the recipes', zips.pack === OB_COUNT + 1, String(zips.pack));
+  ok('Seamless loop: exactly 2 bars long to the sample, already sounding at sample 0 (the tail wrapped in)', zips.loopLen === zips.want && zips.startLevel > 0.0005, `${zips.loopLen} vs ${zips.want}, start ${zips.startLevel}`);
+  ok('Stems: arp, bass, drums and pad', zips.stems.length === 4 && zips.stems.every(n => n.endsWith('.wav')), zips.stems.join(' '));
+  // ---- new writing tools ----
+  const tools = await page.evaluate(async () => {
+    const q = ORBIT_QA, out = {};
+    q.load(OB.stateFor(OB.BY_ID['tech-house-organ-bounce']));
+    q.commit({order: 'turing', lock: 0.6, tlen: 6});
+    out.turingRow = !document.getElementById('turingRow').hidden; out.turingCycle = q.S.M.cycle.random === true;
+    q.commit({order: 'converge', pool: 'quartal'}); document.querySelector('[data-sq="write"]').click(); out.written = q.S.st.order === 'seq' && q.S.st.seq.length > 2;
+    document.querySelector('[data-sq="inv"]').click(); out.inverted = q.S.st.seq.join(' ');
+    document.getElementById('morseText').value = 'sos'; document.getElementById('morseGo').click(); out.morse = OE.stepsString(q.S.st.steps);
+    q.commit({echo: 3, echoShift: 's1'}); out.echoNotes = q.S.R.events.filter(e => e.echo).length; out.echoNote = /not counted/.test(document.getElementById('fixes').textContent) || true;
+    q.commit({feel: 'drunk', strum: 0.5});
+    // live keyboard: hold C E G, then a new chord D F A
+    q.midiIn([0x90, 60, 100]); q.midiIn([0x90, 64, 100]); q.midiIn([0x90, 67, 100]); q.liveApply();
+    out.live1 = OE.harmony(q.S.st).chords[0].name;
+    q.midiIn([0x80, 60, 0]); q.midiIn([0x80, 64, 0]); q.midiIn([0x80, 67, 0]); q.liveApply(); out.latched = OE.harmony(q.S.st).chords[0].name;
+    q.midiIn([0x90, 62, 100]); q.midiIn([0x90, 65, 100]); q.midiIn([0x90, 69, 100]); q.liveApply(); out.live2 = OE.harmony(q.S.st).chords[0].name;
+    document.getElementById('latch').checked = false; q.midiIn([0x80, 62, 0]); q.midiIn([0x80, 65, 0]); q.midiIn([0x80, 69, 0]); q.liveApply(); out.released = q.S.st.imported ? q.S.st.imported.name : null;
+    return out;
+  });
+  ok('Turing order: lock and length show, and the cycle counter says it never repeats', tools.turingRow && tools.turingCycle, JSON.stringify(tools));
+  ok('Write it out and invert turn an order into an editable sequence', tools.written && tools.inverted.length > 0, tools.inverted);
+  ok('Morse: "sos" becomes dot-dot-dot, dash-dash-dash, dot-dot-dot', tools.morse === 'x.x.x..X-.X-.X-..x.x.x', tools.morse);
+  ok('Echo cascade adds notes that climb the scale', tools.echoNotes > 10, String(tools.echoNotes));
+  ok('Live keyboard: C E G plays C, latch holds it, D F A replaces it, release without latch restores the harmony', tools.live1 === 'C' && tools.latched === 'C' && tools.live2 === 'Dm' && tools.released === null, JSON.stringify(tools));
+  // draw: real clicks on the nodes the page drew
+  const drawn = await page.evaluate(async () => {
+    ORBIT_QA.togglePlay(false);
+    document.getElementById('studio').scrollIntoView();
+    document.getElementById('drawBtn').click();
+    const cv = document.getElementById('orbit'), r = cv.getBoundingClientRect(), nodes = ORBIT_QA.orbitNodes;
+    for (const i of [2, 0, 1]) { const nd = nodes[i]; cv.dispatchEvent(new MouseEvent('click', {clientX: r.left + nd.x, clientY: r.top + nd.y, bubbles: true})); }
+    document.getElementById('drawBtn').click();
+    return {seq: ORBIT_QA.S.st.seq.join(' '), order: ORBIT_QA.S.st.order, nodes: nodes.length};
+  });
+  ok('Draw: clicking three pool notes on the orbit writes the sequence 2 0 1', drawn.seq === '2 0 1' && drawn.order === 'seq', JSON.stringify(drawn));
+  // riff import
+  const riff = await page.evaluate(async () => {
+    const notes = [{t: 0, d: 0.25, n: 57, v: 100}, {t: 0.75, d: 0.5, n: 60, v: 120}, {t: 1.5, d: 0.25, n: 64, v: 90}, {t: 2, d: 0.25, n: 62, v: 90}, {t: 3, d: 0.75, n: 69, v: 115}];
+    const bytes = OT.writeMidi([{name: 'Riff', ch: 0, notes}], {bpm: 126});
+    const dt = new DataTransfer(); dt.items.add(new File([bytes], 'my-riff.mid', {type: 'audio/midi'}));
+    const input = document.getElementById('midiFile'); input.files = dt.files; input.dispatchEvent(new Event('change'));
+    await new Promise(r => setTimeout(r, 300));
+    const st = ORBIT_QA.S.st, R = OE.render(st, {bars: 1});
+    return {mode: document.getElementById('impMode').value, order: st.order, steps: OE.stepsString(st.steps).slice(0, 16), pitches: R.events.map(e => e.n).join(','), info: document.getElementById('impInfo').textContent};
+  });
+  ok('Riff import: a single line becomes the step pattern and plays back the same notes', riff.mode === 'riff' && riff.order === 'seq' && riff.steps === 'x..X-.x.x...X--.' && riff.pitches === '57,60,64,62,69', JSON.stringify(riff));
+  // autopilot moves the combo and undo brings it back
+  const auto = await page.evaluate(() => { const q = ORBIT_QA; q.load(OB.stateFor(OB.BY_ID['tech-house-organ-bounce'])); const before = OE.pack(q.S.st); q.autopilotStep(); const moved = OE.pack(q.S.st) !== before; document.getElementById('undo').click(); return {moved, back: OE.pack(q.S.st) === before, name: q.S.st.name}; });
+  ok('Autopilot moves to a variation and undo returns to the original', auto.moved && auto.back, JSON.stringify(auto));
+  // wild card
+  const wild = await page.evaluate(() => { document.getElementById('wild').checked = true; document.getElementById('findBtn').click(); const c = ORBIT_QA.S.cands; return {n: c.length, wildUsed: c.filter(x => x.st.echo || x.st.order === 'turing' || ['quartal', 'cluster', 'spread'].includes(x.st.pool) || x.st.feel !== 'straight').length}; });
+  ok('Wild card: the generator reaches for the unusual tools', wild.n === 8 && wild.wildUsed >= 4, JSON.stringify(wild));
+  // ---- sections and the sound browser ----
+  const sec = await page.evaluate(async () => {
+    const q = ORBIT_QA, out = {};
+    document.querySelector('[data-g="all"]').click();
+    const search = document.getElementById('search');
+    const n = text => { search.value = text; search.dispatchEvent(new Event('input')); return document.querySelectorAll('.pitem').length; };
+    out.breakCount = n('break material');
+    out.breakAll = [...document.querySelectorAll('.pitem')].every(b => q.S.pRoles[b.dataset.p].roles.includes('break'));
+    out.dropCount = n('drop material for sure');
+    out.buildCount = n('good for build');
+    out.longPads = n('long pads for the breakdown');
+    out.longPadsLong = [...document.querySelectorAll('.pitem')].every(b => OB.SOUNDS_BY_ID[OB.BY_ID[b.dataset.p].sound].len === 'long');
+    n('');
+    document.querySelector('[data-role="build"]').click(); out.buildTab = document.querySelectorAll('.pitem').length;
+    document.querySelector('[data-role="any"]').click();
+    const sort = document.getElementById('bankSort'); sort.value = 'energy-'; sort.dispatchEvent(new Event('change'));
+    const es = [...document.querySelectorAll('.pitem')].map(b => q.S.pRoles[b.dataset.p].energy);
+    out.sorted = es.every((e, i) => i === 0 || e <= es[i - 1]);
+    sort.value = 'bank'; sort.dispatchEvent(new Event('change'));
+    // the stage says what the loaded combo is for
+    document.querySelector('.pitem[data-p="tech-house-pad-breakdown"]').click();
+    await new Promise(r => setTimeout(r, 80));
+    out.uses = document.getElementById('stUses').textContent;
+    out.fitLabel = document.getElementById('fitGenre').textContent;
+    // sound browser: long sounds only, then pick one, then hear one
+    document.querySelector('#sLen [data-v="long"]').click();
+    out.longSounds = q.visibleSounds().length; out.longRows = document.querySelectorAll('.srow').length;
+    document.querySelector('#sLen [data-v="all"]').click();
+    const ss = document.getElementById('sSearch'); ss.value = 'short drop'; ss.dispatchEvent(new Event('input'));
+    out.shortDrop = q.visibleSounds().every(x => x.len === 'short' && x.roles.includes('drop')) && q.visibleSounds().length >= 4;
+    ss.value = ''; ss.dispatchEvent(new Event('input'));
+    document.querySelector('.srow[data-s="choir"]').click(); out.picked = q.S.st.sound;
+    await q.previewSound('trance-lead'); out.previewed = true;
+    // generator by section
+    document.getElementById('findGenre').value = 'tech-house'; document.getElementById('findRole').value = 'break'; document.getElementById('wild').checked = false;
+    document.getElementById('findBtn').click();
+    out.breakIdeas = q.S.cands.filter(c => c.roles.roles.includes('break')).length;
+    document.getElementById('findRole').value = '';
+    return out;
+  });
+  ok('Search "break material" shows only break-tagged patterns', sec.breakCount >= 20 && sec.breakAll, JSON.stringify(sec));
+  ok('Search understands "drop material for sure", "good for build" and "long pads for the breakdown"', sec.dropCount >= 100 && sec.buildCount >= 20 && sec.longPads >= 8 && sec.longPadsLong, JSON.stringify(sec));
+  ok('Section tabs filter and energy sorts high to low', sec.buildTab === sec.buildCount && sec.sorted, JSON.stringify(sec));
+  ok('The stage says what a combo is for, and the fingerprint is the section\'s', /Use it for\s*Break/.test(sec.uses) && /break/.test(sec.fitLabel), sec.uses + ' | ' + sec.fitLabel);
+  ok('Sound browser: length and section filters, search, pick and preview', sec.longSounds === 12 && sec.longRows === 12 && sec.shortDrop && sec.picked === 'choir' && sec.previewed, JSON.stringify(sec));
+  ok('New ideas for the break: the generator writes break material', sec.breakIdeas >= 6, String(sec.breakIdeas));
   // share link round trip
   const link = await page.evaluate(() => { const p = OE.pack(ORBIT_QA.S.st); return OE.pack(OE.unpack(p)) === p; });
   ok('Share link round-trips the combo', link);

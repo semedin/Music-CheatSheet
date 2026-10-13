@@ -148,10 +148,10 @@ check(`Bank: ${OB.PATTERNS.length} patterns, unique ids, every step string valid
   }
   for (const g of Object.values(OB.GENRES)) for (const q of g.progs) assert.equal(OT.parseProgression(q.p, OT.pcOf(g.key), g.scale).errors.length, 0, g.name + ' ' + q.p);
 });
-check('Bank vs fingerprint: every pattern sits inside its own genre on every axis', () => {
+check('Bank vs fingerprint: every pattern sits inside its own genre, for the section it is written for, on every axis', () => {
   const out = [];
   for (const p of OB.PATTERNS) {
-    const st = OE.normalize(OB.stateFor(p)), f = OE.fit(OE.metrics(four(st)), OB.GENRES[p.genre].target);
+    const st = OE.normalize(OB.stateFor(p)), f = OE.sectionFit(st, OE.metrics(four(st))).fit;
     const bad = f.axes.filter(a => !a.ok);
     if (bad.length) out.push(`${p.id}: ${bad.map(a => `${a.id}=${(+a.v).toFixed(2)} [${a.lo}, ${a.hi}]`).join(' ')}`);
   }
@@ -173,8 +173,11 @@ check('Bank vs register: no arp outside the piano, and only the acid genre lives
     if (!OB.GENRES[p.genre].lowOk) assert(m.low <= 0.2, `${p.id}: ${Math.round(m.low * 100)}% under 165 Hz`);
   }
 });
-check('Sounds: every patch has a Serum 2 and an Ableton recipe and valid synth settings', () => {
-  assert(OB.SOUNDS.length >= 18);
+check('Sounds: every patch has a Serum 2 and an Ableton recipe, a length, sections, an energy and valid synth settings', () => {
+  assert(OB.SOUNDS.length >= 36);
+  assert.equal(new Set(OB.SOUNDS.map(x => x.id)).size, OB.SOUNDS.length);
+  for (const len of ['short', 'medium', 'long']) assert(OB.SOUNDS.filter(x => x.len === len).length >= 10, len);
+  for (const x of OB.SOUNDS) { assert(['short', 'medium', 'long'].includes(x.len) && x.roles.length && x.roles.every(r => OE.ROLES[r]) && x.energy >= 0 && x.energy <= 1, x.id + ' tags'); }
   for (const s of OB.SOUNDS) {
     assert(s.serum.length >= 3 && s.live.length >= 2, s.id + ' recipes');
     assert(s.osc.length && s.filter && s.amp && s.level > 0, s.id + ' synth');
@@ -242,6 +245,143 @@ check('Export: full sketch has five tracks, the arp matches the render, bytes ar
   assert.match(OE.fileStem(st), /^Orbit_Afterlife-sequence_Am_124bpm$/);
   const z = OT.zip([{name: 'a.mid', bytes}, {name: 'b.txt', bytes: new TextEncoder().encode('hi')}]);
   assert.deepEqual([z[0], z[1], z[2], z[3]], [80, 75, 3, 4]);
+});
+
+// ---- the outside-the-box tools ----
+check('New scales: Phrygian dominant, Hungarian minor, double harmonic, melodic minor and Locrian parse and pool correctly', () => {
+  assert.deepEqual(OT.parseProgression('I II iv', 4, 'phrygdom').chords.map(c => c.name), ['E', 'F', 'Am']);
+  assert.equal(OE.harmony(base({scale: 'locrian', prog: 'i'})).chords[0].name, 'Am');
+  for (const sc of ['melodic', 'phrygdom', 'hungarian', 'dharmonic', 'locrian']) {
+    const st = base({scale: sc, pool: 'penta', steps: 'xxxxxxxxxxxxxxxx', order: 'up', octaves: 2});
+    for (const e of four(st).events) assert(OT.SCALES[sc].st.includes(OT.mod(e.n - 9, 12)), `${sc}: ${OT.noteName(e.n)}`);
+  }
+});
+check('New pools: stacked 4ths are a fourth apart in the scale, the cluster rubs, the open voicing spreads the chord', () => {
+  const p = pool => OE.render(base({pool, steps: 'x', reg: 64}), {bars: 1}).pools[0].base;
+  assert.deepEqual(p('quartal').map(n => n - p('quartal')[0]), [0, 5, 10, 15]);
+  assert.deepEqual(p('cluster').map(n => n - p('cluster')[0]), [0, 2, 3, 7]);
+  const closed = p('chord'), open = p('spread');
+  assert(open[open.length - 1] - open[0] > closed[closed.length - 1] - closed[0] + 6, 'wider than the closed chord');
+});
+check('Turing order: 100% lock is a fixed loop, lower locks drift but stay deterministic', () => {
+  const st = lock => base({order: 'turing', lock, tlen: 6, steps: 'x.x.x.x.x.x.x.x.', reset: 'never', seed: 4, pool: 'chord9', octaves: 2});
+  const bars = R => [0, 1, 2, 3].map(b => R.events.filter(e => e.bar === b).map(e => e.n).join(','));
+  const fixed = OE.render(st(1), {bars: 6});
+  const notes = fixed.events.map(e => e.n);
+  for (let i = 6; i < notes.length; i++) assert.equal(notes[i], notes[i - 6], 'a 6-note loop at full lock');
+  assert.equal(OE.cycle(st(1)).bars, 3, '6 notes over 8 hits a bar: 3 bars');
+  const loose = OE.render(st(0.3), {bars: 4});
+  assert.notDeepEqual(bars(loose).slice(0, 2), bars(fixed).slice(0, 2));
+  assert.deepEqual(bars(loose), bars(OE.render(st(0.3), {bars: 4})), 'same seed, same drift');
+  assert(OE.cycle(st(0.3)).random);
+});
+check('Echo cascade: repeats at the echo time, quieter each time, climbing the scale, wrapped round the loop, exported, not fingerprinted', () => {
+  const st = base({steps: 'x...............', echo: 3, echoTime: '8d', echoFb: 0.5, echoShift: 's1', vel: 100, accent: 0});
+  const R = OE.render(st, {bars: 1}), ev = R.events;
+  assert.deepEqual(ev.map(e => +e.t.toFixed(3)), [0, 0.75, 1.5, 2.25]);
+  assert.deepEqual(ev.map(e => e.v), [100, 50, 25, 13]);
+  for (let i = 1; i < 4; i++) assert.equal(ev[i].n, OE.scaleStep(st, ev[0].n, i));
+  const late = OE.render(base({steps: '..............x.', echo: 2, echoTime: '8d', echoFb: 0.6}), {bars: 1});
+  assert(late.events.some(e => e.echo && e.t < 1), 'an echo past the end wraps to the start');
+  assert.equal(OE.metrics(R).density, 1, 'the fingerprint counts only the written note');
+  assert.equal(OT.readMidi(OE.exportMidi(st, {bars: 1})).tracks.find(t => t.name === 'Orbit Arp').notes.length, 4);
+});
+check('Strum and feel: chord notes spread up to 80 ms in order; Drunk drags the e and the a and pushes the and', () => {
+  const st = base({steps: 'C...............', prog: 'i7', strum: 1, strumDir: 'down', bpm: 120});
+  const ev = OE.render(st, {bars: 1}).events.sort((a, b) => b.n - a.n);
+  near(ev[ev.length - 1].t - ev[0].t, 0.08 * 2, 1e-9, 'full strum in beats at 120');
+  assert(ev.every((e, i) => i === 0 || e.t > ev[i - 1].t), 'down: highest note first');
+  const f = OE.render(base({steps: 'xxxx', feel: 'drunk', bpm: 120}), {bars: 1}).events;
+  near((f[1].t - f[1].gt) * 500, 24, 1e-6, 'the e, ms'); near((f[2].t - f[2].gt) * 500, -10, 1e-6, 'the and, ms'); near((f[3].t - f[3].gt) * 500, 30, 1e-6, 'the a, ms');
+  assert.equal(OE.metrics(OE.render(base({steps: 'xxxx', feel: 'drunk'}), {bars: 4, evo: false})).sync, 0, 'measured on the grid');
+});
+check('Bouncing-ball fill: the last beat plays 1, 2, 3, then 4 notes per step', () => {
+  const R = OE.render(base({steps: 'xxxxxxxxxxxxxxxx', fill: 'bounce', fillEvery: 2, bars: 2}));
+  const lastBeat = R.events.filter(e => e.gt >= 7 - 1e-9);
+  assert.deepEqual([7, 7.25, 7.5, 7.75].map(t => lastBeat.filter(e => e.gt >= t - 1e-9 && e.gt < t + 0.25 - 1e-9).length), [1, 2, 3, 4]);
+});
+check('Morse: "sos" is dot-dot-dot dash-dash-dash dot-dot-dot; words get a longer gap; never longer than 64 steps', () => {
+  assert.equal(OE.morse('SOS'), 'x.x.x..X-.X-.X-..x.x.x');
+  assert.equal(OE.morse('e e'), 'x....x');
+  assert(OE.morse('the quick brown fox jumps over the lazy dog').length <= 64);
+  OE.parseSteps(OE.morse('tech house 2026'));
+});
+check('Riff import: rhythm, accents, ties, pitches and swing come back exactly; notes outside the scale snap', () => {
+  const sw = 0.035;
+  const riff = [{t: 0, d: 0.25, n: 57, v: 100}, {t: 0.75 + sw, d: 0.5, n: 60, v: 124}, {t: 1.5, d: 0.25, n: 64, v: 90}, {t: 2, d: 0.25, n: 62, v: 90}, {t: 3, d: 0.75, n: 69, v: 120}, {t: 4.5, d: 0.2, n: 61, v: 90}];
+  const r = OE.riffFromNotes(riff, base({}));
+  assert.equal(OE.stepsString(r.patch.steps), 'x..X-.x.x...X--...x.............');
+  assert.equal(r.snapped, 1); assert.equal(r.bars, 2); assert.equal(r.swing, 57);
+  const R = OE.render(OE.normalize(Object.assign(base({}), r.patch)), {bars: 2});
+  assert.deepEqual(R.events.map(e => [e.gt, e.n]), [[0, 57], [0.75, 60], [1.5, 64], [2, 62], [3, 69], [4.5, 60]]);
+});
+check('Write it out: every order becomes the same notes as a written sequence', () => {
+  for (const order of ['up', 'converge', 'pinky', 'thumb', 'updown', 'diverge']) {
+    const st = base({order, pool: 'chord9', octaves: 2, steps: 'xxxxxxxxxxxxxxxx', reset: 'never'});
+    const as = OE.render(st, {bars: 2}).events.map(e => e.n), written = OE.render(Object.assign({}, st, {order: 'seq', seq: OE.writeOut(st)}), {bars: 2}).events.map(e => e.n);
+    assert.deepEqual(written, as, order);
+  }
+});
+check('Chords of the key: seven per scale, named, in key; 9ths name their flat 9ths', () => {
+  assert.deepEqual(OE.diatonicChords(base({}), '7th').map(c => c.name), ['Am7', 'Bm7♭5', 'Cmaj7', 'Dm7', 'Em7', 'Fmaj7', 'G7']);
+  assert.deepEqual(OE.diatonicChords(base({scale: 'major', key: 0}), 'triad').map(c => c.name), ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim']);
+  assert.equal(OE.diatonicChords(base({}), '9th')[4].name, 'Em7♭9');
+  for (const c of OE.diatonicChords(base({}), '9th')) for (const n of c.notes) assert(OT.SCALES.minor.st.includes(OT.mod(n - 9, 12)));
+});
+check('Wild card: the generator and variations use the new tools only when asked', () => {
+  const uses = st => st.echo > 0 || st.order === 'turing' || ['quartal', 'cluster', 'spread'].includes(st.pool) || st.feel !== 'straight' || st.strum > 0;
+  assert.equal(OE.find('tech-house', 8, 5).filter(c => uses(c.st)).length, 0);
+  assert(OE.find('tech-house', 8, 5, {wild: true}).filter(c => uses(c.st)).length >= 5);
+  assert(OE.find('tech-house', 8, 5, {wild: true}).every(c => c.fit >= 90));
+  const org = OB.stateFor(OB.BY_ID['tech-house-organ-bounce']);
+  assert.equal(OE.vary(org, 8, 1).filter(v => uses(v.st)).length, 0);
+});
+
+// ---- sections ----
+check('Sections: written breaks read as breaks, risers as builds, riffs as drops, sparse openers as intros', () => {
+  const prim = id => OE.roles(OB.stateFor(OB.BY_ID[id])).primary, has = (id, r) => OE.roles(OB.stateFor(OB.BY_ID[id])).roles.includes(r);
+  for (const id of ['tech-house-pad-breakdown', 'tech-house-choir-break', 'tech-house-gospel-organ-break', 'melodic-techno-shimmer-break', 'progressive-pad-swell-break', 'trance-string-breakdown', 'deep-rhodes-broken-chord', 'deep-gospel-break']) assert.equal(prim(id), 'break', id);
+  for (const id of ['tech-house-string-rise', 'tech-house-noise-swell', 'tech-house-zap-fills', 'melodic-techno-drone-build', 'hard-techno-hoover-rise', 'tech-house-roll-in-stab']) assert.equal(prim(id), 'build', id);
+  for (const id of ['tech-house-organ-bounce', 'tech-house-acid-roller', 'tech-house-swung-stab-roll', 'trance-euphoric-gate', 'hard-techno-hoover-anthem', 'nu-disco-clav-funk', 'tech-house-rolling-16ths']) assert.equal(prim(id), 'drop', id);
+  for (const id of ['tech-house-micro-intro', 'melodic-techno-drone-intro', 'minimal-micro-plucks', 'progressive-harp-intro']) assert.equal(prim(id), 'intro', id);
+  assert(has('tech-house-gate-riser', 'build'), 'the gate riser is also a build');
+  const n = r => OB.PATTERNS.filter(p => OE.roles(OB.stateFor(p)).roles.includes(r)).length;
+  for (const r of ['drop', 'build', 'break', 'intro']) assert(n(r) >= 20, `${r}: ${n(r)}`);
+});
+check('Sections: energy orders a pad break below a drop riff below a hoover anthem; reasons are given', () => {
+  const r = id => OE.roles(OB.stateFor(OB.BY_ID[id]));
+  assert(r('tech-house-pad-breakdown').energy < r('tech-house-organ-bounce').energy && r('tech-house-organ-bounce').energy < r('hard-techno-hoover-anthem').energy);
+  assert(r('tech-house-pad-breakdown').why.break.includes('long notes'));
+  assert(r('tech-house-string-rise').why.build.some(w => /Build to the drop/.test(w)));
+});
+check('Sections: a break may hold long notes on the beat; the drop keeps the genre fingerprint', () => {
+  const t = OB.GENRES['tech-house'].target;
+  assert.deepEqual(OE.roleTarget(t, 'drop'), t);
+  const b = OE.roleTarget(t, 'break');
+  assert(!b.kick && b.length[1] >= 16 && b.density[0] <= 1);
+  const pad = OE.normalize(OB.stateFor(OB.BY_ID['tech-house-pad-breakdown'])), m = OE.metrics(four(pad));
+  assert(OE.fit(m, t).score < 100, 'against the drop it does not fit');
+  assert.equal(OE.sectionFit(pad, m).fit.score, 100, 'as a break it does');
+});
+check('Search words: "good for build", "break material", "drop material for sure", "short plucks for the intro"', () => {
+  const q = x => { const r = OE.parseQuery(x); return [[...r.roles].join(','), [...r.lens].join(','), r.words.join(' ')]; };
+  assert.deepEqual(q('good for build'), ['build', '', '']);
+  assert.deepEqual(q('break material'), ['break', '', '']);
+  assert.deepEqual(q('drop material for sure'), ['drop', '', '']);
+  assert.deepEqual(q('short plucks for the intro'), ['intro', 'short', 'plucks']);
+  assert.deepEqual(q('long pads for the breakdown'), ['break', 'long', '']);
+  assert.deepEqual(q('acid riser'), ['build', '', 'acid']);
+});
+check('Generator by section: eight drop, build, break and intro ideas per genre, each tagged for its section and fitting it', () => {
+  for (const g of ['tech-house', 'melodic-techno', 'trance', 'deep']) for (const role of ['drop', 'build', 'break', 'intro']) {
+    const c = OE.find(g, 8, 11, {role});
+    assert.equal(c.length, 8, `${g} ${role}`);
+    const on = c.filter(x => x.roles.roles.includes(role)).length;
+    assert(on >= 6, `${g} ${role}: ${on} of 8 tagged ${role}`);
+    assert(c.every(x => x.fit >= 85), `${g} ${role}: ${c.map(x => x.fit)}`);
+  }
+  const br = OE.find('tech-house', 8, 3, {role: 'break'});
+  assert(br.filter(x => OB.SOUNDS_BY_ID[x.st.sound].len !== 'short').length >= 5, 'breaks reach for longer sounds');
 });
 
 console.log(`\n${checks} checks passed`);

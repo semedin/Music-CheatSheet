@@ -12,7 +12,9 @@
   const KEY_NOW = 'orbit.current.v1', KEY_CRATE = 'orbit.crate.v1';
 
   const S = {st: null, hist: [], fut: [], A: null, side: 'B', aud: null, crate: store.get(KEY_CRATE) || [], filter: 'tech-house', q: '', tool: 'note',
-    cands: [], candKind: '', R: null, M: null, ph: null, flashes: [], trail: [], lastFlash: 0, paint: null, importFile: null};
+    cands: [], candKind: '', R: null, M: null, ph: null, flashes: [], trail: [], lastFlash: 0, paint: null, importFile: null, importMode: 'chords', importInfo: '',
+    role: 'any', sort: 'bank', sLen: 'all', sRole: 'all', sQ: '', pRoles: null,
+    held: new Set(), down: new Set(), liveFresh: true, preLive: undefined, midi: null, draw: false, drawSeq: null, auto: false, autoAt: null, sample: null};
   let actx = null, engine = null, player = null;
 
   // ---------- helpers ----------
@@ -53,14 +55,15 @@
     S.R = OE.render(st);
     if ($('pocketSend')) $('pocketSend').href = 'pocket.html#orbit=' + OE.pack(st);
     const mR = OE.render(st, {bars: 4, evo: false, fills: false, mutate: false});
-    const m = OE.metrics(mR), f = OE.fit(m, genre().target), c = OE.cycle(st);
-    S.M = {m, fit: f, cycle: c, cycleText: OE.cycleText(c, st, S.R.harmony.beats), mR};
+    const m = OE.metrics(mR), sf = OE.sectionFit(st, m), f = sf.fit, c = OE.cycle(st);
+    S.M = {m, fit: f, role: sf.role, roles: sf.roles, cycle: c, cycleText: OE.cycleText(c, st, S.R.harmony.beats), mR};
     S.ph = OA.phrase(st, S.R);
     if (player) player.load(S.ph);
     setAccent(genre().color);
     viewTransport(); viewStage(); viewGrid(); viewControls(); drawRollLayer(); orbitStatic(); viewBankActive();
+    document.querySelectorAll('.srow').forEach(r => r.classList.toggle('on', r.dataset.s === st.sound));
     clearTimeout(slowTimer);
-    slowTimer = setTimeout(() => { viewMeasure(); viewAbleton(); store.set(KEY_NOW, OE.pack(st)); }, light ? 140 : 0);
+    slowTimer = setTimeout(() => { viewMeasure(); viewAbleton(); viewSamples(); store.set(KEY_NOW, OE.pack(st)); }, light ? 140 : 0);
   }
 
   function viewTransport() {
@@ -81,7 +84,9 @@
     $('stName').textContent = st.name;
     $('stWhy').textContent = p ? p.why : st.from === 'generated' ? 'Written by the generator from the genre\'s grammar and measured against its fingerprint.' : st.from === 'variation' ? 'A variation: same key, tempo, harmony and sound; the notes or the rhythm moved.' : st.from === 'import' ? 'Your chords, arpeggiated.' : g.blurb;
     const s = sound();
-    $('stChips').innerHTML = [OT.keyLabel(st.key, st.scale) + ' · ' + OT.camelot(st.key, st.scale), st.bpm + ' BPM', OE.RATES[st.rate].label, OE.POOLS[st.pool].name, OE.ORDERS[st.order].name, s.name, st.evo !== 'none' ? OE.EVOS[st.evo].name : null].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('');
+    const R0 = S.M.roles;
+    $('stUses').innerHTML = `<span>Use it for</span>` + Object.keys(OE.ROLES).filter(r => R0.roles.includes(r)).sort((a, b) => R0.scores[b] - R0.scores[a]).map((r, i) => `<span class="rchip${i ? ' dim' : ''}" style="--rc:${OE.ROLES[r].color}" title="${esc(OE.ROLES[r].desc + (R0.why[r].length ? ' Here: ' + R0.why[r].join(', ') + '.' : ''))}">${esc(OE.ROLES[r].name)}</span>`).join('') + `<span class="energy" title="Energy: density, syncopation, accents, short notes and how punchy the sound is">energy <i style="--e:${R0.energy}%"></i> ${R0.energy}</span>` + (R0.why[R0.primary].length ? `<span class="hint">${esc(R0.why[R0.primary].join(' · '))}</span>` : '');
+    $('stChips').innerHTML = [OT.keyLabel(st.key, st.scale) + ' · ' + OT.camelot(st.key, st.scale), st.bpm + ' BPM', OE.RATES[st.rate].label, OE.POOLS[st.pool].name, st.order === 'turing' ? `Turing ${Math.round(st.lock * 100)}% lock` : OE.ORDERS[st.order].name, s.name, st.evo !== 'none' ? OE.EVOS[st.evo].name : null, st.echo ? `echo ×${st.echo}` : null, st.feel !== 'straight' ? OE.FEELS[st.feel].name : null, st.strum ? 'strum' : null].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('');
     // chord lane
     const h = S.R.harmony;
     $('chordLane').innerHTML = h.chords.map((c, i) => `<div class="cc" data-ci="${i}"><b>${esc(c.name)}</b><small>${esc(c.roman)} · ${c.d / 4 >= 1 ? (c.d / 4) + ' bar' + (c.d > 4 ? 's' : '') : c.d + ' beats'} · ${c.notes.map(nn).join(' ')}</small></div>`).join('');
@@ -166,6 +171,7 @@
     swing: v => Math.round(v) + '%', gate: v => Math.round(v * 100) + '%', accent: v => '+' + Math.round(v), human: v => pct(v),
     cut: v => pct(v), res: v => pct(v), dec: v => pct(v), drive: v => pct(v), width: v => pct(v),
     delay: v => pct(v), fb: v => pct(v), reverb: v => pct(v), space: v => (0.8 + v * 4.2).toFixed(1) + ' s', duck: v => pct(v), hp: v => Math.round(v) + ' Hz', depth: v => pct(v),
+    lock: v => pct(v), strum: v => Math.round(v * 80) + ' ms', echoFb: v => pct(v),
   };
   function viewControls() {
     const st = S.st, active = document.activeElement;
@@ -175,7 +181,10 @@
     $('progErr').hidden = !errs.length; $('progErr').textContent = errs.join(' · ');
     $('prog').disabled = !!st.imported;
     opt($('progPreset'), [['', 'Pick one…'], ...genre().progs.map(p => [p.p, `${p.name}: ${p.p}`]), ...Object.values(OB.GENRES).filter(g => g !== genre()).flatMap(g => g.progs.slice(0, 2).map(p => [p.p, `${g.name}: ${p.p}`]))], '');
-    for (const k of ['per', 'voicing', 'pool', 'count', 'order', 'octaves', 'advance', 'reset', 'pedal', 'rate', 'sound', 'evo', 'fill', 'fillEvery', 'mutate', 'delayTime', 'groove', 'bassPat']) setv(k, st[k]);
+    for (const k of ['per', 'voicing', 'pool', 'count', 'order', 'octaves', 'advance', 'reset', 'pedal', 'rate', 'sound', 'evo', 'fill', 'fillEvery', 'mutate', 'delayTime', 'groove', 'bassPat', 'feel', 'strumDir', 'tlen', 'echo', 'echoTime', 'echoShift']) setv(k, st[k]);
+    $('turingRow').hidden = st.order !== 'turing';
+    document.querySelectorAll('[data-sq]').forEach(b => { b.hidden = (b.dataset.sq === 'write') === (st.order === 'seq'); });
+    $('feelDesc').textContent = OE.FEELS[st.feel].desc || 'Every note on the grid (swing still applies).';
     $('follow').checked = st.follow;
     setv('seq', st.seq.join(' '));
     $('seqRow').hidden = st.order !== 'seq';
@@ -187,10 +196,13 @@
     $('evoDesc').textContent = (OE.EVOS[st.evo] || {}).desc || '';
     $('delayMs').textContent = Math.round((OE.DELAY_TIMES[st.delayTime] || 0.75) * 60000 / st.bpm) + ' ms';
     // import box
-    $('importedBox').hidden = !st.imported;
-    if (st.imported) {
-      $('impName').textContent = st.imported.name || 'Imported chords';
-      $('impInfo').textContent = `${st.imported.chords.length} chords over ${st.imported.beats / 4} bars · read as ${OT.keyLabel(st.imported.key, st.imported.scale)}`;
+    const live = st.imported && st.imported.name === 'Live keyboard';
+    $('importedBox').hidden = !S.importFile || live || (S.importMode === 'chords' && !st.imported);
+    if (S.importFile) {
+      $('impName').textContent = S.importFile.name;
+      $('impMode').value = S.importMode;
+      $('impInfo').textContent = S.importMode === 'riff' ? S.importInfo : st.imported ? `${st.imported.chords.length} chords over ${st.imported.beats / 4} bars · read as ${OT.keyLabel(st.imported.key, st.imported.scale)}` : '';
+      $('impToText').hidden = S.importMode === 'riff';
     }
     if ($('expName') !== active) $('expName').value = st.name;
     if (!S.expTouched) $('expBars').value = [4, 8, 16, 32, 64].includes(st.bars) ? st.bars : 8;
@@ -205,8 +217,41 @@
     $('prog').addEventListener('input', () => { const r = OT.parseProgression($('prog').value, S.st.key, S.st.scale); if (!r.errors.length) commit({prog: $('prog').value}, {history: false, light: true}); else { $('progErr').hidden = false; $('progErr').textContent = r.errors.join(' · '); } });
     $('prog').addEventListener('change', () => { const r = OT.parseProgression($('prog').value, S.st.key, S.st.scale); if (!r.errors.length) commit({prog: $('prog').value}); });
     $('progPreset').addEventListener('change', () => { if ($('progPreset').value) commit({prog: $('progPreset').value, imported: null}); });
-    for (const k of ['per', 'octaves', 'count', 'fillEvery', 'mutate']) $(k).addEventListener('change', () => commit({[k]: num(k)}));
-    for (const k of ['voicing', 'pool', 'order', 'advance', 'reset', 'pedal', 'rate', 'evo', 'fill', 'delayTime', 'groove', 'bassPat']) $(k).addEventListener('change', () => commit({[k]: $(k).value}));
+    for (const k of ['per', 'octaves', 'count', 'fillEvery', 'mutate', 'tlen', 'echo']) $(k).addEventListener('change', () => commit({[k]: num(k)}));
+    for (const k of ['voicing', 'pool', 'order', 'advance', 'reset', 'pedal', 'rate', 'evo', 'fill', 'delayTime', 'groove', 'bassPat', 'feel', 'strumDir', 'echoTime', 'echoShift']) $(k).addEventListener('change', () => commit({[k]: $(k).value}));
+    // the written sequence, as something to edit
+    document.querySelectorAll('[data-sq]').forEach(b => b.addEventListener('click', () => {
+      const sq = S.st.order === 'seq' ? S.st.seq.slice() : OE.writeOut(S.st), hi = Math.max(...sq), lo = Math.min(...sq);
+      const out = {write: sq, rev: sq.slice().reverse(), inv: sq.map(i => hi + lo - i), up: sq.map(i => i + 1), down: sq.map(i => i - 1), rot: sq.slice(1).concat(sq.slice(0, 1))}[b.dataset.sq];
+      commit({order: 'seq', seq: out});
+      toast(b.dataset.sq === 'write' ? `Written out: ${out.join(' ')}. Edit it freely.` : `Sequence: ${out.join(' ')}`);
+    }));
+    $('morseGo').addEventListener('click', () => { const t = $('morseText').value.trim() || S.st.name; const steps = OE.morse(t); commit({steps}); toast(`"${t}" in Morse: ${steps.length} steps`); });
+    $('morseText').addEventListener('keydown', e => { if (e.key === 'Enter') $('morseGo').click(); });
+    $('impMode').addEventListener('change', () => { if (S.importFile) applyImport(S.importFile, +$('impTrack').value, $('impMode').value); });
+    $('liveBtn').addEventListener('click', liveConnect);
+    $('latch').addEventListener('change', () => { if (!$('latch').checked) { for (const n of [...S.held]) if (!S.down.has(n)) S.held.delete(n); liveApply(); } });
+    $('drawBtn').addEventListener('click', () => {
+      S.draw = !S.draw; S.drawSeq = null;
+      $('drawBtn').classList.toggle('on', S.draw); document.querySelector('.orbitbox').classList.toggle('drawing', S.draw);
+      $('drawBtn').textContent = S.draw ? '✓ Done' : '✎ Draw';
+      if (S.draw) toast('Click the pool notes on the inner ring in the order they should play');
+      if (!player || !player.playing) drawOrbit(null);
+    });
+    $('orbit').addEventListener('click', e => {
+      if (!S.draw || !O.nodes) return;
+      const r = $('orbit').getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      let best = null, bd = Infinity;
+      for (const nd of O.nodes) { const d = Math.hypot(nd.x - x, nd.y - y); if (d < bd) { bd = d; best = nd; } }
+      if (!best || bd > Math.max(22, O.nodeGap * 0.45)) return;
+      if (!S.drawSeq) { S.drawSeq = []; S.hist.push(snapshot()); S.fut.length = 0; }
+      S.drawSeq.push(best.i);
+      commit({order: 'seq', seq: S.drawSeq.slice()}, {history: false});
+      toast('Sequence: ' + S.drawSeq.join(' '));
+    });
+    const syncAuto = on => { S.auto = on; $('auto').checked = on; $('autoBtn').classList.toggle('on', on); S.autoAt = null; if (on) toast(`Autopilot on: a new variation every ${$('autoEvery').value} bars while it plays. Undo goes back.`); };
+    $('auto').addEventListener('change', () => syncAuto($('auto').checked));
+    $('autoBtn').addEventListener('click', () => syncAuto(!S.auto));
     $('sound').addEventListener('change', () => { const s = OB.SOUNDS_BY_ID[$('sound').value]; commit(Object.assign({sound: s.id}, s.fx || {})); });
     $('follow').addEventListener('change', () => commit({follow: $('follow').checked}));
     $('seq').addEventListener('change', () => commit({seq: $('seq').value}));
@@ -247,14 +292,14 @@
     // import
     $('importBtn').addEventListener('click', () => $('midiFile').click());
     $('midiFile').addEventListener('change', () => { const f = $('midiFile').files[0]; if (f) importFile(f); $('midiFile').value = ''; });
-    $('impClear').addEventListener('click', () => commit({imported: null, from: S.st.from === 'import' ? null : S.st.from}));
+    $('impClear').addEventListener('click', () => { S.importFile = null; commit({imported: null}); });
     $('impToText').addEventListener('click', () => {
       const imp = S.st.imported; if (!imp) return;
       const per = S.st.per, text = imp.chords.map(c => { const len = c.d / (4 * per); const nm = OT.asciiName(OT.chordName(c.root, c.q, imp.key, imp.scale)).replace('m(add9)', 'madd9').replace('m7♭5', 'm7b5'); return nm + (Math.abs(len - 1) > 0.01 ? ':' + +len.toFixed(2) : ''); }).join(' ');
       commit({imported: null, prog: text, key: imp.key, scale: imp.scale});
       toast('The chords are now text you can edit (the voicing is the page\'s own).');
     });
-    $('impTrack').addEventListener('change', () => { if (S.importFile) applyImport(S.importFile, +$('impTrack').value); });
+    $('impTrack').addEventListener('change', () => { if (S.importFile) applyImport(S.importFile, +$('impTrack').value, S.importMode); });
     // drag & drop anywhere
     addEventListener('dragover', e => { if ([...(e.dataTransfer?.types || [])].includes('Files')) { e.preventDefault(); document.body.classList.add('dropping'); } });
     addEventListener('dragleave', e => { if (!e.relatedTarget) document.body.classList.remove('dropping'); });
@@ -274,22 +319,34 @@
       const tracks = mid.tracks.map((t, i) => ({i, t, notes: t.notes.filter(n => n.ch !== 9)})).filter(x => x.notes.length);
       if (!tracks.length) throw Error('No pitched notes in this file.');
       tracks.forEach(x => { x.poly = OT.polyphony(x.notes); });
-      S.importFile = {name: file.name, mid, tracks};
+      S.importFile = {name: file.name.replace(/\.midi?$/i, ''), mid, tracks};
       opt($('impTrack'), tracks.map(x => [x.i, `${x.t.name} (${x.notes.length} notes, ${x.poly.toFixed(1)} at once)`]));
       const best = tracks.slice().sort((a, b) => b.poly - a.poly)[0];
       $('impTrack').value = best.i;
       $('impTrackRow').hidden = tracks.length < 2;
-      applyImport(S.importFile, best.i);
+      // a single line (a riff or a melody) becomes the pattern; anything with chords becomes the harmony
+      applyImport(S.importFile, best.i, best.poly < 1.25 ? 'riff' : 'chords');
     } catch (err) { toast('Could not read that MIDI: ' + err.message); console.error(err); }
   }
-  function applyImport(f, ti) {
+  function applyImport(f, ti, mode = 'chords') {
     const tr = f.tracks.find(x => x.i === ti) || f.tracks[0];
+    S.importMode = mode;
+    if (mode === 'riff') {
+      const k = OT.detectKey(tr.notes);
+      const r = OE.riffFromNotes(tr.notes, Object.assign({}, S.st, {key: k.key, scale: k.scale}));
+      const allowed = [1, 2, 4, 8, 16, 32, 64], bars = allowed.find(b => b >= Math.max(r.bars, S.st.bars)) || 64;
+      S.importInfo = `A riff of ${r.notes} notes over ${r.bars} bar${r.bars > 1 ? 's' : ''}, read in ${OT.keyLabel(k.key, k.scale)}${r.snapped ? `; ${r.snapped} note${r.snapped > 1 ? 's' : ''} outside the scale snapped to it` : ''}. Now vary it, fingerprint it or play it on any patch.`;
+      commit(Object.assign({}, r.patch, {key: k.key, scale: k.scale, imported: null, bars, from: 'import', name: f.name}));
+      toast(`Riff imported: ${r.notes} notes, ${OT.keyLabel(k.key, k.scale)}`);
+      $('gHarmony').open = true;
+      return;
+    }
     const {chords, beats} = OT.chordsFromNotes(tr.notes);
     if (!chords.length) return toast('No chords found in that track.');
     const k = OT.detectKey(tr.notes, chords[0]);
     const bars = beats / 4, allowed = [1, 2, 4, 8, 16, 32, 64];
     const fitBars = allowed.find(b => b >= bars) || 64;
-    const patch = {imported: {name: f.name.replace(/\.midi?$/i, ''), chords, beats, key: k.key, scale: k.scale}, key: k.key, scale: k.scale, bars: Math.max(fitBars, Math.min(S.st.bars, 64)), from: S.st.from};
+    const patch = {imported: {name: f.name, chords, beats, key: k.key, scale: k.scale}, key: k.key, scale: k.scale, bars: Math.max(fitBars, Math.min(S.st.bars, 64)), from: S.st.from};
     if (f.mid.bpm && Math.abs(f.mid.bpm - S.st.bpm) > 0.5 && f.mid.bpm >= 60 && f.mid.bpm <= 200) toast(`${chords.length} chords imported in ${OT.keyLabel(k.key, k.scale)}. The file says ${Math.round(f.mid.bpm)} BPM; the tempo field is yours to change.`);
     else toast(`${chords.length} chords imported, read as ${OT.keyLabel(k.key, k.scale)}.`);
     commit(patch);
@@ -301,9 +358,32 @@
     const tabs = [['all', 'All', '#ECEEF5'], ...Object.entries(OB.GENRES).map(([id, g]) => [id, g.name, g.color])];
     $('genreTabs').innerHTML = tabs.map(([id, n, c]) => `<button type="button" role="tab" data-g="${id}" style="--c:${c}" class="${S.filter === id ? 'on' : ''}" aria-selected="${S.filter === id}"><i style="background:${c}"></i>${esc(n)}</button>`).join('');
   }
+  function patternRoles() {
+    if (!S.pRoles) { S.pRoles = {}; for (const p of OB.PATTERNS) S.pRoles[p.id] = OE.roles(OB.stateFor(p)); }
+    return S.pRoles;
+  }
+  // search: section words ("drop", "build", "breakdown"…) and length words ("short", "long", "pads"…) filter by tag,
+  // everything else is matched against the text. "drop material for sure" is just "drop".
   function visiblePatterns() {
-    const q = S.q.trim().toLowerCase();
-    return OB.PATTERNS.filter(p => (S.filter === 'all' || p.genre === S.filter) && (!q || [p.name, p.sub, p.why, p.sound, OB.GENRES[p.genre].name, p.pool, p.order].join(' ').toLowerCase().includes(q)));
+    const q = OE.parseQuery(S.q), PR = patternRoles();
+    const roles = new Set(q.roles); if (S.role !== 'any') roles.add(S.role);
+    const list = OB.PATTERNS.filter(p => {
+      if (S.filter !== 'all' && p.genre !== S.filter) return false;
+      const r = PR[p.id], snd = OB.SOUNDS_BY_ID[p.sound];
+      if (roles.size && ![...roles].some(x => r.roles.includes(x))) return false;
+      if (q.lens.size && !q.lens.has(snd.len)) return false;
+      const text = [p.name, p.sub, p.why, snd.name, snd.family, OB.GENRES[p.genre].name, p.pool, p.order].join(' ').toLowerCase();
+      return q.words.every(w => text.includes(w));
+    });
+    if (S.sort === 'energy-') list.sort((a, b) => PR[b.id].energy - PR[a.id].energy);
+    if (S.sort === 'energy+') list.sort((a, b) => PR[a.id].energy - PR[b.id].energy);
+    if (S.sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+    return list;
+  }
+  const roleTags = rs => `<span class="rtags">${Object.keys(OE.ROLES).filter(r => rs.includes(r)).map(r => `<span class="rtag" style="--rc:${OE.ROLES[r].color}">${r === 'intro' ? 'intro' : r}</span>`).join('')}</span>`;
+  function viewRoleTabs() {
+    const tabs = [['any', 'Any section', '#ECEEF5'], ...Object.entries(OE.ROLES).map(([k, v]) => [k, v.name, v.color])];
+    $('roleTabs').innerHTML = tabs.map(([k, n, c]) => `<button type="button" data-role="${k}" style="--rc:${c}" class="${S.role === k ? 'on' : ''}" title="${esc(k === 'any' ? 'Every pattern' : OE.ROLES[k].desc)}">${esc(n)}</button>`).join('');
   }
   function strip(steps) {
     const st = typeof steps === 'string' ? OE.parseSteps(steps) : steps;
@@ -313,14 +393,35 @@
     const list = visiblePatterns();
     $('bankCount').textContent = `${list.length} of ${OB.PATTERNS.length}`;
     let html = '', lastSub = '';
+    const PR = patternRoles(), grouped = S.sort === 'bank';
     for (const p of list) {
-      const g = OB.GENRES[p.genre], sub = (S.filter === 'all' ? g.name + ' · ' : '') + p.sub;
-      if (sub !== lastSub) { html += `<p class="psub">${esc(sub)}</p>`; lastSub = sub; }
+      const g = OB.GENRES[p.genre], sub = (S.filter === 'all' ? g.name + ' · ' : '') + p.sub, r = PR[p.id];
+      if (grouped && sub !== lastSub) { html += `<p class="psub">${esc(sub)}</p>`; lastSub = sub; }
       const s = OB.SOUNDS_BY_ID[p.sound];
-      html += `<button type="button" class="pitem" data-p="${p.id}" style="--c:${g.color}"><b>${esc(p.name)}</b><small>${p.bpm || Math.round((g.bpm[0] + g.bpm[1]) / 2)} · ${esc(s ? s.name : '')} · ${OE.parseSteps(p.steps).length} steps</small><span class="strip">${strip(p.steps)}</span></button>`;
+      html += `<button type="button" class="pitem" data-p="${p.id}" style="--c:${g.color}"><b>${esc(p.name)}${roleTags(r.roles)}</b><small>${grouped ? '' : esc(g.name) + ' · '}${p.bpm || Math.round((g.bpm[0] + g.bpm[1]) / 2)} · ${esc(s ? s.name : '')} · energy ${r.energy}</small><span class="strip">${strip(p.steps)}</span><span class="en" style="--e:${r.energy}%"></span></button>`;
     }
     $('plist').innerHTML = html || '<p class="empty">Nothing matches.</p>';
     viewBankActive();
+  }
+  // ---------- the sound browser ----------
+  function visibleSounds() {
+    const q = OE.parseQuery(S.sQ);
+    const lens = new Set(q.lens); if (S.sLen !== 'all') lens.add(S.sLen);
+    const roles = new Set(q.roles); if (S.sRole !== 'all') roles.add(S.sRole);
+    return OB.SOUNDS.filter(x => (!lens.size || lens.has(x.len)) && (!roles.size || [...roles].some(r => x.roles.includes(r))) && q.words.every(w => [x.name, x.family, x.desc, x.tags.join(' ')].join(' ').toLowerCase().includes(w)));
+  }
+  function viewSoundBrowser() {
+    const segs = (id, cur, items) => { $(id).innerHTML = items.map(([k, n, c]) => `<button type="button" data-v="${k}" style="--rc:${c || 'var(--g)'}" class="${cur === k ? 'on' : ''}">${esc(n)}</button>`).join(''); };
+    segs('sLen', S.sLen, [['all', 'Any length'], ['short', 'Short'], ['medium', 'Medium'], ['long', 'Long']]);
+    segs('sRole', S.sRole, [['all', 'Any section'], ...Object.entries(OE.ROLES).map(([k, v]) => [k, k === 'intro' ? 'Intro' : v.name, v.color])]);
+    const list = visibleSounds();
+    $('sList').innerHTML = list.map(x => `<div class="srow ${x.id === S.st.sound ? 'on' : ''}" data-s="${x.id}" role="button" tabindex="0" title="${esc(x.desc)}"><span><b>${esc(x.name)}${roleTags(x.roles)}</b><small>${esc(x.family)} · ${x.len} · energy ${Math.round(x.energy * 100)}</small></span><button class="ib" type="button" data-hear="${x.id}" title="Hear one note" aria-label="Hear ${esc(x.name)}">▶</button></div>`).join('') || '<p class="note">No sound matches.</p>';
+  }
+  async function previewSound(id) {
+    const x = OB.SOUNDS_BY_ID[id], st = Object.assign({}, S.st, {sound: id}, x.fx || {});
+    const note = S.st.reg - OT.mod(S.st.reg - S.st.key, 12) + (OT.mod(S.st.reg - S.st.key, 12) > 6 ? 12 : 0);
+    const buf = await OA.renderSample(OE.normalize(st), {notes: [note], hold: {short: 0.2, medium: 0.5, long: 1.6}[x.len], vel: 110, fx: true, maxSec: 6});
+    playBuffer(buf);
   }
   function viewBankActive() { document.querySelectorAll('.pitem').forEach(b => b.classList.toggle('on', b.dataset.p === S.st.from)); }
   function stepPattern(dir) {
@@ -412,6 +513,8 @@
     // pool ring with the figure the notes draw
     const r3 = R * 0.5, M = Math.max(1, (lastNote && lastNote.e.pl) || O.poolN || 3);
     const node = i => { const a = ang(((i % M) + M) % M / M); return [cx + Math.cos(a) * r3, cy + Math.sin(a) * r3]; };
+    O.nodes = Array.from({length: M}, (_, i) => { const [x, y] = node(i); return {i, x, y}; });
+    O.nodeGap = M > 1 ? 2 * Math.PI * r3 / M : 60;
     c.beginPath(); c.arc(cx, cy, r3, 0, 7); c.strokeStyle = '#ffffff0c'; c.stroke();
     c.globalCompositeOperation = 'lighter';
     if (pos == null && O.figure && O.figure.length > 1) {
@@ -452,6 +555,10 @@
     const bb = pb == null ? 'press play' : `${Math.floor(pb / 4) + 1}.${Math.floor(pb % 4) + 1} · ${ch ? ch.roman : ''}`;
     c.fillText(bb, cx, cy + R * 0.12);
     if (S.M.cycle.bars) { c.fillStyle = ACC; c.fillText(`cycle ${pb == null ? '—' : (Math.floor(pb / 4) % S.M.cycle.bars) + 1} / ${S.M.cycle.bars}`, cx, cy + R * 0.21); }
+    if (S.draw) {
+      c.fillStyle = ACC; c.fillText(S.drawSeq ? S.drawSeq.join(' ') : 'click the notes in order', cx, cy + R * 0.3);
+      if (S.drawSeq) { c.strokeStyle = ACC; c.lineWidth = 2.2; c.beginPath(); S.drawSeq.forEach((i, k) => { const [x, y] = node(i); k ? c.lineTo(x, y) : c.moveTo(x, y); }); c.stroke(); }
+    }
   }
   function currentPool() {
     const tr = S.trail, e = tr.length ? tr[tr.length - 1].e : S.R.events[0];
@@ -577,7 +684,154 @@
     const L = S.st.steps.length, cell = Math.floor(pb / OE.RATES[S.st.rate].beats + 1e-6) % L;
     if (cell !== lastCell) { document.querySelector('.cell.now')?.classList.remove('now'); document.querySelector(`.cell[data-i="${cell}"]`)?.classList.add('now'); lastCell = cell; }
     if (now - lowTimer > 0.3) { lowTimer = now; liveRegister(); }
+    if (S.auto) {
+      const every = +$('autoEvery').value * 4, next = Math.ceil((pos + 1e-6) / every) * every;
+      if (next - pos < 0.35 && S.autoAt !== next) { S.autoAt = next; autopilotStep(); }
+    }
   }
+  function autopilotStep() {
+    const v = OE.vary(S.st, 6, 1 + Math.floor(Math.random() * 1e5), {wild: $('wild').checked});
+    if (!v.length) return;
+    v.sort((a, b) => b.fit - a.fit);
+    const pick = v[0];
+    load(Object.assign({}, pick.st, {name: S.st.name.replace(/ · (var|auto).*$/, '') + ' · auto', ctx: S.st.ctx, mix: S.st.mix}));
+    toast(`Autopilot: ${pick.what} · fit ${pick.fit}`);
+  }
+
+  // ---------- live chords from a MIDI keyboard ----------
+  async function liveConnect() {
+    if (S.midi) {
+      for (const i of S.midi.inputs.values()) i.onmidimessage = null;
+      S.midi = null; S.held.clear(); S.down.clear(); liveApply();
+      $('liveBtn').classList.remove('on'); $('liveStatus').textContent = 'Keyboard off.';
+      return;
+    }
+    if (!navigator.requestMIDIAccess) { $('liveStatus').textContent = 'This browser has no Web MIDI: use Chrome or Edge.'; return; }
+    try { S.midi = await navigator.requestMIDIAccess(); } catch (_) { $('liveStatus').textContent = 'MIDI access was refused.'; return; }
+    const bind = () => { let n = 0; for (const i of S.midi.inputs.values()) { i.onmidimessage = ev => midiIn(ev.data); n++; } $('liveStatus').textContent = n ? `Listening to ${n} MIDI input${n > 1 ? 's' : ''}: hold a chord and press play.` : 'No MIDI keyboard found: plug one in.'; };
+    bind(); S.midi.onstatechange = bind;
+    $('liveBtn').classList.add('on');
+  }
+  function midiIn(d) {
+    const type = d[0] & 0xF0, n = d[1], v = d[2];
+    if (type === 0x90 && v > 0) { if (S.liveFresh) { S.held.clear(); S.liveFresh = false; } S.held.add(n); S.down.add(n); }
+    else if (type === 0x80 || (type === 0x90 && v === 0)) { S.down.delete(n); if (!$('latch').checked) S.held.delete(n); if (!S.down.size) S.liveFresh = true; }
+    else return;
+    clearTimeout(S.liveT); S.liveT = setTimeout(liveApply, 25);
+  }
+  function liveApply() {
+    const notes = [...S.held].sort((a, b) => a - b);
+    if (!notes.length) {
+      if (S.preLive !== undefined) { const back = S.preLive; S.preLive = undefined; commit({imported: back}, {history: false, light: true}); }
+      return;
+    }
+    if (S.preLive === undefined) S.preLive = S.st.imported && S.st.imported.name !== 'Live keyboard' ? S.st.imported : null;
+    const w = new Array(12).fill(0); notes.forEach(n => { w[n % 12] += 1; });
+    const det = OT.detectChord(w, notes[0]);
+    commit({imported: {name: 'Live keyboard', chords: [{t: 0, d: 4, notes, root: det.root, q: det.q, iv: OT.Q[det.q].iv.slice()}], beats: 4, key: S.st.key, scale: S.st.scale}}, {history: false, light: true});
+    $('liveStatus').textContent = `Playing ${OT.chordName(det.root, det.q, S.st.key, S.st.scale)}: ${notes.map(nn).join(' ')}${$('latch').checked ? ' (latched)' : ''}`;
+  }
+
+  // ---------- sounds out ----------
+  const slugName = s => OT.asciiName(s).normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
+  const noteFile = n => OT.asciiName(OT.noteName(n)).replace('#', 's');
+  function smpFormat() { const [bits, sr] = $('smpFmt').value.split('-').map(Number); return {bits, sr}; }
+  function smpState(soundId) { return Object.assign({}, S.st, {sound: soundId || $('smpSound').value || S.st.sound}); }
+  function playBuffer(buf) { ensureAudio(); const src = actx.createBufferSource(); src.buffer = buf; src.connect(engine.out); src.start(); }
+  function drawWave(buf) {
+    const cv = $('smpWave'), {dpr, w, h} = sizeCanvas(cv), c = cv.getContext('2d');
+    c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+    const d = buf.getChannelData(0), G = getComputedStyle(document.documentElement).getPropertyValue('--g').trim();
+    c.fillStyle = G; const step = Math.max(1, Math.floor(d.length / w));
+    for (let x = 0; x < w; x++) { let mn = 0, mx = 0; for (let i = x * step; i < (x + 1) * step && i < d.length; i++) { if (d[i] < mn) mn = d[i]; if (d[i] > mx) mx = d[i]; } c.fillRect(x, h / 2 - mx * h / 2, 1, Math.max(1, (mx - mn) * h / 2)); }
+  }
+  async function renderOne() {
+    const {sr} = smpFormat(), note = +$('smpNote').value, st = smpState();
+    const buf = await OA.renderSample(st, {notes: [note], hold: +$('smpHold').value, vel: +$('smpVel').value, fx: $('smpFx').value === 'fx', sampleRate: sr});
+    const snd = OB.SOUNDS_BY_ID[st.sound];
+    S.sample = {buf, note, name: `Orbit_${slugName(snd.name)}_${noteFile(note)}${$('smpFx').value === 'fx' ? '_fx' : ''}`};
+    drawWave(buf);
+    $('smpInfo').textContent = `${snd.name} · ${OT.noteName(note)} (${Math.round(OT.hz(note))} Hz) · ${(buf.length / buf.sampleRate).toFixed(2)} s · peak −1 dBFS · ${$('smpFmt').selectedOptions[0].textContent} · root ${OT.noteName(note)} in the file`;
+    return S.sample;
+  }
+  async function busy(btn, fn) {
+    const t = btn.textContent; btn.disabled = true; btn.textContent = 'Rendering…';
+    try { await fn(msg => { btn.textContent = msg; }); } catch (err) { toast('Could not render: ' + err.message); console.error(err); }
+    btn.disabled = false; btn.textContent = t;
+  }
+  function stabChords() {
+    const set = $('stabSet').value;
+    if (set === 'prog') { const seen = new Set(); return S.R.harmony.chords.filter(c => { const k = c.name + c.notes.join(','); if (seen.has(k)) return false; seen.add(k); return true; }); }
+    return OE.diatonicChords(S.st, set);
+  }
+  function viewSamples() {
+    if (!$('stabList')) return;
+    $('stabList').innerHTML = stabChords().map((c, i) => `<button type="button" data-stab="${i}" title="Hear ${esc(c.name)}">${esc(c.name)}<small>${esc(c.roman)} · ${c.notes.map(nn).join(' ')}</small></button>`).join('');
+    $('loopLen').textContent = `${S.st.bars} bars at ${S.st.bpm} BPM (${(S.st.bars * 4 * 60 / S.st.bpm).toFixed(2)} s)`;
+  }
+  async function stabBuffer(c) { const {sr} = smpFormat(); return OA.renderSample(smpState(), {notes: c.notes, hold: +$('stabHold').value, vel: 110, fx: $('smpFx').value === 'fx', sampleRate: sr}); }
+  const rootOf = c => c.notes[0] - OT.mod(c.notes[0] - c.root, 12);
+  const keyTag = () => OT.asciiName(OT.pcName(S.st.key, S.st.key, S.st.scale)).replace('#', 's') + (OT.SCALES[S.st.scale].minor ? 'm' : '');
+  async function stabsZip(report) {
+    const {bits} = smpFormat(), list = stabChords(), files = [], snd = OB.SOUNDS_BY_ID[smpState().sound];
+    for (const [i, c] of list.entries()) { report(`Chord ${i + 1} of ${list.length}…`); const b = await stabBuffer(c); files.push({name: `${String(i + 1).padStart(2, '0')}_${slugName(c.name)}_${slugName(snd.name)}.wav`, bytes: OA.wav(b, {bits, root: rootOf(c)})}); }
+    const lines = list.map((c, i) => `${i + 1}. ${OT.asciiName(c.name)} (${c.roman}): ${c.notes.map(n => OT.asciiName(OT.noteName(n))).join(' ')}`);
+    files.push({name: 'README.txt', bytes: new TextEncoder().encode([`ORBIT CHORD STABS · ${snd.name} · ${OT.asciiName(OT.keyLabel(S.st.key, S.st.scale))} (${OT.camelot(S.st.key, S.st.scale)})`, '', ...lines, '', 'One chord per file. Drum Rack: drop the files on the pads. Simpler: load one chord and play it up and down the keyboard (chord memory). Each file carries its chord root as its root key.', ''].join('\n'))});
+    download(OT.zip(files), `Orbit_stabs_${slugName(snd.name)}_${keyTag()}.zip`, 'application/zip');
+    toast(`${list.length} chord stabs in one ZIP`);
+    return files;
+  }
+  async function multisampleZip(report) {
+    const {bits, sr} = smpFormat(), [lo, hi] = $('msRange').value.split('-').map(Number), step = +$('msStep').value, st = smpState(), snd = OB.SOUNDS_BY_ID[st.sound];
+    const layers = $('msLayers').checked ? [[70, 'soft'], [127, 'hard']] : [[+$('smpVel').value, '']];
+    const notes = []; for (let n = lo; n <= hi; n += step) notes.push(n);
+    const files = []; let k = 0;
+    for (const n of notes) for (const [v, tag] of layers) {
+      report(`Note ${++k} of ${notes.length * layers.length}…`);
+      const b = await OA.renderSample(st, {notes: [n], hold: +$('smpHold').value, vel: v, fx: $('smpFx').value === 'fx', sampleRate: sr});
+      files.push({name: `${slugName(snd.name)}_${String(n).padStart(3, '0')}_${noteFile(n)}${tag ? '_' + tag : ''}.wav`, bytes: OA.wav(b, {bits, root: n})});
+    }
+    const text = [`ORBIT MULTISAMPLE · ${snd.name}`, '', `${notes.length} notes from ${OT.asciiName(OT.noteName(lo))} to ${OT.asciiName(OT.noteName(hi))}, every ${step} semitone${step > 1 ? 's' : ''}${layers.length > 1 ? ', two velocity layers (soft = 70, hard = 127)' : ''}.`,
+      'File names: patch_MIDInote_Note(_layer).wav, C3 = MIDI 60 as in Live. Each file carries its root key.', "In Live's Sampler: drop the files into the Zone editor, then set each zone's root key and key range from its name.", '', 'The patch in Serum 2:', ...snd.serum.map(x => '- ' + x), ''];
+    files.push({name: 'README.txt', bytes: new TextEncoder().encode(text.join('\n'))});
+    download(OT.zip(files), `Orbit_multisample_${slugName(snd.name)}.zip`, 'application/zip');
+    toast(`${files.length - 1} samples in one ZIP`);
+    return files;
+  }
+  async function patchPack(report) {
+    const {bits, sr} = smpFormat(), files = [];
+    for (const [i, snd] of OB.SOUNDS.entries()) {
+      report(`Patch ${i + 1} of ${OB.SOUNDS.length}…`);
+      const st = OE.normalize(Object.assign({}, OE.DEFAULT, snd.fx || {}, {sound: snd.id, bpm: S.st.bpm, key: S.st.key, scale: S.st.scale}));
+      const b = await OA.renderSample(st, {notes: [60], hold: 0.5, vel: 110, sampleRate: sr});
+      files.push({name: `${String(i + 1).padStart(2, '0')}_${slugName(snd.name)}_C3.wav`, bytes: OA.wav(b, {bits, root: 60})});
+    }
+    const text = ['ORBIT PATCH PACK', '', 'Every patch as a one-shot at C3 (MIDI 60), half a second held, at its own settings, dry.', ''];
+    OB.SOUNDS.forEach((x, i) => text.push(`${i + 1}. ${x.name} (${x.family}): ${x.desc}`, 'Serum 2:', ...x.serum.map(l => '  - ' + l), 'Ableton:', ...x.live.map(l => '  - ' + l), ''));
+    files.push({name: 'RECIPES.txt', bytes: new TextEncoder().encode(text.join('\n'))});
+    download(OT.zip(files), `Orbit_patch_pack_${OB.SOUNDS.length}.zip`, 'application/zip');
+    toast(`${OB.SOUNDS.length} patches in one ZIP`);
+    return files;
+  }
+  async function loopWav(full) {
+    const {bits, sr} = smpFormat();
+    const buf = await OA.render(S.st, OE.render(S.st), {loops: 1, seamless: true, sampleRate: sr, parts: full ? null : {arp: true, bass: false, drums: false, chords: false}});
+    download(OA.wav(buf, {bits}), `${OE.fileStem(S.st)}_${S.st.bars}bars_${full ? 'mix' : 'arp'}_loop.wav`, 'audio/wav');
+    toast(`Seamless ${S.st.bars}-bar loop: exactly ${(buf.length / buf.sampleRate).toFixed(3)} s`);
+    return buf;
+  }
+  async function stemsZip(report) {
+    const {bits, sr} = smpFormat(), R = OE.render(S.st), files = [];
+    for (const part of ['arp', 'bass', 'drums', 'chords']) {
+      report(`Stem: ${part === 'chords' ? 'pad' : part}…`);
+      const buf = await OA.render(S.st, R, {loops: 1, seamless: true, sampleRate: sr, parts: {arp: part === 'arp', bass: part === 'bass', drums: part === 'drums', chords: part === 'chords'}});
+      files.push({name: `${OE.fileStem(S.st)}_${part === 'chords' ? 'pad' : part}.wav`, bytes: OA.wav(buf, {bits})});
+    }
+    download(OT.zip(files), `${OE.fileStem(S.st)}_${S.st.bars}bars_stems.zip`, 'application/zip');
+    toast('Four seamless stems in one ZIP');
+    return files;
+  }
+
   function scope() {
     const cv = $('scope'); if (!cv || !cv.offsetParent) return;
     const {dpr, w, h} = sizeCanvas(cv), c = cv.getContext('2d');
@@ -597,7 +851,7 @@
   // ---------- fingerprint ----------
   function viewMeasure() {
     const {m, fit, cycle} = S.M, g = genre();
-    $('fitNum').textContent = fit.score; $('fitGenre').textContent = g.name;
+    $('fitNum').textContent = fit.score; $('fitGenre').textContent = g.name + (S.M.role !== 'drop' ? ' · ' + OE.ROLES[S.M.role].name.toLowerCase() : '');
     // radar
     const svg = $('radar'), cx = 180, cy = 165, R = 120, A = OE.AXES, n = A.length;
     const pt = (i, f) => { const a = -Math.PI / 2 + i / n * Math.PI * 2; return [cx + Math.cos(a) * R * f, cy + Math.sin(a) * R * f]; };
@@ -605,8 +859,9 @@
     let s = '';
     for (const f of [0.25, 0.5, 0.75, 1]) s += `<polygon points="${A.map((_, i) => pt(i, f).join(',')).join(' ')}" fill="none" stroke="#ffffff14"/>`;
     A.forEach((a, i) => { const [x, y] = pt(i, 1); s += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#ffffff10"/>`; });
-    const lo = A.map((a, i) => pt(i, g.target[a.id] ? norm(a, g.target[a.id][0]) : 0));
-    const hi = A.map((a, i) => pt(i, g.target[a.id] ? norm(a, g.target[a.id][1]) : 1));
+    const T = OE.roleTarget(g.target, S.M.role);
+    const lo = A.map((a, i) => pt(i, T[a.id] ? norm(a, T[a.id][0]) : 0));
+    const hi = A.map((a, i) => pt(i, T[a.id] ? norm(a, T[a.id][1]) : 1));
     s += `<path d="M${hi.map(p => p.join(',')).join('L')}Z M${lo.slice().reverse().map(p => p.join(',')).join('L')}Z" fill="var(--g)" fill-opacity=".16" fill-rule="evenodd" stroke="var(--g)" stroke-opacity=".5" stroke-dasharray="3 3"/>`;
     const cur = A.map((a, i) => pt(i, norm(a, m[a.id])));
     s += `<polygon points="${cur.map(p => p.join(',')).join(' ')}" fill="#ffffff10" stroke="#fff" stroke-width="1.6"/>`;
@@ -615,14 +870,15 @@
     svg.innerHTML = s;
     // tiles
     $('tiles').innerHTML = fit.axes.map((ax, i) => {
-      const a = A[i], tr = g.target[a.id];
+      const a = A[i], tr = T[a.id];
       const band = tr ? `<span class="band" style="left:${norm(a, tr[0]) * 100}%;width:${(norm(a, tr[1]) - norm(a, tr[0])) * 100}%"></span>` : '';
-      return `<div class="tile ${ax.na ? 'na' : ax.ok ? '' : 'bad'}" title="${esc(ax.na || a.unit)}"><small>${a.label}</small><b>${a.fmt(m[a.id])}</b><span class="rng">${tr ? `${g.name}: ${a.fmt(tr[0])}–${a.fmt(tr[1])}` : ''}${ax.na ? ' · n/a' : ''}</span><div class="bar">${band}<span class="dot" style="left:${norm(a, m[a.id]) * 100}%"></span></div></div>`;
+      return `<div class="tile ${ax.na ? 'na' : ax.ok ? '' : 'bad'}" title="${esc(ax.na || a.unit)}"><small>${a.label}</small><b>${a.fmt(m[a.id])}</b><span class="rng">${tr ? `${g.name}: ${a.fmt(tr[0])}–${a.fmt(tr[1])}` : `not counted in a ${OE.ROLES[S.M.role].name.toLowerCase()}`}${ax.na ? ' · n/a' : ''}</span><div class="bar">${band}<span class="dot" style="left:${norm(a, m[a.id]) * 100}%"></span></div></div>`;
     }).join('');
     // fixes
     const sug = OE.suggestions(S.st);
     const bad = fit.axes.filter(a => !a.ok);
     $('fixes').innerHTML = !bad.length ? `<p class="ok-msg">Every measurement sits inside ${esc(g.name)}'s range.</p>` : sug.length ? sug.map((x, i) => `<div class="fix"><span>${esc(x.text)}<small>${OE.AXES.find(a => a.id === x.axis)?.label || x.axis} · fit ${x.score}</small></span><button class="btn sm" data-fix="${i}" type="button">Apply</button></div>`).join('') : `<p class="note">Out of range on ${bad.map(a => OE.AXES.find(x => x.id === a.id).label.toLowerCase()).join(', ')}, and no single small edit fixes it. Try the generator for this genre.</p>`;
+    if (S.st.echo) $('fixes').insertAdjacentHTML('beforeend', '<p class="note" style="margin-top:8px">The echo cascade is not counted: the fingerprint measures the notes you wrote.</p>');
     $('fixes').querySelectorAll('[data-fix]').forEach(b => b.addEventListener('click', () => { const x = sug[+b.dataset.fix]; commit(x.patch); toast(x.text); }));
     // cycle
     $('cycleText').innerHTML = esc(S.M.cycleText).replace(/(\d+ bars?)/g, '<b>$1</b>');
@@ -677,14 +933,16 @@
     const keep = {};
     if ($('keepHarm').checked) Object.assign(keep, {bpm: gid === S.st.genre ? S.st.bpm : undefined, key: S.st.key, scale: S.st.scale, prog: S.st.imported ? undefined : (gid === S.st.genre ? S.st.prog : undefined), imported: S.st.imported || undefined, bars: S.st.bars});
     if ($('keepSound').checked) keep.sound = S.st.sound;
+    if ($('wild').checked) keep.wild = true;
+    if ($('findRole').value) keep.role = $('findRole').value;
     for (const k of Object.keys(keep)) if (keep[k] === undefined) delete keep[k];
     const seed = 1 + Math.floor(Math.random() * 1e5);
     const t0 = performance.now();
-    S.cands = kind === 'vary' ? OE.vary(S.st, 8, seed).map(v => Object.assign(v, {typical: null})) : OE.find(gid, 8, seed, keep);
+    S.cands = kind === 'vary' ? OE.vary(S.st, 8, seed, {wild: $('wild').checked}).map(v => Object.assign(v, {typical: null})) : OE.find(gid, 8, seed, keep);
     S.candKind = kind;
     for (const c of S.cands) { c.st.ctx = S.st.ctx; c.st.mix = S.st.mix; }
     viewCands();
-    toast(kind === 'vary' ? `8 variations of "${S.st.name}"` : `${S.cands.length} of 140 ideas kept in ${Math.round(performance.now() - t0)} ms`);
+    toast(kind === 'vary' ? `8 variations of "${S.st.name}"` : `${S.cands.length} of 140 ${keep.role ? OE.ROLES[keep.role].name.toLowerCase() + ' ' : ''}ideas kept in ${Math.round(performance.now() - t0)} ms`);
   }
   function viewCands() {
     const box = $('cands');
@@ -692,7 +950,7 @@
     const packed = OE.pack(S.st);
     box.innerHTML = S.cands.map((c, i) => {
       const g = OB.GENRES[c.st.genre], s = OB.SOUNDS_BY_ID[c.st.sound];
-      return `<div class="cand ${OE.pack(c.st) === packed ? 'on' : ''}" data-c="${i}" style="--c:${g.color}" tabindex="0" role="button" aria-label="Audition ${esc(c.st.name)}"><canvas></canvas><span class="sc">${c.fit}</span><h4>${esc(c.what ? c.what : s.name + ' · ' + ({stab: 'chord stabs', pedal: 'pedal riff', riff: 'written riff', arp: OE.ORDERS[c.st.order].name.toLowerCase() + ' arp'})[c.kind || 'arp'])}</h4><p>${esc(OE.POOLS[c.st.pool].name)} · ${OE.RATES[c.st.rate].label} · ${c.st.steps.length} steps · ${c.st.bpm} BPM${c.typical != null ? ' · typical ' + Math.round(c.typical * 100) + '%' : ''}</p><div class="ca"><button class="btn sm" data-play="${i}" type="button">▶ Hear</button><button class="btn sm ghost" data-star="${i}" type="button">★ Save</button></div></div>`;
+      return `<div class="cand ${OE.pack(c.st) === packed ? 'on' : ''}" data-c="${i}" style="--c:${g.color}" tabindex="0" role="button" aria-label="Audition ${esc(c.st.name)}"><canvas></canvas><span class="sc">${c.fit}</span><h4>${esc(c.what ? c.what : s.name + ' · ' + ({stab: 'chord stabs', pedal: 'pedal riff', riff: 'written riff', arp: OE.ORDERS[c.st.order].name.toLowerCase() + ' arp'})[c.kind || 'arp'])}</h4><p>${esc(OE.POOLS[c.st.pool].name)} · ${OE.RATES[c.st.rate].label} · ${c.st.steps.length} steps · ${c.st.bpm} BPM${c.typical != null ? ' · typical ' + Math.round(c.typical * 100) + '%' : ''}</p>${roleTags((c.roles || OE.roles(c.st)).roles)}<div class="ca"><button class="btn sm" data-play="${i}" type="button">▶ Hear</button><button class="btn sm ghost" data-star="${i}" type="button">★ Save</button></div></div>`;
     }).join('');
     box.querySelectorAll('.cand').forEach((el, i) => miniCanvas(el.querySelector('canvas'), S.cands[i].st, OB.GENRES[S.cands[i].st.genre].color));
   }
@@ -800,6 +1058,8 @@
       <table class="kv">${la.settings.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('')}</table>
       ${la.reasons.length ? `<p class="note" style="margin-top:10px"><b>Why not exact:</b> ${la.reasons.map(esc).join(' ')}</p>` : ''}
       ${la.notes.length ? `<p class="note">${la.notes.map(esc).join(' ')}</p>` : ''}
+      ${st.echo ? `<p class="note">The echo cascade is written into the MIDI as real notes. To keep it live instead, play the plain arp into a MIDI echo device (Live Suite's Note Echo) at the same time and pitch.</p>` : ''}
+      ${st.order === 'turing' ? '<p class="note">A Turing loop is different on every pass: the MIDI export is one take of it. Export a few and keep the best.</p>' : ''}
       <p class="note">MIDI effect chain for the same idea played live: <b>Arpeggiator → Scale</b> (base ${esc(OT.pcName(st.key, st.key, st.scale))}, ${esc(OT.SCALES[st.scale].name)}) <b>→ Velocity</b> (Random 6, for life) <b>→ Note Length</b> (gate ${Math.round(st.gate * 100)}%).</p>`;
     const e = OE.EVOS[st.evo], lanes = [['cut', 74, 'Cutoff'], ['res', 71, 'Resonance'], ['dec', 75, 'Decay'], ['send', 91, 'Reverb']].filter(([k]) => e[k]);
     $('serumCard').innerHTML = `<p class="tag">Serum 2 · ${esc(s.family)}</p><h3>${esc(s.name)}</h3><p class="note">${esc(s.desc)}</p><ol>${s.serum.map(x => `<li>${esc(x)}</li>`).join('')}</ol>
@@ -892,6 +1152,11 @@
     opt($('groove'), Object.entries(OB.GROOVES).map(([k, v]) => [k, v.name]));
     opt($('bassPat'), Object.entries(OB.BASS).map(([k, v]) => [k, v.name]));
     opt($('findGenre'), Object.entries(OB.GENRES).map(([k, v]) => [k, v.name]));
+    opt($('feel'), Object.entries(OE.FEELS).map(([k, v]) => [k, v.name]));
+    opt($('echoShift'), Object.entries(OE.ECHO_SHIFTS));
+    opt($('tlen'), [2, 3, 4, 5, 6, 7, 8, 10, 12, 16].map(n => [n, n + ' notes']));
+    $('smpSound').innerHTML = '<option value="">the current patch</option>' + OB.SOUNDS.map(x => `<option value="${x.id}">${esc(x.name)}</option>`).join('');
+    opt($('smpNote'), Array.from({length: 73}, (_, i) => 24 + i).map(n => [n, OT.noteName(n) + (n === 60 ? " (Live's root)" : '')]), 60);
     const fams = [...new Set(OB.SOUNDS.map(s => s.family))];
     $('sound').innerHTML = fams.map(f => `<optgroup label="${esc(f)}">${OB.SOUNDS.filter(s => s.family === f).map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('')}</optgroup>`).join('');
     $('stats').innerHTML = [[OB.PATTERNS.length, 'patterns', `${OB.PATTERNS.filter(p => p.genre === 'tech-house').length} tech house`], [Object.keys(OB.GENRES).length, 'genres', 'each measured'], [OB.SOUNDS.length, 'sounds', 'Serum 2 + Live recipes'], [Object.keys(OE.EVOS).length - 1, 'evolutions', 'exported as CC']].map(([n, l, s]) => `<div><dt>${l}</dt><dd>${n}<small>${esc(s)}</small></dd></div>`).join('');
@@ -905,8 +1170,9 @@
     S.filter = S.st.genre;
     $('findGenre').value = S.st.genre;
     bindControls();
-    viewBankTabs(); viewBank();
+    viewBankTabs(); viewRoleTabs(); viewBank();
     refresh();
+    viewSoundBrowser();
     viewCands(); viewCrate(); viewRules(); viewGenres();
     // events
     $('play').addEventListener('click', () => togglePlay());
@@ -914,6 +1180,17 @@
     $('heroPlay').addEventListener('click', () => { togglePlay(); if (player.playing) $('studio').scrollIntoView({behavior: 'smooth'}); });
     $('heroFind').addEventListener('click', () => { $('find').scrollIntoView({behavior: 'smooth'}); runFind('new'); });
     $('genreTabs').addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (!b) return; S.filter = b.dataset.g; viewBankTabs(); viewBank(); });
+    $('roleTabs').addEventListener('click', e => { const b = e.target.closest('[data-role]'); if (!b) return; S.role = b.dataset.role; viewRoleTabs(); viewBank(); });
+    $('bankSort').addEventListener('change', () => { S.sort = $('bankSort').value; viewBank(); });
+    $('sLen').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; S.sLen = b.dataset.v; viewSoundBrowser(); });
+    $('sRole').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; S.sRole = b.dataset.v; viewSoundBrowser(); });
+    $('sSearch').addEventListener('input', () => { S.sQ = $('sSearch').value; viewSoundBrowser(); });
+    $('sList').addEventListener('click', e => {
+      const h = e.target.closest('[data-hear]'); if (h) { e.stopPropagation(); previewSound(h.dataset.hear); return; }
+      const r = e.target.closest('[data-s]'); if (!r) return;
+      const x = OB.SOUNDS_BY_ID[r.dataset.s]; commit(Object.assign({sound: x.id}, x.fx || {}));
+      toast(`${x.name}: ${x.len}, best for ${x.roles.map(k => OE.ROLES[k].name.toLowerCase()).join(' and ')}`);
+    });
     $('search').addEventListener('input', () => { S.q = $('search').value; viewBank(); });
     $('plist').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) loadPattern(b.dataset.p); });
     $('undo').addEventListener('click', undo); $('redo').addEventListener('click', redo);
@@ -931,6 +1208,16 @@
     $('wavArp').addEventListener('click', () => exportWav(true));
     $('wavMix').addEventListener('click', () => exportWav(false));
     $('shareBtn').addEventListener('click', share);
+    $('smpPlay').addEventListener('click', () => busy($('smpPlay'), async () => { const smp = await renderOne(); playBuffer(smp.buf); }));
+    $('smpDown').addEventListener('click', () => busy($('smpDown'), async () => { const smp = await renderOne(); download(OA.wav(smp.buf, {bits: smpFormat().bits, root: smp.note}), smp.name + '.wav', 'audio/wav'); toast('One-shot downloaded: drag it onto a MIDI track for Simpler'); }));
+    $('msGo').addEventListener('click', () => busy($('msGo'), multisampleZip));
+    $('packGo').addEventListener('click', () => busy($('packGo'), patchPack));
+    $('stabGo').addEventListener('click', () => busy($('stabGo'), stabsZip));
+    $('stabSet').addEventListener('change', viewSamples);
+    $('stabList').addEventListener('click', async e => { const b = e.target.closest('[data-stab]'); if (!b) return; const c = stabChords()[+b.dataset.stab]; playBuffer(await stabBuffer(c)); });
+    $('loopArp').addEventListener('click', () => busy($('loopArp'), () => loopWav(false)));
+    $('loopMix').addEventListener('click', () => busy($('loopMix'), () => loopWav(true)));
+    $('stemsGo').addEventListener('click', () => busy($('stemsGo'), stemsZip));
     $('expBars').addEventListener('change', () => { S.expTouched = true; });
     $('expName').addEventListener('change', () => commit({name: $('expName').value || 'Untitled arp'}));
     $('findBtn').addEventListener('click', () => runFind('new'));
@@ -973,7 +1260,7 @@
     let rz = 0;
     addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { drawRollLayer(); drawOrbit(player && player.playing ? player.beat() : null); }); });
     requestAnimationFrame(frame);
-    window.ORBIT_QA = {S, refresh, commit, load, runFind, audition, togglePlay, exportMidi, midiBytes, crateZip, applyImport, importFile, exportWav, toggleSave, get player() { return player; }, get engine() { return engine; }};
+    window.ORBIT_QA = {S, refresh, commit, load, runFind, audition, togglePlay, exportMidi, midiBytes, crateZip, applyImport, importFile, exportWav, toggleSave, midiIn, liveApply, autopilotStep, visiblePatterns, visibleSounds, previewSound, renderOne, stabsZip, multisampleZip, patchPack, loopWav, stemsZip, get orbitNodes() { return O.nodes; }, get player() { return player; }, get engine() { return engine; }};
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

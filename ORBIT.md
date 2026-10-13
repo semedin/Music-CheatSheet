@@ -1,7 +1,7 @@
 # Orbit: notes
 
 [`orbit.html`](orbit.html) is the arpeggio studio: arps, riffs and sequences for twelve genres, from deep tech
-house to trance. Pick a key and a progression (or drop in your own chord MIDI), start from one of 129
+house to trance. Pick a key and a progression (or drop in your own chord MIDI), start from one of 154
 patterns or let the generator write some, hear them on a synthesized sound with drums and a bassline
 under them, check them against the genre's measured fingerprint, and take the MIDI to Ableton.
 
@@ -50,6 +50,56 @@ ride, Riser in the last quarter, Thin to full. **Fills** change the last bar of 
 last beat, octave climb, ratchet, roll in, answer in reverse, stutter) and **Change a note** swaps one note
 of the cycle in every other block of 2, 4 or 8 bars.
 
+## Off the beaten track
+
+- **More scales**: melodic minor, Phrygian dominant, Hungarian minor, double harmonic and Locrian, alongside
+  minor, Dorian, Phrygian, harmonic minor, major, Mixolydian and Lydian.
+- **More pools**: *stacked 4ths* (scale notes a fourth apart: open, modern, fits anywhere in the key), *open
+  voicing* (every other chord tone up an octave) and *cluster* (root, 2nd, 3rd and 5th: notes that rub).
+- **Turing order**, after the Music Thing Modular module: a loop of 2–16 pool notes where, each time it comes
+  round, every note has a (100% − lock) chance of changing. Fully locked it is a fixed loop; loosened, it drifts
+  forever. Deterministic per seed, so the same settings give the same drift.
+- **Echo cascade**: MIDI echoes written into the notes, at 1/16 to dotted 1/4, quieter on each repeat and
+  optionally climbing or falling (octaves, fifths, fourths, or scale steps). One note becomes a run. Echoes wrap
+  round the loop and go into the MIDI export; the fingerprint ignores them and measures what you wrote.
+- **Feel**: microtiming per 16th of the beat, on the arp, bass and hats: *Drunk* (Dilla: the "e" and "a" late,
+  the "and" early), *Afro lean*, *Ahead* and *Laid back*. **Strum** spreads chord hits over up to 80 ms, up, down
+  or alternating.
+- **Bouncing-ball fill**: the last beat speeds up 1, 2, 3, 4 notes per step and falls in level.
+- **Text → rhythm**: any word or track name as Morse code (a dot is a note, a dash an accent held two steps).
+- **Write it out** turns any order into a written sequence, then reverse, mirror, step up or down, or rotate it.
+- **Draw** on the orbit: click the pool notes on the inner ring in the order they should play.
+- **Riff import**: drop a single-line MIDI clip (a riff or a melody) and it becomes the step pattern and a
+  written sequence over the key's scale, with its accents, ties and swing. It plays back exactly (notes outside
+  the scale snap to it), and from there you can vary it, fingerprint it or play it on any patch.
+- **Play chords from a MIDI keyboard** (Web MIDI, Chrome and Edge): hold a chord and the arp plays it, with
+  latch; release without latch and the progression comes back.
+- **Autopilot**: while it plays, Orbit moves to its best-fitting variation every 4, 8 or 16 bars. Undo goes back.
+- **Wild card**: lets the generator and the variations reach for all of the above.
+
+## Sections: intro, build, break, drop
+
+Every combo, from the bank, the generator or your own edits, is measured for what it is good for:
+
+| Section | Points for |
+|---|---|
+| Drop | short notes, four or more notes a bar, accents or syncopation, a punchy sound |
+| Build | build automation (Build to the drop, Riser in the last quarter, Thin to full, Add a note), roll / ratchet / climb / bouncing-ball fills, every step filled, climbing echoes, a filter that opens, a swelling sound |
+| Break | long notes, a long held sound, the chords on show (9ths, open voicings, chord hits), space between the notes, Pluck to pad or Breathe |
+| Intro & outro | few notes, a gentle sound, a filter that opens or a dark one, one to three pitches |
+
+The best section is the primary one; any other within 60% of it is listed too. The stage shows them as
+"Use it for", with the reasons, and an **energy** from 0 to 100 (density, syncopation, accents, short notes and
+how punchy the sound is). The bank has section tabs, an energy sort and tags on every pattern, and its search
+understands sections and lengths: "good for build", "break material", "drop material for sure", "short plucks
+for the intro" and "long pads for the breakdown" all work (the filler words are ignored). *Find me one* can
+write for a section: drops keep accents and short gates, builds get build automation and rolling fills,
+breaks get longer notes, 9ths and long sounds, intros thin out and start dark.
+
+The fingerprint follows the section. A drop is measured against the genre's own ranges; outside the drop
+nothing has to dodge the kick and notes may last up to a bar, builds may fill every step, and breaks may leap
+and spread further.
+
 ## The fingerprint
 
 Seven numbers measured from the notes, on a still four-bar loop and the unswung grid:
@@ -65,7 +115,7 @@ Seven numbers measured from the notes, on a still four-bar loop and the unswung 
 | Swing | Swing of the off-16ths (50% straight). Only counted when notes land there. |
 
 Each genre has a range on every axis, set from its conventions and then checked against the bank: every one
-of the 129 patterns sits inside its own genre on all seven axes, and `test.mjs` fails if one drifts out. Fit
+of the 154 patterns sits inside its own genre, for the section it is written for, on all seven axes, and `test.mjs` fails if one drifts out. Fit
 is 100 inside every range and drops with the distance outside. **Fixes** are candidate edits (rotations,
 thinning, Euclidean fills, gate, swing, octaves, order) that are each measured before they are offered, and
 only shown when they raise the fit.
@@ -87,11 +137,20 @@ halftime) without touching its harmony or sound.
 
 ## Sounds and recipes
 
-Nineteen patches: house organ, tech pluck, rubber bleep, Detroit chord stab, percussive blip, acid line,
-hollow square, gated supersaw, glass pluck, dark wide saw, marimba, kalimba, log drum, electric piano,
-house piano, disco saw, vox chop, rave stab and mid pulse. Each has a preview voice (oscillators and
-periodic waves, unison and spread, FM, noise transients, pitch envelopes, formant filters, tremolo,
-vibrato, mono glide), a **Serum 2 recipe** (oscillators, unison, filter, envelopes, FX, and which macro to
+Thirty-seven patches, each tagged with its **length** and the **sections** it suits:
+
+| Length | Patches |
+|---|---|
+| Short (hits and plucks) | house organ, tech pluck, rubber bleep, percussive blip, marimba, log drum, disco saw, mid pulse, micro pluck, wood knock, laser zap, bell tick, funk clav |
+| Medium (notes that ring) | Detroit chord stab, acid line, hollow square, gated supersaw, glass pluck, dark wide saw, kalimba, house piano, vox chop, rave stab, harp pluck, mono lead |
+| Long (pads, swells, held leads) | electric piano, warm pad, glass pad, string swell, choir aah, dark drone, noise swell, Reese, euphoric lead, hoover, gospel organ, shimmer pad |
+
+The sound browser in the Sound panel filters them by length and section, searches them ("short drop", "long
+pads"), and plays one note of any patch before you choose it.
+
+Each has a preview voice (oscillators and periodic waves, unison and spread, FM, noise transients and held
+noise, pitch envelopes, a slow filter LFO, formant filters, tremolo, vibrato, mono glide; at most 40 voices
+overlap, the oldest fading first), a **Serum 2 recipe** (oscillators, unison, filter, envelopes, FX, and which macro to
 MIDI-learn to the exported CC) and an **Ableton recipe** with Live's own instruments. The preview is a sketch
 of the patch; the recipes are the real sound.
 
@@ -102,6 +161,23 @@ genre bassline and an optional chord pad play under the arp, with their own groo
 ## Into Pocket
 
 **Open in Pocket** carries this combo to `pocket.html` in a local URL fragment: the rendered riff, original patch/effects, timing, evolution and source chord path are retained. Pocket adds a foundation beneath it. No upload or shared browser storage is required. A plain MIDI export does not contain the synth patch; use this handoff or paste an Orbit share link into Pocket for the complete source.
+
+## Sounds out
+
+The patches as WAV files for Simpler, Sampler and Drum Rack, rendered offline from the same synth, at the
+current knobs, without the mix bus (no compressor, limiter, sidechain or high-pass):
+
+- **One note**: any patch, any note from C0 to C6, held from 80 ms to 4 s, soft/medium/hard, dry or with the
+  delay and reverb. Silence at the end is trimmed, the last 5 ms faded and the peak normalised to −1 dBFS.
+  24-bit or 16-bit, 44.1 or 48 kHz. Each file carries its root note in a `smpl` chunk.
+- **Multisample**: the patch every octave, 6, 3 or 1 semitones across C0–C6, C1–C5 or C2–C4, optionally in two
+  velocity layers, named `patch_MIDInote_Note(_layer).wav` for mapping in Sampler.
+- **Chord stabs**: the chords of the progression (its voicings) or every chord of the key as triads, 7ths or
+  9ths, one file each, with a README of the voicings. For Drum Rack pads, or Simpler's chord-memory trick.
+- **Patch pack**: all 37 patches as C3 one-shots at their own settings, with every Serum 2 and Ableton recipe.
+- **Seamless loops and stems**: the phrase exactly its length to the sample, rendered with the previous pass
+  first so the tail of the last bar is already at the start; arp alone, full mix, or four stems (arp, bass,
+  drums, pad) in one ZIP.
 
 ## Into Ableton
 
@@ -130,8 +206,8 @@ number that changes measured on both.
 ## Validation
 
 ```
-node arp-src/test.mjs            # 25 engine checks
-node arp-src/browser-check.mjs   # 17 checks in headless Chromium (needs Playwright); writes arp-src/qa/
+node arp-src/test.mjs            # 41 engine checks
+node arp-src/browser-check.mjs   # 38 checks in headless Chromium (needs Playwright); writes arp-src/qa/
 ```
 
 `test.mjs` checks the engine against answers worked out by hand: roman numerals and chord symbols, Camelot
@@ -142,13 +218,22 @@ lanes and their CC export, fills and mutation. Then the bank: unique ids, valid 
 progressions; every pattern inside its genre on all seven axes; every note in the scale or the chord under
 it; nothing outside the piano and nothing under 165 Hz outside the acid genre. Then the generator (eight
 fitting, distinct, deterministic combos per genre, no chords on mono sounds), variations, fixes, the
-Arpeggiator translation and the full five-track export, byte for byte.
+Arpeggiator translation and the full five-track export, byte for byte. The newer tools are checked the same
+way: the new scales stay in key, stacked 4ths are a fourth apart, a fully locked Turing loop repeats exactly and
+a loose one drifts the same way every time, echoes land at the echo time with the right levels and scale steps
+and wrap round the loop, strum and feel offsets in milliseconds, the bouncing-ball fill's 1-2-3-4, Morse code,
+a riff that comes back note for note with its swing, written-out orders that play the same notes, the chords of
+the key, and wild card mode used only when asked.
 
 `browser-check.mjs` drives the built page: playback and the orbit following it, one pattern per genre, the
 generator and variations, the MIDI export note for note, the crate ZIP, chord import through the file input,
 a WAV render measured for level and clipping, every sound rendering audible audio, a rule A/B and back, a fix
 and its undo, A/B switching, share links, and on a 390 px phone no horizontal scroll and the floating play
-button.
+button. For the samples: a 24-bit one-shot read back from its bytes (peak −1.0 dBFS, trimmed, root key in the
+`smpl` chunk), the stab, multisample and patch-pack ZIPs file by file, a seamless loop exactly two bars long to
+the sample and already sounding at sample 0, and the four stems. For the tools: Turing, write-out and mirror,
+Morse, echoes, the live keyboard with and without latch, drawing a sequence by clicking the orbit, riff import
+through the file input, autopilot and its undo, and wild card.
 
 ## Limits
 

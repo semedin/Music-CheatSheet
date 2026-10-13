@@ -57,7 +57,8 @@ const OA = (() => {
     const comp = ctx.createDynamicsCompressor();
     comp.threshold.value = -14; comp.knee.value = 8; comp.ratio.value = 2.5; comp.attack.value = 0.006; comp.release.value = 0.15;
     const master = ctx.createGain(); master.gain.value = 0.8;
-    master.connect(comp); comp.connect(limiter); limiter.connect(out);
+    // raw: no bus compressor or limiter, for samples that keep their own dynamics
+    if (opts.raw) master.connect(out); else { master.connect(comp); comp.connect(limiter); limiter.connect(out); }
     const analyser = ctx.createAnalyser(); analyser.fftSize = 2048; analyser.smoothingTimeConstant = 0.78;
     out.connect(analyser);
     if (opts.destination !== false) out.connect(ctx.destination);
@@ -105,6 +106,7 @@ const OA = (() => {
     const drumRev = ctx.createGain(); drumRev.gain.value = 0.06; drumBus.connect(drumRev); drumRev.connect(revSend);
 
     let P = {}, revSize = -1, curSound = null, lastMono = null, spb = 0.5;
+    const voices = [], MAX_VOICES = opts.maxVoices || 40;
     const noise = noiseBuffer(ctx);
 
     function set(st, sound) {
@@ -163,6 +165,10 @@ const OA = (() => {
       vg.gain.setTargetAtTime(0, end, Math.max(0.004, rel / 3));
       const stop = end + rel * 2.2 + 0.03;
       if (s.mono) { if (lastMono && lastMono.end > t) lastMono.g.gain.setTargetAtTime(0, t + 0.004, 0.006); lastMono = {g: vg, end: stop}; }
+      // a cap on overlapping voices: long pads in fast patterns would otherwise pile up; the oldest fades out first
+      for (let i = voices.length - 1; i >= 0; i--) if (voices[i].stop < t) voices.splice(i, 1);
+      while (voices.length >= MAX_VOICES) voices.shift().g.gain.setTargetAtTime(0, t, 0.02);
+      voices.push({g: vg, stop});
       // filter (or the formant bank)
       const F = s.filter, cutMul = Math.pow(2, ((m.cut ?? 0.5) - 0.5) * 5) * (e.acc ? 1.15 : 1);
       const base = Math.min(16000, Math.max(40, F.cut * cutMul * Math.pow(f / 261.6, F.kt || 0)));
@@ -174,6 +180,14 @@ const OA = (() => {
         if (F.a) flt.frequency.exponentialRampToValueAtTime(peakF, t + F.a);
         flt.frequency.setTargetAtTime(base + (peakF - base) * F.s, t + (F.a || 0), Math.max(0.005, F.d * decMul / 3));
       } else flt.frequency.setValueAtTime(base, t);
+      // a slow LFO on the cutoff, for pads and drones that keep moving
+      if (s.lfo) {
+        const lo = ctx.createOscillator(), lg = ctx.createGain();
+        lo.frequency.value = s.lfo.rate;
+        lg.gain.value = base * (Math.pow(2, s.lfo.depth) - 1) * 0.5;
+        lo.connect(lg); lg.connect(flt.frequency);
+        lo.start(t); lo.stop(stop);
+      }
       let head = flt;
       if (s.formants) {
         const sum = ctx.createGain();
@@ -227,9 +241,18 @@ const OA = (() => {
       if (s.noise) {
         const ns = ctx.createBufferSource(), nf = ctx.createBiquadFilter(), ng = ctx.createGain();
         ns.buffer = noise; nf.type = 'highpass'; nf.frequency.value = s.noise.hp;
-        ng.gain.setValueAtTime(s.noise.gain * (0.4 + 0.6 * v), t); ng.gain.setTargetAtTime(0, t, s.noise.decay / 2);
-        ns.connect(nf); nf.connect(ng); ng.connect(vg);
-        ns.start(t, (e.n * 0.0173) % 1.5); ns.stop(t + s.noise.decay * 6 + 0.01);
+        const nl = s.noise.gain * (0.4 + 0.6 * v);
+        if (s.noise.sus) {
+          // held noise (a swell): follows the amp envelope's shape, through the filter so the sweep opens it
+          ns.loop = true;
+          ng.gain.setValueAtTime(nl * s.noise.sus, t);
+          ng.gain.setTargetAtTime(0, end, Math.max(0.004, rel / 3));
+          ns.start(t, (e.n * 0.0173) % 1.5); ns.stop(stop);
+        } else {
+          ng.gain.setValueAtTime(nl, t); ng.gain.setTargetAtTime(0, t, s.noise.decay / 2);
+          ns.start(t, (e.n * 0.0173) % 1.5); ns.stop(t + s.noise.decay * 6 + 0.01);
+        }
+        ns.connect(nf); nf.connect(ng); ng.connect(s.noise.thru ? flt : vg);
       }
       const last = oscs[oscs.length - 1];
       if (last) last.onended = () => { try { vg.disconnect(); flt.disconnect(); } catch (_) {} };
@@ -326,7 +349,7 @@ const OA = (() => {
             if (fn === 'note') {
               if (ph.st.mute && ph.st.mute.arp) continue;
               engine.note(e, when, sound);
-              flashes.push({time: when, e, abs: off + e.t});
+              if (!e.echo) flashes.push({time: when, e, abs: off + e.t});
               if (e.mod && Math.abs((e.mod.send || 0) - (lastSend ?? -9)) > 0.02) { engine.sendAt(when, e.mod.send || 0); lastSend = e.mod.send || 0; }
             } else engine[fn](e, when);
           }
@@ -364,36 +387,96 @@ const OA = (() => {
   }
 
   // ---- offline render to WAV
-  async function render(st, R, {loops = 1, tail = 2.5, solo = false, sampleRate = 44100} = {}) {
+  // parts: which parts play ({arp, bass, drums, chords}); seamless: render one extra loop first and keep only the
+  // last loops, so the tail of the previous pass is already inside the file and it loops without a click or a gap.
+  async function render(st, R, {loops = 1, tail = 2.5, solo = false, sampleRate = 44100, parts = null, seamless = false} = {}) {
     const ph = phrase(st, R);
-    const spb = 60 / st.bpm, dur = loops * ph.beats * spb + tail;
+    const spb = 60 / st.bpm, loopSec = ph.beats * spb;
+    const P = parts || (solo ? {arp: true, bass: false, drums: false, chords: false} : {arp: true, bass: !!st.ctx.bass, drums: !!st.ctx.drums, chords: !!st.ctx.chords});
+    const pre = seamless ? 1 : 0, total = loops + pre;
+    const dur = total * loopSec + (seamless ? 0 : tail);
     const ctx = new OfflineAudioContext(2, Math.ceil(dur * sampleRate), sampleRate);
     const eng = create(ctx);
-    const s2 = Object.assign({}, st, {ctx: solo ? {drums: false, bass: false, chords: false} : st.ctx});
+    const s2 = Object.assign({}, st, {ctx: {drums: P.drums, bass: P.bass, chords: P.chords}, mute: {arp: !P.arp}});
     eng.set(s2, OB.SOUNDS_BY_ID[st.sound]);
-    const t0 = 0.02;
-    for (let l = 0; l < loops; l++) {
+    const t0 = seamless ? 0 : 0.02;
+    for (let l = 0; l < total; l++) {
       const off = l * ph.beats;
-      for (const e of ph.arp) { eng.note(e, t0 + (off + e.t) * spb); if (e.mod) eng.sendAt(t0 + (off + e.t) * spb, e.mod.send || 0); }
-      if (!solo) {
-        if (st.ctx.bass) for (const e of ph.bass) eng.bass(e, t0 + (off + e.t) * spb);
-        if (st.ctx.chords) for (const e of ph.chords) eng.pad(e, t0 + (off + e.t) * spb);
-        if (st.ctx.drums) for (const e of ph.drums) eng.drum(e, t0 + (off + e.t) * spb);
-      } else if ((st.duck || 0) > 0.01) for (const e of ph.drums) if (e.lane === 'k') eng.duck(t0 + (off + e.t) * spb);
+      if (P.arp) for (const e of ph.arp) { eng.note(e, t0 + (off + e.t) * spb); if (e.mod) eng.sendAt(t0 + (off + e.t) * spb, e.mod.send || 0); }
+      if (P.bass) for (const e of ph.bass) eng.bass(e, t0 + (off + e.t) * spb);
+      if (P.chords) for (const e of ph.chords) eng.pad(e, t0 + (off + e.t) * spb);
+      if (P.drums) for (const e of ph.drums) eng.drum(e, t0 + (off + e.t) * spb);
+      else if ((st.duck || 0) > 0.01) for (const e of ph.drums) if (e.lane === 'k') eng.duck(t0 + (off + e.t) * spb);
     }
     const buf = await ctx.startRendering();
+    if (!seamless) return buf;
+    const from = Math.round(pre * loopSec * sampleRate), len = Math.round(loops * loopSec * sampleRate);
+    return slice(buf, from, len);
+  }
+  function slice(buf, from, len) {
+    const out = new AudioBuffer({length: Math.max(1, len), numberOfChannels: buf.numberOfChannels, sampleRate: buf.sampleRate});
+    for (let c = 0; c < buf.numberOfChannels; c++) out.copyToChannel(buf.getChannelData(c).subarray(from, from + len), c);
+    return out;
+  }
+
+  // ---- samples: one note or one chord of a patch, alone, for Simpler and Sampler ----
+  // The patch at the current knobs, through its own drive and width, without the mix bus (no compressor, limiter,
+  // sidechain or high-pass). Optionally with the delay and reverb. Silence at the end is trimmed, the last 5 ms faded,
+  // and the peak normalised to -1 dBFS.
+  async function renderSample(st, {notes = [60], hold = 0.5, vel = 110, fx = false, sampleRate = 44100, normalize = true, maxSec = 12, sound = null} = {}) {
+    const snd = OB.SOUNDS_BY_ID[sound || st.sound];
+    const space = fx ? 0.8 + (st.space ?? 0.5) * 4.2 : 0;
+    const echo = fx && st.delay > 0.01 ? (OE.DELAY_TIMES[st.delayTime] || 0.75) * 60 / st.bpm * Math.ceil(Math.log(0.01) / Math.log(Math.max(0.05, st.fb))) : 0;
+    const dur = Math.min(maxSec, hold + snd.amp.r * 2.5 * Math.sqrt(Math.pow(2, ((st.dec ?? 0.5) - 0.5) * 3)) + Math.max(space, echo) + 0.4);
+    const ctx = new OfflineAudioContext(2, Math.ceil(dur * sampleRate), sampleRate);
+    const eng = create(ctx, {raw: true});
+    eng.set(Object.assign({}, st, {hp: 20, duck: 0, delay: fx ? st.delay : 0, reverb: fx ? st.reverb : 0, mix: {arp: 1}, mute: {}, ctx: {drums: false, bass: false, chords: false}}), snd);
+    const spb = 60 / st.bpm;
+    for (const n of notes) eng.note({n, t: 0, d: hold / spb, v: vel, acc: vel >= 115, mod: {cut: st.cut, res: st.res, dec: st.dec, send: 0}, poly: notes.length, kind: notes.length > 1 ? 'chord' : 'note'}, 0.004, snd);
+    let buf = await ctx.startRendering();
+    buf = trim(buf, -66);
+    if (normalize) gain(buf, -1);
     return buf;
   }
-  function wav(buf) {
-    const ch = buf.numberOfChannels, len = buf.length, sr = buf.sampleRate;
-    const data = new DataView(new ArrayBuffer(44 + len * ch * 2));
-    const w = (o, s) => { for (let i = 0; i < s.length; i++) data.setUint8(o + i, s.charCodeAt(i)); };
-    w(0, 'RIFF'); data.setUint32(4, 36 + len * ch * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  function peakOf(buf) { let p = 0; for (let c = 0; c < buf.numberOfChannels; c++) for (const x of buf.getChannelData(c)) { const a = Math.abs(x); if (a > p) p = a; } return p; }
+  function trim(buf, db) {
+    const thr = Math.pow(10, db / 20) * Math.max(1e-9, peakOf(buf));
+    let last = 0;
+    for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = d.length - 1; i > last; i--) if (Math.abs(d[i]) > thr) { last = i; break; } }
+    const len = Math.min(buf.length, last + Math.round(buf.sampleRate * 0.02));
+    const out = slice(buf, 0, len), fade = Math.min(len, Math.round(buf.sampleRate * 0.005));
+    for (let c = 0; c < out.numberOfChannels; c++) { const d = out.getChannelData(c); for (let i = 0; i < fade; i++) d[len - 1 - i] *= i / fade; }
+    return out;
+  }
+  function gain(buf, db) {
+    const p = peakOf(buf); if (p < 1e-6) return buf;
+    const g = Math.pow(10, db / 20) / p;
+    for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = 0; i < d.length; i++) d[i] *= g; }
+    return buf;
+  }
+
+  // WAV: 16- or 24-bit PCM. With a root note, a 'smpl' chunk carries it, for samplers that read it.
+  function wav(buf, {bits = 16, root = null} = {}) {
+    const ch = buf.numberOfChannels, len = buf.length, sr = buf.sampleRate, B = bits / 8;
+    const dataLen = len * ch * B, smplLen = root != null ? 8 + 36 : 0;
+    const data = new DataView(new ArrayBuffer(44 + dataLen + smplLen));
+    const w = (o, str) => { for (let i = 0; i < str.length; i++) data.setUint8(o + i, str.charCodeAt(i)); };
+    w(0, 'RIFF'); data.setUint32(4, 36 + dataLen + smplLen, true); w(8, 'WAVE'); w(12, 'fmt ');
     data.setUint32(16, 16, true); data.setUint16(20, 1, true); data.setUint16(22, ch, true); data.setUint32(24, sr, true);
-    data.setUint32(28, sr * ch * 2, true); data.setUint16(32, ch * 2, true); data.setUint16(34, 16, true); w(36, 'data'); data.setUint32(40, len * ch * 2, true);
+    data.setUint32(28, sr * ch * B, true); data.setUint16(32, ch * B, true); data.setUint16(34, bits, true); w(36, 'data'); data.setUint32(40, dataLen, true);
     const chans = [...Array(ch)].map((_, i) => buf.getChannelData(i));
     let o = 44;
-    for (let i = 0; i < len; i++) for (let c = 0; c < ch; c++) { const x = Math.max(-1, Math.min(1, chans[c][i])); data.setInt16(o, x < 0 ? x * 32768 : x * 32767, true); o += 2; }
+    for (let i = 0; i < len; i++) for (let c = 0; c < ch; c++) {
+      const x = Math.max(-1, Math.min(1, chans[c][i]));
+      if (bits === 24) { const v = Math.round(x < 0 ? x * 8388608 : x * 8388607); data.setUint8(o, v & 255); data.setUint8(o + 1, (v >> 8) & 255); data.setUint8(o + 2, (v >> 16) & 255); o += 3; }
+      else { data.setInt16(o, x < 0 ? x * 32768 : x * 32767, true); o += 2; }
+    }
+    if (root != null) {
+      w(o, 'smpl'); data.setUint32(o + 4, 36, true);
+      data.setUint32(o + 8, 0, true); data.setUint32(o + 12, 0, true); data.setUint32(o + 16, Math.round(1e9 / sr), true);
+      data.setUint32(o + 20, root, true); data.setUint32(o + 24, 0, true); data.setUint32(o + 28, 0, true); data.setUint32(o + 32, 0, true);
+      data.setUint32(o + 36, 0, true); data.setUint32(o + 40, 0, true);
+    }
     return new Uint8Array(data.buffer);
   }
   // how much of the arp's own energy sits under a frequency, measured on the arp bus
@@ -406,5 +489,5 @@ const OA = (() => {
     return all > 1e-12 ? {share: lo / all, db: 10 * Math.log10(Math.max(1e-12, lo / all))} : null;
   }
 
-  return {create, phrase, player, render, wav, lowShare};
+  return {create, phrase, player, render, renderSample, wav, lowShare, peakOf, trim, gain, slice};
 })();

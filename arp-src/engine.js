@@ -33,6 +33,9 @@ const OE = (() => {
     root5: {name: 'Root + 5th', desc: 'Root, fifth, octave. Techno and acid power.'},
     octave: {name: 'Octaves', desc: 'Root and its octave. The disco bounce.'},
     root: {name: 'Root only', desc: 'One note per chord. Rhythm and sound do all the work.'},
+    quartal: {name: 'Stacked 4ths', desc: 'Scale notes a fourth apart from the root: open, modern, a little cinematic. Fits over anything in the key.'},
+    spread: {name: 'Open voicing', desc: 'The chord spread over two octaves (every other note up an octave): wide leaps from a plain chord.'},
+    cluster: {name: 'Cluster', desc: 'Root, 2nd, 3rd and 5th of the scale: notes a step apart that rub, then resolve.'},
   };
 
   const ORDERS = {
@@ -48,6 +51,20 @@ const OE = (() => {
     shuffle: {name: 'Shuffle once', live: 'Random Once'},
     random: {name: 'Random each cycle', live: 'Random'},
     seq: {name: 'Written sequence', live: 'Play Order'},
+    turing: {name: 'Turing (drifting loop)', live: 'Random'},
+  };
+
+  // Microtiming per 16th of the beat, in milliseconds: where each of the four 16ths lands against the grid
+  const FEELS = {
+    straight: {name: 'On the grid', ms: [0, 0, 0, 0]},
+    drunk: {name: 'Drunk (Dilla)', ms: [0, 24, -10, 30], desc: 'The "e" and the "a" drag late and the "and" rushes: the loose, wonky hip-hop feel.'},
+    afro: {name: 'Afro lean', ms: [0, 14, -6, 18], desc: 'The off-16ths lean late, as a hand percussionist plays them.'},
+    push: {name: 'Ahead (pushing)', ms: [-8, -12, -8, -12], desc: 'Everything a few milliseconds early: urgent, driving.'},
+    laid: {name: 'Laid back', ms: [10, 16, 10, 16], desc: 'Everything behind the kick: relaxed, deep.'},
+  };
+  const ECHO_SHIFTS = {
+    '0': 'Same note', '12': 'Up an octave each repeat', '-12': 'Down an octave each repeat', '7': 'Up a fifth each repeat',
+    '5': 'Up a fourth each repeat', s1: 'Up one scale step each repeat', 's-1': 'Down one scale step each repeat', s2: 'Up a scale third each repeat',
   };
 
   // ---- step patterns ----
@@ -116,6 +133,7 @@ const OE = (() => {
     sound: 'tech-pluck', cut: 0.55, res: 0.3, dec: 0.5, drive: 0.15, width: 0.45,
     delay: 0.18, delayTime: '8d', fb: 0.38, reverb: 0.18, space: 0.5, duck: 0.45, hp: 160,
     evo: 'none', depth: 1, fill: 'none', fillEvery: 4, mutate: 0,
+    lock: 0.75, tlen: 8, echo: 0, echoTime: '8d', echoFb: 0.55, echoShift: '0', strum: 0, strumDir: 'up', feel: 'straight',
     bars: 8, seed: 1,
     ctx: {drums: true, bass: true, chords: false}, groove: 'house', bassPat: 'offbeat', mix: {arp: 0.8, drums: 0.7, bass: 0.7, chords: 0.45},
   };
@@ -144,6 +162,12 @@ const OE = (() => {
     for (const k of ['cut', 'res', 'dec', 'drive', 'width', 'delay', 'fb', 'reverb', 'space', 'duck', 'human', 'depth']) st[k] = clamp01(+st[k]);
     st.fillEvery = [2, 4, 8, 16].includes(+st.fillEvery) ? +st.fillEvery : 4;
     st.mutate = [0, 2, 4, 8].includes(+st.mutate) ? +st.mutate : 0;
+    st.lock = clamp01(+st.lock); st.tlen = clamp(Math.round(+st.tlen || 8), 2, 16);
+    st.echo = clamp(Math.round(+st.echo || 0), 0, 8); st.echoFb = clamp(+st.echoFb, 0.1, 0.95);
+    if (!(st.echoTime in DELAY_TIMES)) st.echoTime = '8d';
+    st.echoShift = String(st.echoShift); if (!(st.echoShift in ECHO_SHIFTS)) st.echoShift = '0';
+    st.strum = clamp01(+st.strum || 0); if (!['up', 'down', 'alt'].includes(st.strumDir)) st.strumDir = 'up';
+    if (!FEELS[st.feel]) st.feel = 'straight';
     Object.defineProperty(st, '_n', {value: true, enumerable: false});
     return st;
   }
@@ -225,13 +249,20 @@ const OE = (() => {
         break;
       }
       case 'penta': {
-        const pent = sc.minor ? [0, 3, 5, 7, 10] : [0, 2, 4, 7, 9];
+        const pent = sc.pent || (sc.minor ? [0, 3, 5, 7, 10] : [0, 2, 4, 7, 9]);
         base = [];
         for (let i = 0; i < 12; i++) if (pent.includes(mod(r + i - st.key, 12))) base.push(r + i);
         if (!base.includes(r)) base.unshift(r);
         base = [...new Set(base)].sort((a, b) => a - b).slice(0, 5);
         break;
       }
+      case 'quartal': case 'cluster': {
+        const lad = ladder(st, r - 24, r + 48), i0 = Math.max(0, lad.findIndex(p => p >= r));
+        base = (st.pool === 'quartal' ? [0, 3, 6, 9] : [0, 1, 2, 4]).map(k => lad[i0 + k]);
+        base[0] = r;
+        break;
+      }
+      case 'spread': base = v.map((p, i) => i % 2 ? p + 12 : p); break;
       case 'root5': base = [r, r + 7, r + 12]; break;
       case 'octave': base = [r, r + 12]; break;
       case 'root': base = [r]; break;
@@ -239,6 +270,15 @@ const OE = (() => {
     }
     base = [...new Set(base)].sort((a, b) => a - b);
     return {base, chordNotes: v, root: r};
+  }
+  // every pitch of the key's scale between lo and hi
+  function ladder(st, lo, hi) { const sc = OT.SCALES[st.scale].st, out = []; for (let p = lo; p <= hi; p++) if (sc.includes(mod(p - st.key, 12))) out.push(p); return out; }
+  // a pitch moved by scale steps (snapped to the scale first)
+  function scaleStep(st, n, k) {
+    const lad = ladder(st, n - 40, n + 40);
+    let i = 0, best = Infinity;
+    lad.forEach((p, j) => { if (Math.abs(p - n) < best) { best = Math.abs(p - n); i = j; } });
+    return lad[clamp(i + k, 0, lad.length - 1)];
   }
   function extend(base, count, octaves) {
     let b = count > 0 ? base.slice(0, count) : base.slice();
@@ -265,8 +305,22 @@ const OE = (() => {
         return o;
       }
       case 'seq': return st.seq.slice();
+      case 'turing': return turing(st, M, cycleIndex);
     }
     return idx;
+  }
+  // The Turing Machine (after the Music Thing Modular module): a loop of tlen pool indices. Each time the loop comes
+  // round, every note has a (1 − lock) chance of being replaced. Lock 100%: a fixed loop. Lock 0%: new notes every time.
+  const TURING = new Map();
+  function turing(st, M, c) {
+    const key = [st.seed, st.lock, st.tlen, M].join('|');
+    let list = TURING.get(key);
+    if (!list) { if (TURING.size > 64) TURING.clear(); list = [Array.from({length: st.tlen}, (_, i) => Math.floor(hash(st.seed, i, 101) * M))]; TURING.set(key, list); }
+    while (list.length <= c) {
+      const prev = list[list.length - 1], k = list.length;
+      list.push(prev.map((x, i) => hash(st.seed, k, i, 103) < 1 - st.lock ? Math.floor(hash(st.seed, k, i, 107) * M * 1.25) : x));
+    }
+    return list[c].slice();
   }
   const pitchAt = (p, i) => p[mod(i, p.length)] + 12 * Math.floor(i / p.length);
 
@@ -318,6 +372,7 @@ const OE = (() => {
     roll: {name: 'Roll in', desc: 'The last two beats fill every step, rising in velocity.'},
     answer: {name: 'Answer (reverse)', desc: 'The bar plays the note order backwards: a call and its answer.'},
     stutter: {name: 'Stutter', desc: 'Beat one repeats across the bar.'},
+    bounce: {name: 'Bouncing ball', desc: 'The last beat speeds up like a dropped ball: 1, 2, 3 then 4 notes per step, falling in level.'},
   };
 
   // ---- the render ----
@@ -350,13 +405,14 @@ const OE = (() => {
       let si = g % L, s = st.steps[si];
       if (fillBar && st.fill === 'stutter') { const beatStep = Math.floor(beatInBar * spBeat + EPS) % Math.max(1, Math.round(spBeat)); const g0 = Math.round(bar * 4 * spBeat) + beatStep; si = g0 % L; s = st.steps[si]; }
       s = Object.assign({}, s);
-      let roll = 0, reverse = false;
+      let roll = 0, reverse = false, bounce = 0;
       if (fillBar) {
         if (st.fill === 'drop' && beatInBar >= 3 - EPS) s.type = 'rest';
         if (st.fill === 'climb' && beatInBar >= 2 - EPS && s.type === 'note') s.oct += 1;
         if (st.fill === 'ratchet' && beatInBar >= 3 - EPS) { if (s.type === 'rest' || s.type === 'tie') s.type = 'note'; if (s.type === 'note') s.rat = 2; }
         if (st.fill === 'roll' && beatInBar >= 2 - EPS) { if (s.type !== 'chord') { s.type = 'note'; s.oct = 0; s.rat = 1; } roll = (beatInBar - 2) / 2; }
         if (st.fill === 'answer') reverse = true;
+        if (st.fill === 'bounce' && beatInBar >= 3 - EPS) { if (s.type === 'rest' || s.type === 'tie') s.type = 'note'; if (s.type === 'note') { s.rat = clamp(1 + Math.floor((beatInBar - 3) * 4 + EPS), 1, 4); bounce = s.rat; } }
       }
       const P = pools[ci];
       const cnt = ev.cnt > 0 ? ev.cnt : st.count;
@@ -388,6 +444,7 @@ const OE = (() => {
       const accVel = s.acc ? st.accent : 0;
       let vel = st.vel + accVel - (s.type === 'chord' ? 4 : 0);
       if (roll) vel = st.vel - 30 + roll * (st.accent + 34);
+      if (bounce) vel -= (bounce - 1) * 9;
       const gl = clamp(st.gate * ev.gate, 0.04, 1.6) * stepLen;
       const n = s.rat || 1, sub = stepLen / n;
       const made = [];
@@ -407,8 +464,20 @@ const OE = (() => {
     const triplet = st.rate === '8t' || st.rate === '16t';
     for (const e of events) {
       if (!triplet) e.t = swingTime(e.gt, st.swing);
+      e.t += feelShift(st, e.gt);
       if (st.human) e.t += (hash(st.seed, e.g, e.n, 23) - 0.5) * 2 * (0.012 * st.bpm / 60) * st.human;
       e.t = Math.max(0, e.t);
+    }
+    // strum: a chord hit's notes spread from the lowest up (or the highest down, or alternating), up to 80 ms
+    if (st.strum > 0) {
+      const hits = new Map();
+      for (const e of events) if (e.kind === 'chord') { const k = e.g + ':' + e.gt.toFixed(4); if (!hits.has(k)) hits.set(k, []); hits.get(k).push(e); }
+      let h = 0;
+      for (const list of hits.values()) {
+        list.sort((a, b) => a.n - b.n);
+        const down = st.strumDir === 'down' || (st.strumDir === 'alt' && h++ % 2 === 1), span = st.strum * 0.08 * st.bpm / 60;
+        list.forEach((e, i) => { const f = list.length > 1 ? (down ? list.length - 1 - i : i) / (list.length - 1) : 0; e.t += f * span; e.d = Math.max(0.03, e.d - f * span * 0.5); });
+      }
     }
     events.sort((a, b) => a.t - b.t || a.n - b.n);
     // a slide holds its note into the next one (overlapping it, as a 303 or a legato synth expects) and that note glides in
@@ -420,7 +489,31 @@ const OE = (() => {
       e.d = nx.t - e.t + 0.03;
       nx.glideFrom = e.n;
     }
+    // echo cascade: each written note repeats as MIDI notes, quieter each time and optionally climbing or falling.
+    // Repeats that run past the end wrap to the start, so the loop stays seamless.
+    if (st.echo > 0) {
+      const dt = DELAY_TIMES[st.echoTime], src = events.slice();
+      for (const e of src) {
+        let v = e.v;
+        for (let k = 1; k <= st.echo; k++) {
+          v *= st.echoFb;
+          if (v < 6) break;
+          const sh = st.echoShift;
+          const n = sh[0] === 's' ? scaleStep(st, e.n, +sh.slice(1) * k) : e.n + (+sh) * k;
+          if (n < 12 || n > 120) break;
+          events.push(Object.assign({}, e, {t: mod(e.t + k * dt, beats), gt: mod(e.gt + k * dt, beats), d: Math.min(e.d, dt * 0.92), n, v: Math.max(1, Math.round(v)), echo: k, slide: false, glideFrom: undefined, acc: false}));
+        }
+      }
+      events.sort((a, b) => a.t - b.t || a.n - b.n);
+    }
     return {events, harmony: h, pools, beats, bars, stepLen, st};
+  }
+
+  function feelShift(st, gt) {
+    const f = FEELS[st.feel];
+    if (!f || st.feel === 'straight') return 0;
+    const pos = mod(Math.round(mod(gt, 1) / 0.25), 4);
+    return f.ms[pos] / 1000 * st.bpm / 60;
   }
 
   // ---- context parts: bass, drums, chords ----
@@ -435,7 +528,7 @@ const OE = (() => {
       if (r > 43) r -= 12;
       const third = c.iv.includes(3) ? 3 : 4;
       const n = ch === 'o' || ch === 'O' ? r + 12 : ch === '5' ? r + 7 : ch === '3' ? r + third : ch === '7' ? r + 10 : r;
-      out.push({t: swingTime(t, st.swing), gt: t, d: step * 0.8, n, v: ch === 'X' || ch === 'O' ? 112 : 96});
+      out.push({t: swingTime(t, st.swing) + feelShift(st, t), gt: t, d: step * 0.8, n, v: ch === 'X' || ch === 'O' ? 112 : 96});
     }
     return out;
   }
@@ -450,7 +543,7 @@ const OE = (() => {
         if (ch === '.') continue;
         const gt = b * 4 + i * step;
         const swung = lane === 'h' || lane === 's' || lane === 'o' || lane === 'r' || lane === 't' || lane === 'b';
-        out.push({t: swung ? swingTime(gt, st.swing) : gt, gt, d: 0.1, n: DRUM_NOTES[lane], v: ch === 'X' ? 118 : ch === 'g' ? 60 : 92, lane});
+        out.push({t: swung ? swingTime(gt, st.swing) + feelShift(st, gt) : gt, gt, d: 0.1, n: DRUM_NOTES[lane], v: ch === 'X' ? 118 : ch === 'g' ? 60 : 92, lane});
       }
     }
     return out.sort((a, b) => a.t - b.t);
@@ -488,7 +581,7 @@ const OE = (() => {
   ];
   const weight = t => { const q = x => Math.abs(t / x - Math.round(t / x)) < 1e-4; return q(4) ? 4 : q(2) ? 3 : q(1) ? 2 : q(0.5) ? 1 : 0; };
   function metrics(R) {
-    const st = R.st, ev = R.events, bars = R.bars;
+    const st = R.st, ev = R.events.filter(e => !e.echo), bars = R.bars;
     const byOnset = new Map();
     for (const e of ev) { const k = Math.round(e.gt * 1e4); if (!byOnset.has(k)) byOnset.set(k, []); byOnset.get(k).push(e); }
     const onsets = [...byOnset.keys()].sort((a, b) => a - b).map(k => ({t: k / 1e4, es: byOnset.get(k)}));
@@ -544,6 +637,95 @@ const OE = (() => {
     return {score: Math.round(100 * axes.reduce((s, a) => s + a.s, 0) / axes.length), axes};
   }
 
+  // ---- sections: what a combo is good for in an arrangement ----
+  // Each section collects points from what the notes, the sound and the automation do. The best one is the primary
+  // section; any other within 60% of it (and at least 1.8 points) is listed too. Energy is a 0-100 summary.
+  const ROLES = {
+    drop: {name: 'Drop', color: '#FF5C8A', desc: 'Short, accented, driving: it locks with the kick and the bass and carries the floor.'},
+    build: {name: 'Build', color: '#FFD166', desc: 'Rising tension: filling, climbing, opening, rolling into the drop.'},
+    break: {name: 'Break', color: '#9D8CFF', desc: 'Long notes and space, the chords on show: works with no kick at all.'},
+    intro: {name: 'Intro & outro', color: '#5CC8FF', desc: 'Sparse, filtered, patient: plays while a DJ mixes in or out.'},
+  };
+  const BUILD_EVOS = new Set(['build', 'into-drop', 'thin', 'add-notes']);
+  function roles(input, m) {
+    const st = normalize(input), snd = OB.SOUNDS_BY_ID[st.sound] || {}, len = snd.len || 'short', en = snd.energy ?? 0.5, tag = new Set(snd.roles || []);
+    if (!m) m = metrics(render(st, {bars: 4, evo: false, fills: false, mutate: false}));
+    const sd = st.steps.filter(sounding), acc = sd.length ? sd.filter(x => x.acc).length / sd.length : 0;
+    const sc = {drop: 0, build: 0, break: 0, intro: 0}, why = {drop: [], build: [], break: [], intro: []};
+    const add = (r, v, txt) => { sc[r] += v; if (txt) why[r].push(txt); };
+    if (m.length <= 0.7) add('drop', 1, 'short notes');
+    if (m.density >= 4) add('drop', 0.6, `${Math.round(m.density)} notes a bar`);
+    if (acc >= 0.1) add('drop', 0.5, 'accents'); else if (m.sync >= 0.5) add('drop', 0.5, 'syncopated');
+    if (en >= 0.6) add('drop', 0.8, `a punchy sound (${snd.name})`);
+    if (tag.has('drop')) add('drop', 0.5);
+    if (BUILD_EVOS.has(st.evo)) add('build', 2.6, `"${EVOS[st.evo].name}" automation`);
+    else if (st.evo === 'slow-open') add('build', 0.8, 'a filter that opens');
+    if (['roll', 'ratchet', 'climb', 'bounce'].includes(st.fill)) add('build', 1.2, `a "${FILLS[st.fill].name}" fill`);
+    if (m.density >= 11) add('build', 0.7, 'every step filled');
+    if (st.echo > 0 && st.echoShift !== '0') add('build', 0.5, 'echoes that climb');
+    if (tag.has('build')) add('build', 0.8, len === 'long' ? `a swelling sound (${snd.name})` : null);
+    if (m.length >= 0.9) add('break', 1.6, 'long notes');
+    if (len === 'long') add('break', 1.1, `a long, held sound (${snd.name})`);
+    if (['chord9', 'spread', 'quartal', 'cluster'].includes(st.pool) || st.steps.some(x => x.type === 'chord')) add('break', 0.4, 'the chords on show');
+    if (m.density <= 6) add('break', 0.4, 'space between the notes');
+    if (['pluck-to-pad', 'breathe'].includes(st.evo)) add('break', 0.5, `"${EVOS[st.evo].name}" automation`);
+    if (tag.has('break')) add('break', 0.8);
+    if (m.density <= 5) add('intro', 0.8, 'few notes');
+    if (en <= 0.5) add('intro', 0.6, 'a gentle sound');
+    if (st.evo === 'slow-open') add('intro', 0.8, 'a filter that opens'); else if (st.cut <= 0.4) add('intro', 0.8, 'filtered dark');
+    if (m.pitches <= 3) add('intro', 0.5, `${m.pitches} pitch${m.pitches > 1 ? 'es' : ''}`);
+    if (tag.has('intro')) add('intro', 0.8);
+    const order = Object.keys(sc).sort((a, b) => sc[b] - sc[a]);
+    const top = order[0], list = order.filter(r => sc[r] >= Math.max(1.8, sc[top] * 0.6));
+    if (!list.length) list.push(top);
+    const energy = Math.round(100 * clamp01(0.3 * Math.min(1, m.density / 12) + 0.16 * m.sync + 0.12 * acc + 0.16 * (1 - Math.min(1, m.length / 2)) + 0.26 * en + (BUILD_EVOS.has(st.evo) ? 0.04 : 0)));
+    return {roles: list, primary: top, scores: sc, why, energy};
+  }
+  // The genre's ranges, adjusted for the section: a break may hold long notes and needs no kick to avoid; a build may
+  // fill every step; an intro may be sparser. The drop is the genre's own fingerprint.
+  function roleTarget(t, role) {
+    if (!t || !role || role === 'drop') return t;
+    const o = JSON.parse(JSON.stringify(t));
+    // outside the drop nothing has to dodge the kick, and long notes are allowed (up to a whole bar)
+    o.density = [Math.min(1, o.density[0]), role === 'build' ? 16 : o.density[1]];
+    o.sync = [0, role === 'break' ? 1 : o.sync[1]];
+    delete o.kick;
+    o.length = [Math.min(0.25, o.length[0]), 16];
+    o.range = [0, o.range[1] + (role === 'intro' ? 0 : 6)];
+    o.leap = [0, o.leap[1] + (role === 'intro' ? 0 : 2)];
+    return o;
+  }
+  // fit against the genre for the section the combo is best at (or the one asked for)
+  function sectionFit(st, m, role) {
+    const g = OB.GENRES[st.genre], r = roles(st, m), use = role || r.primary;
+    return {fit: fit(m, roleTarget(g && g.target, use)), role: use, roles: r};
+  }
+
+  // ---- search words: sections and lengths, then free text ----
+  const STOP = new Set(['good', 'for', 'material', 'sure', 'the', 'a', 'an', 'of', 'and', 'to', 'in', 'some', 'stuff', 'that', 'is', 'are', 'great', 'really', 'very', 'super', 'song', 'part', 'section', 'use', 'used', 'with', 'my', 'me', 'something', 'things', 'thing', 'type', 'kind', 'sounds', 'sound', 'ideas', 'idea', 'please', 'want', 'need', 'like', 'definitely', 'totally', 'perfect', 'best', 'nice', 'cool', 'ones', 'one', 'it', 'on', 'at', 'or']);
+  const ROLE_WORDS = {
+    intro: ['intro', 'intros', 'outro', 'outros', 'opening', 'opener', 'dj', 'mixin', 'warmup', 'ending'],
+    build: ['build', 'builds', 'buildup', 'buildups', 'build-up', 'riser', 'risers', 'rise', 'rising', 'tension', 'predrop', 'pre-drop', 'lift', 'uplift'],
+    break: ['break', 'breaks', 'breakdown', 'breakdowns', 'ambient', 'atmos', 'atmosphere', 'atmospheric', 'emotional', 'interlude', 'bridge', 'calm'],
+    drop: ['drop', 'drops', 'peak', 'peaktime', 'peak-time', 'banger', 'bangers', 'dancefloor', 'floor', 'main', 'energetic'],
+  };
+  const LEN_WORDS = {
+    short: ['short', 'shorter', 'tiny', 'tight', 'staccato', 'percussive', 'hit', 'hits', 'blip', 'blips', 'snappy', 'plucky', 'stabby'],
+    medium: ['medium', 'mid-length'],
+    long: ['long', 'longer', 'sustained', 'sustain', 'held', 'swell', 'swells', 'swelling', 'legato', 'evolving', 'lush', 'pad', 'pads'],
+  };
+  function parseQuery(q) {
+    const out = {roles: new Set(), lens: new Set(), words: []};
+    for (const raw of String(q || '').toLowerCase().split(/[\s,./!?;:()"']+/).filter(Boolean)) {
+      if (STOP.has(raw)) continue;
+      let hit = false;
+      for (const [r, ws] of Object.entries(ROLE_WORDS)) if (ws.includes(raw)) { out.roles.add(r); hit = true; }
+      for (const [l, ws] of Object.entries(LEN_WORDS)) if (ws.includes(raw)) { out.lens.add(l); hit = true; }
+      if (!hit) out.words.push(raw);
+    }
+    return out;
+  }
+
   // ---- the cycle counter ----
   // On one held chord, with nothing evolving: when does the pattern line up with the bar line again?
   function cycle(input) {
@@ -552,7 +734,7 @@ const OE = (() => {
     const h = harmony(st), P = pool(st, h.chords[0]);
     const M = extend(P.base, st.count, st.octaves).length;
     const seqLen = orderSeq(st, M).length;
-    if (st.order === 'random') return {bars: null, random: true, L, seqLen, stepLen};
+    if (st.order === 'random' || (st.order === 'turing' && st.lock < 1)) return {bars: null, random: true, turing: st.order === 'turing', L, seqLen, stepLen};
     const maxBars = 128;
     let counter = 0, lastBar = -1;
     for (let g = 0; ; g++) {
@@ -568,6 +750,7 @@ const OE = (() => {
     }
   }
   function cycleText(c, st, hBeats) {
+    if (c.turing) return `Turing order at ${Math.round(st.lock * 100)}% lock: the ${st.tlen}-note loop drifts as it plays, so it never repeats exactly.`;
     if (c.random) return 'Random order: it never repeats exactly.';
     if (!c.bars) return `Longer than ${c.over} bars: effectively never repeats.`;
     const unit = st.advance === 'step' ? 'step' : 'note';
@@ -582,10 +765,9 @@ const OE = (() => {
     const st = normalize(input);
     const R = render(st, opts);
     const m = metrics(R);
-    const g = OB.GENRES[st.genre];
-    const f = fit(m, g && g.target);
+    const sf = sectionFit(st, m);
     const c = cycle(st);
-    return {st, R, m, fit: f, cycle: c, cycleText: cycleText(c, st, R.harmony.beats)};
+    return {st, R, m, fit: sf.fit, role: sf.role, roles: sf.roles, cycle: c, cycleText: cycleText(c, st, R.harmony.beats)};
   }
 
   // ---- fixes: candidate edits that move the fingerprint into the genre's range ----
@@ -594,12 +776,13 @@ const OE = (() => {
     const base = normalize(input);
     const g = OB.GENRES[base.genre];
     if (!g) return [];
-    const score = st => { const R = render(st, {evo: false, fills: false, mutate: false, bars: 4}); return fit(metrics(R), g.target); };
+    const role = roles(base).primary, tgt = roleTarget(g.target, role);
+    const score = st => { const R = render(st, {evo: false, fills: false, mutate: false, bars: 4}); return fit(metrics(R), tgt); };
     const now = score(base);
     const bad = now.axes.filter(a => !a.ok).map(a => a.id);
     if (!bad.length) return [];
     const cands = [];
-    const T = g.target;
+    const T = tgt;
     const add = (axis, text, patch) => cands.push({axis, text, patch});
     if (bad.includes('kick') || bad.includes('sync') || bad.includes('density')) {
       for (let k = 1; k < Math.min(base.steps.length, 16); k++) add(bad.includes('kick') ? 'kick' : 'sync', `Rotate the pattern ${k} step${k > 1 ? 's' : ''} later`, {steps: rotate(base.steps, k)});
@@ -622,8 +805,8 @@ const OE = (() => {
       if (dir === 'high') { if (base.octaves > 1) add('range', `Narrow to ${base.octaves - 1} octave${base.octaves > 2 ? 's' : ''}`, {octaves: base.octaves - 1}); add('range', 'Use only 3 notes of the pool', {count: 3}); add('leap', 'Change the order to Up', {order: 'up'}); add('leap', 'Change the order to Converge', {order: 'converge'}); }
       else { add('range', `Widen to ${base.octaves + 1} octaves`, {octaves: Math.min(4, base.octaves + 1)}); add('leap', 'Change the order to Pinky (top-note pedal)', {order: 'pinky'}); add('leap', 'Change the order to Up-down', {order: 'updown'}); add('range', 'Add the 9th to the pool', {pool: 'chord9'}); }
     }
-    if (bad.includes('length')) { const mid = (T.length[0] + T.length[1]) / 2; add('length', `Set the gate to ${Math.round(clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5) * 100)}%`, {gate: +clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5).toFixed(2)}); }
-    if (bad.includes('swing')) { const mid = Math.round((T.swing[0] + T.swing[1]) / 2); add('swing', `Set the swing to ${mid}%`, {swing: mid}); }
+    if (bad.includes('length') && T.length) { const mid = (T.length[0] + T.length[1]) / 2; add('length', `Set the gate to ${Math.round(clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5) * 100)}%`, {gate: +clamp(mid * 0.25 / RATES[base.rate].beats, 0.05, 1.5).toFixed(2)}); }
+    if (bad.includes('swing') && T.swing) { const mid = Math.round((T.swing[0] + T.swing[1]) / 2); add('swing', `Set the swing to ${mid}%`, {swing: mid}); }
     const out = [];
     for (const c of cands) {
       const s = score(normalize(Object.assign({}, base, c.patch)));
@@ -682,7 +865,7 @@ const OE = (() => {
     if (r() < 0.5) out[irange(r, [1, len - 1])] = 0;
     return out;
   }
-  const NO_CHORDS = new Set(['acid-303', 'perc-bleep', 'sub-pulse', 'log-drum', 'vox-chop', 'rubber-stab', 'kalimba']);
+  const NO_CHORDS = new Set(['acid-303', 'perc-bleep', 'sub-pulse', 'log-drum', 'vox-chop', 'rubber-stab', 'kalimba', 'laser-zap', 'wood-knock', 'mono-lead', 'reese']);
   function generate(genreId, seed, keep = {}) {
     const g = OB.GENRES[genreId] || OB.GENRES['tech-house'], gen = g.gen, r = rng(seed * 2654435761 + 99);
     const rate = pickW(r, gen.rates), stepLen = RATES[rate].beats;
@@ -702,6 +885,41 @@ const OE = (() => {
       groove: g.groove, bassPat: g.bass, bars: keep.bars ?? 8, seed,
     };
     if (keep.imported) st.imported = keep.imported;
+    // wild card: the generator may also reach for the unusual tools
+    if (keep.wild) {
+      const w = rng(seed * 7 + 5);
+      if (w() < 0.3) st.pool = pickA(w, ['quartal', 'cluster', 'spread']);
+      if (w() < 0.25) { st.order = 'turing'; st.lock = +(0.6 + w() * 0.35).toFixed(2); st.tlen = pickA(w, [5, 6, 7, 8, 12]); }
+      if (w() < 0.35) { st.echo = pickA(w, [2, 3, 4]); st.echoTime = pickA(w, ['8d', '16d', '8', '8t']); st.echoShift = pickA(w, ['0', '12', '7', 's1', 's-1', 's2']); st.echoFb = +(0.4 + w() * 0.3).toFixed(2); }
+      if (w() < 0.35) st.feel = pickA(w, ['drunk', 'afro', 'push', 'laid']);
+      if (st.steps.some(x => x.type === 'chord') && w() < 0.6) { st.strum = +(0.2 + w() * 0.6).toFixed(2); st.strumDir = pickA(w, ['up', 'down', 'alt']); }
+      if (w() < 0.15) st.fill = 'bounce';
+    }
+    // writing for a section: the same grammar, pushed toward what that section wants
+    if (keep.role) {
+      const w = rng(seed * 13 + 9), thin = p => st.steps.forEach(x => { if (x.type === 'note' && !x.acc && w() < p) x.type = 'rest'; });
+      const pickSound = (want, extra = []) => { if (keep.sound) return; const ok = gen.sounds.concat(extra).filter(id => OB.SOUNDS_BY_ID[id] && OB.SOUNDS_BY_ID[id].roles.includes(want)); if (ok.length) st.sound = pickA(w, ok); };
+      if (keep.role === 'drop') {
+        st.evo = pickA(w, ['none', 'breathe', 'gate-pump', 'none']); st.gate = +(st.gate * 0.85).toFixed(2);
+        if (!st.steps.some(x => x.acc)) { const per = Math.max(1, Math.round(1 / RATES[st.rate].beats)); st.steps.forEach((x, i) => { if (sounding(x) && i % per === 2 % per) x.acc = 1; }); }
+        pickSound('drop');
+      } else if (keep.role === 'build') {
+        st.evo = pickA(w, ['build', 'into-drop', 'thin', 'add-notes']); st.fill = pickA(w, ['roll', 'ratchet', 'bounce', 'climb']); st.fillEvery = 4;
+        st.steps.forEach(x => { if (x.type === 'rest' && w() < 0.3) x.type = 'note'; });
+        pickSound('build', ['string-swell', 'laser-zap', 'supersaw', 'tech-pluck']);
+      } else if (keep.role === 'break') {
+        if (st.rate === '16' && w() < 0.6) { st.rate = '8'; st.steps = st.steps.filter((_, i) => i % 2 === 0); }
+        st.gate = +clamp(st.gate * 2.6, 0.9, 1.5).toFixed(2); thin(0.4);
+        if (!['scale', 'penta'].includes(st.pool)) st.pool = pickA(w, ['chord9', 'spread', 'chord']);
+        st.evo = pickA(w, ['pluck-to-pad', 'breathe', 'none']); st.fill = 'none';
+        pickSound('break', ['warm-pad', 'glass-pad', 'shimmer', 'choir', 'string-swell', 'string-pluck', 'rhodes', 'glass-pluck']);
+      } else if (keep.role === 'intro') {
+        thin(0.4); st.evo = 'slow-open'; st.cut = 0.35; st.fill = 'none';
+        if (w() < 0.4 && !['scale', 'penta'].includes(st.pool)) st.pool = pickA(w, ['root', 'root5']);
+        pickSound('intro', ['bell-tick', 'micro-pluck', 'wood-knock', 'drone', 'perc-bleep', 'sub-pulse']);
+      }
+      if (!st.steps.some(sounding)) st.steps[2 % st.steps.length].type = 'note';
+    }
     // chord hits need a sound that can play chords: mono, percussive and vocal patches get single notes instead
     if (st.steps.some(x => x.type === 'chord') && NO_CHORDS.has(st.sound)) {
       if (keep.sound) st.steps.forEach(x => { if (x.type === 'chord') x.type = 'note'; });
@@ -722,15 +940,16 @@ const OE = (() => {
     }
     return n ? 1 - s / n : 1;
   }
-  function signature(st) { return stepsString(st.steps) + '|' + st.pool + '|' + st.order + '|' + st.rate + '|' + (st.order === 'seq' ? st.seq.join('') : ''); }
+  function signature(st) { return stepsString(st.steps) + '|' + st.pool + '|' + st.order + '|' + st.rate + '|' + (st.order === 'seq' ? st.seq.join('') : '') + '|' + st.echo + st.echoShift + st.feel + Math.round(st.strum * 10); }
+  const wildness = st => (st.echo > 0) + (st.order === 'turing') + ['quartal', 'cluster', 'spread'].includes(st.pool) + (st.feel !== 'straight') + (st.strum > 0) + (st.fill === 'bounce');
   function find(genreId, n = 8, seed = 1, keep = {}, tries = 140) {
     const g = OB.GENRES[genreId];
     const out = [];
     for (let i = 0; i < tries; i++) {
       const st = generate(genreId, seed * 1000 + i, keep);
       const R = render(st, {bars: 4, evo: false, fills: false, mutate: false});
-      const m = metrics(R), f = fit(m, g.target);
-      out.push({st, m, fit: f.score, typical: centrality(m, g.target), sig: signature(st)});
+      const m = metrics(R), sf = sectionFit(st, m, keep.role), tgt = roleTarget(g.target, sf.role);
+      out.push({st, m, fit: sf.fit.score, typical: centrality(m, tgt), sig: signature(st), roles: sf.roles, role: sf.role, onRole: !keep.role || sf.roles.roles.includes(keep.role)});
     }
     out.sort((a, b) => (b.fit + 30 * b.typical) - (a.fit + 30 * a.typical) || a.st.seed - b.st.seed);
     // greedy pick for variety: the best remaining candidate, marked down for each pick that shares its sound,
@@ -743,7 +962,7 @@ const OE = (() => {
         const c = pool[i], k = stepsString(c.st.steps);
         if (seen.has(k)) continue;
         const same = (f) => picked.filter(p => f(p.st) === f(c.st)).length;
-        const sc = c.fit + 30 * c.typical - 9 * same(st => st.sound) - 14 * same(kind) - 5 * same(st => st.pool) - (c.m.low > 0.2 && !g.lowOk ? 25 : 0);
+        const sc = c.fit + 30 * c.typical - 9 * same(st => st.sound) - 14 * same(kind) - 5 * same(st => st.pool) - (c.m.low > 0.2 && !g.lowOk ? 25 : 0) + (keep.wild ? 7 * Math.min(3, wildness(c.st)) : 0) - (c.onRole ? 0 : 40);
         if (sc > bs) { bs = sc; bi = i; }
       }
       if (bi < 0) break;
@@ -755,24 +974,30 @@ const OE = (() => {
     return picked;
   }
   // Variations of one combo: same harmony, key, tempo and sound; the notes and rhythm moved
-  function vary(input, n = 8, seed = 1) {
+  const WILD_POOLS = new Set(['quartal', 'cluster', 'spread']);
+  function vary(input, n = 8, seed = 1, opts = {}) {
     const base = normalize(input), g = OB.GENRES[base.genre] || OB.GENRES['tech-house'];
     const out = [];
     const r = rng(seed * 7 + 3);
     const ops = [
       ['Rotated', st => { const k = 1 + Math.floor(r() * (st.steps.length - 1)); st.steps = rotate(st.steps, k); return `pattern rotated ${k} step${k > 1 ? 's' : ''}`; }],
-      ['New order', st => { const o = pickA(r, Object.keys(ORDERS).filter(o => o !== st.order && o !== 'random')); st.order = o; if (o === 'seq') st.seq = genSeq(r, irange(r, [3, 6]), 3); return `order: ${ORDERS[o].name}`; }],
+      ['New order', st => { const o = pickA(r, Object.keys(ORDERS).filter(o => o !== st.order && o !== 'random' && (opts.wild || o !== 'turing'))); st.order = o; if (o === 'seq') st.seq = genSeq(r, irange(r, [3, 6]), 3); return `order: ${ORDERS[o].name}`; }],
       ['Accents moved', st => { const every = pickA(r, [3, 5, 6, 7]); st.steps.forEach((s, i) => { s.acc = sounding(s) && i % every === 0 ? 1 : 0; }); return `accent every ${every} steps`; }],
       ['Octave jumps', st => { st.steps.forEach(s => { if (s.type === 'note') s.oct = r() < 0.25 ? 1 : 0; }); return 'octave jumps on a quarter of the notes'; }],
       ['Thinned', st => { let k = 0; st.steps.forEach(s => { if (s.type === 'note' && !s.acc && r() < 0.35) { s.type = 'rest'; k++; } }); return `${k} notes taken out`; }],
       ['Filled', st => { let k = 0; st.steps.forEach(s => { if (s.type === 'rest' && r() < 0.3) { s.type = 'note'; k++; } }); return `${k} rests filled`; }],
-      ['New pool', st => { const p = pickA(r, Object.keys(POOLS).filter(p => p !== st.pool && p !== 'root')); st.pool = p; return `pool: ${POOLS[p].name}`; }],
+      ['New pool', st => { const p = pickA(r, Object.keys(POOLS).filter(p => p !== st.pool && p !== 'root' && (opts.wild || !WILD_POOLS.has(p)))); st.pool = p; return `pool: ${POOLS[p].name}`; }],
       ['Polymeter', st => { const L = pickA(r, [3, 5, 6, 7, 10, 12, 14]); const src = st.steps.filter(sounding).length ? st.steps : parseSteps('x'); st.steps = Array.from({length: L}, (_, i) => Object.assign({}, src[i % src.length])); return `pattern length ${L} steps`; }],
       ['Written riff', st => { st.order = 'seq'; st.seq = genSeq(r, irange(r, [3, 7]), st.pool === 'scale' ? 6 : 3); return `riff ${st.seq.join(' ')}`; }],
       ['Pedal', st => { st.steps.forEach((s, i) => { if (s.type === 'note' && i % 2 === 0) s.type = 'pedal'; }); return 'every other note to the pedal'; }],
       ['Ratchets', st => { st.steps.forEach(s => { if (s.type === 'note' && r() < 0.2) s.rat = 2; }); return 'ratchets on a fifth of the notes'; }],
       ['Halftime', st => { if (st.rate === '16') { st.rate = '8'; return 'rate 1/8'; } st.rate = '16'; return 'rate 1/16'; }],
+      ['Stacked 4ths', st => { st.pool = pickA(r, ['quartal', 'cluster', 'spread']); return `pool: ${POOLS[st.pool].name}`; }],
+      ['Echo cascade', st => { st.echo = pickA(r, [2, 3, 4]); st.echoTime = pickA(r, ['8d', '16d', '8']); st.echoShift = pickA(r, ['12', '7', 's1', 's2', 's-1']); return `echo ×${st.echo}, ${ECHO_SHIFTS[st.echoShift].toLowerCase()}`; }],
+      ['Turing drift', st => { st.order = 'turing'; st.lock = pickA(r, [0.7, 0.8, 0.9]); st.tlen = pickA(r, [5, 6, 7, 8]); return `Turing loop of ${st.tlen}, ${Math.round(st.lock * 100)}% locked`; }],
+      ['Feel', st => { st.feel = pickA(r, ['drunk', 'afro', 'push', 'laid']); return `feel: ${FEELS[st.feel].name.toLowerCase()}`; }],
     ];
+    if (!opts.wild) ops.length = 12;
     for (let i = 0; i < n * 3 && out.length < n; i++) {
       const st = normalize(base);
       st.seed = base.seed * 31 + i + seed;
@@ -866,6 +1091,85 @@ const OE = (() => {
     return `Orbit_${nm}_${k}_${st.bpm}bpm`;
   }
 
+  // ---- text → rhythm: Morse code, a dot is a note, a dash an accent held for two steps ----
+  const MORSE = {a: '.-', b: '-...', c: '-.-.', d: '-..', e: '.', f: '..-.', g: '--.', h: '....', i: '..', j: '.---', k: '-.-', l: '.-..', m: '--', n: '-.', o: '---', p: '.--.', q: '--.-', r: '.-.', s: '...', t: '-', u: '..-', v: '...-', w: '.--', x: '-..-', y: '-.--', z: '--..',
+    0: '-----', 1: '.----', 2: '..---', 3: '...--', 4: '....-', 5: '.....', 6: '-....', 7: '--...', 8: '---..', 9: '----.'};
+  function morse(text) {
+    const words = String(text || '').toLowerCase().split(/\s+/).filter(Boolean);
+    let out = '';
+    words.forEach((w, wi) => {
+      const letters = [...w].filter(ch => MORSE[ch]);
+      letters.forEach((ch, li) => {
+        out += [...MORSE[ch]].map(sym => sym === '.' ? 'x' : 'X-').join('.');
+        if (li < letters.length - 1) out += '..';
+      });
+      if (wi < words.length - 1 && letters.length) out += '....';
+    });
+    out = out.slice(0, 64).replace(/-$/, '.');
+    return out || 'x';
+  }
+
+  // ---- a written riff (a MIDI clip) → step pattern + written sequence over the key's scale ----
+  // The rhythm is read on the 16th grid (up to 4 bars), held notes become ties, loud notes accents, and each pitch
+  // becomes its index on the scale from the tonic, so the riff plays back exactly (notes outside the scale snap).
+  function riffFromNotes(notes, input) {
+    const st = normalize(Object.assign({}, input, {pool: 'scale', follow: false, count: 0, octaves: 1, imported: null}));
+    const ns = notes.filter(n => n.d > 0.02).slice().sort((a, b) => a.t - b.t || b.n - a.n);
+    if (!ns.length) throw Error('No notes in that clip.');
+    const t0 = Math.floor(ns[0].t / 4 + 1e-6) * 4, end = Math.max(...ns.map(n => n.t + n.d)) - t0;
+    const bars = clamp(Math.ceil(end / 4 - 0.02), 1, 4), L = bars * 16;
+    const meanV = ns.reduce((a, n) => a + n.v, 0) / ns.length;
+    const P = pool(st, tonicChord(st)), base = P.base;
+    const steps = [], seq = [];
+    let snapped = 0, holdUntil = -1;
+    for (let g = 0; g < L; g++) {
+      const t = t0 + g * 0.25;
+      const here = ns.filter(n => n.t >= t - 0.125 && n.t < t + 0.125);
+      if (here.length) {
+        const n = here.sort((a, b) => b.v - a.v || b.n - a.n)[0];
+        let bi = 0, bd = Infinity;
+        for (let i = -35; i <= 42; i++) { const d = Math.abs(pitchAt(base, i) - n.n); if (d < bd) { bd = d; bi = i; } }
+        if (bd > 0) snapped++;
+        seq.push(bi);
+        steps.push({type: 'note', acc: n.v >= Math.max(108, meanV + 12) ? 1 : 0, oct: 0, rat: 1, slide: false, prob: 1});
+        holdUntil = n.t + n.d;
+      } else steps.push({type: holdUntil > t + 0.07 ? 'tie' : 'rest', acc: 0, oct: 0, rat: 1, slide: false, prob: 1});
+    }
+    const lens = ns.slice(0, 64).map(n => n.d);
+    const gate = clamp(lens.reduce((a, b) => a + b, 0) / lens.length / 0.25, 0.1, 1);
+    // its swing: how late the notes near the off-16ths land, as a share of the 8th
+    const offs = ns.map(n => n.t - t0).filter(t => Math.abs(mod(t, 0.5) - 0.25 - 0.03) < 0.09).map(t => mod(t, 0.5) - 0.25);
+    const swing = offs.length ? clamp(Math.round(50 + offs.reduce((a, b) => a + b, 0) / offs.length / 0.5 * 100), 50, 70) : 50;
+    return {patch: {steps, seq: seq.length ? seq : [0], pool: 'scale', follow: false, count: 0, octaves: 1, order: 'seq', rate: '16', advance: 'note', reset: 'never', gate: +Math.min(0.95, gate).toFixed(2),
+      swing, fill: 'none', mutate: 0, evo: input.evo || 'none', echo: 0, strum: 0, feel: 'straight', human: 0},
+      bars, notes: seq.length, snapped, swing};
+  }
+  // the seven chords of the key, stacked in thirds from each scale degree (triads, 7ths or 9ths), voiced near the register
+  function diatonicChords(input, ext = 'triad') {
+    const st = normalize(input), sc = OT.SCALES[st.scale].st, out = [];
+    for (let d = 0; d < 7; d++) {
+      const deg = k => sc[(d + k) % 7] + 12 * Math.floor((d + k) / 7) - sc[d];
+      const iv = [0, deg(2), deg(4)];
+      if (ext !== 'triad') iv.push(deg(6));
+      if (ext === '9th') iv.push(deg(8));
+      const root = mod(st.key + sc[d], 12), w = new Array(12).fill(0);
+      iv.forEach(i => { w[mod(root + i, 12)] = 1; });
+      let q = OT.detectChord(w, root).q;
+      if (OT.Q[q].iv.length !== iv.length || OT.Q[q].iv.some((x, i) => mod(x, 12) !== mod(iv[i], 12))) {
+        const exact = Object.entries(OT.Q).find(([, v]) => v.iv.length === iv.length && v.iv.every((x, i) => x === iv[i]));
+        if (exact) q = exact[0];
+      }
+      const flat9 = ext === '9th' && iv[4] === 13 ? '♭9' : '';
+      out.push({deg: d, root, q, iv, name: OT.chordName(root, q, st.key, st.scale) + flat9, roman: OT.romanFor(root, q, st.key, st.scale) + flat9, notes: OT.voice(root, iv, st.reg, null)});
+    }
+    return out;
+  }
+  // the current order written out as a sequence, so it can be edited note by note
+  function writeOut(input) {
+    const st = normalize(input), h = harmony(st), P = pool(st, h.chords[0]);
+    return orderSeq(st, extend(P.base, st.count, st.octaves).length, 0).slice(0, 64);
+  }
+
   // ---- sharing: a combo as a compact string for the URL ----
   const TYPES = ['rest', 'note', 'chord', 'pedal', 'tie'];
   function pack(input) {
@@ -894,6 +1198,7 @@ const OE = (() => {
   }
 
   return {RATES, POOLS, ORDERS, EVOS, FILLS, AXES, DEFAULT, DELAY_TIMES, DRUM_NOTES, parseSteps, stepsString, stepChar, sounding, euclid, normalize, harmony,
-    pool, extend, orderSeq, render, renderBass, renderDrums, renderChords, renderArpInput, metrics, fit, cycle, cycleText, analyse, rotate,
+    ROLES, roles, roleTarget, sectionFit, parseQuery, ROLE_WORDS, LEN_WORDS,
+    pool, extend, orderSeq, render, FEELS, ECHO_SHIFTS, ladder, scaleStep, morse, riffFromNotes, writeOut, feelShift, diatonicChords, renderBass, renderDrums, renderChords, renderArpInput, metrics, fit, cycle, cycleText, analyse, rotate,
     suggestions, generate, find, vary, centrality, liveArp, delayTable, exportMidi, fileStem, pack, unpack, describe, evoAt, chordIndexAt, weight, signature};
 })();

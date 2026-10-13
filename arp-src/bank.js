@@ -48,7 +48,7 @@ const OB = (() => {
       gen: {bpm: [124, 128], keys: [5, 7, 9, 2, 10], scales: {minor: 4, dorian: 2, phrygian: 1}, rates: {'16': 1}, lengths: {16: 6, 32: 2, 12: 1, 6: 1, 5: 1}, shapes: {offbeat: 5, euclid: 3, tresillo: 1, sparse: 1}, hits: [4, 9],
         pools: {scale: 3, chord: 2, root5: 2, root: 1, penta: 2, chord9: 1}, orders: {seq: 5, up: 1, pinky: 1, thumb: 1, updown: 1}, seqLen: [2, 5], octaves: {1: 6, 2: 1}, count: {0: 2, 2: 1, 3: 2},
         advance: {note: 3, step: 1}, reset: {bar: 4, never: 1, '2bar': 1}, gate: [0.22, 0.55], swing: [54, 58], accent: 0.3, oct: 0.1, ratchet: 0.04, chordHit: 0.06, pedal: 0.1,
-        sounds: ['organ-stab', 'tech-pluck', 'rubber-stab', 'perc-bleep', 'chord-stab', 'vox-chop', 'sub-pulse'], evos: ['slow-open', 'breathe', 'none', 'gate-pump'], fills: ['none', 'drop', 'ratchet', 'climb'], reg: [58, 68]},
+        sounds: ['organ-stab', 'tech-pluck', 'rubber-stab', 'perc-bleep', 'chord-stab', 'vox-chop', 'sub-pulse', 'micro-pluck', 'mono-lead'], evos: ['slow-open', 'breathe', 'none', 'gate-pump'], fills: ['none', 'drop', 'ratchet', 'climb'], reg: [58, 68]},
     },
     'melodic-techno': {
       name: 'Melodic techno', color: '#8F7CFF', bpm: [122, 126], groove: 'melodic', bass: 'melodic', key: 'A', scale: 'minor',
@@ -74,7 +74,7 @@ const OB = (() => {
       gen: {bpm: [120, 124], keys: [2, 9, 4, 7, 11], scales: {minor: 3, major: 1, dorian: 1}, rates: {'16': 4, '8': 2}, lengths: {16: 5, 8: 2, 12: 1}, shapes: {euclid: 3, full: 2, tresillo: 2}, hits: [5, 12],
         pools: {chord: 3, chord9: 3, scale: 1, triad: 1}, orders: {up: 3, updown: 2, seq: 2, converge: 1, pinky: 1}, seqLen: [3, 6], octaves: {2: 3, 1: 2}, count: {0: 3, 3: 1},
         advance: {note: 4, step: 1}, reset: {chord: 2, never: 1, bar: 2}, gate: [0.3, 0.75], swing: [50, 53], accent: 0.2, oct: 0.05, ratchet: 0, chordHit: 0.02, pedal: 0.05,
-        sounds: ['glass-pluck', 'tech-pluck', 'supersaw', 'dark-saw'], evos: ['pluck-to-pad', 'slow-open', 'build', 'breathe'], fills: ['none', 'climb', 'none'], reg: [60, 70]},
+        sounds: ['glass-pluck', 'tech-pluck', 'supersaw', 'dark-saw', 'string-pluck'], evos: ['pluck-to-pad', 'slow-open', 'build', 'breathe'], fills: ['none', 'climb', 'none'], reg: [60, 70]},
     },
     trance: {
       name: 'Trance', color: '#FF5CA8', bpm: [136, 140], groove: 'trance', bass: 'rolling', key: 'A', scale: 'minor',
@@ -87,7 +87,7 @@ const OB = (() => {
       gen: {bpm: [136, 140], keys: [9, 2, 6, 11, 4], scales: {minor: 4, harmonic: 1}, rates: {'16': 1}, lengths: {16: 5, 8: 1, 12: 1}, shapes: {full: 6, euclid: 1}, hits: [11, 16],
         pools: {chord: 3, root5: 2, triad: 2, chord9: 1}, orders: {up: 3, seq: 3, updown: 1, pinky: 1}, seqLen: [3, 8], octaves: {2: 4, 1: 1, 3: 1}, count: {0: 3, 3: 1},
         advance: {note: 4, step: 1}, reset: {bar: 2, chord: 2, never: 1}, gate: [0.35, 0.6], swing: [50, 51], accent: 0.2, accentEvery: [2, 4, 0], oct: 0.18, ratchet: 0, chordHit: 0, pedal: 0.04,
-        sounds: ['supersaw', 'hollow-square', 'glass-pluck'], evos: ['build', 'slow-open', 'none'], fills: ['roll', 'climb', 'none'], reg: [62, 72]},
+        sounds: ['supersaw', 'hollow-square', 'glass-pluck', 'trance-lead', 'string-pluck'], evos: ['build', 'slow-open', 'none'], fills: ['roll', 'climb', 'none'], reg: [62, 72]},
     },
     afro: {
       name: 'Afro house', color: '#FFB547', bpm: [118, 123], groove: 'afro', bass: 'afro', key: 'G', scale: 'minor',
@@ -100,7 +100,7 @@ const OB = (() => {
       gen: {bpm: [118, 123], keys: [7, 9, 2, 4, 0], scales: {minor: 2, dorian: 2, phrygian: 1}, rates: {'16': 4, '16t': 2}, lengths: {16: 5, 12: 2, 6: 1, 32: 1}, shapes: {tresillo: 5, euclid: 3, offbeat: 1}, hits: [4, 8],
         pools: {penta: 4, scale: 2, chord: 1, chord9: 1}, orders: {seq: 4, up: 1, updown: 1, converge: 1}, seqLen: [3, 6], octaves: {1: 3, 2: 2}, count: {0: 1},
         advance: {note: 3, step: 1}, reset: {bar: 2, never: 1, '2bar': 1}, gate: [0.3, 0.8], swing: [52, 57], accent: 0.25, oct: 0.08, ratchet: 0.03, chordHit: 0, pedal: 0.08,
-        sounds: ['marimba', 'kalimba', 'log-drum', 'tech-pluck', 'vox-chop'], evos: ['none', 'breathe', 'slow-open'], fills: ['none', 'answer', 'drop'], reg: [60, 70], static: 0.3},
+        sounds: ['marimba', 'kalimba', 'log-drum', 'tech-pluck', 'vox-chop', 'wood-knock'], evos: ['none', 'breathe', 'slow-open'], fills: ['none', 'answer', 'drop'], reg: [60, 70], static: 0.3},
     },
     deep: {
       name: 'Deep & organic house', color: '#4FE3B0', bpm: [118, 122], groove: 'deep', bass: 'deep', key: 'C', scale: 'dorian',
@@ -113,7 +113,7 @@ const OB = (() => {
       gen: {bpm: [118, 122], keys: [0, 5, 2, 9, 7], scales: {dorian: 3, minor: 2}, rates: {'16': 3, '8': 2}, lengths: {16: 5, 32: 2, 8: 1}, shapes: {euclid: 3, sparse: 2, tresillo: 2, offbeat: 2}, hits: [3, 7],
         pools: {chord9: 4, chord: 3}, orders: {up: 3, updown: 2, converge: 1, seq: 1}, seqLen: [3, 5], octaves: {1: 3, 2: 2}, count: {0: 1},
         advance: {note: 4, step: 1}, reset: {chord: 3, bar: 1}, gate: [0.7, 1.4], swing: [53, 58], accent: 0.2, oct: 0.04, ratchet: 0, chordHit: 0.12, pedal: 0.04,
-        sounds: ['rhodes', 'chord-stab', 'house-piano', 'glass-pluck', 'marimba'], evos: ['none', 'breathe', 'pluck-to-pad'], fills: ['none', 'drop'], reg: [58, 68], per: [1, 2]},
+        sounds: ['rhodes', 'chord-stab', 'house-piano', 'glass-pluck', 'marimba', 'bell-tick'], evos: ['none', 'breathe', 'pluck-to-pad'], fills: ['none', 'drop'], reg: [58, 68], per: [1, 2]},
     },
     techno: {
       name: 'Techno', color: '#A9B4C8', bpm: [128, 135], groove: 'techno', bass: 'sub', key: 'F', scale: 'phrygian',
@@ -126,7 +126,7 @@ const OB = (() => {
       gen: {bpm: [128, 135], keys: [5, 7, 9, 4, 1], scales: {phrygian: 3, minor: 3}, rates: {'16': 6, '8': 1}, lengths: {16: 3, 3: 2, 5: 2, 7: 2, 12: 1}, shapes: {euclid: 4, full: 2, offbeat: 2}, hits: [2, 10],
         pools: {root5: 3, root: 2, scale: 2, chord: 1}, orders: {seq: 3, up: 2, updown: 1}, seqLen: [2, 4], octaves: {1: 4, 2: 1}, count: {0: 2, 2: 2},
         advance: {note: 2, step: 2}, reset: {never: 3, bar: 2}, gate: [0.25, 0.55], swing: [50, 52], accent: 0.25, accentEvery: [3, 5, 0], oct: 0.1, ratchet: 0.03, chordHit: 0, pedal: 0.1,
-        sounds: ['sub-pulse', 'dark-saw', 'perc-bleep', 'chord-stab', 'acid-303'], evos: ['dark-ride', 'breathe', 'slow-open'], fills: ['none', 'drop', 'stutter'], reg: [52, 64]},
+        sounds: ['sub-pulse', 'dark-saw', 'perc-bleep', 'chord-stab', 'acid-303', 'micro-pluck'], evos: ['dark-ride', 'breathe', 'slow-open'], fills: ['none', 'drop', 'stutter'], reg: [52, 64]},
     },
     acid: {
       name: 'Acid', color: '#FFE14D', bpm: [125, 135], groove: 'techno', bass: 'offbeat', key: 'A', scale: 'minor',
@@ -152,7 +152,7 @@ const OB = (() => {
       gen: {bpm: [115, 122], keys: [4, 9, 2, 0, 7], scales: {minor: 3, major: 1, dorian: 1}, rates: {'16': 3, '8': 2}, lengths: {16: 5, 8: 2}, shapes: {gallop: 3, full: 3, euclid: 1}, hits: [6, 14],
         pools: {octave: 3, chord: 2, root5: 1, triad: 1}, orders: {up: 3, updown: 1, seq: 2, down: 1}, seqLen: [2, 4], octaves: {1: 2, 2: 2}, count: {0: 1},
         advance: {note: 4}, reset: {bar: 2, chord: 2}, gate: [0.3, 0.7], swing: [50, 55], accent: 0.2, oct: 0.12, ratchet: 0, chordHit: 0.05, pedal: 0,
-        sounds: ['disco-saw', 'house-piano', 'tech-pluck', 'supersaw'], evos: ['breathe', 'none', 'slow-open'], fills: ['none', 'climb', 'roll'], reg: [52, 64]},
+        sounds: ['disco-saw', 'house-piano', 'tech-pluck', 'supersaw', 'clav', 'mono-lead'], evos: ['breathe', 'none', 'slow-open'], fills: ['none', 'climb', 'roll'], reg: [52, 64]},
     },
     garage: {
       name: 'UK garage & bass house', color: '#3DFFD0', bpm: [128, 134], groove: 'garage', bass: 'garage', key: 'F', scale: 'minor',
@@ -165,7 +165,7 @@ const OB = (() => {
       gen: {bpm: [128, 134], keys: [5, 7, 9, 0], scales: {minor: 3, dorian: 2}, rates: {'16': 1}, lengths: {16: 5, 32: 2}, shapes: {twostep: 4, offbeat: 3, euclid: 1}, hits: [4, 8],
         pools: {scale: 2, chord: 2, chord9: 1, penta: 2, root: 1}, orders: {seq: 4, up: 1, pinky: 1}, seqLen: [2, 5], octaves: {1: 4, 2: 1}, count: {0: 2, 3: 1},
         advance: {note: 3}, reset: {bar: 3, '2bar': 1}, gate: [0.25, 0.6], swing: [59, 65], accent: 0.3, oct: 0.1, ratchet: 0.05, chordHit: 0.12, pedal: 0.05,
-        sounds: ['organ-stab', 'vox-chop', 'rubber-stab', 'chord-stab', 'rhodes'], evos: ['none', 'breathe', 'gate-pump'], fills: ['none', 'drop', 'ratchet'], reg: [58, 68]},
+        sounds: ['organ-stab', 'vox-chop', 'rubber-stab', 'chord-stab', 'rhodes', 'clav'], evos: ['none', 'breathe', 'gate-pump'], fills: ['none', 'drop', 'ratchet'], reg: [58, 68]},
     },
     'hard-techno': {
       name: 'Hard techno & neo-rave', color: '#FF4D4D', bpm: [145, 155], groove: 'hard', bass: 'hard', key: 'F#', scale: 'minor',
@@ -178,7 +178,7 @@ const OB = (() => {
       gen: {bpm: [145, 155], keys: [6, 9, 4, 1], scales: {minor: 4, harmonic: 1, phrygian: 1}, rates: {'16': 1}, lengths: {16: 6, 8: 1, 12: 1}, shapes: {full: 4, offbeat: 2, euclid: 2}, hits: [8, 16],
         pools: {chord: 3, root5: 2, triad: 2}, orders: {up: 3, seq: 3, pinky: 1}, seqLen: [3, 6], octaves: {2: 3, 1: 2}, count: {0: 3, 3: 1},
         advance: {note: 4}, reset: {bar: 2, chord: 2}, gate: [0.3, 0.55], swing: [50, 51], accent: 0.25, accentEvery: [2, 4, 0], oct: 0.15, ratchet: 0.03, chordHit: 0.05, pedal: 0.05,
-        sounds: ['rave-hoover', 'supersaw', 'hollow-square', 'acid-303'], evos: ['build', 'slow-open', 'none'], fills: ['roll', 'climb', 'none'], reg: [60, 70]},
+        sounds: ['rave-hoover', 'supersaw', 'hollow-square', 'acid-303', 'hoover-long'], evos: ['build', 'slow-open', 'none'], fills: ['roll', 'climb', 'none'], reg: [60, 70]},
     },
     minimal: {
       name: 'Minimal & rominimal', color: '#B7C8A0', bpm: [124, 127], groove: 'minimal', bass: 'minimal', key: 'G', scale: 'minor',
@@ -191,7 +191,7 @@ const OB = (() => {
       gen: {bpm: [124, 127], keys: [7, 9, 2, 5], scales: {minor: 2, dorian: 2, phrygian: 1}, rates: {'16': 1}, lengths: {32: 5, 16: 2, 24: 1}, shapes: {sparse: 4, euclid: 2, offbeat: 2}, hits: [3, 7],
         pools: {root: 2, root5: 2, penta: 2, scale: 1}, orders: {seq: 3, up: 1}, seqLen: [2, 4], octaves: {1: 1}, count: {0: 1, 2: 1},
         advance: {note: 2, step: 1}, reset: {'2bar': 3, never: 1}, gate: [0.2, 0.45], swing: [55, 60], accent: 0.3, oct: 0.08, ratchet: 0.06, chordHit: 0, pedal: 0.1,
-        sounds: ['perc-bleep', 'rubber-stab', 'sub-pulse', 'marimba'], evos: ['none', 'breathe'], fills: ['none', 'drop'], reg: [58, 68]},
+        sounds: ['perc-bleep', 'rubber-stab', 'sub-pulse', 'marimba', 'micro-pluck', 'wood-knock'], evos: ['none', 'breathe'], fills: ['none', 'drop'], reg: [58, 68]},
     },
   };
 
@@ -394,6 +394,51 @@ const OB = (() => {
     ['Swing blips', '.x...x.x...x..x.', {pool: 'root', order: 'up', swing: 60}, 'A single pitch on swung off-16ths: the shuffle does everything.'],
     ['Dub minimal', '...x..........x.......x.........', {sound: 'chord-stab', pool: 'chord', order: 'up', prog: 'i7', delay: 0.45, fb: 0.6, reverb: 0.35}, 'Three dub chord tones in two bars, with the delay filling the room.'],
     ['Tick-tock', '..x..x....x..x....x..x....x..x..', {sound: 'marimba', pool: 'penta', seq: [0, 2, 1, 3, 0, 2, 4, 1], mutate: 8}, 'A soft marimba ticking in pairs across two bars.'],
+  ]);
+
+  // ===== BREAKS, BUILDS AND INTROS: written for the sections around the drop =====
+  group(TH, 'Breaks & builds', {sound: 'warm-pad', pool: 'chord9', order: 'up', swing: 54, gate: 1.4, reg: 62, bpm: 126, key: 'F', prog: 'i9 iv9', reset: 'chord', duck: 0.15}, [
+    ['Pad breakdown', 'x.x.', {rate: '4', per: 2, evo: 'breathe'}, 'Half notes on a slow, warm pad, two bars a chord: the break where the kick drops out and the chords take over.'],
+    ['Choir break', 'x...x...', {rate: '8', sound: 'choir', pool: 'chord', prog: 'i VI', gate: 1.5}, 'A synthesized choir walking up the chord in half notes. Pure emotion before the drop comes back.'],
+    ['Gospel organ break', 'C.......C.......', {sound: 'organ-sustain', pool: 'chord', prog: 'i7 iv7', gate: 1.5}, 'Held organ chords with a Leslie wobble, two a bar: the soulful break of piano house, in tech house.'],
+    ['String rise', 'xxxxxxxx', {rate: '8', sound: 'string-swell', pool: 'chord', octaves: 2, gate: 0.9, evo: 'build', fill: 'roll', fillEvery: 4, bars: 16, prog: 'i VI', duck: 0.3}, 'Swelling strings in 8ths through two octaves while the build automation climbs: sixteen bars of lift.'],
+    ['Noise swell', 'x...', {rate: '4', sound: 'noise-riser', pool: 'root', gate: 1.5, evo: 'into-drop', bars: 8, prog: 'i', duck: 0}, 'One long swell a beat on the root, the filter opening into the last bars: a riser you can play in key.'],
+    ['Zap fills', '..x...x...x..xx.', {sound: 'laser-zap', pool: 'root5', order: 'up', gate: 0.4, fill: 'bounce', fillEvery: 4, evo: 'build', prog: 'i', reg: 66, duck: 0.4}, 'Laser zaps on the off-beats, bouncing into every fourth bar: build energy without a single chord.'],
+    ['Micro intro', '..x....x..x.....', {sound: 'micro-pluck', pool: 'root', gate: 0.3, evo: 'slow-open', cut: 0.35, prog: 'i', reg: 66, duck: 0.3}, 'Three tiny plucks a bar, dark at first: the DJ-friendly intro version of a riff.'],
+    ['Reese riff', 'x-..x-.x..x-..x.', {sound: 'reese', pool: 'root5', order: 'seq', seq: [0, 0, 1, 0, 2, 0], gate: 0.9, prog: 'i', reg: 64, duck: 0.5, swing: 56}, 'A detuned Reese held across two steps at a time: the dark, moving drop riff of bass-house-leaning tech house.'],
+  ]);
+  group('melodic-techno', 'Breaks & builds', {sound: 'shimmer', pool: 'chord9', order: 'up', octaves: 2, gate: 1.5, reg: 62, bpm: 124, key: 'A', prog: 'i VI III VII', reset: 'chord', swing: 50, duck: 0.15}, [
+    ['Drone intro', 'x...', {rate: '4', sound: 'drone', pool: 'root5', octaves: 1, evo: 'slow-open', prog: 'i', cut: 0.3}, 'A low drone on the root and fifth, one note a beat, the filter opening over the phrase: how a melodic techno set begins.'],
+    ['Shimmer break', 'x...x.x.', {rate: '8'}, 'Shimmering partials over the four-chord journey, two octaves of 9ths: the breakdown that floats.'],
+    ['Glass pad journey', 'xxxx', {rate: '4', sound: 'glass-pad', pool: 'chord', octaves: 1, gate: 1.4}, 'FM bells blooming into pads, a chord tone each beat: the long, cold breakdown.'],
+    ['Drone build', 'xxxx', {rate: '4', sound: 'drone', pool: 'root', octaves: 1, gate: 1.2, evo: 'build', bars: 16, prog: 'i', fill: 'roll', fillEvery: 4}, 'One note, one drone, sixteen bars of filter, gate and density climbing: tension with no melody at all.'],
+  ]);
+  group('progressive', 'Breaks & builds', {sound: 'string-pluck', pool: 'chord9', order: 'up', octaves: 2, gate: 0.5, reg: 64, bpm: 122, key: 'D', prog: 'i VI III VII', reset: 'chord', delay: 0.3}, [
+    ['Harp intro', 'x..x..x.x..x..x.', {evo: 'slow-open', cut: 0.4}, 'A bright harp pluck in a 3+3+2 rhythm, opening slowly: the first sixteen bars of a progressive track.'],
+    ['Pad swell break', 'x.x.', {rate: '4', sound: 'warm-pad', octaves: 1, gate: 1.5, evo: 'breathe'}, 'Warm pad chords in half notes, breathing every four bars: the breakdown bed under a vocal.'],
+  ]);
+  group('trance', 'Breaks & builds', {sound: 'trance-lead', pool: 'chord', order: 'up', octaves: 2, gate: 0.55, reg: 64, bpm: 138, key: 'A', prog: 'i VI III VII', reset: 'chord', swing: 50}, [
+    ['Euphoric gate', 'xxxxxxxxxxxxxxxx', {evo: 'none'}, 'The euphoric lead gated into 16ths through the anthem progression: the moment the drop lands.'],
+    ['String breakdown', 'xxxx', {rate: '4', sound: 'string-swell', octaves: 1, gate: 1.5, duck: 0}, 'Swelling strings, a chord tone a beat: the breakdown before the lead comes in.'],
+  ]);
+  group('hard-techno', 'Breaks & builds', {sound: 'hoover-long', pool: 'chord', order: 'up', octaves: 1, gate: 0.6, reg: 64, bpm: 150, key: 'F#', prog: 'i VI VII v', reset: 'chord', swing: 50, hp: 220}, [
+    ['Hoover anthem', 'x.xx.x.xx.xx.x.x', {evo: 'none'}, 'The 90s hoover, held and scooping, in a pushing rhythm: drops that start riots.'],
+    ['Hoover rise', 'xxxxxxxxxxxxxxxx', {evo: 'build', fill: 'roll', fillEvery: 4, bars: 16, gate: 0.45}, 'Every 16th on the hoover while the build automation climbs: sixteen bars of pressure.'],
+  ]);
+  group('nu-disco', 'Funk & intros', {sound: 'clav', pool: 'chord', order: 'up', octaves: 1, gate: 0.4, reg: 62, bpm: 118, key: 'E', prog: 'i VII VI VII', reset: 'chord', swing: 54}, [
+    ['Clav funk', 'x.xx.x.xx.x..x.x', {}, 'A funk clav chopping through the chords: the disco rhythm section in one part.'],
+    ['Mono lead hook', 'x.x.xx.x', {rate: '8', sound: 'mono-lead', pool: 'scale', order: 'seq', seq: [0, 2, 4, 2, 6, 4], gate: 0.7, reg: 62, prog: 'i VII VI VII', follow: false}, 'A singing analogue mono lead playing a written hook over the progression.'],
+  ]);
+  group('deep', 'Intros & breaks', {sound: 'bell-tick', pool: 'chord9', order: 'up', octaves: 1, gate: 0.5, reg: 66, bpm: 120, key: 'C', scale: 'dorian', prog: 'i9 iv9', reset: 'chord', swing: 56}, [
+    ['Bell intro', '..x...x...x..x..', {evo: 'slow-open', cut: 0.4}, 'Glinting bell ticks on the off-beats, opening slowly: the intro before the Rhodes arrives.'],
+    ['Gospel break', 'C...............', {sound: 'organ-sustain', pool: 'chord', gate: 1.5, prog: 'i7 iv9 VII7 III7'}, 'A held organ chord a bar through a soulful turnaround: the deep house break.'],
+  ]);
+  group('afro', 'Grooves & intros', {sound: 'wood-knock', pool: 'penta', order: 'seq', octaves: 1, gate: 0.5, reg: 64, bpm: 121, key: 'G', swing: 55, reset: 'bar'}, [
+    ['Wood knock groove', 'x..x..x...x.x...', {seq: [0, 2, 1, 3, 2]}, 'Tuned woodblocks on the son clave: a percussion part and a melody at once.'],
+    ['Choir lift', 'x.......x.......', {sound: 'choir', pool: 'chord9', order: 'up', gate: 1.5, prog: 'i7 iv7'}, 'A slow choir over the Afro groove, two notes a bar: the spiritual break.'],
+  ]);
+  group('minimal', 'Intros', {sound: 'micro-pluck', pool: 'root5', order: 'seq', octaves: 1, gate: 0.25, reg: 66, bpm: 125, key: 'G', prog: 'i', reset: '2bar', swing: 58, human: 0.4}, [
+    ['Micro plucks', '..x.......x..x.......x....x.....', {seq: [0, 1, 0, 1, 0], evo: 'slow-open', cut: 0.4}, 'Five tiny plucks across two bars, opening slowly: patience, again.'],
   ]);
 
   const BY_ID = Object.fromEntries(PATTERNS.map(p => [p.id, p]));

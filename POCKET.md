@@ -55,4 +55,4 @@ node pocket-src/browser-check.mjs
 
 Pocket embeds Orbit’s theory, bank, composition and synthesis helpers plus its own engine/UI. Chromium checks use a temporary local HTTP server because this managed browser blocks file URLs. Artifacts are written under `/tmp/pocket-qa` by default.
 
-Validation: 20 engine groups, 40 browser checks, 25 Orbit regression checks, and the site link check passed. The exact Euphoric hard arp was tested through both the direct handoff and melody-only MIDI import: 150 BPM, supersaw, and F♯m → D → A → E harmony. All eight foundations rendered finite, non-silent, unclipped mixes. These checks do not establish subjective sound quality or a manual Ableton audition.
+Validation: 20 engine groups, 40 browser checks, 41 Orbit regression checks, and the site link check passed. The exact Euphoric hard arp was tested through both the direct handoff and melody-only MIDI import: 150 BPM, supersaw, and F♯m → D → A → E harmony. All eight foundations rendered finite, non-silent, unclipped mixes. These checks do not establish subjective sound quality or a manual Ableton audition.
