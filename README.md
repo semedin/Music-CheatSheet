@@ -9,7 +9,7 @@ synthesis. There is no server, account, install or package manager.
 
 1. Keep every file in **one folder**. Pages link to each other by file name.
 2. Open **[`index.html`](index.html)**, the home page. It lists every page, the notes and the MIDI packs, with search (<kbd>/</kbd>).
-3. Every page has the same top bar: **Home · Motif Studio · Arps · V2 Studio · Trance · X-Ray · Blueprint · Drums · Rumble · Sound design · Field guides**.
+3. Every page has the same top bar: **Home · Motif Studio · Arps · Pocket · Tech House · V2 Studio · Trance · X-Ray · Blueprint · Drums · Rumble · Sound design · Field guides**.
 
 Use headphones or monitors: several labs work below 150 Hz, where laptop speakers are silent.
 
@@ -19,6 +19,7 @@ Use headphones or monitors: several labs work below 150 Hz, where laptop speaker
 
 | Page | What it is | Notes | Built from |
 |---|---|---|---|
+| [`talk.html`](talk.html) | **Talk, tech house bass and hooks.** A formant bass that says wah, ow and yeah: 14 loops that never touch the kick, a generator in the same grammar, and eight moves that keep one loop alive across a 32-bar drop. Then a mic booth: say three words, get eight chart-style hooks (chopped, pitched, stuttered, thrown) that take turns with the bass. MIDI with bend and CCs, WAV stems, syllables for a Drum Rack. | [TALK.md](TALK.md) | `talk-src/` |
 | [`pocket.html`](pocket.html) | **Pocket, a foundation for your riff.** Send a riff directly from Orbit with its patch and harmony intact. Riff-derived house foundations or root-led rave support, 16-bar development, bass-step edits, MIDI and WAV stems. | [POCKET.md](POCKET.md) | `pocket-src/` |
 | [`orbit.html`](orbit.html) | **Orbit, the arpeggio studio (latest).** Arps, riffs and sequences for 12 genres (49 deep tech house patterns, 154 in all), each tagged intro, build, break or drop and searchable that way ("break material", "good for build"): a note cycle turning against a step pattern, voiced through your key and progression or your own imported chord MIDI. A measured genre fingerprint with fixes, a cycle counter, a generator, 10 evolution lanes exported as CC, 37 sounds (short, medium and long) with Serum 2 and Ableton recipes, Live's Arpeggiator settings, 12 rules as A/Bs, a crate with ZIP export, MIDI and WAV out. Off-the-wall tools too (Turing loops, echo cascades, feels, stacked 4ths, Morse rhythms, riff import, live MIDI keyboard, autopilot) and **Sounds out**: every patch as WAV one-shots, multisamples, chord stabs, seamless loops and stems for Simpler and Sampler. | [ORBIT.md](ORBIT.md) | `arp-src/` |
 | [`fieldwork-v3.html`](fieldwork-v3.html) | **Motif Studio (V3, latest).** Write a two-bar motif, then grow it into an 8- or 16-bar phrase. 69 styles, 120 artist perspectives, 59 preview voices, 19 drum kits; MIDI and WAV export. | [VERSION-3.md](VERSION-3.md) | `v3-src/` |
@@ -103,6 +104,7 @@ folder yet".
 | `trance.html` | `trance-src/` + `material/` | `node trance-src/build.mjs` (`node trance-src/pack.mjs` rebuilds the zip) |
 | `blueprint.html` | `blueprint-src/` + X-Ray's engine from `xray.html` | `node blueprint-src/build.mjs` |
 | `pocket.html` | `pocket-src/` + Orbit theory/MIDI helpers | `node pocket-src/build.mjs` |
+| `talk.html` | `talk-src/` + Orbit theory/MIDI helpers | `node talk-src/build.mjs` |
 | `orbit.html` | `arp-src/` | `node arp-src/build.mjs` |
 | `index.html` + top bar everywhere | `site/` | `node site/build.mjs` |
 
@@ -130,11 +132,12 @@ node rumble-tests.mjs            # rumble lab
 node xray-tests.mjs              # X-Ray analysis engine against known answers
 node blueprint-src/test.mjs      # Blueprint's move detectors against a planted demo and an effect-free control
 node trance-src/test.mjs         # trance room
+node talk-src/test.mjs           # Talk: bass grammar, moves, syllables, pitch, hooks, MIDI
 node pocket-src/test.mjs         # Pocket responses, timing, import/export and session validation
 node arp-src/test.mjs            # Orbit: theory, engine, bank against its genres, generator, export
 ```
 
-`pocket-src/browser-check.mjs` checks Pocket with Playwright and saves QA artifacts under `/tmp/pocket-qa`.
+`pocket-src/browser-check.mjs` checks Pocket with Playwright and saves QA artifacts under `/tmp/pocket-qa`. `talk-src/browser-check.mjs` does the same for Talk (`/tmp/talk-qa`), including offline renders of the mix, each part and all eight hooks.
 
 `v3-src/browser-check.mjs`, `drum-library-src/browser-check.mjs`,
 `sound-design-src/check.mjs`, `trance-src/check.mjs` and `arp-src/browser-check.mjs` (Playwright) drive a real browser and write reports into each `qa/` folder.
@@ -147,14 +150,15 @@ node arp-src/test.mjs            # Orbit: theory, engine, bank against its genre
   links need a connection.
 - **MIDI export** is written byte by byte in JavaScript and downloaded as a `Blob`, so it
   works from `file://`.
-- **Saving.** The V2 Studio, drum studio, Rumble, Sound Design V2, Trance and Orbit keep sessions, notes or
+- **Saving.** The V2 Studio, drum studio, Rumble, Sound Design V2, Trance, Orbit and Talk keep sessions, notes or
   favourites in `localStorage`, and several studios export/import session files. The V1
   guides keep everything in memory only.
 - **Browsers.** Everything works in current Chrome, Edge, Firefox and Safari. Audio starts
-  after the first click or <kbd>space</kbd>. Web MIDI input (`keyboard.html`) needs Chrome or Edge.
+  after the first click or <kbd>space</kbd>. Web MIDI input (`keyboard.html`) needs Chrome or Edge. Talk's microphone needs HTTPS (the GitHub Pages site) or localhost.
 
 ## Release history
 
+- **Talk**: the tech house room. A talking formant bass with 14 loops, a generator and eight phrase moves; a mic booth that cuts your line into syllables and gives eight hook treatments; the bass makes room for the vocal, measured. See [TALK.md](TALK.md).
 - **Orbit 1.2**: 18 more sounds (short hits and plucks, long pads, swells and held leads), length and section tags, a sound browser, every combo measured for intro, build, break or drop with a section-aware fingerprint, section search and sort in the bank, the generator writing for a section, and 25 new break, build and intro patterns.
 - **Orbit 1.1**: Sounds out (WAV one-shots, multisamples, chord stabs, patch pack, seamless loops and stems) and new tools: Turing loops, echo cascades, feels, strum, five more scales, three new pools, Morse rhythms, riff import, live MIDI keyboard, draw on the orbit, autopilot, wild card.
 - **Orbit**: the arpeggio studio, with 129 patterns across 12 genres, a measured genre fingerprint, a generator, chord MIDI import and Serum 2 / Ableton recipes. See [ORBIT.md](ORBIT.md).

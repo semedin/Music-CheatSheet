@@ -294,6 +294,7 @@ const OT = (() => {
       const ch = tr.ch || 0, tn = ascii(tr.name || 'Track');
       const ev = [{tick: 0, order: -3, bytes: [255, 3, ...vlq(tn.length), ...tn]}];
       for (const c of tr.cc || []) ev.push({tick: Math.max(0, Math.round(c.t * ppq)), order: -1, bytes: [176 + ch, c.cc & 127, Math.max(0, Math.min(127, Math.round(c.v)))]});
+      for (const p of tr.pb || []) { const v = Math.max(0, Math.min(16383, Math.round(p.v) + 8192)); ev.push({tick: Math.max(0, Math.round(p.t * ppq)), order: -2, bytes: [224 + ch, v & 127, v >> 7]}); }
       for (const n of tr.notes) {
         const a = Math.max(0, Math.round(n.t * ppq));
         let b = Math.max(a + 1, Math.round((n.t + n.d) * ppq));
@@ -331,6 +332,7 @@ const OT = (() => {
       const end = pos + size;
       let tick = 0, status = 0, name = '';
       const on = new Map(), notes = [], cc = [];
+      let pb = null;
       while (pos < end) {
         if (++events > 300000) throw Error('This MIDI file has too many events.');
         tick += rv();
@@ -347,12 +349,13 @@ const OT = (() => {
           if (type === 144 && d2 > 0) { if (!on.has(key)) on.set(key, []); on.get(key).push({t: tick / ppq, n: d1, v: d2, ch}); }
           else if (type === 128 || type === 144) { const n = on.get(key)?.shift(); if (n && tick / ppq > n.t) notes.push({...n, d: tick / ppq - n.t}); }
           else if (type === 176) cc.push({t: tick / ppq, cc: d1, v: d2, ch});
+          else if (type === 224) (pb ||= []).push({t: tick / ppq, v: d2 * 128 + d1 - 8192, ch});
         }
       }
       pos = end;
       for (const q of on.values()) for (const n of q) if (tick / ppq > n.t) notes.push({...n, d: tick / ppq - n.t});
       notes.sort((a, b) => a.t - b.t || a.n - b.n);
-      tracks.push({name: name || 'Track ' + (tr + 1), beats: tick / ppq, notes, cc, drums: notes.length > 0 && notes.every(n => n.ch === 9)});
+      tracks.push({name: name || 'Track ' + (tr + 1), beats: tick / ppq, notes, cc, ...(pb ? {pb} : {}), drums: notes.length > 0 && notes.every(n => n.ch === 9)});
     }
     return {ppq, bpm, format, tracks};
   }
