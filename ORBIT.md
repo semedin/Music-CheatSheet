@@ -1,9 +1,10 @@
 # Orbit: notes
 
-[`orbit.html`](orbit.html) is the arpeggio studio: arps, riffs and sequences for twelve genres, from deep tech
-house to trance. Pick a key and a progression (or drop in your own chord MIDI), start from one of 154
+[`orbit.html`](orbit.html) is the arpeggio studio: arps, riffs and sequences for fourteen genres, from deep tech
+house and dub techno to trance. Pick a key and a progression (or drop in your own chord MIDI), start from one of 333
 patterns or let the generator write some, hear them on a synthesized sound with drums and a bassline
-under them, check them against the genre's measured fingerprint, and take the MIDI to Ableton.
+under them, check them against the genre's measured fingerprint, turn the idea into a whole song sketch, and take
+the MIDI to Ableton.
 
 Like every Fieldwork page it is one self-contained file: every sound is synthesized in the page, nothing is
 uploaded, and it works offline (Google Fonts fall back to system fonts).
@@ -77,6 +78,67 @@ of the cycle in every other block of 2, 4 or 8 bars.
 - **Autopilot**: while it plays, Orbit moves to its best-fitting variation every 4, 8 or 16 bars. Undo goes back.
 - **Wild card**: lets the generator and the variations reach for all of the above.
 
+## The bank (Orbit 1.3)
+
+333 patterns across fourteen genres, every one an original study of its genre's conventions:
+
+| Genre | Patterns | Groups |
+|---|---|---|
+| Tech house | 85 | Organ riffs, stabs, pedal & answer, polymeter & rolling, bleeps, acid tech, vocal chops, melodic tech house, build tools, breaks & builds, **less is more** (two to four notes a bar), **jackin' & piano**, **bass-led riffs**, **Latin & percussive**, **peak-time tech**, **intros & outros** |
+| Techno | 45 | Hypnotic, **less is more** (three or four notes a bar, drop-ready), **peak-time**, **hypnotic loops** (Turing drift, 9-, 11- and 13-step loops, echo steps), **warehouse**, **breaks & builds** |
+| Melodic techno | 24 | Sequences, more sequences, breaks & builds |
+| Hard techno & neo-rave | 20 | Rave, peak & industrial, breaks & builds |
+| Minimal & rominimal | 17 | Micro-riffs, rominimal, intros |
+| Dub techno (new) | 16 | Chords & echoes, deep pulses, intros & breaks |
+| Detroit techno (new) | 16 | Strings & stabs, machine soul, second-wave minimal, breaks & builds |
+| Acid, progressive, trance, Afro, deep, nu-disco | 16 each | The 1.2 groups plus a group of new ideas each |
+| UK garage & bass house | 14 | Shuffle riffs, more shuffle |
+
+**Dub techno** is a genre of its own: two to five chord hits a bar (often fewer), minor 7ths, 9ths and stacked 4ths,
+long filtered feedback delays, and a fingerprint that allows as few as 1.5 notes a bar. **Detroit techno** covers
+the strings and stabs of the first wave, its futuristic sequences, and the stripped one-pitch loop of the second.
+Each has its own drum groove, bassline and generator grammar.
+
+Techno's fingerprint now allows syncopation up to 100%: a riff that never touches the beat (every note on an
+off-16th) is a core techno move, and the 1.2 range (up to 85%) left it out. The generator's techno grammar also
+reaches for sparse and two-bar shapes and more sounds (wood knock, laser zap, hollow square).
+
+## Song sketch
+
+Turn the combo on stage into a whole track. Three forms:
+
+| Form | Sections | Bars |
+|---|---|---|
+| Club track | intro 16 · build 8 · drop 32 · break 16 · build 8 · drop 2 32 · outro 16 | 128 |
+| Short edit | intro 8 · drop 16 · break 8 · build 8 · drop 2 16 · outro 8 | 64 |
+| Long journey | intro 32 · build 16 · drop 32 · break 32 · build 16 · drop 2 32 · outro 16 | 176 |
+
+Every section is a rewrite of the **same idea**: key, tempo and harmony never change, and only the break changes
+the sound.
+
+| Section | What changes | Parts under it |
+|---|---|---|
+| Intro | Every other note taken out until about three a bar remain (never a note added), no accents, ratchets or octave jumps, chord hits as single notes, on the tonic, at most three pitches (if a written riff still has more, its rhythm on root, fifth and octave), filter dark and slowly opening | drums |
+| Build | The whole riff with "Build to the drop" automation and a roll into every fourth bar | drums |
+| Drop | The idea as it is (a build or pad automation in the source is switched off) | drums, bass |
+| Break | Long notes on the genre's held sound (warm pad, shimmer, strings, choir, Rhodes…), a quarter or half note at a time, the same harmony | chord pad, no drums |
+| Drop 2 | The drop, now changing one note every four bars, with a gap at the end of every eight | drums, bass |
+| Outro | The intro's thinned riff, dark and still | drums |
+
+If the idea is not drop material (a pad, a break, a slow line), its drops play its notes on a short sound from the
+genre, a short gate and the off-beat riff rhythm, and the page says so.
+
+**Measured, not assumed.** Each rewrite is measured with the same section reading as the bank, and its card says
+whether it reads as the section it was written for. Every bank pattern, run through the club form, gives seven
+sections that all read as written (2,331 of 2,331), and `test.mjs` fails if one stops doing so.
+
+Play the song and the sections play one after another in the browser, each with its own sound, automation and
+parts; the map and the transport follow it. Click a section to put it on stage and edit it (undo goes back).
+**Song MIDI** writes the whole arrangement as one file: the arp on one track with each section's automation as CC
+(cutoff is set at the start of every section), chords only in the break, bass only in the drops, drums everywhere
+but the break, and a marker at every section. The *arp energy* on each section measures the arp alone, not the
+bass and drums under it.
+
 ## Sections: intro, build, break, drop
 
 Every combo, from the bank, the generator or your own edits, is measured for what it is good for:
@@ -115,7 +177,7 @@ Seven numbers measured from the notes, on a still four-bar loop and the unswung 
 | Swing | Swing of the off-16ths (50% straight). Only counted when notes land there. |
 
 Each genre has a range on every axis, set from its conventions and then checked against the bank: every one
-of the 154 patterns sits inside its own genre, for the section it is written for, on all seven axes, and `test.mjs` fails if one drifts out. Fit
+of the 333 patterns sits inside its own genre, for the section it is written for, on all seven axes, and `test.mjs` fails if one drifts out. Fit
 is 100 inside every range and drops with the distance outside. **Fixes** are candidate edits (rotations,
 thinning, Euclidean fills, gate, swing, octaves, order) that are each measured before they are offered, and
 only shown when they raise the fit.
@@ -206,8 +268,8 @@ number that changes measured on both.
 ## Validation
 
 ```
-node arp-src/test.mjs            # 41 engine checks
-node arp-src/browser-check.mjs   # 38 checks in headless Chromium (needs Playwright); writes arp-src/qa/
+node arp-src/test.mjs            # 45 engine checks
+node arp-src/browser-check.mjs   # 43 checks in headless Chromium (needs Playwright); writes arp-src/qa/
 ```
 
 `test.mjs` checks the engine against answers worked out by hand: roman numerals and chord symbols, Camelot
@@ -244,5 +306,9 @@ through the file input, autopilot and its undo, and wild card.
   commercial records.
 - Chord import merges passing notes and melodies on the same track into the chords; pick the chord track.
 - Ableton's Arpeggiator plays every step at one velocity with no rests, so most patterns need the MIDI export.
+- The song sketch is a starting arrangement, not a finished track: it writes the arp and its accompaniment, not
+  the transitions (risers, fills, FX) between sections. Blueprint and Arc cover those.
+- Section reading is a heuristic (density, length, accents, sound, automation). "Reads as a drop" means the rewrite
+  has drop features, not that it will move a dance floor.
 - Bank patterns are original studies of each genre's conventions. They are not transcriptions of anyone's
   record; the artist names describe a direction, not a source.

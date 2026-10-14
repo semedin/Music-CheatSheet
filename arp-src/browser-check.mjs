@@ -22,7 +22,8 @@ const report = {page: 'orbit.html', results: [], errors: []};
 async function run(width, height, label, fn) {
   const page = await browser.newPage({viewport: {width, height}});
   page.on('pageerror', e => report.errors.push(`${label}: ${e.message}`));
-  page.on('console', m => { if (m.type() === 'error') report.errors.push(`${label}: ${m.text()}`); });
+  // Google Fonts are optional (the page falls back to system fonts offline), so a font that cannot load is not an error
+  page.on('console', m => { if (m.type() === 'error' && !/fonts\.(googleapis|gstatic)\.com/.test(m.location()?.url || '')) report.errors.push(`${label}: ${m.text()}`); });
   await page.goto(url);
   await page.waitForFunction(() => window.ORBIT_QA);
   await fn(page);
