@@ -1085,6 +1085,156 @@ const OE = (() => {
     for (let t0 = 0; t0 < bars * 4; t0 += R.harmony.beats) for (const c of R.harmony.chords) if (t0 + c.t < bars * 4) markers.push({t: t0 + c.t, text: c.name});
     return OT.writeMidi(tracks, {bpm: st.bpm, name: st.name, beats: bars * 4, markers: opts.markers === false ? [] : markers.slice(0, 256)});
   }
+  // ---- Song sketch: one idea, rewritten for every section of a track ----
+  // Each section keeps the idea's key, tempo, harmony and (except in the break) its rhythm and sound, and changes
+  // only what that section needs. Every rewrite is then measured with roles(), so the page can show whether it reads
+  // as the section it was written for.
+  const FORMS = {
+    club: {name: 'Club track', text: 'DJ-friendly: sixteen bars to mix in and out, two drops around a break.',
+      sections: [['intro', 16], ['build', 8], ['drop', 32], ['break', 16], ['build', 8], ['drop2', 32], ['outro', 16]]},
+    edit: {name: 'Short edit', text: 'Gets to the point: half the length, the same story.',
+      sections: [['intro', 8], ['drop', 16], ['break', 8], ['build', 8], ['drop2', 16], ['outro', 8]]},
+    journey: {name: 'Long journey', text: 'Melodic and progressive length: a long intro, a long break, slow builds.',
+      sections: [['intro', 32], ['build', 16], ['drop', 32], ['break', 32], ['build', 16], ['drop2', 32], ['outro', 16]]},
+  };
+  const SECTION_KINDS = {
+    intro: {name: 'Intro', role: 'intro', parts: {drums: true, bass: false, chords: false},
+      how: 'About three notes a bar from the same rhythm, on the tonic and at most three pitches, no accents, the filter dark and slowly opening. Drums only, so a DJ can mix over it.'},
+    build: {name: 'Build', role: 'build', parts: {drums: true, bass: false, chords: false},
+      how: 'The full riff with the build automation climbing (filter, gate, density, reverb) and a roll into every fourth bar. No bass: the drop brings it back.'},
+    drop: {name: 'Drop', role: 'drop', parts: {drums: true, bass: true, chords: false},
+      how: 'The idea as it is, with the drums and the bassline under it.'},
+    break: {name: 'Break', role: 'break', parts: {drums: false, bass: false, chords: true},
+      how: 'No drums. The same harmony slowed to long notes on a held sound, with the pad underneath.'},
+    drop2: {name: 'Drop 2', role: 'drop', parts: {drums: true, bass: true, chords: false},
+      how: 'The idea again, now changing one note every four bars and leaving a gap at the end of every eight: the same drop, a little further on.'},
+    outro: {name: 'Outro', role: 'intro', parts: {drums: true, bass: false, chords: false},
+      how: 'The intro\'s thinned riff, dark and still: the last sixteen bars for the next record to come in over.'},
+  };
+  // the held sound each genre's break reaches for
+  const BREAK_SOUND = {'tech-house': 'warm-pad', 'melodic-techno': 'shimmer', progressive: 'warm-pad', trance: 'string-swell', afro: 'choir',
+    deep: 'rhodes', techno: 'glass-pad', acid: 'drone', 'nu-disco': 'string-swell', garage: 'rhodes', 'hard-techno': 'hoover-long', minimal: 'glass-pad',
+    'dub-techno': 'glass-pad', detroit: 'string-swell'};
+  const LONG_OK = new Set(['scale', 'penta', 'chord', 'chord9', 'triad', 'quartal', 'spread', 'cluster']);
+  function songSection(input, kind) {
+    const base = normalize(input), st = JSON.parse(JSON.stringify(base));
+    st.steps = base.steps.map(x => Object.assign({}, x));
+    const K = SECTION_KINDS[kind] || SECTION_KINDS.drop;
+    st.ctx = Object.assign({}, base.ctx, K.parts, {kickOnly: false});
+    // a build or break automation in the source would fight the section's own; the drop is the plain idea
+    const quiet = e => (BUILD_EVOS.has(e) || e === 'pluck-to-pad') ? 'none' : e;
+    // an intro or outro: the same rhythm with every other note taken out until about three a bar remain, no accents,
+    // chord hits as single notes, and only the first three notes of the cycle
+    const thin = () => {
+      st.steps.forEach(x => { x.acc = 0; x.rat = 1; x.oct = 0; x.slide = false; if (x.type === 'chord' || x.type === 'pedal') x.type = 'note'; });
+      const perBar = () => st.steps.filter(x => sounding(x) && x.type !== 'tie').length * 4 / (st.steps.length * RATES[st.rate].beats);
+      for (let pass = 0; pass < 4 && perBar() > 3.5; pass++) {
+        let k = 0;
+        st.steps.forEach(x => { if (sounding(x) && x.type !== 'tie' && k++ % 2 === 1) x.type = 'rest'; });
+      }
+      if (!st.steps.some(sounding)) st.steps[Math.min(2, st.steps.length - 1)].type = 'note';
+      st.steps.forEach((x, i) => { if (x.type === 'tie' && (i === 0 || st.steps[i - 1].type === 'rest')) x.type = 'rest'; });
+      st.octaves = 1; st.follow = false; // one octave, on the tonic: the progression arrives with the drop
+      const size = extend(pool(st, harmony(st).chords[0]).base, 0, 1).length;
+      if (size > 3) st.count = 3;
+      // still more than three pitches (a written riff over the scale): its rhythm on root, fifth and octave
+      if (metrics(render(normalize(st), {bars: 4, evo: false, fills: false, mutate: false})).pitches > 3) {
+        st.pool = 'root5'; st.count = 0;
+        if (st.order === 'seq') st.seq = st.seq.map(v => mod(v, 3)); else if (st.order === 'turing') st.order = 'up';
+      }
+    };
+    // a drop from an idea that is not drop material (a pad, a break, a slow line): the same notes on a short sound,
+    // a short gate and, if it is very sparse or slow, the off-beat riff rhythm
+    const g = OB.GENRES[base.genre] || OB.GENRES['tech-house'];
+    const baseRoles = roles(base);
+    const toDrop = () => {
+      if (baseRoles.roles.includes('drop')) return false;
+      const snd = OB.SOUNDS_BY_ID[st.sound] || {};
+      if (snd.len === 'long' || (snd.energy ?? 0.5) < 0.5) {
+        const chords = st.steps.some(x => x.type === 'chord');
+        const pick = g.gen.sounds.find(id => OB.SOUNDS_BY_ID[id] && OB.SOUNDS_BY_ID[id].roles.includes('drop') && OB.SOUNDS_BY_ID[id].len !== 'long' && !(chords && NO_CHORDS.has(id))) || 'tech-pluck';
+        st.sound = pick; const fx = OB.SOUNDS_BY_ID[pick].fx; if (fx) Object.assign(st, fx);
+      }
+      const perBar = st.steps.filter(sounding).length * 4 / (st.steps.length * RATES[st.rate].beats);
+      if (RATES[st.rate].beats > 0.25 || perBar < 4) { st.rate = '16'; st.steps = parseSteps('..X..x.x..X..x.x'); }
+      st.gate = Math.min(st.gate, 0.4); st.duck = Math.max(st.duck, 0.4);
+      if (!st.steps.some(x => x.acc)) st.steps.forEach((x, i) => { if (sounding(x) && i % 4 === 2) x.acc = 1; });
+      return true;
+    };
+    let rewritten = false;
+    if (kind === 'drop') { st.evo = quiet(base.evo); rewritten = toDrop(); }
+    else if (kind === 'drop2') {
+      rewritten = toDrop();
+      st.evo = quiet(base.evo); st.mutate = base.mutate || 4;
+      st.fill = ['drop', 'answer', 'stutter'].includes(base.fill) ? base.fill : 'drop'; st.fillEvery = 8;
+    } else if (kind === 'intro' || kind === 'outro') {
+      thin(); st.fill = 'none'; st.echo = 0; st.mutate = 0;
+      st.cut = Math.min(base.cut, kind === 'intro' ? 0.35 : 0.3);
+      st.evo = kind === 'intro' ? 'slow-open' : 'none';
+      st.reverb = Math.min(0.6, base.reverb + 0.1);
+    } else if (kind === 'build') {
+      st.evo = 'build'; st.fill = 'roll'; st.fillEvery = 4; st.mutate = 0;
+    } else if (kind === 'break') {
+      if (!LONG_OK.has(base.pool)) { st.pool = 'chord9'; if (st.order === 'seq' || st.order === 'turing') st.order = 'up'; }
+      const dense = base.steps.filter(sounding).length / Math.max(1, base.steps.length * RATES[base.rate].beats / 4) >= 6;
+      st.rate = '4'; st.steps = parseSteps(dense ? 'xxxx' : 'x.x.'); st.gate = 1.4;
+      st.sound = BREAK_SOUND[base.genre] || 'warm-pad';
+      const snd = OB.SOUNDS_BY_ID[st.sound]; if (snd && snd.fx) Object.assign(st, snd.fx);
+      st.evo = 'breathe'; st.fill = 'none'; st.mutate = 0; st.echo = 0; st.duck = 0.1; st.strum = 0;
+      st.reg = Math.max(base.reg, 60);
+    }
+    st.name = (base.name || 'Idea').replace(/ · .*$/, '') + ' · ' + K.name;
+    const out = normalize(st);
+    if (rewritten) out.songNote = 'This idea reads as ' + ROLES[baseRoles.primary].name.toLowerCase() + ' material, so the drop plays its notes on a short sound and a riff rhythm.';
+    return out;
+  }
+  function song(input, formId = 'club') {
+    const base = normalize(input), form = FORMS[formId] || FORMS.club;
+    let at = 0;
+    const sections = form.sections.map(([kind, bars], i) => {
+      const st = songSection(base, kind);
+      st.bars = bars;
+      const K = SECTION_KINDS[kind];
+      const m = metrics(render(st, {bars: 4, evo: false, fills: false, mutate: false}));
+      const r = roles(st, m);
+      const sec = {i, kind, name: K.name, role: K.role, how: K.how, note: st.songNote || '', bars, start: at, st, parts: K.parts, measured: r.primary, roles: r.roles, energy: r.energy, reads: r.roles.includes(K.role)};
+      at += bars * 4;
+      return sec;
+    });
+    return {form: formId, name: form.name, text: form.text, bpm: base.bpm, beats: at, bars: at / 4, sections};
+  }
+  // The whole song as one MIDI file: the arp on one track with each section's automation as CC, the parts each
+  // section uses on theirs, and a marker at every section.
+  function exportSong(sg, opts = {}) {
+    const parts = opts.parts || {arp: true, bass: true, drums: true, chords: true};
+    const arp = {name: 'Orbit Arp', ch: 0, notes: [], cc: []}, chords = {name: 'Chords', ch: 1, notes: []}, bass = {name: 'Bass', ch: 3, notes: []}, drums = {name: 'Drums', ch: 9, notes: []};
+    const tidy = (es, off) => es.map(e => ({t: e.t + off, d: e.d, n: e.n, v: e.v}));
+    const markers = [];
+    for (const sec of sg.sections) {
+      const st = sec.st, beats = sec.bars * 4, off = sec.start, R = render(st, {bars: sec.bars});
+      markers.push({t: off, text: `${sec.name} (${sec.bars} bars)`});
+      arp.notes.push(...tidy(R.events, off).filter(n => n.t < off + beats - EPS).map(n => Object.assign(n, {d: Math.min(n.d, off + beats - n.t)})));
+      // cutoff always, so each section's filter state is set when it starts; the other lanes when the section moves them
+      const e = EVOS[st.evo] || {};
+      const lanes = [['cut', 74], ['res', 71], ['dec', 75], ['send', 91]].filter(([k]) => k === 'cut' || e[k]);
+      for (let t = 0; t < beats; t += st.evo === 'none' ? beats : 0.25) {
+        const v = evoAt(st, t, beats);
+        for (const [k, cc] of lanes) arp.cc.push({t: off + t, cc, v: k === 'send' ? clamp01(st.reverb + v.send) * 127 : v[k] * 127});
+      }
+      if (sec.parts.chords) chords.notes.push(...tidy(renderChords(st, R.harmony, sec.bars), off).map(n => Object.assign(n, {n: n.n + 12})));
+      if (sec.parts.bass) bass.notes.push(...tidy(renderBass(st, R.harmony, sec.bars), off));
+      if (sec.parts.drums) drums.notes.push(...tidy(renderDrums(st, sec.bars), off));
+    }
+    const lastv = {};
+    arp.cc = arp.cc.filter(c => { const val = Math.round(c.v); if (lastv[c.cc] === val) return false; lastv[c.cc] = val; return true; });
+    const tracks = [];
+    if (parts.arp) tracks.push(arp);
+    if (parts.chords && chords.notes.length) tracks.push(chords);
+    if (parts.bass && bass.notes.length) tracks.push(bass);
+    if (parts.drums && drums.notes.length) tracks.push(drums);
+    return OT.writeMidi(tracks, {bpm: sg.bpm, name: opts.name || 'Orbit song', beats: sg.beats, markers});
+  }
+
   function fileStem(st) {
     const k = OT.asciiName(OT.pcName(st.key, st.key, st.scale)).replace('#', 's') + (OT.SCALES[st.scale].minor ? 'm' : '');
     const nm = String(st.name || 'arp').normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 48) || 'arp';
@@ -1198,7 +1348,7 @@ const OE = (() => {
   }
 
   return {RATES, POOLS, ORDERS, EVOS, FILLS, AXES, DEFAULT, DELAY_TIMES, DRUM_NOTES, parseSteps, stepsString, stepChar, sounding, euclid, normalize, harmony,
-    ROLES, roles, roleTarget, sectionFit, parseQuery, ROLE_WORDS, LEN_WORDS,
+    ROLES, roles, roleTarget, sectionFit, parseQuery, ROLE_WORDS, LEN_WORDS, FORMS, SECTION_KINDS, BREAK_SOUND, songSection, song, exportSong,
     pool, extend, orderSeq, render, FEELS, ECHO_SHIFTS, ladder, scaleStep, morse, riffFromNotes, writeOut, feelShift, diatonicChords, renderBass, renderDrums, renderChords, renderArpInput, metrics, fit, cycle, cycleText, analyse, rotate,
     suggestions, generate, find, vary, centrality, liveArp, delayTable, exportMidi, fileStem, pack, unpack, describe, evoAt, chordIndexAt, weight, signature};
 })();

@@ -326,34 +326,49 @@ const OA = (() => {
 
   // ---- the live player: a look-ahead scheduler over a looping phrase
   function player(ctx, engine) {
-    let ph = null, playing = false, timer = null, anchorTime = 0, anchorBeat = 0, cursor = 0, spb = 0.5;
+    let ph = null, playing = false, timer = null, anchorTime = 0, anchorBeat = 0, cursor = 0, spb = 0.5, song = null, current = null;
     const AHEAD = 0.14;
     const flashes = [];
     let lastSend = null;
     const beatAt = time => anchorBeat + (time - anchorTime) / spb;
     const timeAt = beat => anchorTime + (beat - anchorBeat) * spb;
     const lower = (arr, t) => { let a = 0, b = arr.length; while (a < b) { const m = (a + b) >> 1; if (arr[m].t < t - 1e-9) a = m + 1; else b = m; } return a; };
+    // every event of phrase p with a position in [p0, p1), placed at beat off + position
+    function emit(p, p0, p1, off) {
+      const sound = OB.SOUNDS_BY_ID[p.st.sound];
+      for (const [list, fn] of [[p.arp, 'note'], [p.bass, 'bass'], [p.drums, 'drum'], [p.chords, 'pad']]) {
+        if (fn === 'bass' && !p.st.ctx.bass) continue;
+        if (fn === 'pad' && !p.st.ctx.chords) continue;
+        if (fn === 'drum' && !p.st.ctx.drums && !p.st.ctx.kickOnly) continue;
+        for (let i = lower(list, p0); i < list.length && list[i].t < p1 - 1e-9; i++) {
+          const e = list[i], when = Math.max(ctx.currentTime + 0.002, timeAt(off + e.t));
+          if (fn === 'note') {
+            if (p.st.mute && p.st.mute.arp) continue;
+            engine.note(e, when, sound);
+            if (!e.echo) flashes.push({time: when, e, abs: off + e.t});
+            if (e.mod && Math.abs((e.mod.send || 0) - (lastSend ?? -9)) > 0.02) { engine.sendAt(when, e.mod.send || 0); lastSend = e.mod.send || 0; }
+          } else engine[fn](e, when);
+        }
+      }
+    }
     function scheduleRange(b0, b1) {
-      const L = ph.beats;
       let b = b0;
+      if (song) {
+        // song mode: the sections play one after another, each its own phrase, and the whole song loops
+        while (b < b1 - 1e-9) {
+          const iter = Math.floor(b / song.beats + 1e-9), lb = b - iter * song.beats;
+          const sec = song.list.find(x => lb >= x.start - 1e-9 && lb < x.start + x.beats - 1e-9) || song.list[song.list.length - 1];
+          const base = iter * song.beats + sec.start, end = Math.min(b1, base + sec.beats);
+          if (current !== sec) { current = sec; ph = sec.ph; engine.set(ph.st, OB.SOUNDS_BY_ID[ph.st.sound]); lastSend = null; }
+          emit(sec.ph, b - base, end - base, base);
+          b = end;
+        }
+        return;
+      }
+      const L = ph.beats;
       while (b < b1 - 1e-9) {
         const iter = Math.floor(b / L + 1e-9), off = iter * L, end = Math.min(b1, off + L);
-        const p0 = b - off, p1 = end - off;
-        const sound = OB.SOUNDS_BY_ID[ph.st.sound];
-        for (const [list, fn] of [[ph.arp, 'note'], [ph.bass, 'bass'], [ph.drums, 'drum'], [ph.chords, 'pad']]) {
-          if (fn === 'bass' && !ph.st.ctx.bass) continue;
-          if (fn === 'pad' && !ph.st.ctx.chords) continue;
-          if (fn === 'drum' && !ph.st.ctx.drums && !ph.st.ctx.kickOnly) continue;
-          for (let i = lower(list, p0); i < list.length && list[i].t < p1 - 1e-9; i++) {
-            const e = list[i], when = Math.max(ctx.currentTime + 0.002, timeAt(off + e.t));
-            if (fn === 'note') {
-              if (ph.st.mute && ph.st.mute.arp) continue;
-              engine.note(e, when, sound);
-              if (!e.echo) flashes.push({time: when, e, abs: off + e.t});
-              if (e.mod && Math.abs((e.mod.send || 0) - (lastSend ?? -9)) > 0.02) { engine.sendAt(when, e.mod.send || 0); lastSend = e.mod.send || 0; }
-            } else engine[fn](e, when);
-          }
-        }
+        emit(ph, b - off, end - off, off);
         b = end;
       }
     }
@@ -367,7 +382,15 @@ const OA = (() => {
       get playing() { return playing; },
       get phrase() { return ph; },
       flashes,
+      get song() { return song; },
+      // play a list of sections [{ph, start, beats}] in order, from beat 0; load() leaves song mode
+      playSong(list) {
+        song = {list, beats: list.reduce((a, x) => Math.max(a, x.start + x.beats), 0)}; current = null;
+        ph = list[0].ph; spb = 60 / ph.st.bpm; engine.set(ph.st, OB.SOUNDS_BY_ID[ph.st.sound]);
+        this.start(0);
+      },
       load(p) {
+        song = null; current = null;
         const prevBpm = ph ? ph.st.bpm : null;
         if (playing && prevBpm && prevBpm !== p.st.bpm) { const now = ctx.currentTime, b = beatAt(now); anchorTime = now; anchorBeat = b; }
         ph = p; spb = 60 / p.st.bpm; engine.set(p.st, OB.SOUNDS_BY_ID[p.st.sound]);
@@ -379,7 +402,7 @@ const OA = (() => {
         anchorTime = ctx.currentTime + 0.06; anchorBeat = atBeat; cursor = atBeat; lastSend = null;
         clearInterval(timer); timer = setInterval(tick, 25); tick();
       },
-      stop() { playing = false; clearInterval(timer); flashes.length = 0; },
+      stop() { playing = false; song = null; current = null; clearInterval(timer); flashes.length = 0; },
       beat() { return playing ? beatAt(ctx.currentTime) : null; },
       // jump to the start of the next bar (for A/B switching in time)
       nextBar() { const b = beatAt(ctx.currentTime); return Math.ceil(b / 4) * 4; },

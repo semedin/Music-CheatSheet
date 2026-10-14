@@ -384,4 +384,61 @@ check('Generator by section: eight drop, build, break and intro ideas per genre,
   assert(br.filter(x => OB.SOUNDS_BY_ID[x.st.sound].len !== 'short').length >= 5, 'breaks reach for longer sounds');
 });
 
+// ---- Orbit 1.3: the wider bank and the song sketch ----
+check('Bank 1.3: every genre has at least 14 patterns; techno is deep, with sparse drop riffs; dub and Detroit techno are genres', () => {
+  for (const g of Object.keys(OB.GENRES)) assert(OB.PATTERNS.filter(p => p.genre === g).length >= 14, g);
+  assert(OB.GENRES['dub-techno'] && OB.GENRES.detroit, 'the two new genres');
+  const tc = OB.PATTERNS.filter(p => p.genre === 'techno');
+  assert(tc.length >= 40, 'techno ' + tc.length);
+  assert(OB.PATTERNS.filter(p => p.genre === 'tech-house').length >= 80, 'tech house');
+  // "less busy": drop riffs with four notes a bar or fewer
+  const sparse = tc.filter(p => { const st = OE.normalize(OB.stateFor(p)), m = OE.metrics(four(st)); return m.density <= 4 && OE.roles(st, m).roles.includes('drop'); });
+  assert(sparse.length >= 10, 'sparse techno drops: ' + sparse.length);
+  for (const r of ['drop', 'build', 'break', 'intro']) assert(tc.some(p => OE.roles(OB.stateFor(p)).primary === r), 'techno has ' + r + ' material');
+});
+check('Song: every bank pattern becomes a seven-section club track whose every section reads as the section it was written for', () => {
+  const misses = [];
+  for (const p of OB.PATTERNS) {
+    const sg = OE.song(OB.stateFor(p), 'club');
+    assert.equal(sg.bars, 128); assert.equal(sg.sections.length, 7);
+    for (const x of sg.sections) if (!x.reads) misses.push(`${p.id} ${x.kind} reads as ${x.measured}`);
+  }
+  assert.equal(misses.length, 0, misses.slice(0, 10).join('\n'));
+  for (const f of Object.keys(OE.FORMS)) { const sg = OE.song(OB.stateFor(OB.BY_ID['techno-three-hits']), f); assert.equal(sg.beats, OE.FORMS[f].sections.reduce((a, [, b]) => a + b * 4, 0), f); assert(sg.sections.every(x => x.reads), f); }
+});
+check('Song: each rewrite keeps the idea and changes only what its section needs', () => {
+  const base = OE.normalize(OB.stateFor(OB.BY_ID['tech-house-organ-bounce'])), sec = k => OE.songSection(base, k);
+  for (const k of Object.keys(OE.SECTION_KINDS)) { const s = sec(k); assert.equal(s.key, base.key); assert.equal(s.bpm, base.bpm); assert.equal(s.scale, base.scale); assert.equal(s.prog, base.prog); }
+  const d = sec('drop'); assert.equal(OE.stepsString(d.steps), OE.stepsString(base.steps)); assert.equal(d.sound, base.sound); assert.deepEqual(d.seq, base.seq);
+  const i = sec('intro'), mi = OE.metrics(four(i));
+  assert(mi.density <= 3.5 && mi.pitches <= 3 && !i.steps.some(x => x.acc) && i.evo === 'slow-open' && i.follow === false && i.ctx.bass === false && i.ctx.drums === true, JSON.stringify(mi));
+  // the intro is the drop's rhythm with notes taken out, never added
+  i.steps.forEach((x, k) => { if (x.type !== 'rest') assert(base.steps[k].type !== 'rest', 'intro step ' + k); });
+  const b = sec('build'); assert(b.evo === 'build' && b.fill === 'roll' && OE.stepsString(b.steps).replace(/X/g, 'x') === OE.stepsString(base.steps).replace(/X/g, 'x') && !b.ctx.bass);
+  const br = sec('break'); assert(br.ctx.drums === false && br.ctx.bass === false && br.ctx.chords === true && OB.SOUNDS_BY_ID[br.sound].len === 'long' && br.rate === '4');
+  const d2 = sec('drop2'); assert(d2.mutate === 4 && d2.fill === 'drop' && d2.fillEvery === 8 && OE.stepsString(d2.steps) === OE.stepsString(base.steps));
+  // an idea that is not drop material gets a short sound and a riff rhythm for its drop, and says so
+  const pad = OE.song(OB.stateFor(OB.BY_ID['tech-house-pad-breakdown']), 'club'), pd = pad.sections.find(x => x.kind === 'drop');
+  assert(pd.reads && OB.SOUNDS_BY_ID[pd.st.sound].len !== 'long' && /break material/.test(pd.note), pd.note);
+});
+check('Song MIDI: the whole arrangement on four tracks, a marker per section, each part only where its section plays it', () => {
+  const sg = OE.song(OB.stateFor(OB.BY_ID['tech-house-organ-bounce']), 'club'), bytes = OE.exportSong(sg), m = OT.readMidi(bytes);
+  assert(Math.abs(m.bpm - sg.bpm) < 1e-3);
+  const tr = n => m.tracks.find(t => t.name === n);
+  assert(tr('Orbit Arp') && tr('Chords') && tr('Bass') && tr('Drums').drums);
+  let want = 0;
+  for (const x of sg.sections) want += OE.render(x.st, {bars: x.bars}).events.filter(e => e.t < x.bars * 4 - 1e-6).length;
+  assert.equal(tr('Orbit Arp').notes.length, want);
+  const inSec = (n, kind) => sg.sections.filter(x => x.kind === kind).some(x => n.t >= x.start - 1e-6 && n.t < x.start + x.bars * 4 - 1e-6);
+  assert(!tr('Drums').notes.some(n => inSec(n, 'break')), 'no drums in the break');
+  assert(!tr('Bass').notes.some(n => inSec(n, 'intro') || inSec(n, 'build') || inSec(n, 'break') || inSec(n, 'outro')), 'bass only in the drops');
+  assert(tr('Chords').notes.every(n => inSec(n, 'break')), 'the pad only in the break');
+  assert(Math.max(...m.tracks.flatMap(t => t.notes.map(n => n.t + n.d))) <= sg.beats + 1e-6, 'nothing runs past the end');
+  // the arp's cutoff is set at the start of every section, so a dark intro does not leave the drop dark
+  const cut = tr('Orbit Arp').cc.filter(c => c.cc === 74);
+  for (const x of sg.sections) assert(cut.some(c => Math.abs(c.t - x.start) < 1e-6), 'CC74 at ' + x.name);
+  const text = new TextDecoder().decode(bytes);
+  for (const x of sg.sections) assert(text.includes(`${x.name} (${x.bars} bars)`), 'marker ' + x.name);
+});
+
 console.log(`\n${checks} checks passed`);

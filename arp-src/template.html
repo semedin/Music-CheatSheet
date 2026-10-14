@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Orbit — the arpeggio studio</title>
-<meta name="description" content="Write club-grade arpeggios, riffs and sequences for twelve genres, from deep tech house to trance: a key and progression or your own chord MIDI in, a measured genre fingerprint, a generator, Serum 2 and Ableton recipes, and MIDI out.">
+<meta name="description" content="Write club-grade arpeggios, riffs and sequences for fourteen genres, from deep tech house and dub techno to trance: a key and progression or your own chord MIDI in, a measured genre fingerprint, a generator, Serum 2 and Ableton recipes, and MIDI out.">
 <meta name="theme-color" content="#07080c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -238,6 +238,20 @@
   <div class="cands" id="cands"></div>
 </section>
 
+<section class="part wrap" id="song">
+  <div class="head"><h2>Song sketch</h2><p>Turn the combo on stage into a whole track. Orbit rewrites the <b>same idea</b> for every section: a thin, dark intro, a build with the automation climbing, the drop, a beatless break on a held sound, a second drop that changes a note every four bars, an outro. Then it <b>measures each rewrite</b> to check that it reads as that section. Play it through, click a section to put it on stage, or take the whole arrangement to Live as one MIDI file with a marker at every section.</p></div>
+  <div class="songbar panel">
+    <label>Form<select id="songForm"></select></label>
+    <span class="songmeta" id="songMeta"></span>
+    <span class="grow"></span>
+    <button class="btn hot" id="songPlay" type="button" aria-pressed="false">▶ Play the song</button>
+    <button class="btn" id="songMidi" type="button">Song MIDI (.mid)</button>
+  </div>
+  <div class="songmap panel" id="songMap" role="group" aria-label="The song's sections, in order, sized by length: click one to put it on stage"></div>
+  <p class="songnote" id="songNote"></p>
+  <div class="songsecs" id="songSecs"></div>
+</section>
+
 <section class="part wrap" id="crate">
   <div class="head"><h2>The crate</h2><p>Everything you starred, kept in this browser. Export them all at once as a ZIP of MIDI files (arp, chords and the Arpeggiator input for each), with a text file of every setting.</p></div>
   <div class="cratebar panel">
@@ -332,7 +346,7 @@
 </section>
 
 <section class="part wrap" id="genres">
-  <div class="head"><h2>Twelve genres, twelve jobs</h2><p>The same arp means something different in each genre. Here is what it does, how it is measured and what to reach for.</p></div>
+  <div class="head"><h2>Fourteen genres, fourteen jobs</h2><p>The same arp means something different in each genre. Here is what it does, how it is measured and what to reach for.</p></div>
   <div class="gcards" id="gcards"></div>
 </section>
 

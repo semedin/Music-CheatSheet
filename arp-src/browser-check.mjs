@@ -22,7 +22,8 @@ const report = {page: 'orbit.html', results: [], errors: []};
 async function run(width, height, label, fn) {
   const page = await browser.newPage({viewport: {width, height}});
   page.on('pageerror', e => report.errors.push(`${label}: ${e.message}`));
-  page.on('console', m => { if (m.type() === 'error') report.errors.push(`${label}: ${m.text()}`); });
+  // Google Fonts are optional (the page falls back to system fonts offline), so a font that cannot load is not an error
+  page.on('console', m => { if (m.type() === 'error' && !/fonts\.(googleapis|gstatic)\.com/.test(m.location()?.url || '')) report.errors.push(`${label}: ${m.text()}`); });
   await page.goto(url);
   await page.waitForFunction(() => window.ORBIT_QA);
   await fn(page);
@@ -44,7 +45,7 @@ await run(1440, 1000, 'desktop', async page => {
     for (const g of Object.keys(OB.GENRES)) { const p = OB.PATTERNS.find(x => x.genre === g); document.querySelector(`.pitem[data-p="${p.id}"]`)?.click(); await new Promise(r => setTimeout(r, 120)); out.push(ORBIT_QA.S.st.from === p.id && ORBIT_QA.S.M.fit.score === 100); }
     return out;
   });
-  ok('One pattern from each of the 12 genres loads and plays at fit 100', loads.every(Boolean), loads.join(','));
+  ok(`One pattern from each of the ${await page.evaluate(() => Object.keys(OB.GENRES).length)} genres loads and plays at fit 100`, loads.every(Boolean), loads.join(','));
   // generator
   await page.click('#findBtn');
   const cands = await page.evaluate(() => ({n: document.querySelectorAll('.cand').length, fits: ORBIT_QA.S.cands.map(c => c.fit)}));
@@ -62,6 +63,34 @@ await run(1440, 1000, 'desktop', async page => {
     return {name: d.name, tracks: m.tracks.filter(t => t.notes.length).map(t => t.name), arp: m.tracks.find(t => t.name === 'Orbit Arp').notes.length, want: OE.render(ORBIT_QA.S.st, {bars: +document.getElementById('expBars').value}).events.length};
   });
   ok('MIDI export: five tracks, the arp note for note', midi.tracks.length === 5 && midi.arp === midi.want && midi.name.endsWith('.mid'), JSON.stringify(midi));
+  // song sketch: seven sections that read as written, plays section after section, exports one arranged MIDI
+  const song = await page.evaluate(async () => {
+    document.querySelector('.pitem[data-p="tech-house-organ-bounce"]')?.click(); await new Promise(r => setTimeout(r, 200));
+    ORBIT_QA.viewSong();
+    const sg = ORBIT_QA.S.song, out = {secs: document.querySelectorAll('.songsecs .ssec').length, blks: document.querySelectorAll('.songmap .blk').length, reads: sg.sections.every(x => x.reads), bars: sg.bars};
+    document.getElementById('songPlay').click(); await new Promise(r => setTimeout(r, 900));
+    out.playing = !!ORBIT_QA.player.song && ORBIT_QA.player.playing; out.label = document.getElementById('tBar').textContent; out.now = !!document.querySelector('.songmap .blk.now');
+    // two one-bar sections back to back: notes from both must sound, the second one's sound loaded at its boundary
+    const one = x => ({ph: OA.phrase(x.st, OE.render(x.st, {bars: 1})), start: 0, beats: 4, i: x.i});
+    const a = one(sg.sections[2]), b = Object.assign(one(sg.sections[3]), {start: 4});
+    ORBIT_QA.player.playSong([a, b]); ORBIT_QA.S.trail.length = 0;
+    await new Promise(r => setTimeout(r, 1000 * 60 / sg.bpm * 4 * 1.6));
+    out.first = ORBIT_QA.S.trail.filter(f => f.abs < 4).length; out.second = ORBIT_QA.S.trail.filter(f => f.abs >= 4 && f.abs < 8).length;
+    document.getElementById('songPlay').click();
+    out.stopped = !ORBIT_QA.player.playing && document.getElementById('songPlay').getAttribute('aria-pressed') === 'false';
+    document.getElementById('songMidi').click();
+    const d = QA_DL.at(-1), m = OT.readMidi(new Uint8Array(await d.blob.arrayBuffer())), want = OT.readMidi(OE.exportSong(sg));
+    out.midi = {name: d.name, tracks: m.tracks.filter(t => t.notes.length).map(t => t.name), arp: m.tracks.find(t => t.name === 'Orbit Arp').notes.length, want: want.tracks.find(t => t.name === 'Orbit Arp').notes.length,
+      last: Math.max(...m.tracks.flatMap(t => t.notes.map(n => n.t + n.d))), beats: sg.beats};
+    document.querySelector('.ssec[data-si="3"]').click(); await new Promise(r => setTimeout(r, 150));
+    out.loaded = ORBIT_QA.S.st.name.endsWith('· Break') && ORBIT_QA.S.st.sound === OE.BREAK_SOUND['tech-house'];
+    return out;
+  });
+  ok('Song: seven sections drawn, every one reads as the section it was written for', song.secs === 7 && song.blks === 7 && song.reads && song.bars === 128, JSON.stringify(song));
+  ok('Song: plays, the map and transport follow it', song.playing && song.now && /Intro 1\//.test(song.label), song.label);
+  ok('Song: playback moves from one section into the next', song.first > 0 && song.second > 0, `${song.first} then ${song.second}`);
+  ok('Song: MIDI is the whole arrangement, arp note for note, ending inside the song', song.midi.tracks.length === 4 && song.midi.arp === song.midi.want && song.midi.last <= song.midi.beats + 1e-6 && song.midi.last > song.midi.beats - 8 && /_song-club_128bars\.mid$/.test(song.midi.name), JSON.stringify(song.midi));
+  ok('Song: stop works; a section card puts that section on stage', song.stopped && song.loaded);
   // crate + zip
   const zip = await page.evaluate(async () => {
     localStorage.clear(); ORBIT_QA.S.crate.length = 0;
