@@ -58,12 +58,12 @@
     const m = OE.metrics(mR), sf = OE.sectionFit(st, m), f = sf.fit, c = OE.cycle(st);
     S.M = {m, fit: f, role: sf.role, roles: sf.roles, cycle: c, cycleText: OE.cycleText(c, st, S.R.harmony.beats), mR};
     S.ph = OA.phrase(st, S.R);
-    if (player) player.load(S.ph);
+    if (player) { player.load(S.ph); songButton(); }
     setAccent(genre().color);
     viewTransport(); viewStage(); viewGrid(); viewControls(); drawRollLayer(); orbitStatic(); viewBankActive();
     document.querySelectorAll('.srow').forEach(r => r.classList.toggle('on', r.dataset.s === st.sound));
     clearTimeout(slowTimer);
-    slowTimer = setTimeout(() => { viewMeasure(); viewAbleton(); viewSamples(); store.set(KEY_NOW, OE.pack(st)); }, light ? 140 : 0);
+    slowTimer = setTimeout(() => { viewMeasure(); viewAbleton(); viewSamples(); viewSong(); store.set(KEY_NOW, OE.pack(st)); }, light ? 140 : 0);
   }
 
   function viewTransport() {
@@ -665,6 +665,7 @@
     const b = $('play'); b.classList.toggle('on', player.playing); b.querySelector('.ico').textContent = player.playing ? '■' : '▶'; b.querySelector('.lbl').textContent = player.playing ? 'Stop' : 'Play';
     $('fab').textContent = player.playing ? '■' : '▶'; $('fab').classList.toggle('on', player.playing);
     $('heroPlay').innerHTML = player.playing ? '<span class="ico">■</span> Stop' : '<span class="ico">▶</span> Play';
+    songButton();
   }
   let lastCell = -1, lastChord = -1, lowTimer = 0;
   function frame() {
@@ -676,6 +677,7 @@
     while (fl.length && fl[0].time <= now) { S.trail.push(fl.shift()); if (S.trail.length > 64) S.trail.shift(); }
     const pos = player.beat();
     if (pos == null || pos < 0) return;
+    if (player.song) { songFrame(pos); return; }
     const beats = S.R.beats, pb = ((pos % beats) + beats) % beats;
     drawOrbit(pos); paintRoll(pos); scope();
     $('tBar').textContent = `${Math.floor(pb / 4) + 1}.${Math.floor(pb % 4) + 1}`;
@@ -963,6 +965,69 @@
     document.querySelectorAll('.cand').forEach((el, k) => el.classList.toggle('on', k === i));
   }
 
+  // ---------- song sketch ----------
+  function viewSong() {
+    if (!$('songMap')) return;
+    const sg = S.song = OE.song(S.st, $('songForm').value || 'club'), total = sg.beats;
+    const mins = total * 60 / sg.bpm / 60;
+    $('songMeta').textContent = `${sg.bars} bars · ${Math.floor(mins)}:${String(Math.round(mins % 1 * 60)).padStart(2, '0')} at ${sg.bpm} BPM · ${sg.sections.filter(x => x.reads).length}/${sg.sections.length} sections read as written`;
+    $('songMap').innerHTML = sg.sections.map(x => `<button type="button" class="blk" data-si="${x.i}" style="--w:${x.bars};--rc:${OE.ROLES[x.role].color};--e:${Math.round(x.energy * 0.55)}%" title="${esc(x.name)}: ${x.bars} bars, arp energy ${x.energy}"><b>${esc(x.name)}</b><small>${x.bars} bars</small><i></i></button>`).join('') + '<span class="ph" id="songPh"></span>';
+    $('songSecs').innerHTML = sg.sections.map(x => `<button type="button" class="ssec" data-si="${x.i}" style="--rc:${OE.ROLES[x.role].color}"><h4>${esc(x.name)}<span>${x.bars} bars · arp energy ${x.energy}</span></h4><p>${esc(x.how)}</p><span class="rd ${x.reads ? 'ok' : 'no'}">${x.reads ? '✓ reads as ' + OE.ROLES[x.role].name.toLowerCase() : '△ reads as ' + OE.ROLES[x.measured].name.toLowerCase()}</span></button>`).join('');
+    const notes = [...new Set(sg.sections.map(x => x.note).filter(Boolean))];
+    $('songNote').textContent = (FORM_TEXT() + (notes.length ? ' ' + notes.join(' ') : '')).trim();
+  }
+  const FORM_TEXT = () => (OE.FORMS[$('songForm').value] || OE.FORMS.club).text;
+  function songList() {
+    return S.song.sections.map(x => {
+      const st = Object.assign({}, x.st, {mix: S.st.mix});
+      return {ph: OA.phrase(OE.normalize(st), OE.render(st, {bars: x.bars})), start: x.start, beats: x.bars * 4, i: x.i};
+    });
+  }
+  function playSong() {
+    ensureAudio();
+    if (player.song) { togglePlay(false); return; }
+    if (!S.song) viewSong();
+    if (player.playing) player.stop();
+    player.playSong(songList());
+    S.trail.length = 0;
+    const b = $('play'); b.classList.add('on'); b.querySelector('.ico').textContent = '■'; b.querySelector('.lbl').textContent = 'Stop';
+    $('fab').textContent = '■'; $('fab').classList.add('on'); $('heroPlay').innerHTML = '<span class="ico">■</span> Stop';
+    songButton();
+    toast(`Playing the ${S.song.name.toLowerCase()}: ${S.song.bars} bars`);
+  }
+  function songButton() {
+    const on = !!(player && player.song);
+    const b = $('songPlay'); if (!b) return;
+    b.textContent = on ? '■ Stop the song' : '▶ Play the song'; b.setAttribute('aria-pressed', String(on));
+    if (!on) { const ph = $('songPh'); if (ph) ph.style.display = 'none'; document.querySelectorAll('.songmap .blk.now').forEach(x => x.classList.remove('now')); }
+  }
+  let lastSec = -1;
+  function songFrame(pos) {
+    const sg = player.song, total = sg.beats, p = ((pos % total) + total) % total;
+    const sec = sg.list.find(x => p >= x.start && p < x.start + x.beats) || sg.list[0];
+    const map = $('songMap'), ph = $('songPh');
+    if (map && ph) {
+      const blk = map.querySelector(`.blk[data-si="${sec.i}"]`);
+      if (blk) { ph.style.display = 'block'; ph.style.left = (blk.offsetLeft + blk.offsetWidth * (p - sec.start) / sec.beats) + 'px'; }
+      if (sec.i !== lastSec) { lastSec = sec.i; map.querySelectorAll('.blk').forEach(x => x.classList.toggle('now', +x.dataset.si === sec.i)); }
+    }
+    const bar = Math.floor((p - sec.start) / 4) + 1;
+    $('tBar').textContent = `${S.song.sections[sec.i].name} ${bar}/${sec.beats / 4}`;
+  }
+  function songLoad(i) {
+    const x = S.song && S.song.sections[i]; if (!x) return;
+    const st = Object.assign({}, x.st, {ctx: Object.assign({}, S.st.ctx, x.parts), mix: S.st.mix, bars: Math.min(32, x.bars)});
+    load(st);
+    toast(`${x.name} on stage: undo goes back to the idea`);
+  }
+  function songMidi() {
+    if (!S.song) viewSong();
+    const bytes = OE.exportSong(S.song, {name: S.st.name + ' (song)'});
+    download(bytes, OE.fileStem(S.st) + '_song-' + S.song.form + '_' + S.song.bars + 'bars.mid', 'audio/midi');
+    toast('Song MIDI downloaded: one arp track, chords, bass and drums, a marker per section');
+    return bytes;
+  }
+
   // ---------- crate ----------
   function saveCrate() { store.set(KEY_CRATE, S.crate); }
   function toggleSave() {
@@ -1152,6 +1217,7 @@
     opt($('groove'), Object.entries(OB.GROOVES).map(([k, v]) => [k, v.name]));
     opt($('bassPat'), Object.entries(OB.BASS).map(([k, v]) => [k, v.name]));
     opt($('findGenre'), Object.entries(OB.GENRES).map(([k, v]) => [k, v.name]));
+    opt($('songForm'), Object.entries(OE.FORMS).map(([k, v]) => [k, v.name]), 'club');
     opt($('feel'), Object.entries(OE.FEELS).map(([k, v]) => [k, v.name]));
     opt($('echoShift'), Object.entries(OE.ECHO_SHIFTS));
     opt($('tlen'), [2, 3, 4, 5, 6, 7, 8, 10, 12, 16].map(n => [n, n + ' notes']));
@@ -1226,6 +1292,10 @@
       const st = e.target.closest('[data-star]'); if (st) { e.stopPropagation(); const c = S.cands[+st.dataset.star]; const prev = S.st; S.st = OE.normalize(c.st); S.M.fit.score = c.fit; toggleSave(); S.st = prev; refresh(); return; }
       const c = e.target.closest('.cand'); if (c) audition(+c.dataset.c);
     });
+    $('songForm').addEventListener('change', () => { viewSong(); if (player && player.song) { player.playSong(songList()); songButton(); } });
+    $('songPlay').addEventListener('click', playSong);
+    $('songMidi').addEventListener('click', songMidi);
+    for (const id of ['songMap', 'songSecs']) $(id).addEventListener('click', e => { const t = e.target.closest('[data-si]'); if (t) songLoad(+t.dataset.si); });
     $('cands').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('cand')) { e.preventDefault(); audition(+e.target.dataset.c); } });
     $('crateList').addEventListener('click', e => {
       const l = e.target.closest('[data-cload]'), m = e.target.closest('[data-cmidi]'), d = e.target.closest('[data-cdel]');
@@ -1260,7 +1330,7 @@
     let rz = 0;
     addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { drawRollLayer(); drawOrbit(player && player.playing ? player.beat() : null); }); });
     requestAnimationFrame(frame);
-    window.ORBIT_QA = {S, refresh, commit, load, runFind, audition, togglePlay, exportMidi, midiBytes, crateZip, applyImport, importFile, exportWav, toggleSave, midiIn, liveApply, autopilotStep, visiblePatterns, visibleSounds, previewSound, renderOne, stabsZip, multisampleZip, patchPack, loopWav, stemsZip, get orbitNodes() { return O.nodes; }, get player() { return player; }, get engine() { return engine; }};
+    window.ORBIT_QA = {S, refresh, viewSong, playSong, songMidi, songLoad, commit, load, runFind, audition, togglePlay, exportMidi, midiBytes, crateZip, applyImport, importFile, exportWav, toggleSave, midiIn, liveApply, autopilotStep, visiblePatterns, visibleSounds, previewSound, renderOne, stabsZip, multisampleZip, patchPack, loopWav, stemsZip, get orbitNodes() { return O.nodes; }, get player() { return player; }, get engine() { return engine; }};
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

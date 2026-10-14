@@ -17,6 +17,8 @@ const OB = (() => {
     disco: {name: 'Disco', lanes: {k: 'X...X...X...X...', c: '....x.......x...', o: '..x...x...x...x.', h: 'xgxgxgxgxgxgxgxg'}},
     hard: {name: 'Hard techno', lanes: {k: 'X...X...X...X...', c: '....x.......x...', o: '..x...x...x...x.', h: 'gggggggggggggggg'}},
     minimal: {name: 'Minimal', lanes: {k: 'X...X...X...X...', r: '...x..x.....x...', h: '..g...g...g...g.', s: 'g.g.g.g.g.g.g.g.'}},
+    dub: {name: 'Dub techno', lanes: {k: 'X...X...X...X...', h: '..g...x...g...x.', s: '.g.g.g.g.g.g.g.g', r: '...........x....'}},
+    detroit: {name: 'Detroit', lanes: {k: 'X...X...X...X...', c: '....x.......x...', o: '..x...x...x...x.', h: 'xgxgxgxgxgxgxgxg', r: '.......x..x.....'}},
   };
   // ---- basslines: x root, X accent, o octave, 5 fifth, 3 third, 7 seventh, - tie ----
   const BASS = {
@@ -31,6 +33,8 @@ const OB = (() => {
     hard: {name: 'Rumble roll', steps: '.xxx.xxx.xxx.xxx'},
     minimal: {name: 'Sparse', steps: '..x....x..x...x.'},
     sub: {name: 'Sub on the off-beat', steps: '..x---.x..x---.x'},
+    dub: {name: 'Dub sub', steps: '..x---....x---..'},
+    detroit: {name: 'Motor city', steps: '..x.x.o...x.x.o.'},
   };
 
   // ---- genres ----
@@ -48,7 +52,7 @@ const OB = (() => {
       gen: {bpm: [124, 128], keys: [5, 7, 9, 2, 10], scales: {minor: 4, dorian: 2, phrygian: 1}, rates: {'16': 1}, lengths: {16: 6, 32: 2, 12: 1, 6: 1, 5: 1}, shapes: {offbeat: 5, euclid: 3, tresillo: 1, sparse: 1}, hits: [4, 9],
         pools: {scale: 3, chord: 2, root5: 2, root: 1, penta: 2, chord9: 1}, orders: {seq: 5, up: 1, pinky: 1, thumb: 1, updown: 1}, seqLen: [2, 5], octaves: {1: 6, 2: 1}, count: {0: 2, 2: 1, 3: 2},
         advance: {note: 3, step: 1}, reset: {bar: 4, never: 1, '2bar': 1}, gate: [0.22, 0.55], swing: [54, 58], accent: 0.3, oct: 0.1, ratchet: 0.04, chordHit: 0.06, pedal: 0.1,
-        sounds: ['organ-stab', 'tech-pluck', 'rubber-stab', 'perc-bleep', 'chord-stab', 'vox-chop', 'sub-pulse', 'micro-pluck', 'mono-lead'], evos: ['slow-open', 'breathe', 'none', 'gate-pump'], fills: ['none', 'drop', 'ratchet', 'climb'], reg: [58, 68]},
+        sounds: ['organ-stab', 'tech-pluck', 'rubber-stab', 'perc-bleep', 'chord-stab', 'vox-chop', 'sub-pulse', 'micro-pluck', 'mono-lead', 'house-piano', 'marimba', 'wood-knock', 'clav'], evos: ['slow-open', 'breathe', 'none', 'gate-pump'], fills: ['none', 'drop', 'ratchet', 'climb'], reg: [58, 68]},
     },
     'melodic-techno': {
       name: 'Melodic techno', color: '#8F7CFF', bpm: [122, 126], groove: 'melodic', bass: 'melodic', key: 'A', scale: 'minor',
@@ -121,12 +125,12 @@ const OB = (() => {
       job: 'The sequence is the trance state. It barely changes pitch; it changes against the bar (polymeter), against the filter and against the delay. The fewer the notes, the more each move matters.',
       tips: ['One to three notes: root, fifth, a flat second.', 'Odd pattern lengths (3, 5, 7 steps) turn a loop into a slowly rotating shape.', 'Phrygian and minor: the b2 is the darkest note in music.', 'Automate the filter and resonance over 16 bars: that is the arrangement.'],
       refs: 'Charlotte de Witte · Amelie Lens · Adam Beyer · Enrico Sangiuliano · Robert Hood',
-      progs: [{p: 'i', name: 'One chord'}, {p: 'i bII', name: 'Phrygian b2'}, {p: 'i v', name: 'i–v'}, {p: 'i VII', name: 'i–VII'}],
-      target: {density: [2.5, 16], sync: [0, 0.85], kick: [0, 0.42], range: [0, 15], leap: [0, 8.5], length: [0.25, 1.6], swing: [50, 54]},
-      gen: {bpm: [128, 135], keys: [5, 7, 9, 4, 1], scales: {phrygian: 3, minor: 3}, rates: {'16': 6, '8': 1}, lengths: {16: 3, 3: 2, 5: 2, 7: 2, 12: 1}, shapes: {euclid: 4, full: 2, offbeat: 2}, hits: [2, 10],
+      progs: [{p: 'i', name: 'One chord'}, {p: 'i bII', name: 'Phrygian b2'}, {p: 'i v', name: 'i–v'}, {p: 'i VII', name: 'i–VII'}, {p: 'i7', name: 'One m7 (stabs)'}, {p: 'i iv', name: 'i–iv'}],
+      target: {density: [2.5, 16], sync: [0, 1], kick: [0, 0.42], range: [0, 15], leap: [0, 8.5], length: [0.25, 1.6], swing: [50, 54]},
+      gen: {bpm: [128, 135], keys: [5, 7, 9, 4, 1], scales: {phrygian: 3, minor: 3}, rates: {'16': 6, '8': 1}, lengths: {16: 4, 3: 2, 5: 2, 7: 2, 9: 1, 12: 1, 32: 1}, shapes: {euclid: 4, full: 2, offbeat: 3, sparse: 2}, hits: [3, 10],
         pools: {root5: 3, root: 2, scale: 2, chord: 1}, orders: {seq: 3, up: 2, updown: 1}, seqLen: [2, 4], octaves: {1: 4, 2: 1}, count: {0: 2, 2: 2},
         advance: {note: 2, step: 2}, reset: {never: 3, bar: 2}, gate: [0.25, 0.55], swing: [50, 52], accent: 0.25, accentEvery: [3, 5, 0], oct: 0.1, ratchet: 0.03, chordHit: 0, pedal: 0.1,
-        sounds: ['sub-pulse', 'dark-saw', 'perc-bleep', 'chord-stab', 'acid-303', 'micro-pluck'], evos: ['dark-ride', 'breathe', 'slow-open'], fills: ['none', 'drop', 'stutter'], reg: [52, 64]},
+        sounds: ['sub-pulse', 'dark-saw', 'perc-bleep', 'chord-stab', 'acid-303', 'micro-pluck', 'wood-knock', 'laser-zap', 'hollow-square'], evos: ['dark-ride', 'breathe', 'slow-open', 'none'], fills: ['none', 'drop', 'stutter'], reg: [56, 64]},
     },
     acid: {
       name: 'Acid', color: '#FFE14D', bpm: [125, 135], groove: 'techno', bass: 'offbeat', key: 'A', scale: 'minor',
@@ -192,6 +196,32 @@ const OB = (() => {
         pools: {root: 2, root5: 2, penta: 2, scale: 1}, orders: {seq: 3, up: 1}, seqLen: [2, 4], octaves: {1: 1}, count: {0: 1, 2: 1},
         advance: {note: 2, step: 1}, reset: {'2bar': 3, never: 1}, gate: [0.2, 0.45], swing: [55, 60], accent: 0.3, oct: 0.08, ratchet: 0.06, chordHit: 0, pedal: 0.1,
         sounds: ['perc-bleep', 'rubber-stab', 'sub-pulse', 'marimba', 'micro-pluck', 'wood-knock'], evos: ['none', 'breathe'], fills: ['none', 'drop'], reg: [58, 68]},
+    },
+    'dub-techno': {
+      name: 'Dub techno', color: '#6FA8A0', bpm: [118, 126], groove: 'dub', bass: 'dub', key: 'C', scale: 'minor',
+      blurb: 'One minor chord, hit rarely, thrown into a delay that never quite stops. The echo is the arrangement.',
+      job: 'The "arp" is a chord stab and its echoes. Two to five hits a bar, often fewer, each one feeding a long, filtered feedback delay and a big reverb, so the space between the hits fills with the chord\'s own reflections. What changes over ten minutes is the filter, the feedback and the reverb, not the notes.',
+      tips: ['Fewer hits than you think: two or three a bar, never on the kick.', 'Minor 7th, minor 9th and stacked 4ths: chords with no strong pull, so they can repeat forever.', 'Feedback 55–70% on a dotted-8th delay, filtered: the echoes are the rhythm section.', 'Automate the cutoff and the delay send over 32 bars. That is the whole arrangement.'],
+      refs: 'Basic Channel · Maurizio · DeepChord · Echospace · Deadbeat · Fluxion',
+      progs: [{p: 'i7', name: 'One m7 (the norm)'}, {p: 'i9', name: 'One m9'}, {p: 'i7 iv7', name: 'i7–iv7'}, {p: 'i7 VII', name: 'i7–VII'}, {p: 'i9 VI', name: 'i9–VI'}],
+      target: {density: [1.5, 7], sync: [0.3, 1], kick: [0, 0.4], range: [0, 19], leap: [0, 9], length: [0.3, 3], swing: [50, 56]},
+      gen: {bpm: [118, 126], keys: [0, 5, 7, 9, 2], scales: {minor: 4, dorian: 2}, rates: {'16': 4, '8': 1}, lengths: {16: 5, 32: 2, 12: 1}, shapes: {sparse: 4, offbeat: 3, euclid: 2}, hits: [2, 5],
+        pools: {chord: 3, chord9: 3, triad: 1}, orders: {up: 2, updown: 1, seq: 1}, seqLen: [2, 4], octaves: {1: 4, 2: 1}, count: {0: 1},
+        advance: {note: 3, step: 1}, reset: {chord: 2, never: 1, bar: 1}, gate: [0.3, 0.6], swing: [50, 55], accent: 0.15, oct: 0.03, ratchet: 0, chordHit: 0.3, pedal: 0,
+        sounds: ['chord-stab', 'glass-pluck', 'rhodes', 'bell-tick', 'string-pluck'], evos: ['breathe', 'slow-open', 'dark-ride', 'none'], fills: ['none', 'drop'], reg: [58, 66]},
+    },
+    detroit: {
+      name: 'Detroit techno', color: '#E0A458', bpm: [126, 134], groove: 'detroit', bass: 'detroit', key: 'F', scale: 'minor',
+      blurb: 'Machine soul: strings and chord stabs over a 909, futuristic sequences, and the stripped-down loop of the second wave.',
+      job: 'The arp carries the feeling. Detroit techno puts chords and melody on top of a hard machine groove: string lines and piano stabs that move through minor progressions, sci-fi sequences in 16ths, or, in the minimal strain, a tiny riff repeated until it becomes a groove of its own.',
+      tips: ['Minor chords that move: i–VI, i–iv–VII–III. Detroit wants a progression, not a single chord.', 'Strings and stabs play the harmony; the 909 plays it hard.', 'Swing a touch (52–55%): it was played on machines by people who loved funk.', 'Or strip it to one riff and a hi-hat: the minimal Detroit loop is as much the style as the strings.'],
+      refs: 'Juan Atkins · Derrick May · Kevin Saunderson · Jeff Mills · Robert Hood · Carl Craig · Underground Resistance',
+      progs: [{p: 'i VI', name: 'i–VI'}, {p: 'i iv VII III', name: 'i–iv–VII–III'}, {p: 'i7 iv7', name: 'i7–iv7'}, {p: 'i VII VI VII', name: 'i–VII–VI–VII'}, {p: 'i', name: 'One chord (minimal)'}],
+      target: {density: [3, 16], sync: [0, 1], kick: [0, 0.45], range: [0, 24], leap: [0, 10], length: [0.3, 2.5], swing: [50, 56]},
+      gen: {bpm: [126, 134], keys: [5, 9, 7, 0, 2], scales: {minor: 4, dorian: 2}, rates: {'16': 5, '8': 1}, lengths: {16: 6, 32: 1, 12: 1}, shapes: {euclid: 3, offbeat: 3, full: 2, tresillo: 2, sparse: 1}, hits: [4, 12],
+        pools: {chord: 3, chord9: 2, triad: 2, root5: 1, penta: 1}, orders: {up: 3, updown: 2, seq: 2, converge: 1}, seqLen: [3, 6], octaves: {1: 3, 2: 2}, count: {0: 3, 3: 1},
+        advance: {note: 4, step: 1}, reset: {chord: 3, bar: 1, never: 1}, gate: [0.3, 0.7], swing: [51, 55], accent: 0.2, oct: 0.06, ratchet: 0.02, chordHit: 0.12, pedal: 0.04,
+        sounds: ['chord-stab', 'string-pluck', 'hollow-square', 'house-piano', 'rhodes', 'perc-bleep', 'dark-saw', 'glass-pluck'], evos: ['slow-open', 'breathe', 'none', 'pluck-to-pad'], fills: ['none', 'climb', 'drop'], reg: [60, 68]},
     },
   };
 
@@ -439,6 +469,254 @@ const OB = (() => {
   ]);
   group('minimal', 'Intros', {sound: 'micro-pluck', pool: 'root5', order: 'seq', octaves: 1, gate: 0.25, reg: 66, bpm: 125, key: 'G', prog: 'i', reset: '2bar', swing: 58, human: 0.4}, [
     ['Micro plucks', '..x.......x..x.......x....x.....', {seq: [0, 1, 0, 1, 0], evo: 'slow-open', cut: 0.4}, 'Five tiny plucks across two bars, opening slowly: patience, again.'],
+  ]);
+
+  // ===== ORBIT 1.3: TECHNO, IN DEPTH =====
+  const TC = 'techno';
+  group(TC, 'Less is more', {sound: 'perc-bleep', pool: 'root5', order: 'seq', octaves: 1, gate: 0.3, reg: 62, bpm: 130, key: 'F', scale: 'phrygian', prog: 'i', reset: 'never', swing: 50, evo: 'dark-ride', bars: 16}, [
+    ['Three hits', '..x...x.....x...', {seq: [0, 0, 1]}, 'Three notes a bar, none on the kick: about the least a riff can be and still be a riff. The fifth on beat four is the only melody.'],
+    ['Late pulse', '...x...x...x...x', {pool: 'root', order: 'up', sound: 'sub-pulse', reg: 60}, 'One pitch on the last 16th of every beat, so each note leans into the next kick. Four notes, all push.'],
+    ['Answer only', '..........x.x..x', {seq: [0, 1, 0], sound: 'micro-pluck', reg: 64}, 'Nothing for the first half of the bar, then three notes answer the kick. The silence before them is the hook.'],
+    ['Late threes', '..x', {pool: 'root5', order: 'up', sound: 'perc-bleep'}, 'A three-step loop that starts on the third 16th: it meets the kick only now and then and drifts around it the rest of the time.'],
+    ['Knock riff', '.x....x..x....x.', {sound: 'wood-knock', seq: [0, 1, 0, 0], reg: 64}, 'Four tuned knocks placed like a rimshot pattern: a melody you hear as percussion until the filter opens.'],
+    ['Half-bar loop', '..x..x..', {seq: [0, 1], sound: 'micro-pluck', reg: 64, reset: 'bar'}, 'An eight-step loop played twice a bar: root on the "and", fifth on the "a". Two notes, endless.'],
+    ['Muted chord', '...c......c...c.', {sound: 'chord-stab', pool: 'chord', order: 'up', prog: 'i7', scale: 'minor', gate: 0.27, reg: 62, evo: 'breathe', reverb: 0.25}, 'Three dry, muted minor-7 hits: the chord as a percussion part, not as harmony.'],
+    ['Flat-two nudge', '..x.....x.x...x.', {pool: 'scale', seq: [0, 1, 0, 0], sound: 'dark-saw', reg: 60}, 'Four notes, one of them the flat second. Once a bar the riff leans a semitone up and falls back: the menace is that small.'],
+    ['Sub dot', '..x.......x..x..', {pool: 'root', order: 'up', sound: 'sub-pulse', reg: 60, gate: 0.4}, 'Three sub-heavy dots that never move in pitch. Turn the filter and it sounds like a different riff every eight bars.'],
+  ]);
+  group(TC, 'Peak-time', {sound: 'dark-saw', pool: 'root5', order: 'seq', octaves: 1, gate: 0.3, reg: 60, bpm: 132, key: 'G', scale: 'minor', prog: 'i', reset: 'bar', swing: 50, evo: 'breathe'}, [
+    ['Peak stab riff', '..X..x.x..X..x..', {seq: [0, 0, 1, 0, 2]}, 'An accented off-beat, two pickups and an octave flick: the big-room techno riff that a whole main room can clap to.'],
+    ['Siren pulse', '.xxx.xxx.xxx.xxx', {pool: 'scale', seq: [0, 1, 0, 2], sound: 'hollow-square', reg: 62, evo: 'gate-pump'}, 'Twelve 16ths a bar wobbling between the root and the next two scale notes: a siren pumped by the sidechain.'],
+    ['Off-beat bounce', '..x.o.x...x.o.x.', {pool: 'root', order: 'up', sound: 'dark-saw'}, 'The off-beat root with an octave flick after it: six notes that bounce the whole room on beat two and four.'],
+    ['Stab and gap', '..C...c...C..c..', {sound: 'chord-stab', pool: 'chord', order: 'up', prog: 'i', gate: 0.25, reg: 62}, 'Four minor stabs, the last one pulled a 16th early. The gap after it is where the crowd shouts.'],
+    ['Rubber drop', '..x..x.x..x..x.x', {sound: 'rubber-stab', seq: [2, 0, 0, 1, 0, 0], reg: 62}, 'A rubbery square that starts each bar an octave up and falls home: the drop is in the pitch, not the rhythm.'],
+    ['Laser call', '..x.......x..x..', {sound: 'laser-zap', pool: 'root', order: 'up', reg: 64, gate: 0.35}, 'Three laser zaps a bar on one pitch: the sound effect becomes the riff.'],
+    ['Hypno 16ths', 'xxxxxxxxxxxxxxxx', {seq: [0, 0, 1, 0], sound: 'sub-pulse', reg: 60, gate: 0.25, accent: 24}, 'Every 16th, short, with the fifth on every fourth note: a pulsing engine that turns into a lead when the filter opens.'],
+    ['Roll and stop', '.xxx.xxx.xxx....', {seq: [0, 1, 0, 2, 1, 0], sound: 'dark-saw'}, 'Three rolling beats, then nothing on the fourth: the gap pulls the next bar in.'],
+  ]);
+  group(TC, 'Hypnotic loops', {sound: 'perc-bleep', pool: 'scale', order: 'seq', octaves: 1, gate: 0.3, reg: 62, bpm: 132, key: 'A', scale: 'minor', prog: 'i', reset: 'never', swing: 51, evo: 'dark-ride', bars: 16}, [
+    ['Turing drift', '.xx.x.xx.x.x.xx.', {order: 'turing', lock: 0.85, tlen: 7}, 'A seven-note loop that changes a note now and then and keeps the change: a hypnotic line that never quite repeats.'],
+    ['Echo steps', '..x...x...x.....', {seq: [0, 2, 4], echo: 2, echoTime: '16d', echoShift: 's1', echoFb: 0.5}, 'Three written notes, each followed by two echoes climbing a scale step: three notes become nine.'],
+    ['Eleven-step loop', 'x.xx.x.xx.x', {seq: [0, 2, 1]}, 'An eleven-step loop of three notes against the sixteen-step bar: it takes 33 steps for notes and rhythm to meet again.'],
+    ['Nine against sixteen', '.x.x..x.x', {seq: [0, 3, 1]}, 'Nine steps, four hits, three notes: a rhythm that shifts by two 16ths every bar and only lines up again after nine bars.'],
+    ['Thirteen', '..x.x..x.x.x.', {pool: 'root5', seq: [0, 0, 1, 0]}, 'A thirteen-step loop: so close to a bar that it feels steady, so far that it never sits still.'],
+    ['Two-note hypnosis', '.x.x.x.x.x.x.x.x', {pool: 'root5', seq: [0, 1, 0, 0, 2], sound: 'micro-pluck', reg: 64}, 'Eight off-16ths a bar with a five-note cycle: the fifth and the octave land somewhere new every bar.'],
+    ['Phrygian tumble', '.x.xx.x..x.xx.x.', {scale: 'phrygian', seq: [0, 1, 0, 4, 3, 1], key: 'E', sound: 'dark-saw', reg: 60}, 'A falling Phrygian figure that keeps landing on the flat second: dark, rolling and slightly off balance.'],
+    ['Accent walk', '.xxx.xxx.xxx.xxx', {pool: 'root', order: 'up', accentEvery: 5, steps: '.Xxx.xxX.xxx.Xxx', sound: 'sub-pulse', reg: 60}, 'One pitch, twelve notes a bar, the accent moving: the filter opens on a different 16th every beat.'],
+  ]);
+  group(TC, 'Warehouse', {sound: 'dark-saw', pool: 'root5', order: 'seq', octaves: 1, gate: 0.35, reg: 60, bpm: 134, key: 'E', scale: 'phrygian', prog: 'i', reset: 'bar', swing: 50, evo: 'dark-ride', drive: 0.5}, [
+    ['Grinder', 'x.xx.x.xx.xx.x.x', {seq: [0, 0, 1, 0]}, 'A driven, grinding gallop: root, root, fifth, root. Raw and repetitive on purpose.'],
+    ['Semitone crush', '..X..x....X..x..', {pool: 'scale', seq: [0, 1], sound: 'chord-stab', gate: 0.25, reg: 62}, 'The root and the flat second ground against each other in a stab pattern: industrial without any noise.'],
+    ['Rattle', '..x.r..x..x.R..x', {pool: 'root', order: 'up', sound: 'perc-bleep', reg: 64}, 'A bleep with a double and a triple ratchet: it rattles like a loose machine.'],
+    ['Reese menace', '..x-..x-..x-..x-', {sound: 'reese', pool: 'root5', seq: [0, 0, 1, 0], gate: 0.9, reg: 62}, 'A detuned Reese held across each off-beat: the dark, moving drone of warehouse techno.'],
+    ['Fourths in the dark', '..c.....c..c....', {sound: 'chord-stab', pool: 'quartal', order: 'up', gate: 0.3, reg: 62, scale: 'minor', delay: 0.3, fb: 0.5}, 'Stacked-4th chords: no major or minor, just open, cold stone. Three hits and a delay.'],
+  ]);
+  group(TC, 'Breaks & builds', {sound: 'drone', pool: 'root5', order: 'up', octaves: 1, gate: 1.4, reg: 60, bpm: 130, key: 'F', scale: 'phrygian', prog: 'i', reset: 'never', swing: 50, duck: 0.2}, [
+    ['Dark intro loop', '..x...x.....x...', {sound: 'perc-bleep', gate: 0.3, cut: 0.3, evo: 'slow-open', reg: 64, order: 'seq', seq: [0, 0, 1]}, 'Three filtered bleeps, opening slowly over sixteen bars: the DJ-friendly first minute of a techno track.'],
+    ['Drone build', 'x...x...x...x...', {evo: 'build', bars: 16, fill: 'roll', fillEvery: 4, gate: 1}, 'A drone retriggered on every beat while the filter, gate and density climb: sixteen bars of pressure with no melody.'],
+    ['Riser in key', 'x...', {rate: '4', sound: 'noise-riser', pool: 'root', evo: 'into-drop', bars: 8, duck: 0}, 'One noise swell a beat on the root, opening into the drop: a riser tuned to the track.'],
+    ['Cold pad break', 'x.x.', {rate: '4', sound: 'glass-pad', pool: 'chord', prog: 'i7', scale: 'minor', gate: 1.5, evo: 'breathe', reg: 62}, 'Half-note minor-7 pads, cold and slow: the breakdown where the kick drops out and the room breathes.'],
+    ['Echo stab break', 'C...', {rate: '4', sound: 'chord-stab', pool: 'chord', prog: 'i7', scale: 'minor', gate: 1.1, delay: 0.5, fb: 0.68, reverb: 0.5, duck: 0, reg: 62}, 'One stab a bar thrown into a long feedback delay: the break is the echo dying away.'],
+    ['Laser build', '..x...x...x...x.', {sound: 'laser-zap', pool: 'root5', order: 'up', gate: 0.35, evo: 'build', bars: 16, fill: 'bounce', fillEvery: 4, reg: 64}, 'Laser zaps on the off-beats bouncing into every fourth bar while the build automation climbs.'],
+    ['Outro pulse', '..x.......x.....', {sound: 'sub-pulse', pool: 'root', gate: 0.3, cut: 0.3, evo: 'none', reg: 60}, 'Two dark pulses a bar: what is left when everything else has gone. Mix the next track in over it.'],
+  ]);
+
+  // ===== DUB TECHNO =====
+  const DT = 'dub-techno';
+  group(DT, 'Chords & echoes', {sound: 'chord-stab', pool: 'chord', order: 'up', octaves: 1, gate: 0.35, reg: 62, bpm: 122, key: 'C', scale: 'minor', prog: 'i7', reset: 'chord', swing: 52, delay: 0.45, fb: 0.62, delayTime: '8d', reverb: 0.4, evo: 'breathe'}, [
+    ['Three in the fog', '...C.....c..C...', {}, 'Three minor-7 stabs, none of them on the beat, each one thrown into a dotted-8th delay. The echoes fill every gap the stabs leave.'],
+    ['Off-beat dub', '..c...c...c...c.', {gate: 0.3, evo: 'slow-open'}, 'One stab on every off-beat, the cutoff opening over sixteen bars: the steady pulse under a whole dub techno set.'],
+    ['Stone fourths', '...c......c.....', {pool: 'quartal', gate: 0.4, fb: 0.66}, 'Two stacked-4th chords a bar: no third, so no major or minor, just open stone and its echoes.'],
+    ['Two-chord drift', '..C.....c..c....', {prog: 'i7 iv7', per: 2, evo: 'slow-open'}, 'i7 for two bars, iv7 for two: the slowest possible change, enough to make the loop breathe without breaking the spell.'],
+    ['Minor nine haze', '..C.......c..c..', {pool: 'chord9', prog: 'i9', gate: 0.4, reverb: 0.5}, 'A minor-9 chord hit three times a bar into a big reverb: soft, blurred, endless.'],
+    ['Rhodes dub', '..c...c..c......', {sound: 'rhodes', gate: 0.6, prog: 'i9 VI', per: 2, pool: 'chord9'}, 'Electric piano chords instead of a synth stab: warmer, rounder, the deep end of dub techno.'],
+    ['Chord ladder', 'x..x..x...x..x..', {gate: 0.45, order: 'up', evo: 'slow-open'}, 'The chord broken into single notes climbing in a 3+3+4 rhythm, each one echoed: an arpeggio drowned in its own delay.'],
+    ['Late stab', '...C...c...C...c', {gate: 0.33, fb: 0.58}, 'Every stab on the last 16th of the beat, so each one leans into the next kick. The delay turns the lean into a rolling swing.'],
+  ]);
+  group(DT, 'Deep pulses', {sound: 'glass-pluck', pool: 'penta', order: 'seq', octaves: 1, gate: 0.4, reg: 64, bpm: 120, key: 'F', scale: 'minor', prog: 'i7', reset: 'never', swing: 52, delay: 0.42, fb: 0.6, delayTime: '8d', reverb: 0.45, evo: 'breathe'}, [
+    ['Bell ping', '..x.....x..x....', {sound: 'bell-tick', seq: [0, 2, 4, 1]}, 'Three bell pings a bar cycling four pentatonic notes: the melody rotates slowly while the echoes overlap.'],
+    ['Glass drops', '..x...x.x.....x.', {seq: [0, 3, 1, 2]}, 'Glassy plucks falling into a long delay: four notes a bar, a cloud of reflections between them.'],
+    ['Single note echo', '..x.......x.....', {pool: 'root5', seq: [0, 1], sound: 'string-pluck', fb: 0.66}, 'Two notes a bar and a delay at two-thirds feedback: the root, the fifth and a whole chorus of echoes.'],
+    ['Dub chord pulse', '.c..c..c..c..c..', {sound: 'chord-stab', pool: 'chord', order: 'up', gate: 0.32, delay: 0.35, fb: 0.5}, 'Five quiet chords in a dotted rhythm against the four-on-the-floor: the pulse of the track rather than its hook.'],
+  ]);
+  group(DT, 'Intros & breaks', {sound: 'chord-stab', pool: 'chord', order: 'up', octaves: 1, gate: 0.4, reg: 62, bpm: 122, key: 'C', scale: 'minor', prog: 'i7', reset: 'chord', swing: 52, delay: 0.5, fb: 0.68, delayTime: '8d', reverb: 0.5, evo: 'slow-open', cut: 0.35}, [
+    ['Fog intro', 'x...', {rate: '4', sound: 'glass-pad', gate: 1.2, duck: 0.15}, 'One pad chord tone a beat, filtered dark, slowly opening: the room filling with fog before the first stab.'],
+    ['Long-tail stab', 'C...', {rate: '4', gate: 1.1, fb: 0.72, duck: 0}, 'One stab a bar and a delay that almost never dies: the break is the sound of the echo decaying.'],
+    ['Tape-echo build', '..c...c...c...c.', {gate: 0.3, evo: 'build', bars: 16, fill: 'roll', fillEvery: 4, cut: 0.5}, 'The off-beat stab with the build automation climbing and a roll into every fourth bar: dub techno, rising.'],
+    ['Shimmer chord break', 'x.x.', {rate: '4', sound: 'shimmer', pool: 'chord9', prog: 'i9 iv9', octaves: 2, gate: 1.5, evo: 'breathe', duck: 0}, 'Shimmering minor-9 chords in half notes over two octaves: the beatless middle of a long dub techno track.'],
+  ]);
+
+  // ===== DETROIT TECHNO =====
+  const DE = 'detroit';
+  group(DE, 'Strings & stabs', {sound: 'chord-stab', pool: 'chord', order: 'up', octaves: 1, gate: 0.32, reg: 64, bpm: 130, key: 'F', scale: 'minor', prog: 'i VI', reset: 'chord', swing: 53}, [
+    ['Motor stabs', '..C..c...C..c...', {evo: 'breathe'}, 'Minor chord stabs pushing across i–VI, two of them a 16th ahead of the beat: soul played on a machine.'],
+    ['Piano jab', '..C..C..C.......', {sound: 'house-piano', prog: 'i7 iv7', gate: 0.3}, 'Three piano chords jabbing in a dotted rhythm, then space: the hook is the rhythm the chords make.'],
+    ['String line', '.x.x..x..x.x..x.', {sound: 'string-pluck', pool: 'chord9', order: 'updown', octaves: 2, prog: 'i iv VII III', gate: 0.5, evo: 'pluck-to-pad'}, 'Plucked strings walking up and down two octaves of 9th chords through i–iv–VII–III: the melodic side of Detroit.'],
+    ['Rhodes motor', '.x.x..x..x.x..x.', {sound: 'rhodes', pool: 'chord9', order: 'up', prog: 'i9 VI', gate: 0.8}, 'A Rhodes broken through minor-9 chords in a syncopated rhythm: the jazz in Detroit techno.'],
+    ['Stab and walk', '..C...x.x.C...x.', {prog: 'i VII VI VII', order: 'down'}, 'A stab, then two chord tones walking down from the top: harmony and riff in one part.'],
+  ]);
+  group(DE, 'Machine soul', {sound: 'hollow-square', pool: 'chord', order: 'updown', octaves: 2, gate: 0.4, reg: 64, bpm: 130, key: 'A', scale: 'minor', prog: 'i iv VII III', reset: 'chord', swing: 52, evo: 'slow-open'}, [
+    ['Motor city arp', 'x.xx.xx.x.xx.xx.', {}, 'A hollow square galloping up and down two octaves through four chords: the futuristic sequence of the first wave.'],
+    ['Sci-fi sequence', 'xxxxxxxxxxxxxxxx', {sound: 'dark-saw', order: 'up', gate: 0.35}, 'Every 16th, straight up two octaves of each chord and back down to the bottom: a machine climbing the same staircase forever.'],
+    ['Electro bleeps', 'x..x..x.x..x..x.', {sound: 'perc-bleep', pool: 'penta', order: 'seq', seq: [0, 3, 1, 4], octaves: 1, prog: 'i'}, 'Pentatonic bleeps in a 3+3+2 rhythm: the electro side of Detroit, part drum machine, part melody.'],
+    ['Dorian space', '..x..x.x..x..x.x', {sound: 'glass-pluck', scale: 'dorian', prog: 'i IV', key: 'D'}, 'A Dorian i–IV with the bright major IV: hopeful, open, the "future" in Detroit\'s futurism.'],
+    ['Lead call', '..x..x.x..x.....', {sound: 'mono-lead', pool: 'scale', order: 'seq', seq: [0, 2, 4, 3, 2], octaves: 1, follow: false, prog: 'i VI', gate: 0.5}, 'A singing mono lead playing a five-note hook over the chords: the line you hum on the way home.'],
+  ]);
+  group(DE, 'Second wave minimal', {sound: 'perc-bleep', pool: 'root', order: 'up', octaves: 1, gate: 0.28, reg: 64, bpm: 132, key: 'F', scale: 'minor', prog: 'i', reset: 'bar', swing: 54}, [
+    ['Hood loop', '..x...x.x.....x.', {}, 'One pitch, four hits, and a hi-hat: the stripped-down loop that the minimal strain of Detroit was built on.'],
+    ['Pulse riff', '..x.x...x.x..x..', {sound: 'micro-pluck', pool: 'root5', order: 'seq', seq: [0, 0, 1, 0, 2]}, 'Root, fifth and octave in a short repeating figure: a riff so small it becomes part of the groove.'],
+    ['Clip and space', '.x...x...x.x....', {sound: 'wood-knock', pool: 'root5', order: 'seq', seq: [0, 1, 0, 0]}, 'Four clipped knocks, the last bar-half empty: the space is as rhythmic as the notes.'],
+  ]);
+  group(DE, 'Breaks & builds', {sound: 'string-swell', pool: 'chord', order: 'up', octaves: 1, gate: 1.4, reg: 64, bpm: 130, key: 'F', scale: 'minor', prog: 'i VI III VII', reset: 'chord', swing: 52, duck: 0.2}, [
+    ['String break', 'xxxx', {rate: '4', gate: 1.5, duck: 0}, 'Swelling strings, a chord tone a beat, through four chords: the moment the drums stop and the soul comes through.'],
+    ['Pad intro', 'x.x.', {rate: '4', sound: 'warm-pad', prog: 'i VI', cut: 0.35, evo: 'slow-open', gate: 1.5}, 'Warm pad chords in half notes, filtered and opening: the first sixteen bars before the 909 comes in.'],
+    ['Rising strings', 'xxxxxxxx', {rate: '8', octaves: 2, gate: 0.9, evo: 'build', bars: 16, fill: 'roll', fillEvery: 4}, 'Strings in 8ths through two octaves while the build automation climbs: sixteen bars of lift.'],
+  ]);
+
+  // ===== ORBIT 1.3: TECH HOUSE, WIDER =====
+  group(TH, 'Less is more', {sound: 'tech-pluck', pool: 'root5', order: 'seq', swing: 57, gate: 0.3, reg: 64, bpm: 126, key: 'G', prog: 'i', evo: 'breathe'}, [
+    ['Two-note groove', '..x....x..x.....', {seq: [0, 1, 0]}, 'Three hits a bar on two pitches, every one off the kick: so little that the hats and the bass suddenly have room to swing.'],
+    ['Answer at the end', '.........x.x..x.', {seq: [0, 0, 1], sound: 'organ-stab'}, 'Half a bar of nothing, then three organ hits answer the groove. The wait makes the riff.'],
+    ['Late organ', '...x...x...x..x.', {seq: [0, 0, 0, 1], sound: 'organ-stab'}, 'The organ on the last 16th of each beat, so every hit drags into the next kick. Swung, it rolls.'],
+    ['One-note shuffle', '..x..x....x..x..', {pool: 'root', order: 'up', sound: 'rubber-stab'}, 'One pitch, four hits in two pairs: the rubber sound and the swing are the whole idea.'],
+    ['Dot dot dash', '..x.x.x-..x.....', {seq: [0, 0, 1, 0], sound: 'mono-lead', gate: 0.5}, 'Two short notes, one held one, a reply: a riff you could say out loud.'],
+    ['Space riff', '..x..x..........x..x.x..........', {seq: [0, 1, 0, 1, 2], reset: '2bar', sound: 'micro-pluck'}, 'Five notes across two bars with long gaps: perfect under a vocal, and it still carries the groove.'],
+    ['Bleep and gap', '..x.x.......x...', {pool: 'root', order: 'up', sound: 'perc-bleep', reg: 66}, 'Two quick bleeps, a long gap, one more: the gap is where the clap lands.'],
+    ['Fifth on four', '..x...x.....x.x.', {seq: [0, 0, 1, 2], sound: 'organ-stab', gate: 0.28}, 'Two roots, then the fifth and the octave on beat four: the riff saves its movement for the end of the bar.'],
+  ]);
+  group(TH, 'Jackin\' & piano', {sound: 'house-piano', pool: 'chord', order: 'up', swing: 57, gate: 0.3, reg: 62, bpm: 125, key: 'A', prog: 'i7', reset: 'chord'}, [
+    ['Jack stab', '..C..C.C..C...c.', {}, 'Minor-7 piano stabs in a jacking, pushed rhythm: Chicago house played at tech house tempo.'],
+    ['Piano bounce', '..c..c.c..c..c.c', {prog: 'i7 iv7'}, 'Six piano chords a bar bouncing off the swing, i7 to iv7: the 90s piano house move, tightened.'],
+    ['Ninth jack', '.c...c.c.c...c..', {pool: 'chord9', prog: 'i9 VII', gate: 0.28}, 'Minor-9 stabs on a syncopated grid: the extended chords make it deep, the rhythm keeps it jacking.'],
+    ['Piano riff', '..x..x.x..x.....', {pool: 'scale', order: 'seq', seq: [0, 4, 2, 0], prog: 'i'}, 'A single-note piano riff, root to fifth and back through the third: piano as a lead, not as chords.'],
+    ['Clav jack', '.x.x..x..x.x..x.', {sound: 'clav', pool: 'root5', order: 'seq', seq: [0, 1, 0, 1], prog: 'i'}, 'A funky clav on the off-16ths: jackin\' house\'s rhythm guitar in one bright, short sound.'],
+    ['Organ jack', '..xx..x...xx..x.', {sound: 'organ-stab', prog: 'i7', gate: 0.28}, 'Chord tones in pairs on the "and-a": the organ jacks up and down the minor 7th.'],
+  ]);
+  group(TH, 'Bass-led riffs', {sound: 'mono-lead', pool: 'scale', order: 'seq', swing: 56, gate: 0.4, reg: 60, bpm: 126, key: 'F', prog: 'i', reset: 'bar', evo: 'gate-pump'}, [
+    ['Mono hook', '..x..x.x..x..x.x', {seq: [0, 0, 3, 0, 4, 0]}, 'A singing mono synth playing a bass-register hook: root, root, fourth, root, fifth. The riff is the bassline, an octave up.'],
+    ['Reese drop', '..x-..x...x-..x.', {sound: 'reese', pool: 'root5', seq: [0, 0, 1], gate: 0.9, reg: 62}, 'A Reese held across two steps then stabbed: the dark, moving drop riff of tech house that leans toward bass house.'],
+    ['Rubber riff', '.xx..x.x.xx..x..', {sound: 'rubber-stab', seq: [0, 0, 2, 0, 6], reg: 62}, 'A rubbery square bouncing between the root, the third and the flat seventh: a bassline you can hear on a phone.'],
+    ['Talking riff', '..x-.x....x-.x..', {sound: 'vox-chop', seq: [0, 2, 0, 4], gate: 0.5, reg: 64}, 'A held syllable, a short one, repeat: the riff talks. Try it in Talk with the formant bass too.'],
+    ['Rubber pickup', '...x..x...x..xx.', {sound: 'rubber-stab', pool: 'root5', seq: [0, 0, 0, 1, 2], reg: 62}, 'The root three times, then a fifth and an octave pickup into the next bar: the bounce of bass house in a single sound.'],
+    ['Slide riff', '..x.s.x...xs..x.', {sound: 'acid-303', seq: [0, 3, 0, 4, 0, 7], gate: 0.6, reg: 60, evo: 'dark-ride'}, 'Six notes, two of them sliding into the next: a 303 playing a riff, not an acid line.'],
+  ]);
+  group(TH, 'Latin & percussive', {sound: 'marimba', pool: 'penta', order: 'seq', swing: 56, gate: 0.45, reg: 66, bpm: 125, key: 'G', prog: 'i', reset: 'bar'}, [
+    ['Latin marimba', '..x..x.x..x..x..', {seq: [0, 2, 1, 3, 2]}, 'A marimba on a clave-like grid that never touches the kick: Latin tech house\'s percussion-melody.'],
+    ['Wood groove', '.x...xx...x..x.x', {sound: 'wood-knock', pool: 'root5', seq: [0, 1, 0, 2, 1]}, 'Tuned wood knocks in a conga pattern: a percussion part that happens to be in key.'],
+    ['Bongo bleep', '..xx..x..xx..x..', {sound: 'perc-bleep', pool: 'root5', seq: [0, 1, 0, 2, 1]}, 'Bleeps in pairs like a bongo player\'s fill, cycling five notes over six hits.'],
+    ['Kalimba roll', '.xx..xx..xx..x.x', {sound: 'kalimba', seq: [0, 1, 2, 1, 3]}, 'A kalimba rolling in pairs between the kicks: warm, organic and still on the grid.'],
+    ['Log tech', '...x..x..x.x..x.', {sound: 'log-drum', pool: 'root5', seq: [0, 0, 1, 2], reg: 62}, 'The amapiano log drum dropped into a tech house groove: root, root, fifth, octave.'],
+    ['Afro tech pluck', '.x.x..x..x.x..x.', {sound: 'tech-pluck', scale: 'dorian', pool: 'scale', seq: [0, 2, 4, 3]}, 'A Dorian pluck on an Afro-tech grid: the bright sixth keeps it from sounding dark.'],
+  ]);
+  group(TH, 'Peak-time tech', {sound: 'organ-stab', pool: 'scale', order: 'seq', swing: 56, gate: 0.28, reg: 64, bpm: 128, key: 'F', prog: 'i', evo: 'gate-pump'}, [
+    ['Festival organ', '..X.xx.x..X.xx.x', {seq: [0, 0, 2, 0, 4, 0, 2, 0]}, 'The organ riff pushed for a big room: eight notes, accents on the off-beats, gate pumping with the kick.'],
+    ['Stab train', '..c.cc.c..c.cc.c', {sound: 'chord-stab', pool: 'chord', order: 'up', prog: 'i7'}, 'Ten short minor-7 stabs a bar in a driving train: maximum energy without touching the kick.'],
+    ['Siren riff', '.xxx.xxx.xxx.xxx', {sound: 'hollow-square', seq: [0, 4, 0, 3], gate: 0.25, reg: 64}, 'Twelve 16ths a bar flicking between the root and the fifth or fourth: a siren that rolls.'],
+    ['Ratchet hook', '..x..r.x..x..R.x', {sound: 'perc-bleep', pool: 'root5', seq: [0, 0, 1, 0, 2]}, 'A riff with a double and a triple ratchet: the stutter is the hook the crowd waits for.'],
+    ['Big lift riff', '..x..x.x..x..x.x', {sound: 'supersaw', pool: 'chord', order: 'updown', prog: 'i VI', reg: 64, gate: 0.25}, 'A supersaw playing the chord as a short, syncopated riff: the moment tech house borrows trance\'s size.'],
+  ]);
+  group(TH, 'Intros & outros', {sound: 'micro-pluck', pool: 'root', order: 'up', swing: 57, gate: 0.28, reg: 66, bpm: 126, key: 'F', prog: 'i', cut: 0.35, evo: 'slow-open', duck: 0.3}, [
+    ['DJ intro bleep', '..x.......x.....', {}, 'Two dark plucks a bar, opening slowly: gives the DJ sixteen bars of clean groove to mix over.'],
+    ['Filtered organ intro', '..x..x....x.....', {sound: 'organ-stab', pool: 'scale', order: 'seq', seq: [0, 0, 2]}, 'The organ riff with half its notes, filtered dark: the drop\'s riff hinted at, not given away.'],
+    ['Outro ticks', '..x...x...x...x.', {sound: 'bell-tick', cut: 0.3, evo: 'none'}, 'Bell ticks on the off-beats, dark and quiet: the last thing playing while the next record comes in.'],
+    ['Shaker riff intro', '.x...x...x...x..', {sound: 'wood-knock', pool: 'root5', order: 'seq', seq: [0, 1]}, 'Tuned knocks placed like a shaker, root and fifth: percussion that tells the DJ the key.'],
+    ['Pad outro', 'x...', {rate: '4', sound: 'warm-pad', pool: 'chord9', prog: 'i9', gate: 1.5, duck: 0.15}, 'A warm minor-9 pad, one chord tone a beat: the outro that lets the room down gently.'],
+  ]);
+
+  // ===== ORBIT 1.3: EVERY GENRE, RICHER =====
+  group('minimal', 'Rominimal', {sound: 'perc-bleep', pool: 'root5', order: 'seq', octaves: 1, gate: 0.3, reg: 64, bpm: 125, key: 'G', prog: 'i', reset: '2bar', swing: 58, human: 0.4}, [
+    ['Click riff', '..x.x......x.......x.x.....x....', {sound: 'micro-pluck', seq: [0, 1, 0, 1], mutate: 4}, 'Six clicks across two bars in two little clusters, one note changing every four bars: rominimal\'s patience in miniature.'],
+    ['Wood minimal', '.x....x...x.....x...x...x..x....', {sound: 'wood-knock', seq: [0, 1, 0, 0, 1, 2, 0]}, 'Seven tuned knocks over two bars: you hear them as percussion until you notice they are in key.'],
+    ['Sub blip', '...x......x........x.....x......', {sound: 'sub-pulse', pool: 'root', order: 'up', reg: 62}, 'Four deep blips across two bars, one pitch: the groove is entirely in where they fall.'],
+    ['Marimba drift', '..x...x..x...x..', {sound: 'marimba', pool: 'penta', order: 'turing', lock: 0.8, tlen: 5, reset: 'never'}, 'A five-note marimba loop that slowly changes itself: it sounds played, then improvised, then played again.'],
+    ['Swing rubber', '..x..x.x...x....', {sound: 'rubber-stab', seq: [0, 0, 1, 0], reset: 'bar'}, 'Four rubbery notes, heavily swung: the shuffle bends them into a lazy little bounce.'],
+    ['Two-bar question', '..x..x.x..........x..x.......x..', {seq: [0, 0, 1, 0, 0, 2]}, 'Three notes ask in bar one, three answer in bar two, with an octave at the end: a conversation in six notes.'],
+    ['Glitch tick', '..r.....x..x....', {sound: 'bell-tick', pool: 'root', order: 'up', reset: 'bar'}, 'A bell tick with a ratchet stutter and two quiet answers: a glitch you would swear was a mistake the first time.'],
+    ['Dub minimal stab', '...c.......c....', {sound: 'chord-stab', pool: 'chord', order: 'up', prog: 'i7', delay: 0.4, fb: 0.55, reverb: 0.3, reset: 'bar'}, 'Two short minor-7 stabs a bar into a dub delay: the minimal take on dub techno.'],
+    ['Lazy fifth', '...x.....x....x.', {seq: [0, 1, 0], reset: 'bar'}, 'Three notes a bar on the last 16th of the beat: root, fifth, root, always a touch late.'],
+    ['Hidden melody', '..x..x...x...x...x.x.....x..x...', {sound: 'micro-pluck', pool: 'penta', seq: [0, 1, 2, 1, 3], mutate: 4}, 'Eight tiny plucks over two bars with a pentatonic line hidden in them: a melody that only appears if you listen for it.'],
+  ]);
+  group('acid', 'More 303', {sound: 'acid-303', pool: 'scale', order: 'seq', octaves: 1, gate: 0.65, reg: 50, bpm: 130, key: 'A', prog: 'i', reset: 'bar', swing: 52, evo: 'dark-ride', bars: 16}, [
+    ['Acid rolling', 'xsXx.xxsxXx.xsxx', {seq: [0, 0, 3, 0, 7, 0, 5, 4]}, 'Fourteen notes with a breath after beat one and three: a rolling 303 line with slides on the turns.'],
+    ['Squelch walk', 'x.xxXsx.x.xxXsx.', {seq: [0, 2, 3, 4, 6, 4, 3, 2]}, 'A line that walks up the scale and back with a slide at the top: acid that sounds like it is going somewhere.'],
+    ['Acid pedal', 'pxpX.xpsPxpX.xps', {seq: [4, 6, 3, 7]}, 'The root as a pedal between a four-note line: two parts from one 303.'],
+    ['Acid minimal', 'x..sX..x.x.sX...', {seq: [0, 7, 0, 3, 5], gate: 0.7}, 'Seven notes a bar with room between them: the slides and accents have space to squelch.'],
+    ['Dorian acid', 'xxsxXx.xxsxXx.xs', {scale: 'dorian', seq: [0, 5, 3, 0, 7, 4, 0, 2], key: 'D'}, 'Dorian\'s bright sixth in an acid line: less evil, more funk.'],
+    ['Acid triplets', 'x.sX.x...xsX', {rate: '16t', seq: [0, 3, 7, 5]}, 'Triplet 16ths against the straight hats: the 303 gallops while the drums march.'],
+    ['Chicago acid', 'X.xsx.Xsx.xsX.xs', {seq: [0, 0, 3, 0, 7, 4], swing: 56, bpm: 124}, 'A swung, slower line with a slide on every fourth step: acid house as it was in Chicago.'],
+    ['Acid build', 'xxxxXxxsxxxxXxxs', {seq: [0, 7, 3, 5, 0, 6], evo: 'build', fill: 'roll', fillEvery: 4}, 'Sixteen notes with the build automation climbing and a roll into every fourth bar: the acid line as the build.'],
+  ]);
+  group('hard-techno', 'Peak & industrial', {sound: 'rave-hoover', pool: 'chord', order: 'up', octaves: 1, gate: 0.4, reg: 64, bpm: 150, key: 'F#', prog: 'i', reset: 'chord', swing: 50, hp: 220}, [
+    ['Schranz stab', '..C.C.C...C.C.C.', {gate: 0.4}, 'Six hoover stabs a bar in two bursts of three: relentless, distorted, a stab where most tracks would leave a gap.'],
+    ['Industrial pulse', 'xxxxxxxxxxxxxxxx', {sound: 'dark-saw', pool: 'root5', order: 'seq', seq: [0, 2, 1, 2], drive: 0.6}, 'Every 16th on a driven saw, root and octave and fifth: a pulse with teeth.'],
+    ['Hard bounce stab', 'x.x.xo.xx.x.xo.x', {sound: 'hollow-square', pool: 'triad', order: 'up'}, 'A three-note bounce with an octave flick on beats two and four: the hard dance lift at 150.'],
+    ['Gabber lead', '.xxx.xxx.xxx.xxx', {sound: 'supersaw', prog: 'i VI VII v', order: 'pinky', octaves: 1}, 'A supersaw hanging from its top note through four chords: the euphoric hard lead, driven.'],
+    ['Acid at 150', 'xsxXxsxXxsxXxsxX', {sound: 'acid-303', pool: 'scale', order: 'seq', seq: [0, 0, 7, 0, 3, 0, 5, 6], reg: 58, gate: 0.6}, 'A screaming acid line at hard techno tempo, accent every fourth note, slides in between.'],
+    ['Rave piano', 'C.C..C.CC.C..C.C', {sound: 'house-piano', prog: 'i VI III VII'}, 'Rave piano chords pushing through the anthem progression: 90s hardcore\'s piano, driven into 2026.'],
+    ['Hoover triplets', 'xx.xx.xx.xx.', {rate: '16t', pool: 'triad', order: 'updown', gate: 0.5}, 'Triplet 16ths on the hoover against the straight kick: the rhythm spins while the floor stomps.'],
+    ['Hoover pairs', 'x.xx..xxx.xx..xx', {pool: 'root5', order: 'seq', seq: [0, 2]}, 'Root and octave in pairs that start on and off the beat: the hoover bounces with the kick, then against it.'],
+    ['Distorted ladder', 'x.xxx.xxx.xxx.xx', {sound: 'dark-saw', prog: 'i VI VII v', octaves: 2, gate: 0.35, drive: 0.6}, 'A galloping climb through two octaves of each chord, distorted: tension that keeps rising.'],
+    ['Neo-rave build', 'xxxxxxxxxxxxxxxx', {sound: 'supersaw', octaves: 2, prog: 'i VI VII v', evo: 'build', bars: 16, fill: 'roll', fillEvery: 4}, 'Every 16th on a supersaw through two octaves while the build automation climbs: sixteen bars to the riot.'],
+  ]);
+  group('melodic-techno', 'More sequences', {sound: 'dark-saw', pool: 'chord', order: 'up', octaves: 2, gate: 0.5, reg: 62, bpm: 124, key: 'A', prog: 'i VI III VII', reset: 'never', swing: 50}, [
+    ['Minor ninth river', 'xxxxxxxxxxxxxxxx', {pool: 'chord9', order: 'updown', prog: 'i iv VI VII', evo: 'slow-open'}, 'Every 16th up and down two octaves of 9th chords: a river of notes with no edges.'],
+    ['Spiral down', 'xxxxxxxxxxxxxxxx', {order: 'downup', sound: 'glass-pluck', evo: 'afterlife', bars: 32}, 'Down and back up through two octaves: the line spirals, the filter opens over 32 bars.'],
+    ['Cathedral', 'x.xxx.xxx.xxx.xx', {sound: 'hollow-square', order: 'diverge', evo: 'slow-open'}, 'Inside-out from the middle of the chord: the notes spread apart like a building getting bigger.'],
+    ['Pulse and pedal', 'xxpxxpxxpxxpxxpx', {sound: 'tech-pluck', evo: 'breathe'}, 'A pedal on the root every third 16th against the chord climbing: the three-against-four built into the notes.'],
+    ['Six-step journey', 'xxx.xx', {count: 4, sound: 'glass-pluck', evo: 'slow-open'}, 'A six-step loop of four notes against the bar: it rotates through the four chords and never lands the same way twice.'],
+    ['Harmonic sequence', 'xxxxxxxxxxxxxxxx', {scale: 'harmonic', prog: 'i iv V i', reset: 'chord', evo: 'slow-open'}, 'Harmonic minor gives a major V: the sequence lifts at the end of every phrase before falling home.'],
+    ['Phrygian sequence', 'xxxxxxxxxxxxxxxx', {scale: 'phrygian', prog: 'i bII', key: 'E', order: 'updown', reset: 'chord', evo: 'dark-ride'}, 'i to the flat II and back: the darkest progression there is, spelled out every 16th.'],
+    ['Triplet shimmer', 'xx.xx.xx.xx.', {rate: '16t', pool: 'chord9', sound: 'glass-pluck', gate: 0.6, evo: 'breathe'}, 'Triplet 16ths through two octaves of 9ths: shimmering, slightly out of step with the hats.'],
+    ['Accented climb', 'XxxxXxxxXxxxXxxx', {pool: 'triad', octaves: 2, sound: 'tech-pluck', gate: 0.4, reset: 'chord', evo: 'slow-open'}, 'Two octaves of the triad straight up with the accent on every beat: the six-note climb lands somewhere different under each accent.'],
+    ['Melodic build', 'xxxxxxxxxxxxxxxx', {sound: 'supersaw', reset: 'chord', evo: 'build', bars: 16, fill: 'climb', fillEvery: 4}, 'The four-chord journey on a supersaw with the build automation and a climbing fill: the last sixteen bars before the drop.'],
+  ]);
+  group('progressive', 'More plucks', {sound: 'glass-pluck', pool: 'chord9', order: 'up', octaves: 2, gate: 0.45, reg: 64, bpm: 122, key: 'D', prog: 'i VI III VII', reset: 'chord', delay: 0.32}, [
+    ['Cascading 9ths', 'xx.xx.xx.xx.xx.x', {order: 'down', evo: 'slow-open'}, 'Falling 9th chords in a 3-3-2 rhythm: a cascade that keeps restarting from the top.'],
+    ['Wide pluck', 'x..x..x.x..x..x.', {order: 'updown', evo: 'pluck-to-pad'}, 'Six notes a bar, a dotted rhythm across two octaves: wide, slow and warm.'],
+    ['Major lift', 'x.xx.xx.x.xx.xx.', {scale: 'major', prog: 'I V vi IV', pool: 'chord', key: 'D', evo: 'breathe'}, 'The pop four in major as a progressive pluck: the lift that makes a room put its hands up.'],
+    ['Echo pluck', 'x.xx.xxx', {rate: '8', echo: 2, echoTime: '8d', echoShift: '0', echoFb: 0.5, octaves: 1, evo: 'slow-open'}, '8th notes with written echoes at a dotted 8th: the delay is in the MIDI, so it follows you into Live.'],
+    ['Slow arp', 'xxxxxxxx', {rate: '8', gate: 0.9, order: 'updown', evo: 'pluck-to-pad'}, 'Slow 8ths up and down two octaves of 9ths, the pluck growing into a pad: the breakdown arp.'],
+    ['Prog build', 'x.xx.xx.x.xx.xx.', {sound: 'tech-pluck', evo: 'build', bars: 16, fill: 'climb', fillEvery: 4}, 'The skip rhythm with the build automation climbing: the long progressive build, in sixteen bars.'],
+  ]);
+  group('trance', 'More trance', {sound: 'supersaw', pool: 'chord', order: 'up', octaves: 2, gate: 0.45, reg: 64, bpm: 138, key: 'A', prog: 'i VI III VII', reset: 'chord', swing: 50}, [
+    ['Psy roll', 'xxx.xxx.xxx.xxx.', {sound: 'hollow-square', pool: 'root5', order: 'seq', seq: [0, 0, 1, 2], octaves: 1, prog: 'i', bpm: 140}, 'A rolling three-note figure with a breath on every beat: the psy-trance roll, moved up out of the bass.'],
+    ['Gated chords', 'cccccccccccccccc', {gate: 0.4, evo: 'slow-open'}, 'The whole chord on every 16th, gated short: the trance gate as a wall of sound.'],
+    ['Vocal trance pluck', 'x.xxx.xxx.xxx.xx', {sound: 'glass-pluck', pool: 'chord9', order: 'updown', evo: 'pluck-to-pad'}, 'A soft pluck galloping through 9th chords: the arp that sits under a vocal.'],
+    ['Octave shimmer', 'xoxoxoxoxoxoxoxo', {pool: 'triad', octaves: 1, gate: 0.4, sound: 'hollow-square'}, 'Every other 16th an octave up through the triad: a shimmer that makes the chord sparkle.'],
+    ['Uplifting three-over-four', 'xxxxxxxxxxxx', {pool: 'triad', reset: 'never', gate: 0.42}, 'A twelve-step pattern over a sixteen-step bar: the line shifts against the beat every bar.'],
+    ['Trance build', 'xxxxxxxxxxxxxxxx', {evo: 'build', bars: 16, fill: 'roll', fillEvery: 4}, 'Every 16th through two octaves while the build automation climbs and a roll lands every four bars.'],
+  ]);
+  group('afro', 'More grooves', {sound: 'marimba', pool: 'penta', order: 'seq', octaves: 1, gate: 0.5, reg: 64, bpm: 121, key: 'G', swing: 55, reset: 'bar'}, [
+    ['Shaker pluck', '..x.x..x..x.x..x', {sound: 'tech-pluck', seq: [0, 2, 1, 3]}, 'A pluck on a shaker grid, pentatonic: melody that moves like percussion.'],
+    ['Talking drum', '.x..x.x..x..x.x.', {sound: 'log-drum', seq: [0, 2, 1, 0, 3], reg: 62}, 'A log drum with a talking-drum phrasing: it rises and falls like speech.'],
+    ['Kora run', '.xx.xx.xx.xx.xx.', {sound: 'string-pluck', order: 'up', gate: 0.4, reset: 'never'}, 'A harp-like pluck running up the pentatonic in pairs, ten notes over a five-note cycle: bright, flowing and never starting a bar the same way.'],
+    ['Bell in threes', 'x.xx.xx.x.xx.xx.', {sound: 'bell-tick', seq: [0, 2, 4, 1, 3]}, 'A bell on a 3-3-2 grid cycling five notes: the African bell pattern\'s spirit, on a pentatonic.'],
+    ['Chant chop', '..x..x....x..x..', {sound: 'vox-chop', seq: [0, 0, 2, 1]}, 'Four chopped syllables like a call from the crowd: the chant hook of Afro house.'],
+    ['Organic build', '.xx.xx.x.xx.xx.x', {sound: 'kalimba', order: 'up', evo: 'build', bars: 16, fill: 'roll', fillEvery: 4}, 'The kalimba cascade with the build automation climbing: tension built from wood and air.'],
+  ]);
+  group('deep', 'More deep', {sound: 'rhodes', pool: 'chord9', order: 'up', octaves: 1, gate: 1, reg: 62, bpm: 120, key: 'C', scale: 'dorian', prog: 'i9 iv9', reset: 'chord', swing: 56}, [
+    ['Rhodes stabs', '..c...c.....c...', {gate: 0.8, prog: 'i9 VII9'}, 'Three Rhodes chords a bar, left to ring: deep house at its most relaxed.'],
+    ['Wurli walk', '.x..x..x..x..x..', {order: 'seq', seq: [0, 1, 2, 3, 2], gate: 1.1}, 'A walking line through the 9th chord on a syncopated grid: the bassist\'s idea played on keys.'],
+    ['Lo-fi 8ths', '.x.x.xx.', {rate: '8', sound: 'house-piano', pool: 'chord', gate: 1.1, order: 'updown'}, 'Lazy piano 8ths ringing into each other: lo-fi house\'s warmth.'],
+    ['Mallet chords', '.x..x..x.x..x...', {sound: 'marimba', gate: 0.8, order: 'updown'}, 'Marimba playing the 9th chord in a broken, syncopated rhythm: organic house\'s wood and warmth.'],
+    ['Soul strings', 'x.x.', {rate: '4', sound: 'string-swell', pool: 'chord', gate: 1.5, duck: 0.1}, 'Swelling strings in half notes: the soul break of a deep house track.'],
+    ['Late night chords', '...c......c.....', {sound: 'chord-stab', gate: 0.9, prog: 'i11', delay: 0.35, fb: 0.5}, 'Two minor-11 chords a bar into a dub delay: deep house leaning toward dub.'],
+  ]);
+  group('nu-disco', 'More disco', {sound: 'disco-saw', pool: 'chord', order: 'up', octaves: 1, gate: 0.45, reg: 60, bpm: 118, key: 'E', prog: 'i VII VI VII', reset: 'chord', swing: 52}, [
+    ['French filter house', 'x.xx.xx.x.xx.xx.', {evo: 'breathe', reg: 62}, 'A bright saw galloping through the chords with the filter breathing: the French-touch loop.'],
+    ['Synth-pop arp', 'xxxxxxxxxxxxxxxx', {sound: 'hollow-square', pool: 'triad', order: 'updown', octaves: 2, scale: 'major', prog: 'I vi IV V', key: 'C'}, 'A bright triad arp up and down two octaves in major: synth-pop\'s innocence at a disco tempo.'],
+    ['Boogie stabs', 'c.cc.c.cc.c.cc.c', {sound: 'clav', reg: 62}, 'Clav chords in a boogie rhythm: the 80s funk in nu-disco.'],
+    ['Cosmic disco', 'x.x.x.x.x.x.x.x.', {sound: 'mono-lead', pool: 'scale', order: 'seq', seq: [0, 4, 7, 4, 2, 4], follow: false}, 'A mono lead playing a cosmic, leaping sequence on 8ths: Italo meets space.'],
+    ['Italo octaves', 'xxxxxxxxxxxxxxxx', {pool: 'octave', reg: 64, gate: 0.35}, 'Root and octave on every 16th: the Italo bassline as an arp.'],
+    ['Piano anthem', 'C.C..C.C..C.C...', {sound: 'house-piano', scale: 'major', prog: 'vi IV I V', key: 'C', reg: 62}, 'Piano house chords through the pop four: the most joyful thing in this folder.'],
+  ]);
+  group('garage', 'More shuffle', {sound: 'organ-stab', pool: 'scale', order: 'seq', octaves: 1, gate: 0.35, reg: 62, bpm: 132, key: 'F', prog: 'i7 iv9', reset: 'bar', swing: 62}, [
+    ['Bass house wobble', '..x.xx.x..x.xx.x', {sound: 'rubber-stab', pool: 'root5', seq: [0, 0, 1, 0, 2], prog: 'i', bpm: 126, swing: 58}, 'A rubbery riff with pairs on the "and-a": bass house\'s wobble without a wobble bass.'],
+    ['Vocal skip', '.x..x..x...x.x..', {sound: 'vox-chop', seq: [0, 2, 4, 2]}, 'Chopped syllables skipping across the 2-step: a vocal hook made of rhythm.'],
+    ['Organ shuffle', '..x..x.x.x...x..', {pool: 'chord9', order: 'up'}, 'The organ through the 9th chord, heavily swung: speed garage\'s rolling organ.'],
+    ['Speed stab', '...c..c...c..c..', {sound: 'chord-stab', pool: 'chord', order: 'up', gate: 0.3}, 'Four short chord stabs around the 2-step kick: the space is the groove.'],
+    ['UKG keys', '.x.x...x.x.x...x', {sound: 'rhodes', pool: 'chord9', order: 'updown', gate: 0.7}, 'Rhodes notes on the swung off-16ths: soulful 2-step keys.'],
+    ['Bassline riff', '..x..x.x...x.x..', {sound: 'mono-lead', seq: [0, 0, 3, 4, 0], reg: 60}, 'A mono riff with a rising middle: UK bassline\'s hook, an octave up.'],
   ]);
 
   const BY_ID = Object.fromEntries(PATTERNS.map(p => [p.id, p]));

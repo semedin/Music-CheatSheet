@@ -12,9 +12,9 @@
       "detail": "{\"playing\":true,\"trail\":4,\"now\":true}"
     },
     {
-      "label": "One pattern from each of the 12 genres loads and plays at fit 100",
+      "label": "One pattern from each of the 14 genres loads and plays at fit 100",
       "ok": true,
-      "detail": "true,true,true,true,true,true,true,true,true,true,true,true"
+      "detail": "true,true,true,true,true,true,true,true,true,true,true,true,true,true"
     },
     {
       "label": "New ideas: eight candidates, all fitting",
@@ -34,12 +34,37 @@
     {
       "label": "MIDI export: five tracks, the arp note for note",
       "ok": true,
-      "detail": "{\"name\":\"Orbit_Tech-house-idea-3_Gm_124bpm_8bars.mid\",\"tracks\":[\"Orbit Arp\",\"Chords\",\"Arp input (for Live's Arpeggiator)\",\"Bass\",\"Drums\"],\"arp\":54,\"want\":54}"
+      "detail": "{\"name\":\"Orbit_Tech-house-idea-3_Fm_127bpm_8bars.mid\",\"tracks\":[\"Orbit Arp\",\"Chords\",\"Arp input (for Live's Arpeggiator)\",\"Bass\",\"Drums\"],\"arp\":60,\"want\":60}"
+    },
+    {
+      "label": "Song: seven sections drawn, every one reads as the section it was written for",
+      "ok": true,
+      "detail": "{\"secs\":7,\"blks\":7,\"reads\":true,\"bars\":128,\"playing\":true,\"label\":\"Intro 1/16\",\"now\":true,\"first\":7,\"second\":3,\"stopped\":true,\"midi\":{\"name\":\"Orbit_Organ-bounce_Fm_126bpm_song-club_128bars.mid\",\"tracks\":[\"Orbit Arp\",\"Chords\",\"Bass\",\"Drums\"],\"arp\":628,\"want\":628,\"last\":511.8854166666667,\"beats\":512},\"loaded\":true}"
+    },
+    {
+      "label": "Song: plays, the map and transport follow it",
+      "ok": true,
+      "detail": "Intro 1/16"
+    },
+    {
+      "label": "Song: playback moves from one section into the next",
+      "ok": true,
+      "detail": "7 then 3"
+    },
+    {
+      "label": "Song: MIDI is the whole arrangement, arp note for note, ending inside the song",
+      "ok": true,
+      "detail": "{\"name\":\"Orbit_Organ-bounce_Fm_126bpm_song-club_128bars.mid\",\"tracks\":[\"Orbit Arp\",\"Chords\",\"Bass\",\"Drums\"],\"arp\":628,\"want\":628,\"last\":511.8854166666667,\"beats\":512}"
+    },
+    {
+      "label": "Song: stop works; a section card puts that section on stage",
+      "ok": true,
+      "detail": ""
     },
     {
       "label": "Crate: two saved, two rows, a ZIP comes out",
       "ok": true,
-      "detail": "{\"n\":2,\"pk\":true,\"rows\":2,\"size\":9130}"
+      "detail": "{\"n\":2,\"pk\":true,\"rows\":2,\"size\":10356}"
     },
     {
       "label": "Chord import: picks the chord track, finds Am7 Fmaj7 C G in A minor",
@@ -49,7 +74,7 @@
     {
       "label": "WAV render: a RIFF file, audible and not clipped",
       "ok": true,
-      "detail": "{\"riff\":\"RIFF\",\"peak\":0.72723388671875,\"rms\":0.1624241384597022}"
+      "detail": "{\"riff\":\"RIFF\",\"peak\":0.72723388671875,\"rms\":0.16242414422547172}"
     },
     {
       "label": "All 37 sounds render audible audio",
@@ -79,7 +104,7 @@
     {
       "label": "Chord stabs: the 7 chords of the key as 7ths plus a README",
       "ok": true,
-      "detail": "{\"stabs\":8,\"stab1\":\"01_Fm7_House-organ.wav\",\"ms\":11,\"ms1\":\"House-organ_036_C1_soft.wav\",\"pack\":38,\"loopLen\":168000,\"want\":168000,\"startLevel\":0.47871047258377075,\"stems\":[\"Orbit_Organ-bounce_Fm_126bpm_arp.wav\",\"Orbit_Organ-bounce_Fm_126bpm_bass.wav\",\"Orbit_Organ-bounce_Fm_126bpm_drums.wav\",\"Orbit_Organ-bounce_Fm_126bpm_pad.wav\"]}"
+      "detail": "{\"stabs\":8,\"stab1\":\"01_Fm7_House-organ.wav\",\"ms\":11,\"ms1\":\"House-organ_036_C1_soft.wav\",\"pack\":38,\"loopLen\":168000,\"want\":168000,\"startLevel\":0.4787105619907379,\"stems\":[\"Orbit_Organ-bounce_Fm_126bpm_arp.wav\",\"Orbit_Organ-bounce_Fm_126bpm_bass.wav\",\"Orbit_Organ-bounce_Fm_126bpm_drums.wav\",\"Orbit_Organ-bounce_Fm_126bpm_pad.wav\"]}"
     },
     {
       "label": "Multisample: C1–C5 every octave, two velocity layers (10 files + README)",
@@ -94,7 +119,7 @@
     {
       "label": "Seamless loop: exactly 2 bars long to the sample, already sounding at sample 0 (the tail wrapped in)",
       "ok": true,
-      "detail": "168000 vs 168000, start 0.47871047258377075"
+      "detail": "168000 vs 168000, start 0.4787105619907379"
     },
     {
       "label": "Stems: arp, bass, drums and pad",
@@ -149,17 +174,17 @@
     {
       "label": "Search \"break material\" shows only break-tagged patterns",
       "ok": true,
-      "detail": "{\"breakCount\":27,\"breakAll\":true,\"dropCount\":126,\"buildCount\":26,\"longPads\":19,\"longPadsLong\":true,\"buildTab\":26,\"sorted\":true,\"uses\":\"Use it forBreakenergy  12long notes · a long, held sound (Warm pad) · the chords on show · space between the notes · \\\"Breathe (4 bars)\\\" automation\",\"fitLabel\":\"Tech house · break\",\"longSounds\":12,\"longRows\":12,\"shortDrop\":true,\"picked\":\"choir\",\"previewed\":true,\"breakIdeas\":8}"
+      "detail": "{\"breakCount\":63,\"breakAll\":true,\"dropCount\":271,\"buildCount\":43,\"longPads\":36,\"longPadsLong\":true,\"buildTab\":43,\"sorted\":true,\"uses\":\"Use it forBreakenergy  12long notes · a long, held sound (Warm pad) · the chords on show · space between the notes · \\\"Breathe (4 bars)\\\" automation\",\"fitLabel\":\"Tech house · break\",\"longSounds\":12,\"longRows\":12,\"shortDrop\":true,\"picked\":\"choir\",\"previewed\":true,\"breakIdeas\":8}"
     },
     {
       "label": "Search understands \"drop material for sure\", \"good for build\" and \"long pads for the breakdown\"",
       "ok": true,
-      "detail": "{\"breakCount\":27,\"breakAll\":true,\"dropCount\":126,\"buildCount\":26,\"longPads\":19,\"longPadsLong\":true,\"buildTab\":26,\"sorted\":true,\"uses\":\"Use it forBreakenergy  12long notes · a long, held sound (Warm pad) · the chords on show · space between the notes · \\\"Breathe (4 bars)\\\" automation\",\"fitLabel\":\"Tech house · break\",\"longSounds\":12,\"longRows\":12,\"shortDrop\":true,\"picked\":\"choir\",\"previewed\":true,\"breakIdeas\":8}"
+      "detail": "{\"breakCount\":63,\"breakAll\":true,\"dropCount\":271,\"buildCount\":43,\"longPads\":36,\"longPadsLong\":true,\"buildTab\":43,\"sorted\":true,\"uses\":\"Use it forBreakenergy  12long notes · a long, held sound (Warm pad) · the chords on show · space between the notes · \\\"Breathe (4 bars)\\\" automation\",\"fitLabel\":\"Tech house · break\",\"longSounds\":12,\"longRows\":12,\"shortDrop\":true,\"picked\":\"choir\",\"previewed\":true,\"breakIdeas\":8}"
     },
     {
       "label": "Section tabs filter and energy sorts high to low",
       "ok": true,
-      "detail": "{\"breakCount\":27,\"breakAll\":true,\"dropCount\":126,\"buildCount\":26,\"longPads\":19,\"longPadsLong\":true,\"buildTab\":26,\"sorted\":true,\"uses\":\"Use it forBreakenergy  12long notes · a long, held sound (Warm pad) · the chords on show · space between the notes · \\\"Breathe (4 bars)\\\" automation\",\"fitLabel\":\"Tech house · break\",\"longSounds\":12,\"longRows\":12,\"shortDrop\":true,\"picked\":\"choir\",\"previewed\":true,\"breakIdeas\":8}"
+      "detail": "{\"breakCount\":63,\"breakAll\":true,\"dropCount\":271,\"buildCount\":43,\"longPads\":36,\"longPadsLong\":true,\"buildTab\":43,\"sorted\":true,\"uses\":\"Use it forBreakenergy  12long notes · a long, held sound (Warm pad) · the chords on show · space between the notes · \\\"Breathe (4 bars)\\\" automation\",\"fitLabel\":\"Tech house · break\",\"longSounds\":12,\"longRows\":12,\"shortDrop\":true,\"picked\":\"choir\",\"previewed\":true,\"breakIdeas\":8}"
     },
     {
       "label": "The stage says what a combo is for, and the fingerprint is the section's",
@@ -169,7 +194,7 @@
     {
       "label": "Sound browser: length and section filters, search, pick and preview",
       "ok": true,
-      "detail": "{\"breakCount\":27,\"breakAll\":true,\"dropCount\":126,\"buildCount\":26,\"longPads\":19,\"longPadsLong\":true,\"buildTab\":26,\"sorted\":true,\"uses\":\"Use it forBreakenergy  12long notes · a long, held sound (Warm pad) · the chords on show · space between the notes · \\\"Breathe (4 bars)\\\" automation\",\"fitLabel\":\"Tech house · break\",\"longSounds\":12,\"longRows\":12,\"shortDrop\":true,\"picked\":\"choir\",\"previewed\":true,\"breakIdeas\":8}"
+      "detail": "{\"breakCount\":63,\"breakAll\":true,\"dropCount\":271,\"buildCount\":43,\"longPads\":36,\"longPadsLong\":true,\"buildTab\":43,\"sorted\":true,\"uses\":\"Use it forBreakenergy  12long notes · a long, held sound (Warm pad) · the chords on show · space between the notes · \\\"Breathe (4 bars)\\\" automation\",\"fitLabel\":\"Tech house · break\",\"longSounds\":12,\"longRows\":12,\"shortDrop\":true,\"picked\":\"choir\",\"previewed\":true,\"breakIdeas\":8}"
     },
     {
       "label": "New ideas for the break: the generator writes break material",
@@ -183,8 +208,8 @@
     },
     {
       "label": "Phone (390 px): no horizontal scroll",
-      "ok": true,
-      "detail": "390 vs 390"
+      "ok": false,
+      "detail": "437 vs 390"
     },
     {
       "label": "Phone: the floating button plays",
@@ -192,6 +217,10 @@
       "detail": ""
     }
   ],
-  "errors": [],
-  "status": "passed"
+  "errors": [
+    "desktop: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+    "mobile: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+    "FAILED: Phone (390 px): no horizontal scroll (437 vs 390)"
+  ],
+  "status": "failed"
 }
