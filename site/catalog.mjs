@@ -12,6 +12,9 @@ export const SECTIONS = [
     title: 'Write ideas',
     blurb: 'Studios that generate, edit and export MIDI. Start here when you want notes to drag into Ableton.',
     pages: [
+      {file: 'breeder.html', title: 'Breeder — grow a groove', edition: 'New', badge: 'Latest',
+        text: 'Don\'t write the groove, grow it. Eight whole loops (drums, bass, riff, chords) in any of Orbit\'s 14 genres, or bred from your own MIDI. Star the ones that move you and breed: children cross over gene by gene and mutate inside the genre\'s grammar, each measured against the genre and telling you how it was made. Locks, drift, a family tree, lineage MIDI, WAV loops, and straight into Transplant.',
+        doc: 'BREEDER.md', src: 'breeder-src'},
       {file: 'talk.html', title: 'Talk — tech house bass and hooks', edition: 'New', badge: 'Latest',
         text: 'Make the bass talk: 14 tech house loops through a formant filter that says wah, ow and yeah, eight moves that keep one loop alive for a whole drop, and a mic booth that turns your three words into eight chart-style hooks, chopped, pitched and taking turns with the bass. MIDI with bend and CCs, WAV stems.',
         doc: 'TALK.md', src: 'talk-src'},
@@ -128,6 +131,7 @@ export const SECTIONS = [
 export const DOCS = [
   {file: 'README.md', title: 'README', text: 'What is in this folder and how it fits together.'},
   {file: 'TODO.md', title: 'TODO: pages to build', text: 'Ranked wish list of new pages and folder-wide features.'},
+  {file: 'BREEDER.md', title: 'Breeder notes', text: 'Growing grooves by interactive evolution: the genes, crossover, mutation inside the grammar, selection, drift, what is measured and the limits.'},
   {file: 'TRANSPLANT.md', title: 'Transplant notes', text: 'Borrowing a reference\'s arrangement for your loop: the model, the layering, every move rebuilt, what is measured and the limits.'},
   {file: 'TALK.md', title: 'Talk notes', text: 'The tech house room: the talking bass, the hook booth, what is measured and the limits.'},
   {file: 'POCKET.md', title: 'Pocket notes', text: 'Writing a foundation around a riff: composition, sound, exports and limits.'},
@@ -157,6 +161,7 @@ export const DOWNLOADS = [
 export const NAV = [
   {file: 'index.html', label: 'Home'},
   {file: 'fieldwork-v3.html', label: 'Motif Studio'},
+  {file: 'breeder.html', label: 'Breeder'},
   {file: 'orbit.html', label: 'Arps'},
   {file: 'pocket.html', label: 'Pocket'},
   {file: 'talk.html', label: 'Tech House'},
@@ -188,4 +193,5 @@ export const TEMPLATES = [
   'pocket-src/template.html',
   'talk-src/template.html',
   'transplant-src/template.html',
+  'breeder-src/template.html',
 ];

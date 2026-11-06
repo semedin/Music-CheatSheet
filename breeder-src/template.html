@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0C1110">
+<title>Breeder — grow a groove · Fieldwork</title>
+<meta name="description" content="Don't write the groove, grow it. Eight grooves (drums, bass, riff, chords) in a genre; star the ones you like and breed them. Children cross over gene by gene and mutate inside the genre's grammar, every one measured against Orbit's genre fingerprint. Family tree, lineage MIDI, WAV loops, and straight into Transplant.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/*STYLE*/
+</style>
+</head>
+<body>
+<!-- site-nav:start --><div id="site-nav" role="navigation" aria-label="All Fieldwork pages"><style>#site-nav{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:2px;width:100%;padding:6px 12px;overflow-x:auto;background:#171e22;color:#c9cdc2;font:500 13px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;position:relative;z-index:1000;scrollbar-width:thin}#site-nav a{all:unset;display:inline-block;padding:5px 9px;border-radius:4px;color:#c9cdc2;white-space:nowrap;cursor:pointer}#site-nav a:hover{color:#fff;background:#283237}#site-nav a:focus-visible{outline:2px solid #ffc96e;outline-offset:1px}#site-nav a[aria-current=page]{color:#171e22;background:#ffc96e}#site-nav .sn-brand{font-weight:800;letter-spacing:.08em;color:#fff;margin-right:6px}@media print{#site-nav{display:none}}</style><a href="index.html" data-files="index.html" class="sn-brand">FIELDWORK</a><a href="fieldwork-v3.html" data-files="fieldwork-v3.html">Motif Studio</a><a href="breeder.html" data-files="breeder.html">Breeder</a><a href="orbit.html" data-files="orbit.html">Arps</a><a href="pocket.html" data-files="pocket.html">Pocket</a><a href="talk.html" data-files="talk.html">Tech House</a><a href="studio-v2.html" data-files="studio-v2.html melody-v2.html chords-v2.html bass-v2.html">V2 Studio</a><a href="trance.html" data-files="trance.html">Trance</a><a href="xray.html" data-files="xray.html">X-Ray</a><a href="blueprint.html" data-files="blueprint.html">Blueprint</a><a href="transplant.html" data-files="transplant.html">Transplant</a><a href="drum-library.html" data-files="drum-library.html">Drums</a><a href="rumble.html" data-files="rumble.html">Rumble</a><a href="serum-v2.html" data-files="serum-v2.html serum.html patch-lab.html sampling.html">Sound design</a><a href="field-guides-v1.html" data-files="field-guides-v1.html groove-cheatsheet.html groove-vol2.html low-end.html melody.html chords.html between.html inkey.html keyboard.html arrangement.html buildorder.html the-move.html disco-house-cheatsheet.html">Field guides</a><script data-site-nav>(()=>{const f=decodeURIComponent(location.pathname.split('/').pop()||'index.html');for(const a of document.querySelectorAll('#site-nav a'))if(a.dataset.files.split(' ').includes(f)){a.setAttribute('aria-current','page');break}})()</script></div><!-- site-nav:end -->
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Fieldwork · Write · interactive evolution</p>
+      <h1 class="title">Breeder<span>Don't write the groove. <em>Grow</em> it.</span></h1>
+      <p class="lede">Eight grooves, each a whole loop: <strong>drums, bassline, riff and chords</strong>. Listen, <strong>star the ones that move you</strong>, press <strong>Breed</strong>. Their children take the kick from one parent and the hats from the other, the riff's rhythm from one and its notes from the other, then mutate inside the genre's grammar. Every child is measured against the genre, and every child tells you exactly how it was made. Ten generations later you have a groove nobody wrote.</p>
+      <div class="cta"><button class="big hot" id="heroGo" type="button">▶ Breed a techno groove</button><a class="ghostlink" href="#start">or pick a genre ↓</a></div>
+    </div>
+    <div class="hero-art" aria-hidden="true"><svg viewBox="0 0 360 300" id="heroArt"></svg></div>
+  </div>
+</header>
+
+<main>
+<section class="wrap start" id="start" aria-label="Start a family">
+  <div class="head"><span class="num">01</span><div><h2>Start a family</h2><p>Eight first grooves in a genre, from Orbit's patterns and its generator, on the genre's own drums and bassline. Or breed from your own loop.</p></div></div>
+  <div class="genres" id="genres" role="list"></div>
+  <div class="drop" id="loopDrop" tabindex="0" role="button" aria-label="Drop your loop's MIDI to breed from it">
+    <b>Breed from your own loop</b><span>Drop its MIDI (several files, or one with several tracks; Drum Rack clips split by pad). Your loop becomes the first parent, in the genre picked above.</span>
+    <div class="acts"><button class="btn" id="loopPick" type="button">Choose MIDI files</button></div>
+    <input type="file" id="loopFile" accept=".mid,.midi,audio/midi" multiple hidden>
+    <div class="err" id="loopErr" hidden></div>
+  </div>
+</section>
+
+<div class="transport" id="transport" hidden>
+  <div class="wrap">
+    <button class="tbtn" id="play" type="button" aria-keyshortcuts="Space">▶ Play</button>
+    <div class="now"><small>Now playing</small><b id="nowName">–</b></div>
+    <span class="pos" id="pos">1.1</span>
+    <span class="grow"></span>
+    <button class="breed" id="breed" type="button" title="Breed the starred grooves (B)">Breed <small id="breedHint">star one or more</small></button>
+    <label class="tvol" title="Volume"><span aria-hidden="true">Vol</span><input id="vol" type="range" min="0" max="100" value="80" aria-label="Volume"></label>
+  </div>
+</div>
+
+<section class="wrap part" id="lab" hidden>
+  <div class="head"><span class="num">02</span><div><h2 id="genTitle">Generation 1</h2><p><span id="genSub"></span><b>Click</b> a groove to hear it (it changes on the next bar). <b>Star</b> the ones you want as parents, <b>heart</b> the ones to keep. Then breed.</p></div></div>
+  <div class="controls">
+    <div class="ctl"><small>Mutation</small><div class="seg" role="group" aria-label="Mutation strength" id="strength"><button type="button" data-v="gentle">Gentle</button><button type="button" data-v="bold">Bold</button><button type="button" data-v="wild">Wild</button></div></div>
+    <div class="ctl drift"><small>Drift <output id="driftOut"></output></small><input type="range" id="drift" min="0" max="100" value="20" aria-label="Drift: how far children may leave the genre"><span class="ends"><i>stay in the genre</i><i>wander</i></span></div>
+    <label class="ctl tog"><input type="checkbox" id="keepParents" checked> Keep the parents in the next generation</label>
+    <div class="ctl gens"><button class="btn ghost sm" id="back" type="button" title="Back a generation">◀</button><span id="genNav">1 / 1</span><button class="btn ghost sm" id="fwd" type="button" title="Forward a generation">▶</button><button class="btn ghost sm" id="fresh" type="button" title="Replace the grooves you didn't star with new ones">Fresh blood</button></div>
+  </div>
+  <div class="locks" id="locks" aria-label="Keep these genes from the first starred groove"><small>Keep from the first star:</small></div>
+  <div class="pop" id="pop" role="list"></div>
+</section>
+
+<section class="wrap part" id="detail" hidden>
+  <div class="head"><span class="num">03</span><div><h2 id="dName">–</h2><p id="dSub"></p></div></div>
+  <div class="dgrid">
+    <div class="panel big"><canvas id="dCv" aria-label="The groove, step by step"></canvas><div class="mixer" id="mixer"></div></div>
+    <div class="panel side">
+      <div class="scores" id="scores"></div>
+      <h3>How it was made</h3><ol class="log" id="log"></ol>
+      <h3>The riff against the genre</h3><div class="axes" id="axes"></div>
+    </div>
+  </div>
+  <div class="row exports"><button class="btn hot" id="xTransplant" type="button">Transplant it into a track →</button><button class="btn" id="xMidi" type="button">MIDI loop</button><button class="btn ghost" id="xWav" type="button">WAV loop</button><button class="btn ghost" id="xLine" type="button">Its lineage as MIDI</button><button class="btn ghost" id="xKeep" type="button">♥ Keep</button></div>
+</section>
+
+<section class="wrap part" id="treeSec" hidden>
+  <div class="head"><span class="num">04</span><div><h2>The family tree</h2><p>Every groove you've bred, generation by generation, coloured by the genre it reads as. Lines run to its parents. <b>Click</b> any groove to hear it again.</p></div></div>
+  <div class="panel tree"><svg id="tree" role="img" aria-label="The family tree"></svg></div>
+</section>
+
+<section class="wrap part" id="keepSec" hidden>
+  <div class="head"><span class="num">05</span><div><h2>Keepers</h2><p>The grooves you hearted, kept in this browser. Star a keeper to bring it back as a parent.</p></div></div>
+  <div class="keepers" id="keepers"></div>
+  <div class="row"><button class="btn ghost" id="xSave" type="button">Save the whole family (.json)</button><button class="btn ghost" id="xOpen" type="button">Open a family</button><input type="file" id="famFile" accept=".json,application/json" hidden></div>
+</section>
+
+<section class="wrap part" id="how">
+  <div class="head"><span class="num">?</span><div><h2>How it works, and where it can be wrong</h2><p>Breeder stands on Orbit: its 14 genres, their grooves and basslines, 333 patterns, the generator, Orbit's own variations and the genre fingerprint. The preview is Transplant's audio engine.</p></div></div>
+  <div class="two">
+    <div class="panel"><h3>The genes</h3><p>A groove is ten gene groups: the kick, the clap, the hats, the percussion (each a two-bar line of 16ths), the bassline (root, fifth, octave, third or seventh of the chord playing, per 16th), the riff's rhythm (rate, steps, gate), the riff's notes (Orbit's pool, order and written sequence, which fit any harmony), the sounds, the key and chords, and the tempo and swing. Children take each group from one parent or the other, sometimes bar 1 from one and bar 2 from the other.</p></div>
+    <div class="panel"><h3>Mutation and selection</h3><p>Mutations stay inside the genre's grammar: the genre's kick anchors always play, the bass stays off the kick where the genre's does, percussion is rewritten as Euclidean rhythms or borrowed from other grooves, and the riff changes with Orbit's own variations. For every slot Breeder draws six candidates and keeps the one with the best mix of genre fit and difference from its siblings, so a generation is good and varied. Drift turns the fit down and lets a family walk out of its genre; the "reads as" label shows where it went.</p></div>
+  </div>
+  <div class="panel"><h3>Limits</h3><ul class="limits">
+    <li>The fit scores measure grammar (the riff against Orbit's genre fingerprint, the kick anchors and backbeat, the bass against the kick). They don't measure whether it's a hit. That's what your stars are for.</li>
+    <li>Drums and bass are two-bar lines on a 16th grid; the riff can be longer (up to Orbit's four bars). Triplet and 32nd drum detail belong in Live.</li>
+    <li>"Reads as" compares the riff, the drums and the tempo with Orbit's 14 genres. Acid and techno share a groove, so an acid line can read as techno.</li>
+    <li>The preview plays Orbit's synths and a synthesized kit; your own instruments in Live are the real thing.</li>
+  </ul></div>
+</section>
+</main>
+<footer class="wrap">Breeder is part of Fieldwork: one self-contained file. Keys: <kbd>Space</kbd> play, <kbd>1</kbd>–<kbd>8</kbd> hear a groove, <kbd>←</kbd> <kbd>→</kbd> the next one, <kbd>S</kbd> star, <kbd>K</kbd> keep, <kbd>B</kbd> breed, <kbd>Backspace</kbd> back a generation.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/*THEORY*/
+/*SOUNDS*/
+/*BANK*/
+/*ORBIT*/
+/*LOOP*/
+/*HANDOFF*/
+/*GENOME*/
+/*AUDIO*/
+/*APP*/
+</script>
+</body>
+</html>

@@ -97,7 +97,8 @@ function create(ctx, {destination = ctx.destination} = {}) {
   let parts = [], plan = null, spb = 0.5, kickHz = 50;
 
   function load(pl, o = {}) {
-    for (const p of parts) try { p.in.disconnect(); p.rev.disconnect(); p.dly.disconnect(); } catch (_) {}
+    // the old parts stay connected a few seconds, so notes already scheduled (a swap at a bar line) ring out
+    const old = parts; if (old.length) setTimeout(() => { for (const p of old) try { p.in.disconnect(); p.rev.disconnect(); p.dly.disconnect(); } catch (_) {} }, 4000);
     plan = pl; spb = 60 / pl.bpm; kickHz = o.kickHz || 50;
     for (const g of ['drums', 'bass', 'synths', 'fx']) { const G = groups[g]; for (const c of [G.dry, G.rev, G.dly]) { for (const f of c.lp) f.frequency.value = 20000; for (const f of c.hp) f.frequency.value = 10; } G.duck.gain.value = 1; }
     const dt = Math.min(3.9, 0.75 * spb); dL.delayTime.value = dt; dR.delayTime.value = dt;
@@ -361,7 +362,7 @@ function create(ctx, {destination = ctx.destination} = {}) {
 
 // ---------- the live player ----------
 function player(ctx, eng) {
-  let playing = false, t0 = 0, k0 = 0, cursor = 0, timer = null, loop = null, fresh = false, segs = [];
+  let playing = false, t0 = 0, k0 = 0, cursor = 0, timer = null, loop = null, fresh = false, segs = [], pending = null;
   const LOOK = 0.18, TICK = 0.035;
   const tOf = k => t0 + (k - k0) * eng.spb;
   function tick() {
@@ -369,30 +370,39 @@ function player(ctx, eng) {
     const now = ctx.currentTime, until = (now + LOOK - t0) / eng.spb + k0;
     while (cursor < until) {
       let end = Math.min(until, loop ? loop[1] : eng.plan.beats);
+      // a swap waits for the next bar line: everything before it is the old plan, everything after it the new one
+      if (pending) {
+        const at = Math.ceil(cursor / 4 - 1e-9) * 4;
+        // the new plan may have another tempo: the clock is re-anchored at the bar line, in the old tempo
+        if (at <= cursor + 1e-9) { const tAt = tOf(cursor); eng.load(pending.plan, pending.opts); eng.prepare(); t0 = tAt; k0 = cursor; segs.push({t0, k0, spb: eng.spb}); pending = null; fresh = true; api.onswap && api.onswap(cursor); continue; }
+        end = Math.min(end, at);
+      }
       if (end <= cursor) {
-        if (loop) { t0 = tOf(loop[1]); k0 = loop[0]; cursor = loop[0]; fresh = true; segs.push({t0, k0}); continue; }
+        if (loop) { t0 = tOf(loop[1]); k0 = loop[0]; cursor = loop[0]; fresh = true; segs.push({t0, k0, spb: eng.spb}); continue; }
         stop(); api.onend && api.onend(); return;
       }
       eng.schedule(cursor, end, tOf, {fresh}); fresh = false; cursor = end;
-      if (loop && cursor >= loop[1] - 1e-9) { t0 = tOf(loop[1]); k0 = loop[0]; cursor = loop[0]; fresh = true; segs.push({t0, k0}); }
+      if (loop && cursor >= loop[1] - 1e-9) { t0 = tOf(loop[1]); k0 = loop[0]; cursor = loop[0]; fresh = true; segs.push({t0, k0, spb: eng.spb}); }
     }
     eng.prune(now);
   }
   function play(from = 0) {
     if (playing) stop();
-    eng.prepare(); playing = true; k0 = Math.max(0, from); cursor = k0; t0 = ctx.currentTime + 0.06; fresh = true; segs = [{t0, k0}];
+    eng.prepare(); playing = true; k0 = Math.max(0, from); cursor = k0; t0 = ctx.currentTime + 0.06; fresh = true; segs = [{t0, k0, spb: eng.spb}];
     eng.master.gain.cancelScheduledValues(ctx.currentTime); eng.master.gain.setValueAtTime(0.86, ctx.currentTime);
     tick(); timer = setInterval(tick, TICK * 1000);
   }
-  function stop() { playing = false; clearInterval(timer); timer = null; eng.silence(ctx.currentTime); }
+  function stop() { playing = false; pending = null; clearInterval(timer); timer = null; eng.silence(ctx.currentTime); }
   function beat() {
     if (!playing) return null;
     const now = ctx.currentTime; let s = segs[0];
     for (const x of segs) if (x.t0 <= now) s = x;
     if (segs.length > 4) segs = segs.filter(x => x === s || x.t0 > now);
-    return Math.max(s.k0, (now - s.t0) / eng.spb + s.k0);
+    return Math.max(s.k0, (now - s.t0) / (s.spb || eng.spb) + s.k0);
   }
-  const api = {play, stop, beat, get playing() { return playing; }, setLoop(l) { loop = l && l[1] > l[0] ? l : null; }, get loop() { return loop; }, onend: null};
+  // swap(plan): play another plan from the next bar line on, without stopping
+  function swap(plan, opts = {}) { if (!playing) { eng.load(plan, opts); return; } pending = {plan, opts}; }
+  const api = {play, stop, beat, swap, get playing() { return playing; }, get pending() { return !!pending; }, setLoop(l) { loop = l && l[1] > l[0] ? l : null; }, get loop() { return loop; }, onend: null, onswap: null};
   return api;
 }
 

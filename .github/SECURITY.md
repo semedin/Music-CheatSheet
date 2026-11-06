@@ -5,7 +5,7 @@ GitHub already prevents people without write access from pushing to the reposito
 ## Protections included in the repository
 
 - CODEOWNERS routes every pull request to `@semedin`, including edits to workflows and ownership rules.
-- Repository checks validates the committed Orbit, Pocket, Talk, Blueprint and Transplant builds and every documented engine and link suite.
+- Repository checks validates the committed Orbit, Pocket, Talk, Blueprint, Transplant and Breeder builds and every documented engine and link suite.
 - The workflow grants only `contents: read`, does not retain checkout credentials, and runs no privileged `pull_request_target` jobs. No secrets are passed to pull-request code.
 - Third-party actions are pinned to full commit SHAs verified against their official release tags. Update pins only after reviewing the upstream change.
 
