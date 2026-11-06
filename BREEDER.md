@@ -86,7 +86,8 @@ These numbers measure grammar and difference, not whether it's a hit. That's wha
 
 Every groove you've bred, generation by generation, with lines to its parents, coloured by the genre it reads as.
 Starred parents are ringed, and a parent kept into the next generation is joined by a dashed line. Click any groove to
-hear it again. Heart a groove to keep it; star a keeper to bring it back as a parent. The family and the keepers are
+hear it again. **Clear the tree** drops every earlier generation (after asking): the current generation becomes generation
+1, and your keepers and stars stay. Heart a groove to keep it; star a keeper to bring it back as a parent. The family and the keepers are
 kept in this browser, and the whole family saves to a `.json` file and opens again.
 
 ## Hear it, take it out
