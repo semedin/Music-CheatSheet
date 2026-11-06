@@ -755,9 +755,23 @@ async function fromBlueprint() {
   setTimeout(() => $('#setup').scrollIntoView({behavior: 'smooth'}), 200);
   return true;
 }
+// a groove bred in Breeder arrives as your loop, in the arrangement you had here last time
+async function fromBreeder() {
+  if (!/from=breeder/.test(location.hash)) return false;
+  history.replaceState(null, '', location.pathname + location.search);
+  let item = null;
+  try { item = await FWH.take('loop'); } catch (_) {}
+  if (!item || !item.loop) { toast('Nothing arrived from Breeder: this browser keeps the two pages apart. Download the groove\'s MIDI in Breeder and drop it here.', 6000); return false; }
+  const l = TL.revive(item.loop); l.name = item.loop.name; l.bpm = item.loop.bpm;
+  if (!restore()) { S.model = shapeModel('peak-techno'); S.shapeId = 'peak-techno'; }
+  setLoop(l);
+  toast(`${l.name} arrived from Breeder: ${l.parts.length} parts in the arrangement of ${S.model.name}. Pick another arrangement above, or drop a reference track.`, 5600);
+  setTimeout(() => $('#board').scrollIntoView({behavior: 'smooth'}), 200);
+  return true;
+}
 async function start() {
   heroArt(); wire();
-  if (!(await fromBlueprint())) {
+  if (!(await fromBlueprint()) && !(await fromBreeder())) {
     if (!restore()) { S.loop = TL.demo('warehouse'); S.demoId = 'warehouse'; S.model = shapeModel('peak-techno'); S.shapeId = 'peak-techno'; S.bpm = S.loop.bpm; recompute(); }
   }
   renderSetup();

@@ -75,6 +75,11 @@ Arc's Transitions lab covers *where* transitions go. This page covers the sounds
   build. Remove one layer and watch the curve go flat.
 - Export: rolls as MIDI, risers as WAV, filter sweeps as MIDI CC.
 
+### `breeder.html` — **Breeder** · grow a groove ✅ built
+Shipped: see [BREEDER.md](BREEDER.md). Next steps: breeding sounds as well as notes (patch parameters as genes),
+longer drum lines with fills as genes, and a "breed toward this reference" mode that uses X-Ray's measured groove of a
+track as the fitness target.
+
 ### `transplant.html` — **Transplant** · your loop in someone else's arrangement ✅ built
 Shipped: see [TRANSPLANT.md](TRANSPLANT.md). It answers "I have 8 bars and no track" with a reference's measured
 arrangement rebuilt on your own parts. Next steps: variations written for long sections (a new fill, a note swap,
