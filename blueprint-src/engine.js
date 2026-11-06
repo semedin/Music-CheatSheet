@@ -1165,6 +1165,33 @@ function report(an, name) {
   return L.join('\n') + '\n';
 }
 
-return {SECTION_TYPES, _x: {echoes, series, otsu, elementBreaks, widthMoves, staticFilters, loopRefs, filterSweeps, pitchSweeps, tapeStops, echoes, impacts, edges, relFit, riserSeries, frameSeries, bandIdx, toBeat, toTime, pumps, steadyRuns}, prepare, derive, spectral, blueprintMidi, rollMidi, midiFile, report, hzToCC, LANES, CAT, COLOR, barBeat, lengthText, hzText, noteValue, spans, fitSkirt, relFit, steadyRuns};
+// ---------- the measurements as data ----------
+// Version 2 of Blueprint's JSON: the version 1 fields (so older readers keep working), plus every move's exact
+// beats and numbers, and the element lanes and tension per beat. Transplant reads this to rebuild the
+// arrangement on someone's own loop; Transplant's own analysis goes through this same function.
+const MOVE_FIELDS = ['target', 'opening', 'fromHz', 'toHz', 'reachedOpen', 'hz', 'slope', 'riseDb', 'noise', 'semis', 'velDb', 'beats', 'depth',
+  'bar', 'ms', 'note', 'repeats', 'repeatDb', 'feedback', 'grid', 'db', 't60', 'decayS', 'levelDrop', 'utility', 'silent', 'against'];
+function exportModel(an, name) {
+  const r = (v, d = 3) => typeof v === 'number' ? (Number.isFinite(v) ? Math.round(v * 10 ** d) / 10 ** d : null) : v, g = an.grid;
+  const move = e => {
+    const o = {type: e.type, title: e.title, at: e.at, to: e.to, sure: r(e.conf), k0: r(e.k0), k1: r(e.k1), cat: e.cat, what: e.what, recipe: e.recipe};
+    for (const f of MOVE_FIELDS) if (e[f] != null && typeof e[f] !== 'object') o[f] = r(e[f]);
+    if (e.curve) o.curve = e.curve.filter(p => p.hz).map(p => [r(p.k), Math.round(p.hz)]);
+    if (e.steps) o.steps = e.steps.map(s => ({k: r(s.k), n: s.n, name: s.name}));
+    if (e.hits) o.hits = e.hits.map(h => [r(h.k), r(h.v, 2)]);
+    return o;
+  };
+  return {
+    kind: 'fieldwork-blueprint', version: 2, track: name ?? (an.meta && an.meta.name), bpm: r(g.bpm), bar1: r(g.t0), beatDur: r(g.beatDur, 6), bars: g.nBars,
+    key: an.key && an.key.name, camelot: an.key && an.key.camelot, lufs: an.loud && r(an.loud.I, 1),
+    sections: an.sections.map(s => ({name: s.name, label: s.label, start: s.start + 1, end: s.end})),
+    moves: an.moves.map(move),
+    sidechain: an.pumps.map(p => ({section: p.section, start: p.start + 1, end: p.end, pump: p.pump, depth: r(p.depth), releaseMs: p.releaseMs && Math.round(p.releaseMs)})),
+    lanes: Object.fromEntries(Object.entries(an.elementSpans).map(([k, v]) => [k, v.map(([a, b]) => [r(a), r(b)])])),
+    beats: {lanes: Object.fromEntries(LANES.map(l => [l.k, Array.from(an.lanes[l.k], v => r(v, 2))])), tension: Array.from(an.tension, v => r(v, 2))},
+  };
+}
+
+return {SECTION_TYPES, exportModel, _x: {echoes, series, otsu, elementBreaks, widthMoves, staticFilters, loopRefs, filterSweeps, pitchSweeps, tapeStops, echoes, impacts, edges, relFit, riserSeries, frameSeries, bandIdx, toBeat, toTime, pumps, steadyRuns}, prepare, derive, spectral, blueprintMidi, rollMidi, midiFile, report, hzToCC, LANES, CAT, COLOR, barBeat, lengthText, hzText, noteValue, spans, fitSkirt, relFit, steadyRuns};
 })();
 /* blueprint-engine:end */

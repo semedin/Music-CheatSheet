@@ -9,7 +9,7 @@ import {withNav} from '../site/build.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url)), root = path.dirname(here);
 const read = f => fs.readFileSync(path.join(here, f), 'utf8');
-const parts = {STYLE: read('style.css'), XR: xrSource(), SYNTH: read('synth.js'), ENGINE: read('engine.js'), APP: read('app.js')};
+const parts = {STYLE: read('style.css'), XR: xrSource(), SYNTH: read('synth.js'), ENGINE: read('engine.js'), HANDOFF: read('../transplant-src/handoff.js'), APP: read('app.js')};
 let html = read('template.html');
 for (const [k, v] of Object.entries(parts)) { const tag = k === 'STYLE' ? `/*${k}*/` : `/*${k}*/`; if (!html.includes(tag)) throw Error('template is missing ' + tag); html = html.replace(tag, () => v); }
 html = withNav(html);

@@ -9,7 +9,7 @@ synthesis. There is no server, account, install or package manager.
 
 1. Keep every file in **one folder**. Pages link to each other by file name.
 2. Open **[`index.html`](index.html)**, the home page. It lists every page, the notes and the MIDI packs, with search (<kbd>/</kbd>).
-3. Every page has the same top bar: **Home · Motif Studio · Arps · Pocket · Tech House · V2 Studio · Trance · X-Ray · Blueprint · Drums · Rumble · Sound design · Field guides**.
+3. Every page has the same top bar: **Home · Motif Studio · Arps · Pocket · Tech House · V2 Studio · Trance · X-Ray · Blueprint · Transplant · Drums · Rumble · Sound design · Field guides**.
 
 Use headphones or monitors: several labs work below 150 Hz, where laptop speakers are silent.
 
@@ -33,6 +33,12 @@ Use headphones or monitors: several labs work below 150 Hz, where laptop speaker
 |---|---|---|---|
 | [`xray.html`](xray.html) | **X-Ray, look inside a reference track.** Drop in an MP3, WAV, FLAC or AAC. Get tempo, key, the arrangement in bars, drum pattern and swing, chords, kick note, LUFS and tonal balance; A/B it loudness-matched against your mix; export a skeleton MIDI for Ableton. | [XRAY.md](XRAY.md) | hand-edited (tested by `xray-tests.mjs`) |
 | [`blueprint.html`](blueprint.html) | **Blueprint, the arrangement and every move in it.** Drop in a reference track. Get its arrangement drawn bar by bar, every transition move found (filter sweeps with the cutoff traced, risers, rolls, gaps, delay throws, stutters, tape stops, sidechain, width, fades) and a recipe for each in Live; export it as MIDI with CC74 automation. | [BLUEPRINT.md](BLUEPRINT.md) | `blueprint-src/` |
+
+### Arrange
+
+| Page | What it is | Notes | Built from |
+|---|---|---|---|
+| [`transplant.html`](transplant.html) | **Transplant, your loop in someone else's arrangement.** Drop in a reference track (or pick one of six shapes) and your loop's MIDI. The reference is measured in the page, and its arrangement is rebuilt on your own parts: each one comes in and out where the reference's lane does (extra layers on phrase lines, where the reference gets fuller), and every move lands on your notes: the roll on your clap, the sweep on your riff as CC74, the throw on your hit, the gap before the drop. A/B it against the reference at the same bar, loudness-matched; see how close the shape is; export arranged MIDI per track, FX audio named by bar, stems and a plan for Live. Blueprint hands its analysis straight over. | [TRANSPLANT.md](TRANSPLANT.md) | `transplant-src/` |
 
 ### Drums & low end
 
@@ -102,7 +108,8 @@ folder yet".
 | `serum-v2.html` | `sound-design-src/` | `node sound-design-src/build.mjs` |
 | `drum-library.html` | `drum-library-src/` | `node drum-library-src/build.mjs` |
 | `trance.html` | `trance-src/` + `material/` | `node trance-src/build.mjs` (`node trance-src/pack.mjs` rebuilds the zip) |
-| `blueprint.html` | `blueprint-src/` + X-Ray's engine from `xray.html` | `node blueprint-src/build.mjs` |
+| `blueprint.html` | `blueprint-src/` + X-Ray's engine from `xray.html` + `transplant-src/handoff.js` | `node blueprint-src/build.mjs` |
+| `transplant.html` | `transplant-src/` + X-Ray's and Blueprint's engines + Orbit's theory and patches | `node transplant-src/build.mjs` |
 | `pocket.html` | `pocket-src/` + Orbit theory/MIDI helpers | `node pocket-src/build.mjs` |
 | `talk.html` | `talk-src/` + Orbit theory/MIDI helpers | `node talk-src/build.mjs` |
 | `orbit.html` | `arp-src/` | `node arp-src/build.mjs` |
@@ -131,13 +138,14 @@ node drum-library-src/test.mjs   # drum studio
 node rumble-tests.mjs            # rumble lab
 node xray-tests.mjs              # X-Ray analysis engine against known answers
 node blueprint-src/test.mjs      # Blueprint's move detectors against a planted demo and an effect-free control
+node transplant-src/test.mjs     # Transplant: lanes, shapes, Blueprint files, MIDI loops, the arrangement grammar, the analysed demo
 node trance-src/test.mjs         # trance room
 node talk-src/test.mjs           # Talk: bass grammar, moves, syllables, pitch, hooks, MIDI
 node pocket-src/test.mjs         # Pocket responses, timing, import/export and session validation
 node arp-src/test.mjs            # Orbit: theory, engine, bank against its genres, generator, export
 ```
 
-`pocket-src/browser-check.mjs` checks Pocket with Playwright and saves QA artifacts under `/tmp/pocket-qa`. `talk-src/browser-check.mjs` does the same for Talk (`/tmp/talk-qa`), including offline renders of the mix, each part and all eight hooks.
+`pocket-src/browser-check.mjs` checks Pocket with Playwright and saves QA artifacts under `/tmp/pocket-qa`. `talk-src/browser-check.mjs` does the same for Talk (`/tmp/talk-qa`), including offline renders of the mix, each part and all eight hooks. `transplant-src/browser-check.mjs` does the same for Transplant (`/tmp/transplant-qa`): playback, MIDI upload, painting, offline renders of the drop, the build, the break and every FX, a silent gap, every download, the in-page analysis of the demo track with its A/B, and the hand-off from Blueprint.
 
 `v3-src/browser-check.mjs`, `drum-library-src/browser-check.mjs`,
 `sound-design-src/check.mjs`, `trance-src/check.mjs` and `arp-src/browser-check.mjs` (Playwright) drive a real browser and write reports into each `qa/` folder.
@@ -158,6 +166,7 @@ node arp-src/test.mjs            # Orbit: theory, engine, bank against its genre
 
 ## Release history
 
+- **Transplant**: your loop in someone else's arrangement. A reference track (measured in the page), a Blueprint file or one of six shapes; your loop's MIDI with Drum Racks split by pad; parts that follow the reference's lanes and stack by fullness on phrase lines; every move rebuilt on your notes; a loudness-matched A/B; shape match, change rate and lane fidelity measured; arranged MIDI, FX audio, stems and a plan. Blueprint's JSON is now version 2 (exact beats and lanes per beat) and Blueprint hands its analysis to Transplant. See [TRANSPLANT.md](TRANSPLANT.md).
 - **Orbit 1.3**: 333 patterns (154 before): techno from 8 to 45 with sparse drop riffs, tech house from 49 to 85, every genre at least 14, and two new genres, Dub techno and Detroit techno. The **Song sketch** turns any idea into a measured club track, short edit or long journey and exports it as one arranged MIDI. See [ORBIT.md](ORBIT.md).
 - **Talk**: the tech house room. A talking formant bass with 14 loops, a generator and eight phrase moves; a mic booth that cuts your line into syllables and gives eight hook treatments; the bass makes room for the vocal, measured. See [TALK.md](TALK.md).
 - **Orbit 1.2**: 18 more sounds (short hits and plucks, long pads, swells and held leads), length and section tags, a sound browser, every combo measured for intro, build, break or drop with a section-aware fingerprint, section search and sort in the bank, the generator writing for a section, and 25 new break, build and intro patterns.

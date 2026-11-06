@@ -108,6 +108,9 @@ export const SECTIONS = [
     title: 'Arrange & finish',
     blurb: 'Structure, order of work and development.',
     pages: [
+      {file: 'transplant.html', title: 'Transplant — your loop in someone else\'s arrangement', edition: 'New', badge: 'Latest',
+        text: 'Stuck on the 8-bar loop? Drop in a reference track (or pick a shape) and your loop\'s MIDI. Transplant rebuilds the reference\'s arrangement on your own parts: where each one comes in and out, the roll on your clap, the sweep on your riff, the throw on your hit, the gap before the drop. A/B it against the reference at the same bar, see how close the shape is, and take it to Live as arranged MIDI, FX audio and stems.',
+        doc: 'TRANSPLANT.md', src: 'transplant-src'},
       {file: 'arrangement.html', title: 'Arc', edition: 'Guide',
         text: 'Arrangement and transitions: a section map, eight templates and twelve transitions.'},
       {file: 'buildorder.html', title: 'Build Order', edition: 'Guide',
@@ -125,6 +128,7 @@ export const SECTIONS = [
 export const DOCS = [
   {file: 'README.md', title: 'README', text: 'What is in this folder and how it fits together.'},
   {file: 'TODO.md', title: 'TODO: pages to build', text: 'Ranked wish list of new pages and folder-wide features.'},
+  {file: 'TRANSPLANT.md', title: 'Transplant notes', text: 'Borrowing a reference\'s arrangement for your loop: the model, the layering, every move rebuilt, what is measured and the limits.'},
   {file: 'TALK.md', title: 'Talk notes', text: 'The tech house room: the talking bass, the hook booth, what is measured and the limits.'},
   {file: 'POCKET.md', title: 'Pocket notes', text: 'Writing a foundation around a riff: composition, sound, exports and limits.'},
   {file: 'ORBIT.md', title: 'Orbit notes', text: 'The arpeggio studio: the model, the bank, the song sketch, the fingerprint, the generator and how it was validated.'},
@@ -160,6 +164,7 @@ export const NAV = [
   {file: 'trance.html', label: 'Trance'},
   {file: 'xray.html', label: 'X-Ray'},
   {file: 'blueprint.html', label: 'Blueprint'},
+  {file: 'transplant.html', label: 'Transplant'},
   {file: 'drum-library.html', label: 'Drums'},
   {file: 'rumble.html', label: 'Rumble'},
   {file: 'serum-v2.html', label: 'Sound design', match: ['serum.html', 'patch-lab.html', 'sampling.html']},
@@ -182,4 +187,5 @@ export const TEMPLATES = [
   'arp-src/template.html',
   'pocket-src/template.html',
   'talk-src/template.html',
+  'transplant-src/template.html',
 ];

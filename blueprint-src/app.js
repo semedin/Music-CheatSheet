@@ -37,7 +37,7 @@ async function analyzeBuffer(buf, meta) {
   toast(`Measured in ${(an.ms / 1000).toFixed(1)} s: ${an.moves.length} moves in ${an.sections.length} sections`);
 }
 async function loadFile(file) {
-  if (!file) return; setErr(''); busy(true); setProg({stage: 'Decoding ' + file.name, frac: 0}); S.demo = null;
+  if (!file) return; setErr(''); busy(true); setProg({stage: 'Decoding ' + file.name, frac: 0}); S.demo = null; S.file = file;
   try { const {buf, info} = await decode(file); await analyzeBuffer(buf, {name: file.name, info}); }
   catch (e) { console.error(e); setProg(null); setErr(`Couldn't read "${file.name}". ${/aif/i.test(file.name) ? 'This browser can\'t decode AIFF; Safari can, or convert it to WAV.' : 'The browser couldn\'t decode it; try a WAV, FLAC or MP3 of the same track.'}${e && e.message ? ` (${e.message})` : ''}`); }
   finally { busy(false); }
@@ -45,7 +45,7 @@ async function loadFile(file) {
 async function loadDemo() {
   setErr(''); busy(true); setProg({stage: 'Synthesizing the demo track', frac: 0.01}); await new Promise(r => setTimeout(r, 30));
   try {
-    const d = BPDemo.synthDemo({fx: true}); S.demo = d;
+    const d = BPDemo.synthDemo({fx: true}); S.demo = d; S.file = null;
     const buf = new AudioBuffer({length: d.L.length, numberOfChannels: 2, sampleRate: d.sr}); buf.copyToChannel(d.L, 0); buf.copyToChannel(d.R, 1);
     await analyzeBuffer(buf, {name: 'Blueprint demo (126 BPM, A minor, 17 planted moves).wav', info: {codec: 'Demo', sr: d.sr}});
   } catch (e) { console.error(e); setProg(null); setErr('The demo failed to build: ' + e.message); }
@@ -447,8 +447,19 @@ function renderExport() {
 // ---------- exports ----------
 function wireExport() {
   $('#midiBtn').onclick = () => download(`${base()} - Blueprint.mid`, BP.blueprintMidi(S.an), 'audio/midi');
+  // Transplant: this arrangement, with the audio for its A/B, handed over through IndexedDB (same origin)
+  $('#transplantBtn').onclick = async () => {
+    const btn = $('#transplantBtn'); btn.disabled = true;
+    try {
+      await FWH.put('blueprint', {json: BP.exportModel(S.an, base()), name: base(), file: S.demo ? null : S.file || null, demo: !!S.demo});
+      location.href = 'transplant.html#from=blueprint';
+    } catch (e) {
+      toast("This browser won't hand the track over between pages here. Download Data (.json) and drop it into Transplant.");
+      btn.disabled = false;
+    }
+  };
   $('#mdBtn').onclick = () => download(`${base()} - Blueprint.md`, BP.report(S.an, base()), 'text/markdown');
-  $('#jsonBtn').onclick = () => { const an = S.an, r = v => typeof v === 'number' ? Math.round(v * 1000) / 1000 : v; download(`${base()} - Blueprint.json`, JSON.stringify({track: an.meta.name, bpm: r(an.grid.bpm), bar1: r(an.grid.t0), bars: an.grid.nBars, key: an.key && an.key.name, sections: an.sections.map(s => ({name: s.name, label: s.label, start: s.start + 1, end: s.end})), moves: an.moves.map(e => ({type: e.type, title: e.title, at: e.at, to: e.to, sure: r(e.conf), target: e.target, what: e.what, recipe: e.recipe, curve: e.curve && e.curve.filter(p => p.hz).map(p => [r(p.k), Math.round(p.hz)])})), sidechain: an.pumps.map(p => ({section: p.section, pump: p.pump, depth: r(p.depth), releaseMs: p.releaseMs && Math.round(p.releaseMs)})), lanes: Object.fromEntries(Object.entries(an.elementSpans).map(([k, v]) => [k, v.map(([a, b]) => [r(a), r(b)])]))}, null, 1), 'application/json'); };
+  $('#jsonBtn').onclick = () => download(`${base()} - Blueprint.json`, JSON.stringify(BP.exportModel(S.an, S.an.meta.name)), 'application/json');
   $('#copyBtn').onclick = () => copy(S.an.transitions.map(t => `Bar ${t.bar + 1}: ${t.from.name} into ${t.to.name}\n` + t.events.map(e => `  ${e.at}  ${e.title}: ${e.recipe.join(' ')}`).join('\n')).join('\n\n'));
 }
 
