@@ -75,6 +75,12 @@ Arc's Transitions lab covers *where* transitions go. This page covers the sounds
   build. Remove one layer and watch the curve go flat.
 - Export: rolls as MIDI, risers as WAV, filter sweeps as MIDI CC.
 
+### `transplant.html` — **Transplant** · your loop in someone else's arrangement ✅ built
+Shipped: see [TRANSPLANT.md](TRANSPLANT.md). It answers "I have 8 bars and no track" with a reference's measured
+arrangement rebuilt on your own parts. Next steps: variations written for long sections (a new fill, a note swap,
+an octave lift every 16 bars, from Talk's and Orbit's development moves), fitting a reference to a target length
+(a 7-minute club mix borrowed as a 4-minute edit), a key-aware A/B, and the `.als` export below.
+
 ---
 
 ## Tier 2: train the ear

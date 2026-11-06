@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1215">
+<title>Transplant — your loop in someone else's arrangement · Fieldwork</title>
+<meta name="description" content="Drop in a reference track and your 8-bar loop. Transplant rebuilds the reference's arrangement on your own parts: where each one comes in and out, every filter sweep, roll, riser, gap, throw and stutter, then measures how close the shape is and hands it to Ableton as MIDI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/*STYLE*/
+</style>
+</head>
+<body>
+<!-- site-nav:start --><div id="site-nav" role="navigation" aria-label="All Fieldwork pages"><style>#site-nav{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:2px;width:100%;padding:6px 12px;overflow-x:auto;background:#171e22;color:#c9cdc2;font:500 13px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;position:relative;z-index:1000;scrollbar-width:thin}#site-nav a{all:unset;display:inline-block;padding:5px 9px;border-radius:4px;color:#c9cdc2;white-space:nowrap;cursor:pointer}#site-nav a:hover{color:#fff;background:#283237}#site-nav a:focus-visible{outline:2px solid #ffc96e;outline-offset:1px}#site-nav a[aria-current=page]{color:#171e22;background:#ffc96e}#site-nav .sn-brand{font-weight:800;letter-spacing:.08em;color:#fff;margin-right:6px}@media print{#site-nav{display:none}}</style><a href="index.html" data-files="index.html" class="sn-brand">FIELDWORK</a><a href="fieldwork-v3.html" data-files="fieldwork-v3.html">Motif Studio</a><a href="orbit.html" data-files="orbit.html">Arps</a><a href="pocket.html" data-files="pocket.html">Pocket</a><a href="talk.html" data-files="talk.html">Tech House</a><a href="studio-v2.html" data-files="studio-v2.html melody-v2.html chords-v2.html bass-v2.html">V2 Studio</a><a href="trance.html" data-files="trance.html">Trance</a><a href="xray.html" data-files="xray.html">X-Ray</a><a href="blueprint.html" data-files="blueprint.html">Blueprint</a><a href="transplant.html" data-files="transplant.html">Transplant</a><a href="drum-library.html" data-files="drum-library.html">Drums</a><a href="rumble.html" data-files="rumble.html">Rumble</a><a href="serum-v2.html" data-files="serum-v2.html serum.html patch-lab.html sampling.html">Sound design</a><a href="field-guides-v1.html" data-files="field-guides-v1.html groove-cheatsheet.html groove-vol2.html low-end.html melody.html chords.html between.html inkey.html keyboard.html arrangement.html buildorder.html the-move.html disco-house-cheatsheet.html">Field guides</a><script data-site-nav>(()=>{const f=decodeURIComponent(location.pathname.split('/').pop()||'index.html');for(const a of document.querySelectorAll('#site-nav a'))if(a.dataset.files.split(' ').includes(f)){a.setAttribute('aria-current','page');break}})()</script></div><!-- site-nav:end -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-text">
+      <p class="eyebrow">Fieldwork · Arrange · from 8 bars to a track</p>
+      <h1 class="title">Transplant<span>Your loop. <em>Their</em> arrangement.</span></h1>
+      <p class="lede">Stuck on the 8-bar loop? Borrow the arrangement of a track you love. Transplant measures <strong>where every part of the reference comes in and out</strong> and <strong>every move in its transitions</strong>, then rebuilds all of it on <strong>your own parts</strong>: your kick drops out where theirs does, the roll lands on your clap, the filter sweep opens your riff, the throw catches your hit. Then it measures how close the shape is, and hands it to Ableton.</p>
+      <div class="cta">
+        <button class="big hot" id="heroPlay" type="button">▶ Hear a loop transplanted</button>
+        <a class="ghostlink" href="#setup">or start with your own ↓</a>
+      </div>
+      <ol class="how3" aria-label="How it works">
+        <li><b>Borrow</b> an arrangement: drop a reference track, a Blueprint file, or pick a shape.</li>
+        <li><b>Drop</b> your loop as MIDI: one file per part, or a Drum Rack clip, split by pad.</li>
+        <li><b>Hear</b> it, A/B it against the reference, take it to Live as MIDI and audio.</li>
+      </ol>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 360 300" id="heroArt"></svg>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="wrap setup" id="setup" aria-label="Choose the arrangement and your loop">
+  <div class="card ref" id="refCard">
+    <div class="card-head"><span class="num">01</span><div><h2>The arrangement to borrow</h2><p>A real track is measured right here, in this page. Nothing is uploaded.</p></div></div>
+    <div class="drop" id="refDrop" tabindex="0" role="button" aria-label="Drop a reference track or Blueprint file, or press Enter to choose one">
+      <b>Drop a reference track</b><span>MP3, WAV, FLAC, AAC, OGG · or a Blueprint <code>.json</code></span>
+      <div class="acts"><button class="btn" id="refPick" type="button">Choose a track</button><button class="btn ghost" id="refJson" type="button">Open Blueprint JSON</button><button class="btn ghost" id="refDemo" type="button">Analyse the demo track</button></div>
+      <input type="file" id="refFile" accept="audio/*,.mp3,.wav,.flac,.m4a,.aac,.ogg,.opus,.aif,.aiff,.json,application/json" hidden>
+      <div class="prog" id="refProg" hidden><div class="bar"><i></i></div><div class="lbl"><span class="st">Decoding</span><span class="pc">0%</span></div></div>
+      <div class="err" id="refErr" hidden></div>
+    </div>
+    <p class="or">or pick a shape: original archetypes of how each style is usually built</p>
+    <div class="shapes" id="shapes" role="list"></div>
+    <div class="status" id="refStatus"></div>
+  </div>
+  <div class="card you" id="loopCard">
+    <div class="card-head"><span class="num">02</span><div><h2>Your loop</h2><p>The 4, 8 or 16 bars you can't get out of. In Live: right-click each clip → Export MIDI Clip.</p></div></div>
+    <div class="drop" id="loopDrop" tabindex="0" role="button" aria-label="Drop your loop's MIDI files, or press Enter to choose them">
+      <b>Drop your loop's MIDI</b><span>Several files at once, one per part, or one file with several tracks. Drum Rack clips are split by pad.</span>
+      <div class="acts"><button class="btn" id="loopPick" type="button">Choose MIDI files</button></div>
+      <input type="file" id="loopFile" accept=".mid,.midi,audio/midi,audio/x-midi" multiple hidden>
+      <div class="err" id="loopErr" hidden></div>
+    </div>
+    <p class="or">or start from a demo loop</p>
+    <div class="demos" id="demos" role="list"></div>
+    <div class="status" id="loopStatus"></div>
+  </div>
+</section>
+
+<div class="transport" id="transport" hidden>
+  <div class="wrap">
+    <button class="tbtn" id="play" type="button" aria-keyshortcuts="Space">▶ Play</button>
+    <div class="ab" role="group" aria-label="Hear">
+      <button type="button" id="abYou" class="on" aria-pressed="true" title="Your loop in the arrangement">Transplant</button><button type="button" id="abRef" aria-pressed="false" title="The reference track at the same bar (R)">Reference</button>
+    </div>
+    <button class="tog" id="loopBtn" type="button" aria-pressed="false" title="Loop the section under the playhead (L)">Loop</button>
+    <div class="tpos"><span>bar <b id="tBar">1.1</b></span><span class="chip" id="tSec">Intro</span><span id="tTime">0:00</span></div>
+    <span class="grow"></span>
+    <label class="tbpm">BPM <input id="bpm" type="number" min="60" max="200" step="0.1" inputmode="decimal"></label>
+    <label class="tvol" title="Volume"><span aria-hidden="true">Vol</span><input id="vol" type="range" min="0" max="100" value="80" aria-label="Volume"></label>
+    <span class="abinfo" id="abInfo"></span>
+  </div>
+</div>
+
+<section class="wrap part" id="board" hidden>
+  <div class="head"><span class="num">03</span><div><h2>The transplant</h2><p>The reference on top, your parts below, bar for bar. <b>Click</b> the ruler to play from a bar, <b>drag</b> it to loop. <b>Click or drag</b> on a part's row to switch bars on or off (<kbd>Alt</kbd>-click gives it back to the reference). <b>Click a move</b> to see how it was rebuilt.</p></div></div>
+  <div class="facts" id="facts"></div>
+  <div class="boardbar">
+    <label>Zoom <select id="zoom"><option value="1">Whole track</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select></label>
+    <button class="btn ghost sm" id="undo" type="button" title="Undo (Ctrl+Z)">Undo</button>
+    <button class="btn ghost sm" id="resetOv" type="button">Give every bar back to the reference</button>
+    <span class="grow"></span>
+    <span class="hint" id="boardHint"></span>
+  </div>
+  <div class="board">
+    <div class="labels" id="labels"></div>
+    <div class="scroll" id="scroll"><canvas id="cv" aria-label="The arrangement, drawn bar by bar"></canvas><canvas id="ov" aria-hidden="true"></canvas><div class="tip" id="tip" hidden></div></div>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="insp" id="insp"><p class="empty">Click a move above, or a bar, to see what happens there and how to rebuild it in Live.</p></div>
+</section>
+
+<section class="wrap part" id="partsSec" hidden>
+  <div class="head"><span class="num">04</span><div><h2>Your parts</h2><p>Each part follows one of the reference's lanes. When several share a lane, the main one plays with it and the others come in where the reference gets fuller. Change the role, the lane or the entry and the arrangement redraws.</p></div></div>
+  <div class="loopbar" id="loopbar"></div>
+  <div class="parts" id="parts"></div>
+</section>
+
+<section class="wrap part" id="movesSec" hidden>
+  <div class="head"><span class="num">05</span><div><h2>The moves</h2><p>Every move the reference makes, rebuilt on your parts. Switch off a whole family or one move. <b>Click a move</b> to hear it looped.</p></div></div>
+  <div class="cats" id="cats"></div>
+  <div class="tablewrap panel"><table class="mv"><thead><tr><th></th><th>At</th><th>Move</th><th>On your loop</th><th>Status</th></tr></thead><tbody id="mvRows"></tbody></table></div>
+  <h3 class="sub">Producer touches</h3>
+  <p class="note">Things a producer would do that the reference can't tell you. Each one is counted, and each can be switched off for a strictly faithful transplant.</p>
+  <div class="touches" id="touches"></div>
+</section>
+
+<section class="wrap part" id="measSec" hidden>
+  <div class="head"><span class="num">06</span><div><h2>Measured</h2><p>Does it have the reference's shape? The reference's tension, measured from its audio (or from the shape), against your arrangement's energy, bar by bar, and how often each one changes.</p></div></div>
+  <div class="tiles" id="tiles"></div>
+  <div class="panel chart"><svg id="shapeSvg" viewBox="0 0 1000 220" preserveAspectRatio="none" role="img" aria-label="Reference tension and your energy across the track"></svg><div class="chartkey"><span class="k ref">Reference tension</span><span class="k you">Your energy</span></div></div>
+  <p class="note" id="measNote"></p>
+</section>
+
+<section class="wrap part" id="exportSec" hidden>
+  <div class="head"><span class="num">07</span><div><h2>Take it to Ableton</h2><p>Everything starts at bar 1 at your tempo. Drop each part's file on the track that already holds its instrument.</p></div></div>
+  <div class="exports">
+    <div class="panel"><h3>Your parts, arranged</h3><p class="note">One MIDI file per track (Drum Rack clips back on their pads), with the filter sweeps as CC74 and the section markers, plus the FX tracks, the plan and a README.</p><div class="row"><button class="btn hot" id="xParts" type="button">Parts (.zip)</button><button class="btn ghost" id="xMidi" type="button">One arranged MIDI</button></div></div>
+    <div class="panel"><h3>Audio</h3><p class="note">The FX the reference uses, rendered to length at your tempo and named by bar. The preview mix, or a stem per track.</p><div class="row"><button class="btn" id="xFx" type="button">FX audio (.zip)</button><button class="btn ghost" id="xMix" type="button">Mix (.wav)</button><button class="btn ghost" id="xStems" type="button">Stems (.zip)</button></div><div class="prog" id="xProg" hidden><div class="bar"><i></i></div><div class="lbl"><span class="st">Rendering</span><span class="pc">0%</span></div></div></div>
+    <div class="panel"><h3>The plan</h3><p class="note">Every section, every move with its Live recipe and automation breakpoints, the sidechain and the numbers, as Markdown. Or save the whole session and open it again later.</p><div class="row"><button class="btn" id="xPlan" type="button">Plan (.md)</button><button class="btn ghost" id="xSave" type="button">Save session</button><button class="btn ghost" id="xOpen" type="button">Open session</button><input type="file" id="sessFile" accept=".json,application/json" hidden></div></div>
+  </div>
+  <div class="panel"><h3>Into Live</h3><ol class="steps" id="liveSteps"></ol></div>
+</section>
+
+<section class="wrap part" id="how">
+  <div class="head"><span class="num">?</span><div><h2>How it works, and where it can be wrong</h2><p>Transplant runs X-Ray's and Blueprint's engines on the reference, in this page, and Orbit's patches for the preview.</p></div></div>
+  <div class="two">
+    <div class="panel"><h3>Reading the reference</h3><p>Blueprint measures seven lanes per beat (kick, clap, hats, sustained highs, bass, chords and synths, noise) and every move in the transitions. Transplant reads each lane per bar and finds the cheapest on/off path through it, where switching costs least on an 8-bar line and most on an odd bar (a Viterbi segmentation), so parts come and go the way an arranger draws them. Filter curves are smoothed into a single direction (isotonic regression) and reduced to the fewest breakpoints that redraw them within a sixth of an octave.</p></div>
+    <div class="panel"><h3>Rebuilding it on yours</h3><p>Each of your parts follows a lane. Parts sharing a lane are stacked: the hook first, then the chords, then the pad (the pad first in breaks and intros); each layer enters on a phrase line where the reference's lane is fuller, measured by its level and its tension, ranked across the phrases. Rolls are snapped to the subdivision the reference's roll plays at that moment; stutters repeat your own first slice; a throw echoes the hit that's actually there; a gap cuts every note and the sends.</p></div>
+  </div>
+  <div class="panel"><h3>Limits</h3><ul class="limits">
+    <li>A lead and the chords under it can't be told apart in a full mix, so the reference has one lane for both. Which of your parts comes first in that lane is a convention you can change per part.</li>
+    <li>The reference's lanes are read from audio: a part that plays quietly under a busy mix can read as absent. Check the lanes against your ears, and paint bars on or off.</li>
+    <li>Constant tempo is assumed, as in X-Ray. Your loop is played at your tempo; the A/B jumps to the same bar of the reference at its own tempo.</li>
+    <li>Filter sweeps arrive in Live as CC74 on each part's clip, which a synth can MIDI-learn; Auto Filter on a group needs the breakpoints drawn as automation (the plan lists them).</li>
+    <li>The preview is a sketch of your parts with Orbit's synths. Your own instruments, in Live, are the real thing. Measurements count notes, bars and lanes; they don't measure taste.</li>
+  </ul></div>
+</section>
+</main>
+<footer class="wrap">Transplant is part of Fieldwork: one self-contained file, nothing uploaded. Keys: <kbd>Space</kbd> play, <kbd>R</kbd> reference, <kbd>←</kbd> <kbd>→</kbd> bar (<kbd>Shift</kbd> for 8), <kbd>L</kbd> loop the section, <kbd>1</kbd>–<kbd>9</kbd> jump to a section, <kbd>Ctrl</kbd>+<kbd>Z</kbd> undo.</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/*XR*/
+/*SYNTH*/
+/*BPENGINE*/
+/*THEORY*/
+/*SOUNDS*/
+/*HANDOFF*/
+/*MODEL*/
+/*SHAPES*/
+/*LOOP*/
+/*ENGINE*/
+/*AUDIO*/
+/*APP*/
+</script>
+</body>
+</html>
