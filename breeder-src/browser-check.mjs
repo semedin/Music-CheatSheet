@@ -26,6 +26,7 @@ const check = (name, value) => { report.checks.push({name, pass: !!value}); asse
 const watch = page => { page.on('pageerror', e => report.errors.push(e.message)); page.on('console', m => m.type() === 'error' && !/Failed to load resource|ERR_FAILED/.test(m.text()) && report.errors.push(m.text())); return page.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort()); };
 const saved = async (dl, name) => { const p = path.join(qa, name); await dl.saveAs(p); return fs.readFileSync(p); };
 const Q = (page, fn, arg) => page.evaluate(fn, arg);
+const wraps = n => n < 0 ? 'no (the page froze)' : n;
 try {
   const page = await browser.newPage({viewport: {width: 1440, height: 1000}, acceptDownloads: true});
   await watch(page);
@@ -35,6 +36,13 @@ try {
   await page.screenshot({path: path.join(qa, 'desktop-top.png')});
   await page.click('#heroGo'); await page.waitForTimeout(1200);
   check('The hero plays the first groove, and the playhead moves', await Q(page, () => BREEDER_QA.A.pl.playing && BREEDER_QA.A.pl.beat() > 0.5));
+  // the loop wraps every four bars: play through three wraps and the page has to stay responsive
+  const wrapsOk = await Promise.race([(async () => {
+    let wraps = 0, last = 0;
+    for (let i = 0; i < 40; i++) { await page.waitForTimeout(500); const b = await Q(page, () => BREEDER_QA.A.pl.beat()); if (b < last - 1) wraps++; last = b; }
+    return wraps;
+  })(), new Promise(r => setTimeout(() => r(-1), 60000))]);
+  check(`Playing through ${wraps(wrapsOk)} loop wraps, the page stays responsive and keeps time`, wrapsOk >= 2 && await Q(page, () => BREEDER_QA.A.pl.playing));
   await page.locator('#pop .card .star').nth(0).click(); await page.locator('#pop .card .star').nth(4).click();
   check('Stars enable Breed', await page.isEnabled('#breed') && /2 stars/.test(await page.textContent('#breedHint')));
   await page.click('#breed'); await page.waitForTimeout(500);
