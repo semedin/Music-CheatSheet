@@ -99,6 +99,19 @@ function fresh() {
   S.selId = next[0].id; renderAll(); save();
   toast(`${blood.length} new grooves from ${genOf(S.genre).name}${keep.length ? `, next to your ${keep.length} starred` : ''}.`);
 }
+// Clear the tree: every earlier generation goes; the current one becomes generation 1, and the keepers and stars stay
+function clearTree() {
+  const n = S.gens.length - 1;
+  if (n < 1) { toast('The tree is already just this generation.'); return; }
+  if (!confirm(`Clear ${n} earlier generation${n > 1 ? 's' : ''} from the tree? This generation, your keepers and your stars stay.`)) return;
+  const cur = curGen();
+  S.gens = [{members: cur.members, parents: [], genre: cur.genre}]; S.cur = 0;
+  S.byId = new Map(); index(S.gens[0].members); index(S.keepers);
+  for (const m of [meas, rends]) for (const id of [...m.keys()]) if (!S.byId.has(id)) m.delete(id);
+  for (const id of [...S.favs]) if (!S.byId.has(id)) S.favs.delete(id);
+  renderAll(); save();
+  toast(`Cleared ${n} generation${n > 1 ? 's' : ''}. This one is now generation 1.`);
+}
 function toggleFav(gm) { if (S.favs.has(gm.id)) S.favs.delete(gm.id); else S.favs.add(gm.id); renderPop(); renderKeepers(); ui(); save(); }
 function toggleKeep(gm) {
   const i = S.keepers.findIndex(k => k.id === gm.id);
@@ -205,6 +218,8 @@ function renderTree() {
     s += `<g class="node" data-id="${m.id}" data-g="${gi}" style="cursor:pointer"><title>${esc(m.name)} · reads as ${esc(M(m).reads[0].name)} · fit ${M(m).fit}</title><circle cx="${x}" cy="${y}" r="${on ? 9 : 7}" fill="${c}" stroke="${par ? '#FF5FA2' : on ? '#fff' : '#0C1110'}" stroke-width="${par || on ? 2.5 : 1.5}"/></g>`;
   }));
   svg.innerHTML = s;
+  const total = G.reduce((s, g) => s + g.members.length, 0);
+  $('#treeNote').textContent = `${G.length} generation${G.length > 1 ? 's' : ''}, ${total} grooves`; $('#clearTree').disabled = G.length < 2;
 }
 function renderKeepers() {
   $('#keepSec').hidden = false;
@@ -290,6 +305,7 @@ function wire() {
   $('#play').onclick = togglePlay;
   $('#breed').onclick = breed;
   $('#fresh').onclick = fresh;
+  $('#clearTree').onclick = clearTree;
   $('#back').onclick = () => { if (S.cur > 0) { S.cur--; S.favs.clear(); S.selId = members()[0].id; renderAll(); save(); } };
   $('#fwd').onclick = () => { if (S.cur < S.gens.length - 1) { S.cur++; S.favs.clear(); S.selId = members()[0].id; renderAll(); save(); } };
   $('#strength').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.strength = b.dataset.v; renderControls(); save(); };

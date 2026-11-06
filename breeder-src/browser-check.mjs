@@ -64,6 +64,12 @@ try {
   check('Locked kick and bassline are exactly the first star\'s in every child', await Q(page, () => { const S = BREEDER_QA.S, g = S.gens[S.cur], p = S.byId.get(g.parents[0]); const kids = g.members.filter(k => !k.elite); return kids.length >= 6 && kids.every(k => k.drums.k === p.drums.k && k.bass.steps === p.bass.steps); }));
   await page.click('[data-lock="kick"]'); await page.click('[data-lock="bass"]');
   await page.click('#back');
+  await page.click('#fwd');
+  const before = await Q(page, () => ({n: BREEDER_QA.S.gens.length, ids: BREEDER_QA.S.gens[BREEDER_QA.S.cur].members.map(m => m.id), keep: BREEDER_QA.S.keepers.length}));
+  page.once('dialog', d => d.accept()); await page.click('#clearTree'); await page.waitForTimeout(200);
+  check(`Clear the tree drops ${before.n - 1} earlier generations and keeps this one, still playing`, await Q(page, b => { const S = BREEDER_QA.S; return S.gens.length === 1 && S.cur === 0 && JSON.stringify(S.gens[0].members.map(m => m.id)) === JSON.stringify(b.ids) && S.keepers.length === b.keep && document.querySelectorAll('#tree .node').length === 8 && BREEDER_QA.A.pl.playing && document.querySelector('#clearTree').disabled; }, before));
+  await page.click('[data-genre="techno"]'); await page.waitForTimeout(200);
+  await page.locator('#pop .card .star').nth(0).click(); await page.click('#breed'); await page.waitForTimeout(300); await page.click('#back');
   check('Back a generation shows generation 2 again', /^2 \//.test(await page.textContent('#genNav')) && /Generation 2/.test(await page.textContent('#genTitle')));
   await page.click('#fwd');
   // offline renders across genres (playback stopped first: renders and live audio share the CPU)
