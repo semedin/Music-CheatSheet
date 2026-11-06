@@ -241,4 +241,37 @@ await check('Speed: a 224-bar plan with a 16-bar loop takes under 250 ms', () =>
   const t = Date.now(); for (let i = 0; i < 3; i++) TE.plan(m, l); const ms = (Date.now() - t) / 3;
   assert(ms < 250, `${ms.toFixed(0)} ms`); console.log(`  ${ms.toFixed(0)} ms per plan`);
 });
+await check('The player: looping for a minute, swapping tempo mid-loop and running off the end each schedule every beat once and never spin', async () => {
+  const fs = await import('node:fs'), vm = await import('node:vm');
+  if (!globalThis.TA) vm.runInThisContext(fs.readFileSync(new URL('./audio.js', import.meta.url), 'utf8') + '\nglobalThis.TA = TA;');
+  const timers = []; const realSI = globalThis.setInterval, realCI = globalThis.clearInterval;
+  globalThis.setInterval = fn => { timers.push(fn); return timers.length; }; globalThis.clearInterval = () => { timers.length = 0; };
+  try {
+    const ctx = {currentTime: 0}, sched = [];
+    const mk = bpm => ({bpm, beats: 16});
+    const gain = {cancelScheduledValues() {}, setValueAtTime() {}}, eng = {master: {gain}, spb: 60 / 130, plan: mk(130), load(p) { this.plan = p; this.spb = 60 / p.bpm; }, prepare() {}, silence() {}, prune() {}, schedule(a, b, tOf) { sched.push([a, b, tOf(a), tOf(b)]); }};
+    const pl = TA.player(ctx, eng);
+    pl.setLoop([0, 16]); pl.play(0);
+    let lastBeat = 0, wraps = 0;
+    for (let i = 0; i < 1800; i++) {                       // 63 s of 35 ms ticks
+      ctx.currentTime += 0.035;
+      const t = Date.now(); for (const f of timers) f(); assert(Date.now() - t < 50, 'a tick returns at once');
+      const b = pl.beat(); if (b < lastBeat - 1) wraps++; lastBeat = b;
+      if (i === 900) pl.swap(mk(124));
+    }
+    assert(wraps >= 7, 'the loop wrapped: ' + wraps);
+    // every beat of every pass scheduled exactly once, and the clock never runs backwards or skips
+    for (let i = 1; i < sched.length; i++) {
+      const [a0, b0, , t1] = sched[i - 1], [a1, , t2] = sched[i];
+      assert(a1 === b0 || (b0 === 16 && a1 === 0), `scheduled ${a0}–${b0} then from ${a1}`);
+      assert(Math.abs(t2 - t1) < 1e-9, 'the next window starts exactly where the last ended, in time');
+    }
+    assert(sched.every(([a, b]) => b > a && b <= 16), 'windows inside the loop');
+    assert(Math.abs(eng.spb - 60 / 124) < 1e-12, 'swapped to the new tempo on a bar line');
+    // without a loop, it plays to the end and stops
+    pl.stop(); pl.setLoop(null); sched.length = 0; let ended = false; pl.onend = () => { ended = true; };
+    pl.play(8); for (let i = 0; i < 400 && !ended; i++) { ctx.currentTime += 0.035; for (const f of timers.slice()) f(); }
+    assert(ended && !pl.playing, 'stops at the end');
+  } finally { globalThis.setInterval = realSI; globalThis.clearInterval = realCI; }
+});
 console.log(`\n${checks} checks passed in ${((Date.now() - t0) / 1000).toFixed(1)} s`);

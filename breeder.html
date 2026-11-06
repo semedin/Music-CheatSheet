@@ -4626,10 +4626,14 @@ function player(ctx, eng) {
   let playing = false, t0 = 0, k0 = 0, cursor = 0, timer = null, loop = null, fresh = false, segs = [], pending = null;
   const LOOK = 0.18, TICK = 0.035;
   const tOf = k => t0 + (k - k0) * eng.spb;
+  // Schedules everything that starts before now + LOOK. The horizon is a time, not a beat: a loop wrap or a swap
+  // re-anchors the beat clock, and the horizon has to be read again in the new beats after each one (reading it once,
+  // in the old beats, scheduled the loop over and over and froze the page). The guard caps one tick's work.
   function tick() {
     if (!playing) return;
-    const now = ctx.currentTime, until = (now + LOOK - t0) / eng.spb + k0;
-    while (cursor < until) {
+    const now = ctx.currentTime, horizon = now + LOOK;
+    for (let guard = 0; guard < 64 && tOf(cursor) < horizon - 1e-9; guard++) {
+      const until = (horizon - t0) / eng.spb + k0;
       let end = Math.min(until, loop ? loop[1] : eng.plan.beats);
       // a swap waits for the next bar line: everything before it is the old plan, everything after it the new one
       if (pending) {
@@ -4638,15 +4642,17 @@ function player(ctx, eng) {
         if (at <= cursor + 1e-9) { const tAt = tOf(cursor); eng.load(pending.plan, pending.opts); eng.prepare(); t0 = tAt; k0 = cursor; segs.push({t0, k0, spb: eng.spb}); pending = null; fresh = true; api.onswap && api.onswap(cursor); continue; }
         end = Math.min(end, at);
       }
-      if (end <= cursor) {
-        if (loop) { t0 = tOf(loop[1]); k0 = loop[0]; cursor = loop[0]; fresh = true; segs.push({t0, k0, spb: eng.spb}); continue; }
-        stop(); api.onend && api.onend(); return;
+      if (end <= cursor + 1e-9) {
+        if (loop && cursor >= loop[1] - 1e-9) { wrap(); continue; }
+        if (!loop && cursor >= eng.plan.beats - 1e-9) { stop(); api.onend && api.onend(); return; }
+        break;
       }
       eng.schedule(cursor, end, tOf, {fresh}); fresh = false; cursor = end;
-      if (loop && cursor >= loop[1] - 1e-9) { t0 = tOf(loop[1]); k0 = loop[0]; cursor = loop[0]; fresh = true; segs.push({t0, k0, spb: eng.spb}); }
+      if (loop && cursor >= loop[1] - 1e-9) wrap();
     }
     eng.prune(now);
   }
+  function wrap() { t0 = tOf(loop[1]); k0 = loop[0]; cursor = loop[0]; fresh = true; segs.push({t0, k0, spb: eng.spb}); if (segs.length > 8) segs = segs.slice(-4); }
   function play(from = 0) {
     if (playing) stop();
     eng.prepare(); playing = true; k0 = Math.max(0, from); cursor = k0; t0 = ctx.currentTime + 0.06; fresh = true; segs = [{t0, k0, spb: eng.spb}];
