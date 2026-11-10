@@ -1,0 +1,1475 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0a10"><title>Wow — the bassline cheat sheet · Fieldwork</title>
+<meta name="description" content="Thirty-four house and techno basslines, from this year's floors back to 1977, each rewritten for every section of a track. Play them, change them, export MIDI and WAV.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0b0a10;--panel:#14121c;--panel2:#1b1826;--line:#2c2839;--ink:#f4f0e8;--muted:#a09bb0;--hot:#ff3d8b;--amber:#ffb23d;--acid:#c6ff3d;--cyan:#3de1ff;--a:var(--hot);--b:var(--amber);--gut:20px;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;overflow-x:hidden}
+main{max-width:1320px;margin:0 auto;padding:0 20px}
+a{color:var(--cyan)}
+h1,h2,h3,p{margin:0}
+.eyebrow,.label{font:600 11.5px/1.2 "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--acid);margin-bottom:10px}
+.label{color:var(--muted)}
+.note{color:var(--muted);font-size:13.5px;line-height:1.5}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+.hero{position:relative;min-height:min(74vh,640px);display:flex;align-items:flex-end;padding:56px 0 44px;isolation:isolate}
+#scope{position:absolute;inset:0 calc(-1*var(--gut));width:calc(100% + 2*var(--gut));height:100%;z-index:-1;opacity:.9}
+.hero::after{content:"";position:absolute;inset:0 calc(-1*var(--gut));z-index:-1;background:linear-gradient(180deg,rgba(11,10,16,.1),rgba(11,10,16,.2) 45%,var(--bg) 100%)}
+h1{font-weight:800;font-size:clamp(54px,12.5vw,176px);line-height:.86;letter-spacing:-.045em;text-wrap:balance}
+h1 span{background:linear-gradient(100deg,var(--hot),var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 em{font-style:italic;background:linear-gradient(100deg,var(--acid),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.06em}
+.intro{max-width:62ch;margin:26px 0 26px;font-size:clamp(16px,1.6vw,19px);color:#d8d3e2}
+.intro b{color:var(--acid)}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.play{border:0;border-radius:999px;padding:12px 22px;font-weight:800;background:linear-gradient(100deg,var(--hot),var(--amber));color:#14060c;box-shadow:0 0 0 0 rgba(255,61,139,.5);transition:transform .12s,box-shadow .2s}
+.play:hover{transform:translateY(-1px);box-shadow:0 6px 28px -6px rgba(255,61,139,.7)}
+.play.alt{background:linear-gradient(100deg,var(--acid),var(--cyan));color:#07130a}
+.play.alt:hover{box-shadow:0 6px 28px -6px rgba(61,225,255,.7)}
+.play.big{padding:17px 34px;font-size:20px}
+.play.on{background:var(--ink);color:#111}
+.ghost{padding:12px 18px;border:1px solid var(--line);border-radius:999px;color:var(--ink);text-decoration:none}
+.ghost:hover{border-color:var(--cyan)}
+
+section{padding:44px 0}
+.section-heading{display:flex;flex-wrap:wrap;gap:16px 32px;justify-content:space-between;align-items:end;margin-bottom:22px}
+h2{font-weight:800;font-size:clamp(26px,3.6vw,44px);line-height:1.04;letter-spacing:-.025em;max-width:22ch;text-wrap:balance}
+h3{font-size:19px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button,.ideas button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 14px;font-size:14px;font-weight:500}
+.chips button[aria-pressed=true],.ideas button[aria-pressed=true]{background:var(--ink);color:#111;border-color:var(--ink)}
+.chips button:hover,.ideas button:hover{border-color:var(--muted)}
+
+.styles{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:12px}
+.style{--a:var(--hot);--b:var(--amber);position:relative;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px 14px 12px;display:grid;gap:6px;overflow:hidden;transition:transform .14s,border-color .14s,box-shadow .2s}
+.style.techno{--a:var(--acid);--b:var(--cyan)}
+.style:hover{transform:translateY(-3px);border-color:var(--a);box-shadow:0 14px 34px -18px var(--a)}
+.style[aria-pressed=true]{border-color:var(--a);background:linear-gradient(160deg,color-mix(in srgb,var(--a) 16%,var(--panel)),var(--panel) 62%);box-shadow:0 0 0 1px var(--a),0 18px 40px -20px var(--a)}
+.style .meta{display:flex;justify-content:space-between;font:600 11px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--a)}
+.style b{font-size:19px;line-height:1.12;letter-spacing:-.01em}
+.style small{color:var(--muted);font-size:12.5px;line-height:1.35}.style small i{font-style:normal;color:var(--ink)}
+.style svg{width:100%;height:34px;margin-top:2px}
+.style svg rect{fill:var(--a)}
+.style svg rect.w{fill:var(--b)}
+.style svg line{stroke:var(--line);stroke-width:1}
+
+.deck{--a:var(--hot);--b:var(--amber);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:26px;margin:8px -6px;box-shadow:0 40px 90px -60px var(--a)}
+.deck.techno{--a:var(--acid);--b:var(--cyan)}
+.deck .eyebrow{color:var(--a)}
+.deck-head{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:26px;align-items:start}
+.deck h2{font-size:clamp(30px,4.4vw,56px);max-width:none}
+.idea{font-size:18px;margin-top:10px;max-width:58ch;color:#e4dfee}
+.lane{margin-top:8px;color:var(--muted);font-size:14px}
+.ideas{display:flex;flex-wrap:wrap;gap:6px}
+.ideas button.dice{border-style:dashed;border-color:var(--a);color:var(--a)}
+.ideas button.dice[aria-pressed=true]{background:var(--a);color:#111}
+.pattern{margin:12px 0 0;padding:10px 12px;background:var(--bg);border:1px solid var(--line);border-radius:10px;font:400 12px/1.7 "JetBrains Mono",ui-monospace,monospace;color:#cfc9dc;white-space:pre;overflow-x:auto}
+.transport{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:22px 0 14px}
+.transport label{display:flex;gap:7px;align-items:center;font-size:13px;color:var(--muted)}
+.transport input,.transport select{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 8px;width:74px}
+.transport select{width:auto}
+.pos,.hz{font:600 12.5px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.06em;color:var(--muted)}
+.pos{color:var(--ink);min-width:15ch}
+.options{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px 12px;margin:0 0 14px}.options label{display:grid;gap:4px;font:600 10.5px/1.2 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.options select{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 8px;font:500 14px "Bricolage Grotesque",system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--ink);min-width:0;width:100%}.options select:hover{border-color:var(--a)}
+.map{display:flex;gap:4px;margin-bottom:8px}
+.map button{position:relative;flex:1 1 0;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 10px 9px;text-align:left;overflow:hidden;display:grid;gap:5px}
+.map button.long{flex-grow:2}
+.map button b{font-size:14px;white-space:nowrap;position:relative}
+.map button small{font:400 11px/1 "JetBrains Mono",ui-monospace,monospace;color:var(--muted);position:relative}
+.map button i{display:block;height:5px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}
+.map button i::after{content:"";position:absolute;inset:0;width:var(--e);background:linear-gradient(90deg,var(--a),var(--b))}
+.map button[aria-pressed=true]{border-color:var(--a);background:var(--panel2)}
+.map button .prog{position:absolute;inset:0;width:0;background:color-mix(in srgb,var(--a) 18%,transparent);pointer-events:none}
+.roll-wrap{border:1px solid var(--line);border-radius:12px;background:var(--bg);overflow:hidden}
+#roll{display:block;width:100%;height:clamp(230px,30vw,330px)}
+#roll text{font:600 11px "JetBrains Mono",ui-monospace,monospace;fill:var(--muted)}
+#roll .bar{stroke:#3a3549;stroke-width:1}
+#roll .beat{stroke:#1e1b29;stroke-width:1}
+#roll .root{stroke:color-mix(in srgb,var(--a) 45%,transparent);stroke-width:1;stroke-dasharray:3 5}
+#roll .n{fill:var(--a)}
+#roll .n.w{fill:url(#wowgrad)}
+#roll .n.g{opacity:.45}
+#roll .sl{stroke:var(--b);stroke-width:2;fill:none}
+#roll .kick{fill:#5b556e}
+#roll .cut{fill:color-mix(in srgb,var(--cyan) 30%,transparent);stroke:none}
+#roll .subon{fill:color-mix(in srgb,var(--a) 55%,transparent)}
+#roll .lane{fill:#110f18}
+#roll #head{stroke:var(--ink);stroke-width:2}
+.deck-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,.9fr);gap:28px;margin-top:24px}
+.role{color:#e4dfee;font-size:17px;margin-bottom:10px}
+.what{margin:0;padding-left:18px;color:#cfc9dc}
+.what li{margin:4px 0}
+.measures{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:16px 0 0}
+.measures div{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+.measures dt{font:600 10.5px/1.2 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.measures dd{margin:4px 0 0;font-weight:800;font-size:19px}
+.measures dd small{display:block;font-weight:500;font-size:12px;color:var(--muted);line-height:1.3}
+.knobs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0 18px;align-content:start}.knobs h3{grid-column:1/-1}
+.slider{display:grid;gap:3px;margin-bottom:12px}
+.slider span{display:flex;justify-content:space-between;font-weight:800}
+.slider output{font:600 12px "JetBrains Mono",ui-monospace,monospace;color:var(--a)}
+.slider small{color:var(--muted);font-size:12.5px}
+input[type=range]{width:100%;accent-color:var(--hot)}
+.deck.techno input[type=range]{accent-color:var(--acid)}
+.export{display:grid;gap:8px;align-content:start}
+.export button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;text-align:left;font-weight:500}
+.export button:hover{border-color:var(--a)}
+.export button:disabled{opacity:.5;cursor:progress}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
+
+.sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.sheet-grid article{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+.sheet-grid .wide{grid-column:1/-1}
+.sheet-grid ul,.sheet-grid ol{margin:0;padding-left:20px;color:#d8d3e2}
+.sheet-grid li{margin:7px 0}
+.sheet-grid .note{margin-top:12px}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:680px;font-size:14.5px}
+th{font:600 11px/1.2 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 10px 8px 0;border-bottom:1px solid var(--line)}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top;color:#d8d3e2}
+td:first-child{font-weight:800;color:var(--ink);white-space:nowrap}
+td.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13px;white-space:nowrap}
+tr.cur td:first-child{color:var(--acid)}
+.rules{list-style:none;counter-reset:r;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.rules li{counter-increment:r;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;color:#cfc9dc}
+.rules li::before{content:counter(r,decimal-leading-zero);display:block;font:600 12px "JetBrains Mono",ui-monospace,monospace;color:var(--hot);margin-bottom:6px}
+.rules b{color:var(--ink)}
+.honest{margin-top:18px;max-width:80ch}
+footer{max-width:1320px;margin:0 auto;padding:18px 20px 48px;color:var(--muted);font-size:13.5px}
+kbd{font:600 12px "JetBrains Mono",ui-monospace,monospace;border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+
+@media (max-width:980px){.deck-head,.deck-grid{grid-template-columns:minmax(0,1fr)}.sheet-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){:root{--gut:16px}main{padding:0 16px}.deck{padding:18px 14px;margin:8px -8px;border-radius:16px}.map{flex-wrap:wrap}.map button,.map button.long{flex:1 1 30%}.map button small{display:none}.hero{min-height:0;padding-top:72px}.styles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.style{padding:11px 10px 9px}.style b{font-size:16px}.style .meta{font-size:9.5px}.style small{display:none}.transport .play{flex:1 1 100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style></head><body>
+<!-- site-nav:start --><div id="site-nav" role="navigation" aria-label="All Fieldwork pages"><style>#site-nav{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:2px;width:100%;padding:6px 12px;overflow-x:auto;background:#171e22;color:#c9cdc2;font:500 13px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;position:relative;z-index:1000;scrollbar-width:thin}#site-nav a{all:unset;display:inline-block;padding:5px 9px;border-radius:4px;color:#c9cdc2;white-space:nowrap;cursor:pointer}#site-nav a:hover{color:#fff;background:#283237}#site-nav a:focus-visible{outline:2px solid #ffc96e;outline-offset:1px}#site-nav a[aria-current=page]{color:#171e22;background:#ffc96e}#site-nav .sn-brand{font-weight:800;letter-spacing:.08em;color:#fff;margin-right:6px}@media print{#site-nav{display:none}}</style><a href="index.html" data-files="index.html" class="sn-brand">FIELDWORK</a><a href="fieldwork-v3.html" data-files="fieldwork-v3.html">Motif Studio</a><a href="breeder.html" data-files="breeder.html">Breeder</a><a href="orbit.html" data-files="orbit.html">Arps</a><a href="pocket.html" data-files="pocket.html">Pocket</a><a href="wow.html" data-files="wow.html">Basslines</a><a href="talk.html" data-files="talk.html">Tech House</a><a href="studio-v2.html" data-files="studio-v2.html melody-v2.html chords-v2.html bass-v2.html">V2 Studio</a><a href="trance.html" data-files="trance.html">Trance</a><a href="xray.html" data-files="xray.html">X-Ray</a><a href="blueprint.html" data-files="blueprint.html">Blueprint</a><a href="transplant.html" data-files="transplant.html">Transplant</a><a href="drum-library.html" data-files="drum-library.html">Drums</a><a href="rumble.html" data-files="rumble.html">Rumble</a><a href="serum-v2.html" data-files="serum-v2.html serum.html patch-lab.html sampling.html">Sound design</a><a href="field-guides-v1.html" data-files="field-guides-v1.html groove-cheatsheet.html groove-vol2.html low-end.html melody.html chords.html between.html inkey.html keyboard.html arrangement.html buildorder.html the-move.html disco-house-cheatsheet.html">Field guides</a><script data-site-nav>(()=>{const f=decodeURIComponent(location.pathname.split('/').pop()||'index.html');for(const a of document.querySelectorAll('#site-nav a'))if(a.dataset.files.split(' ').includes(f)){a.setAttribute('aria-current','page');break}})()</script></div><!-- site-nav:end -->
+<main>
+<header class="hero">
+  <canvas id="scope" aria-hidden="true"></canvas>
+  <div class="hero-text">
+    <p class="eyebrow">FIELDWORK &nbsp;·&nbsp; THE BASSLINE CHEAT SHEET &nbsp;·&nbsp; HOUSE &amp; TECHNO, 1977–2026</p>
+    <h1><span>Wow.</span> <em>Weow.</em> <span>Wow.</span></h1>
+    <p class="intro"><b>34 lanes, 102 written basslines</b> and a generator for more: what is filling floors right now, and the classics those ideas came from. Each one is written <b>six ways</b>, one for every section of a track. Swap the sound, the chords, the break and the fill, then take the MIDI.</p>
+    <div class="hero-actions"><button id="hero-play" class="play big">▶ Drop it</button><button id="surprise" class="play alt big">⚄ Surprise me</button><a class="ghost" href="#lanes">Pick a lane ↓</a></div>
+  </div>
+</header>
+
+<section id="lanes" aria-labelledby="lanes-title">
+  <div class="section-heading"><div><p class="eyebrow">01 / PICK A LANE</p><h2 id="lanes-title">Thirty-four basslines the floor already understands.</h2></div>
+    <div class="chips" id="family" role="group" aria-label="Filter by family"></div></div>
+  <div id="styles" class="styles" role="list"></div>
+</section>
+
+<section id="deck" class="deck" aria-labelledby="deck-name">
+  <div class="deck-head">
+    <div><p class="eyebrow" id="deck-genre"></p><h2 id="deck-name"></h2><p id="deck-idea" class="idea"></p><p id="deck-lane" class="lane"></p></div>
+    <div class="ideas-box"><p class="label">Ideas in this lane</p><div id="ideas" class="ideas" role="group" aria-label="Ideas"></div>
+      <pre id="pattern" class="pattern" aria-label="The loop as 32 steps"></pre></div>
+  </div>
+  <div class="transport">
+    <button id="play" class="play">▶ Loop section</button>
+    <button id="journey" class="play alt">▶ Play the whole track</button>
+    <span id="pos" class="pos">BAR 1 / 8</span>
+    <label>Tempo<input id="bpm" type="number" min="100" max="170" step="1"><small>BPM</small></label>
+    <label>Root<select id="key"></select></label>
+    <span id="hz" class="hz"></span>
+  </div>
+  <div class="options">
+    <label>Sound<select id="sound"></select></label>
+    <label>Chords<select id="move"></select></label>
+    <label>Break<select id="brk"></select></label>
+    <label>Fill<select id="fill"></select></label>
+  </div>
+  <div id="map" class="map" role="group" aria-label="Sections of the track"></div>
+  <div class="roll-wrap"><svg id="roll" viewBox="0 0 1280 330" preserveAspectRatio="none" role="img" aria-label="Piano roll of the bassline for this section"></svg></div>
+  <div class="deck-grid">
+    <div class="sec">
+      <p class="eyebrow" id="sec-eyebrow"></p><h3 id="sec-name"></h3><p id="sec-role" class="role"></p>
+      <ul id="sec-what" class="what"></ul>
+      <dl id="measures" class="measures"></dl>
+    </div>
+    <div class="knobs">
+      <h3>Bend it</h3>
+      <label class="slider"><span>Wow <output id="wow-o"></output></span><input id="wow" type="range" min="0" max="100"><small>How far the filter and the mouth open on the talking notes.</small></label>
+      <label class="slider"><span>Drive <output id="drive-o"></output></span><input id="drive" type="range" min="0" max="100"><small>Saturation before the filter.</small></label>
+      <label class="slider"><span>Sub <output id="sub-o"></output></span><input id="sub" type="range" min="0" max="100"><small>The clean sine underneath.</small></label>
+      <label class="slider"><span>Tone <output id="tone-o"></output></span><input id="tone" type="range" min="0" max="100"><small>Filter cutoff, darker to brighter.</small></label>
+      <label class="slider"><span>Drums <output id="drums-o"></output></span><input id="drums" type="range" min="0" max="100"><small>Turn them down to hear the bass alone.</small></label>
+      <label class="slider"><span>Swing <output id="swing-o"></output></span><input id="swing" type="range" min="0" max="30"><small>How late the off 16ths land, in percent of a 16th.</small></label>
+      <label class="slider"><span>Length <output id="gate-o"></output></span><input id="gate" type="range" min="30" max="100"><small>Note length. Shorter is tighter and funkier.</small></label>
+      <label class="slider"><span>Pump <output id="pump-o"></output></span><input id="pump" type="range" min="0" max="150"><small>Sidechain depth, as a percentage of the lane's own.</small></label>
+      <label class="slider"><span>Space <output id="space-o"></output></span><input id="space" type="range" min="0" max="200"><small>Stereo spread and echo on the top layer. The sub stays mono and dry.</small></label>
+    </div>
+    <div class="export">
+      <h3>Take it</h3>
+      <button id="midi-sec">MIDI · this section</button>
+      <button id="midi-all">MIDI · whole track, 64 bars</button>
+      <button id="wav-sec">WAV · this section, 8 bars</button>
+      <button id="wav-all">WAV · whole track</button>
+      <label class="check"><input id="with-drums" type="checkbox" checked> Include drums</label>
+      <p id="export-note" class="note">MIDI is on a straight grid with section markers, CC74 for the filter and CC1 on the wow notes. Overlapping notes are slides: use a mono, legato patch.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sheet" aria-labelledby="sheet-title">
+  <div class="section-heading"><div><p class="eyebrow">02 / THE CHEAT SHEET</p><h2 id="sheet-title">Why it works, and how to build it.</h2></div></div>
+  <div class="sheet-grid">
+    <article><h3>Why it moves a floor</h3><ul id="why"></ul></article>
+    <article><h3 id="recipe-title">The sound</h3><ol id="recipe"></ol><p id="sound-note" class="note"></p></article>
+    <article class="wide"><h3>Six versions, one idea</h3><div class="table-wrap"><table id="versions"><thead><tr><th>Section</th><th>Bars</th><th>What the bass does</th><th>Notes / bar</th><th>Filter</th><th>Sub</th><th>Kick</th></tr></thead><tbody></tbody></table></div></article>
+  </div>
+</section>
+
+<section id="rules" aria-labelledby="rules-title">
+  <div class="section-heading"><div><p class="eyebrow">03 / EIGHT RULES</p><h2 id="rules-title">What all thirty-four have in common.</h2></div></div>
+  <ol class="rules">
+    <li><b>Know where the kick is.</b> Either never start a note on it, or land on it on purpose and let the sidechain separate them. Half-decisions make mud.</li>
+    <li><b>Two bars: a question, then an answer.</b> Bar two repeats bar one and changes only the last beat. That is enough to loop for five minutes.</li>
+    <li><b>Rests are notes.</b> The gap before a hit is what makes it heavy. If the loop feels weak, delete something.</li>
+    <li><b>Length is groove.</b> Short, short, long. Change the note lengths before you change the pitches.</li>
+    <li><b>One gesture per bar.</b> One slide, one wow, one octave jump. A bassline with a single feature is a hook; with five it is a solo.</li>
+    <li><b>Put the root where the system is.</b> Roots between F and A (44–55 Hz) hit hardest on most club rigs. Check the Hz readout when you change key.</li>
+    <li><b>Change one thing per section.</b> Rhythm in the intro, notes in the drop, development in drop two. Keep the rhythm and people keep dancing.</li>
+    <li><b>The silence is part of the bassline.</b> Pull the sub a bar before the drop and stop everything for two beats. The drop is only as big as the hole in front of it.</li>
+  </ol>
+  <p class="note honest">These are patterns and starting sounds, not finished records. The readouts count notes and time; they do not measure taste, and nothing here can promise a chart position. Read the notes in <a href="WOW.md">WOW.md</a> for what is and is not checked.</p>
+</section>
+</main>
+<footer><p>Wow is one standalone page. Settings are remembered in this browser. <kbd>Space</kbd> plays and stops, <kbd>1</kbd>–<kbd>6</kbd> pick a section.</p></footer>
+<script>// Wow engine: pure functions, no Web Audio. Runs in the page and in Node tests.
+// A bassline is a two-bar loop of 16ths. Every section of a track is that loop
+// rewritten by rule: stripped for the intro, flattened and wound up for the build,
+// developed for the second drop, thinned for the outro.
+const WOW = (() => {
+  const SPB = 16, LOOP = 32, BARS = 8;
+  const KICK = [0, 4, 8, 12];
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+  const hz = midi => 440 * Math.pow(2, (midi - 69) / 12);
+  // Roots live between E1 (41 Hz) and D♯2 (78 Hz): low enough to be a sub, high enough for a club system to reproduce.
+  const rootMidi = pc => 28 + ((pc - 4 + 12) % 12);
+  const noteName = midi => NAMES[((midi % 12) + 12) % 12] + (Math.floor(midi / 12) - 1);
+  function rng(seed) {
+    let a = (seed >>> 0) || 1;
+    return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  }
+
+  // ------------------------------------------------------------- notation
+  // 32 tokens, one per 16th. "." rest, "-" hold the previous note, a number is
+  // semitones from the root. Flags: ! accent, ~ slide into this note, w wow
+  // (the filter opens and closes across the note), ' short. "|" is decoration.
+  function parse(text) {
+    const tok = text.replace(/\|/g, ' ').trim().split(/\s+/);
+    if (tok.length !== LOOP) throw Error('A loop needs 32 steps, got ' + tok.length + ': ' + text);
+    const notes = [];
+    tok.forEach((t, s) => {
+      if (t === '.') return;
+      if (t === '-') { const last = notes[notes.length - 1]; if (!last || last.s + last.l !== s || last.short) throw Error('Nothing to hold at step ' + s + ': ' + text); last.l++; return; }
+      const m = /^(-?\d+)([!~w']*)$/.exec(t);
+      if (!m) throw Error('Bad token "' + t + '" in: ' + text);
+      const f = m[2];
+      notes.push({s, l: 1, semi: +m[1], acc: f.includes('!'), slide: f.includes('~'), wow: f.includes('w'), short: f.includes("'")});
+    });
+    return notes;
+  }
+  const unparse = notes => {
+    const out = Array(LOOP).fill('.');
+    for (const n of notes) { out[n.s] = n.semi + (n.acc ? '!' : '') + (n.slide ? '~' : '') + (n.wow ? 'w' : '') + (n.short ? "'" : ''); for (let i = 1; i < n.l; i++) out[n.s + i] = '-'; }
+    return out.join(' ');
+  };
+  // What every loop must obey. kickFree styles never start a note on a kick.
+  function checkLoop(notes, style) {
+    const bad = [];
+    let end = 0, prev = null;
+    for (const n of notes) {
+      if (n.s < end) bad.push('overlap at step ' + n.s);
+      if (n.s + n.l > LOOP) bad.push('note runs past the loop at step ' + n.s);
+      if (style && style.kickFree && n.s % 4 === 0) bad.push('note on a kick at step ' + n.s);
+      if (n.semi < -7 || n.semi > 19) bad.push('note out of register at step ' + n.s);
+      if (n.slide && (!prev || prev.s + prev.l !== n.s)) bad.push('slide with nothing to slide from at step ' + n.s);
+      end = n.s + n.l; prev = n;
+    }
+    if (notes.length < 2) bad.push('fewer than two notes');
+    return bad;
+  }
+
+  // ---------------------------------------------------------------- sounds
+  const SOUND0 = {osc: [{w: 'sawtooth', oct: 0, det: 0, g: .6}], sub: .7, fm: null, pitchEnv: null, cut: 500, res: 4, env: 2, dec: .15,
+    drive: .4, hp: 80, vowel: 0, rest: 'o', word: ['u', 'a', 'u'], say: 'wow', wowDepth: 2.2, lfo: null, glide: .05, rel: .02, atk: .003, pluck: 0, level: .8, rumble: 0, echo: 0, width: 0};
+  const sound = o => ({...SOUND0, ...o});
+  // Formant centres (Hz). They do not follow the note, which is why a bass through them sounds like a mouth.
+  const VOWELS = {a: [800, 1150, 2900], e: [450, 1750, 2600], i: [300, 2200, 3000], o: [480, 820, 2800], u: [330, 680, 2500]};
+
+  // ---------------------------------------------------------------- styles
+  const S = (o, ideas) => ({prog: [0, 0, 0, 0], breakProg: [0, 0, -4, -2], breakMode: 'tease', fill: 'octave', fill2: 'run', answers: [0, 0, 0, 0],
+    kickFree: true, swing: 0, evolve: 0, era: 'now', year: '2025–26', ...o, ideas: ideas.map(([name, a, b]) => ({name, text: a + ' | ' + b, notes: parse(a + ' ' + b)}))});
+  const STYLES = [
+    S({id: 'tech', name: 'Rubber roller', family: 'house', genre: 'Tech house', bpm: 128, key: 7, swing: .1,
+      lane: 'Chris Lake, FISHER, Cloonee',
+      idea: 'The bass is the lead vocal. Short rubbery root notes dodge every kick, then one long note opens its mouth at the end of the bar.',
+      why: ['No note ever starts on a kick, so the kick stays the loudest thing in the room.', 'One talking note per bar, always in the same place. The crowd learns it in eight bars and waits for it.', 'Bar two ends on the octave: a question in bar one, an answer in bar two.'],
+      recipe: ['Two saws and a square, one voice, mono, legato.', 'Low-pass around 700 Hz into a formant or vowel filter. Automate the vowel, not the cutoff.', 'Drive before the filter so the formants have harmonics to shape.', 'Clean sine sub under 95 Hz on its own chain. Sidechain both to the kick, fast release.'],
+      kit: {kick: 50, kd: .26, hat: 'house', clap: 1, perc: '. . . x . . x . . x . . . . x .', duck: .75, rel: .55},
+      fill: 'gap', fill2: 'stutter', answers: [0, 3, 0, -2], breakMode: 'tease',
+      sound: sound({level: 0.6, osc: [{w: 'sawtooth', oct: 0, det: -7, g: .5}, {w: 'square', oct: 0, det: 7, g: .35}], vowel: .65, cut: 700, res: 5, env: 1.4, dec: .12, drive: .55, sub: .8, hp: 95})},
+    [['Offbeat wow', '. . 0 . | . . 0 0\' | . . 0 . | . 3w - .', '. . 0 . | . . 0 0\' | . 0\' . 0 | . 12w - -'],
+     ['Late talker', '. . . 0 | . . 0 . | . 0\' . 0 | . . 10w -', '. . . 0 | . . 0 . | . 0\' . 7w | - 5~ - .'],
+     ['Gallop', '. 0\' 0 . | . 0\' 0 . | . 0\' 0 . | . 0 3w -', '. 0\' 0 . | . 0\' 0 . | . 0\' 0 . | . 7w - 5\'']]),
+    S({id: 'stab', name: 'Mainstage menace', family: 'house', genre: 'Tech house / mainstage', bpm: 127, key: 5, swing: .06,
+      lane: 'Mau P, John Summit, Dom Dolla',
+      idea: 'Almost nothing, very loud. Two or three huge notes a bar that fall in pitch as they land, and a lot of air between them.',
+      why: ['Space is the hook. A gap of five 16ths makes the next hit feel twice as heavy.', 'Each hit drops in pitch as it lands: the "bwomp" that reads on a phone speaker and a festival rig alike.', 'One root, no melody. The vocal or lead gets the whole midrange.'],
+      recipe: ['Saw plus a square an octave down, heavy drive, mono.', 'Pitch envelope: +7 semitones falling to the note in about 70 ms.', 'Low-pass 400 Hz, envelope amount high, decay 200 ms. A touch of vowel filter for the "ow".', 'Long sidechain release so the hit swells up out of the kick.'],
+      kit: {kick: 47, kd: .3, hat: 'house', clap: 1, perc: '. . . . . . x . . . . x . . . .', duck: .85, rel: .7},
+      fill: 'slide', fill2: 'gap', answers: [0, 0, 0, 3], breakMode: 'pad',
+      sound: sound({level: 0.45, osc: [{w: 'sawtooth', oct: 0, det: -5, g: .5}, {w: 'square', oct: 0, det: 5, g: .4}], pitchEnv: {semi: 7, t: .07}, vowel: .35, word: ['a', 'o', 'u'], say: 'ow', cut: 420, res: 5, env: 2.6, dec: .22, drive: .7, sub: .9, hp: 85})},
+    [['Two hits', '. . 0! - | . . . . | . . 0! - | . 0\' . .', '. . 0! - | . . . . | . 0\' . 0! | - . 3w -'],
+     ['Monotone', '. . 0 . | . 0\' . 0 | . . 0 . | . 0\' . 0', '. . 0 . | . 0\' . 0 | . . 0 . | . 0\' -2w -'],
+     ['Bwomp', '. . 0w - | - . . 0\' | . . 0w - | - . . .', '. . 0w - | - . . 0\' | . 0\' . 0w | - - 12\' .']]),
+    S({id: 'minimal', name: 'Deep tech bounce', family: 'house', genre: 'Minimal / deep tech', bpm: 130, key: 5, swing: .14,
+      lane: 'Josh Baker, Rossi., East End Dubs',
+      idea: 'A round sub that bounces. Tiny plucks, octave jumps and one slide per bar, with more swing than you think you need.',
+      why: ['Octave jumps on weak 16ths make the sub feel like it is skipping.', 'The slide at the end of the bar is the only long gesture, so it reads as the hook.', 'Swing on the 16ths is doing half the work. Turn it off and the loop stops walking.'],
+      recipe: ['Sine or triangle with a little square for definition. Mono, legato, glide 90 ms.', 'Low-pass near 900 Hz, short envelope so each note has a soft "p" at the front.', 'Amp decay so short notes pluck; overlapping MIDI notes slide.', 'Very little drive. This bass is about pitch and timing, not tone.'],
+      kit: {kick: 49, kd: .22, hat: 'shuffle', clap: 1, perc: '. x . . . . . x . . x . . . . .', duck: .7, rel: .45},
+      fill: 'run', fill2: 'slide', answers: [0, 0, 3, 0], breakMode: 'tease',
+      sound: sound({level: 0.5, osc: [{w: 'triangle', oct: 0, det: 0, g: .7}, {w: 'square', oct: 0, det: 4, g: .14}], cut: 900, res: 3, env: 1.2, dec: .09, drive: .2, sub: 1, glide: .09, pluck: .35, wowDepth: 1.6, hp: 70})},
+    [['Bounce', '. . 0\' . | . 0\' . 12\' | . . 0\' . | . 0 10~ -', '. . 0\' . | . 0\' . 12\' | . . 0\' 3\' | . 0 -2~ -'],
+     ['Slinky', '. 0 - . | . . 7\' . | . 0 - . | . 12\' . 10\'', '. 0 - . | . . 7\' . | . 0 - 3~ | - . 5\' .'],
+     ['Hiccup', '. . 0\' 0\' | . . . 0 | - . 12\' . | . 0\' . .', '. . 0\' 0\' | . . . 0 | - . 15\' . | . 12 10~ 0\'']]),
+    S({id: 'warp', name: 'Speed garage warp', family: 'house', genre: 'Bass house / UKG', bpm: 134, key: 7, swing: .12,
+      lane: 'Interplanetary Criminal, Sammy Virji, Bullet Tooth',
+      idea: 'Weow. A detuned reese that bends into its notes while the filter wobbles in time, answered by dry organ-style stabs.',
+      why: ['Long warping notes against short dry ones: the contrast is the groove.', 'The filter wobble is locked to 8ths, so the bass plays a rhythm even while it holds one note.', 'Slides down at the end of bar two pull you back to the one.'],
+      recipe: ['Two saws detuned about 18 cents each way, plus a quiet square an octave up.', 'Low-pass 24 dB near 380 Hz with resonance. LFO to cutoff, synced to 1/8, retriggered per note.', 'Glide 110 ms, legato. Overlap the MIDI notes you want to bend.', 'Drive after the filter, then a clean sub. Keep the reese mono under 150 Hz.'],
+      kit: {kick: 51, kd: .22, hat: 'garage', clap: 1, perc: '. . . x . . . . . x . . . . . x', duck: .7, rel: .45},
+      fill: 'slide', fill2: 'stutter', answers: [0, 3, 0, 5], breakMode: 'tease',
+      sound: sound({level: 0.48, osc: [{w: 'sawtooth', oct: 0, det: -18, g: .45}, {w: 'sawtooth', oct: 0, det: 18, g: .45}, {w: 'square', oct: 1, det: 0, g: .12}], vowel: .3, word: ['u', 'i', 'a', 'u'], say: 'weow', lfo: {rate: 2, depth: 1.5}, cut: 380, res: 7, env: 1, dec: .2, drive: .6, sub: .85, glide: .11, wowDepth: 2.6, hp: 90})},
+    [['Warp', '. . 0w - | - . 0\' . | . . 3w - | - . 0\' 0\'', '. . 0w - | - . 0\' . | . . 7w - | - 5~ 3~ -'],
+     ['Organ skip', '. . 0\' . | . 0\' . 0\' | . . 0\' . | . 12\' 10\' .', '. . 0\' . | . 0\' . 0\' | . . 3\' . | . 5\' . 7w'],
+     ['Reese drag', '. 0w - - | . . 0\' . | . 0w - - | . . -2w -', '. 0w - - | . . 0\' . | . 3w - - | . 0 12~ -']]),
+    S({id: 'afro', name: 'Afro house heartbeat', family: 'house', genre: 'Afro house', bpm: 122, key: 9, swing: .08, kickFree: false,
+      lane: 'Keinemusik, Black Coffee, Shimza',
+      idea: 'A warm, round sub that lands with the kick and then leans against it: three, three, two. It follows the chords and never shouts.',
+      why: ['The 3-3-2 pattern crosses the four-on-the-floor, so the body gets two pulses to move to.', 'Longer notes and slow slides: the bass sings under the percussion instead of competing with it.', 'It follows the chord roots (i, i, VI, VII), so eight bars feel like a journey without a single fill.'],
+      recipe: ['Triangle or sine with a soft sine an octave up. Slow attack (8 ms) so it never clicks.', 'Low-pass 600 Hz, almost no envelope. Warmth from saturation, not from the filter.', 'Glide 120 ms on overlapping notes.', 'Sidechain with a slower release: the notes land on the kick, so the duck is what separates them.'],
+      kit: {kick: 52, kd: .24, hat: 'afro', clap: 0, perc: 'x . . x . . x . . . x . . x . .', duck: .8, rel: .6},
+      prog: [0, 0, -4, -2], fill: 'run', fill2: 'octave', breakMode: 'pad',
+      sound: sound({level: 0.5, osc: [{w: 'triangle', oct: 0, det: 0, g: .7}, {w: 'sine', oct: 1, det: 0, g: .18}], cut: 600, res: 2, env: .8, dec: .25, drive: .28, sub: 1, glide: .12, atk: .008, rel: .04, wowDepth: 1.4, hp: 60})},
+    [['Three three two', '0 - . 0 | - . 0 - | . . 0 - | . 0 . 3', '0 - . 0 | - . 0 - | . . 0 - | . -2 - 0~'],
+     ['Heartbeat', '0 - - . | . . 0 . | . 0 - . | . . 7 -', '0 - - . | . . 0 . | . 0 - . | 5 - 3~ -'],
+     ['Call down', '. . 0 - | . 0 . . | 0 - . 0 | . . 12\' .', '. . 0 - | . 0 . . | 0 - . 10 | - 7 - .']]),
+    S({id: 'melodic', name: 'Melodic house pulse', family: 'house', genre: 'Melodic house & techno', bpm: 124, key: 2,
+      lane: 'Anyma, Argy, Massano',
+      idea: 'An offbeat pulse that follows four chords. Simple enough to disappear under a big lead, strong enough to carry the drop alone.',
+      why: ['Offbeat root notes are the oldest trick there is: kick, bass, kick, bass. The floor moves on the "and".', 'The chord changes every two bars (i, VI, III, VII), so the bass tells the story the lead is singing.', 'A 16th pickup into the next bar keeps the loop rolling over the bar line.'],
+      recipe: ['Two saws detuned 10 cents, mono below 150 Hz.', 'Low-pass 500 Hz, envelope 1.5 octaves, decay 200 ms. Open the cutoff over the whole build.', 'Light drive. A second layer an octave up, high-passed, makes it audible on small speakers.', 'Sidechain deep and slow enough that the offbeat note swells.'],
+      kit: {kick: 48, kd: .28, hat: 'techno', clap: 1, perc: '. . . . . . . x . . . . . . x .', duck: .85, rel: .6},
+      prog: [0, -4, 3, -2], breakProg: [0, -4, 3, -2], fill: 'run', fill2: 'octave', breakMode: 'pad',
+      sound: sound({level: 0.52, osc: [{w: 'sawtooth', oct: 0, det: -10, g: .45}, {w: 'sawtooth', oct: 0, det: 10, g: .45}, {w: 'sawtooth', oct: 1, det: 0, g: .1}], cut: 520, res: 3, env: 1.6, dec: .2, drive: .35, sub: .8, hp: 80})},
+    [['Pulse', '. . 0 . | . . 0 . | . . 0 . | . . 0 0\'', '. . 0 . | . . 0 . | . . 0 . | . 0\' 0 12\''],
+     ['Driver', '. 0\' 0 0\' | . 0\' 0 0\' | . 0\' 0 0\' | . 0\' 0 7\'', '. 0\' 0 0\' | . 0\' 0 0\' | . 0\' 0 0\' | . 12\' 0 10\''],
+     ['Arp walker', '. . 0 . | . 7\' 0 . | . . 0 . | . 12\' 10 .', '. . 0 . | . 7\' 0 . | . . 3 . | . 7\' 5 -']]),
+    S({id: 'organ', name: 'Organ house', family: 'house', genre: 'House / organ bass', bpm: 126, key: 9, swing: .1, kickFree: false,
+      lane: 'Sonny Fodera, Disclosure, the M1 organ lineage',
+      idea: 'The hollow organ bass that has been filling floors since the nineties, back on top. It is percussive, melodic and lands on the one.',
+      why: ['It plays a tune. Root, third, fourth, fifth: you can sing this bassline, which is why people remember it.', 'Dry, short notes with a click at the front work like an extra drum.', 'The first note of the bar is on the kick, so the loop feels planted and the syncopation after it feels like release.'],
+      recipe: ['Sines at the fundamental, the octave and the twelfth (organ drawbars), or an M1-style organ sample.', 'A very short FM or noise click at the start of each note.', 'No filter movement. Short amp decay, no release tail.', 'Layer a sine sub on the same notes. Small room reverb on the top layer only.'],
+      kit: {kick: 50, kd: .24, hat: 'house', clap: 1, perc: '. . . x . . . . . . x . . . . .', duck: .7, rel: .45},
+      prog: [0, 0, 3, -2], fill: 'run', fill2: 'octave', answers: [0, 0, 0, 0], breakMode: 'tease',
+      sound: sound({level: 0.66, osc: [{w: 'sine', oct: 0, det: 0, g: .55}, {w: 'sine', oct: 1, det: 0, g: .42}, {w: 'sine', oct: 1, semi: 7, det: 0, g: .2}], fm: {ratio: 3, amt: 2.2, dec: .035}, cut: 2400, res: 1, env: .3, dec: .1, drive: .3, sub: .55, pluck: .3, wowDepth: 1.2, hp: 60})},
+    [['M1 bounce', '0 . . 0\' | . . 0 . | . 0\' . 3 | . . 5 .', '0 . . 0\' | . . 0 . | . 0\' . 7 | . 5 . 3'],
+     ['Skippy', '. . 0\' . | . 0\' . 12\' | . . 0\' . | 10\' . 7\' .', '. . 0\' . | . 0\' . 12\' | . . 0\' . | 3\' . 5\' 7\''],
+     ['Stab and answer', '0 - . . | . . 0\' 0\' | . . 3 - | . . 0\' .', '0 - . . | . . 0\' 0\' | . . 5 - | 7\' . 10\' .']]),
+    S({id: 'disco', name: 'Jackin octaves', family: 'house', genre: 'Funky / jackin house', bpm: 125, key: 9, swing: .12, kickFree: false,
+      lane: 'Disco-house and jackin lineage',
+      idea: 'Root on the beat, octave on the offbeat, and a walk-up at the end. A bass player\'s line, quantised and filtered.',
+      why: ['The octave on the offbeat is a built-in open hi-hat for the low end.', 'Walking notes into the next bar give the loop a direction.', 'Short notes leave room for a chopped sample and a busy drum loop.'],
+      recipe: ['Saw and square, or a sampled finger bass.', 'Low-pass 800 Hz, envelope 2.5 octaves, decay 100 ms: a pluck with a bright front.', 'Resonance around 30% so the filter quacks a little.', 'Automate the cutoff by hand through the arrangement, the way a DJ would ride a filter.'],
+      kit: {kick: 52, kd: .2, hat: 'house', clap: 1, perc: '. . x . . . . x . . x . . x . .', duck: .6, rel: .4},
+      fill: 'run', fill2: 'octave', answers: [0, 0, 0, 0], breakMode: 'tease',
+      sound: sound({level: 0.56, osc: [{w: 'sawtooth', oct: 0, det: -4, g: .45}, {w: 'square', oct: 0, det: 4, g: .3}], cut: 800, res: 5, env: 2.4, dec: .1, drive: .3, sub: .6, pluck: .3, hp: 70})},
+    [['Octave jack', '0\' . 12\' . | 0\' . 12\' . | 0\' . 12\' . | 0\' 10\' 12\' .', '0\' . 12\' . | 0\' . 12\' . | 0\' . 12\' 7\' | . 5\' 7\' 10\''],
+     ['Slap walk', '0 . . 0\' | . 7\' . 0 | . . 10\' . | 12\' . 7\' .', '0 . . 0\' | . 7\' . 0 | . . 3 . | 5 - 7\' .'],
+     ['Filter funk', '. . 0\' 0\' | . 12\' . 0\' | . . 0\' 0\' | . 10\' 12\' .', '. . 0\' 0\' | . 12\' . 0\' | . 3\' . 5\' | . 7\' 10 -']]),
+
+    S({id: 'rumble', name: 'Peak-time rumble', family: 'techno', genre: 'Peak time techno', bpm: 136, key: 5,
+      lane: 'Charlotte de Witte, Adam Beyer, Enrico Sangiuliano',
+      idea: 'The bass is the kick\'s own shadow: a reverb tail, low-passed and ducked, with a sub pattern rolling in the three 16ths between kicks.',
+      why: ['Three notes between every kick turn four-on-the-floor into a gallop.', 'One pitch only. Movement comes from velocity and the filter, so nothing fights the kick\'s tuning.', 'The last 16th before each kick is short. That tiny gap is what makes the kick punch.'],
+      recipe: ['Send the kick to a reverb (1–2 s), then low-pass at 100–120 Hz, saturate, and sidechain hard to the dry kick.', 'Under it, a sine or filtered saw playing the 16ths between kicks.', 'Tune the kick, the rumble and the sub to the same root.', 'Mono everything below 120 Hz. Automate the low-pass up to 300 Hz in the build.'],
+      kit: {kick: 46, kd: .3, hat: 'techno', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .95, rel: .5, kdrive: .5},
+      fill: 'gap', fill2: 'stutter', breakMode: 'drone',
+      sound: sound({level: 0.42, osc: [{w: 'sine', oct: 0, det: 0, g: .6}, {w: 'sawtooth', oct: 0, det: 0, g: .22}], cut: 190, res: 2, env: .7, dec: .1, drive: .8, sub: .9, rumble: .9, wowDepth: 1.6, hp: 30})},
+    [['Rolling', '. 0 0 0\' | . 0 0 0\' | . 0 0 0\' | . 0 0 0\'', '. 0 0 0\' | . 0 0 0\' | . 0 0 0\' | . 0! 0 0\''],
+     ['Offbeat sub', '. . 0 - | . . 0 - | . . 0 - | . . 0 -', '. . 0 - | . . 0 - | . . 0 - | . 0\' 0 0\''],
+     ['Gallop', '. . 0 0\' | . . 0 0\' | . . 0 0\' | . 0\' 0 0\'', '. . 0 0\' | . . 0 0\' | . 0\' 0 0\' | . 0\' 0! 0\'']]),
+    S({id: 'hypnotic', name: 'Hypnotic loop', family: 'techno', genre: 'Hypnotic techno', bpm: 138, key: 4, evolve: .6,
+      lane: 'Rene Wise, Ignez, Oscar Mulero',
+      idea: 'A cycle of three or five laid over a bar of four. The notes never change; where the accent falls does, and the filter breathes over eight bars.',
+      why: ['A three-step figure over 16 steps only lines up every three bars. The ear keeps chasing it.', 'Nothing is ever a fill. Change comes from the filter moving slowly, which is why a loop can run for six minutes.', 'Short, dry, resonant notes sit like an extra percussion line.'],
+      recipe: ['Square and saw, low-pass 300 Hz with high resonance, short envelope.', 'Map cutoff to a very slow LFO (8 or 16 bars) or ride it by hand. This is the arrangement.', 'A little delay (dotted 8th, high-passed) on the top layer only.', 'Sub stays plain. Let the mid layer do the moving.'],
+      kit: {kick: 47, kd: .22, hat: 'techno', clap: 0, perc: '. . x . . x . . x . . x . . x .', duck: .8, rel: .4},
+      fill: 'none', fill2: 'none', breakMode: 'drone',
+      sound: sound({level: 0.48, osc: [{w: 'square', oct: 0, det: -3, g: .4}, {w: 'sawtooth', oct: 0, det: 3, g: .4}], cut: 300, res: 9, env: 1.5, dec: .08, drive: .4, sub: .7, wowDepth: 2, hp: 70})},
+    [['Three over four', '. 0 0\' 3\' | . 0\' 3 0\' | . 3\' 0 0\' | . 0 0\' 3\'', '. 0\' 3 0\' | . 3\' 0 0\' | . 0 0\' 3\' | . 0\' 3 0\''],
+     ['Loop of five', '. 0\' . 0\' | . . 0\' . | . 0\' . 0\' | . 0\' . .', '. 0\' . . | . 0\' . 0\' | . . 0\' . | . 0\' . 0\''],
+     ['Pedal and ping', '. 0 - 0\' | . 0 - 0\' | . 0 - 12\' | . 0 - 0\'', '. 0 - 0\' | . 0 - 10\' | . 0 - 0\' | . 0 - 12\'']]),
+    S({id: 'groove', name: 'Hard groove funk', family: 'techno', genre: 'Hard groove', bpm: 142, key: 7, swing: .1, kickFree: false,
+      lane: 'Ben Sims, Chlär, Funk Assault',
+      idea: 'A tom you can tune. Fast, swung, syncopated hits that play with the kick like a second drummer.',
+      why: ['It is a drum part with pitch: every note is short and has a small pitch drop, like a tom.', 'Swung 16ths at 142 BPM are where the funk is. Straight, it is a different genre.', 'The pattern repeats every beat and a half, so it tumbles across the bar line.'],
+      recipe: ['Sine or triangle with a pitch envelope: +5 semitones falling in 40 ms.', 'Low-pass 700 Hz, drive it into a saturator until it barks.', 'Short decay, no sustain. Velocity to volume and to pitch-envelope amount.', 'Bus it with the toms and percussion, and compress them together.'],
+      kit: {kick: 49, kd: .2, hat: 'techno', clap: 1, perc: '. . x . . x . x . . x . x . . x', duck: .6, rel: .3, kdrive: .3},
+      fill: 'run', fill2: 'stutter', breakMode: 'tease',
+      sound: sound({level: 0.6, osc: [{w: 'sine', oct: 0, det: 0, g: .6}, {w: 'triangle', oct: 1, det: 0, g: .3}], pitchEnv: {semi: 5, t: .04}, cut: 700, res: 2, env: 1, dec: .1, drive: .65, sub: .8, pluck: .5, wowDepth: 1.5, hp: 50})},
+    [['Funk engine', '0\' . 0\' 0\' | . 0\' . 0\' | 0\' . 0\' 0\' | . 3\' 0\' .', '0\' . 0\' 0\' | . 0\' . 0\' | 0\' . 0\' 0\' | . 5\' 3\' 0\''],
+     ['Tom roller', '. 0\' 0\' . | 0\' . 0\' 7\' | . 0\' 0\' . | 0\' . 5\' 3\'', '. 0\' 0\' . | 0\' . 0\' 7\' | . 0\' 0\' . | 0\' 10\' 7\' 5\''],
+     ['Shuffle stab', '. . 0! . | . 0\' . 0! | . . 0! . | . 0\' 3\' .', '. . 0! . | . 0\' . 0! | . . 0! . | 0\' 5\' . 3\'']]),
+    S({id: 'hard', name: 'Hard techno slam', family: 'techno', genre: 'Hard techno', bpm: 152, key: 5,
+      lane: 'Sara Landry, Nico Moreno, I Hate Models',
+      idea: 'Kick, bass, kick, bass, as loud as it goes. A distorted offbeat tone that is half bassline, half second kick.',
+      why: ['The offbeat note is as loud as the kick, so the track has eight hits a bar instead of four.', 'Two or three pitches, moved rarely. At 150 BPM a simple root change feels like a key change.', 'Everything is distorted together, which glues kick and bass into one instrument.'],
+      recipe: ['Saw and square into hard clipping or a distortion pedal emulation.', 'Low-pass open (900 Hz or more), short pitch or filter envelope for a punchy front.', 'Or resample: bounce the kick\'s tail, pitch it, and play it on the offbeat.', 'Put kick and bass on one bus and clip them together. Check the sub in mono.'],
+      kit: {kick: 46, kd: .24, hat: 'hard', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .95, rel: .35, kdrive: .9},
+      fill: 'stutter', fill2: 'gap', answers: [0, 0, 0, 0], breakMode: 'drone',
+      sound: sound({level: 0.42, osc: [{w: 'sawtooth', oct: 0, det: -6, g: .5}, {w: 'square', oct: 0, det: 6, g: .4}], cut: 900, res: 2, env: 1, dec: .2, drive: 1, sub: 1, wowDepth: 1.5, hp: 40})},
+    [['Offbeat slam', '. . 0! - | . . 0! - | . . 0! - | . . 0! -', '. . 0! - | . . 0! - | . . 0! - | . 0\' 0! -'],
+     ['Root move', '. . 0 - | . . 0 - | . . 3 - | . . 0 -', '. . 0 - | . . 0 - | . . 5 - | . . 3 -'],
+     ['Stomp', '. . 0 0\' | . . 0 0\' | . . 0 0\' | . 0\' 0 0\'', '. . 0 0\' | . . 0 0\' | . . 12\' 0 | . 0\' 0 0\'']]),
+    S({id: 'trance', name: 'Trance-techno roller', family: 'techno', genre: 'Trance techno', bpm: 146, key: 9,
+      lane: 'KI/KI, Marlon Hoffstadt',
+      idea: 'Three 16ths between every kick, following big simple chords. Nineties trance bass at today\'s tempo.',
+      why: ['The rolling 16ths are a constant engine, so the kick can be short and the track still feels full.', 'It follows the chords (i, VI, VII, i). Hands go up on the VI because the bass moved, not because the lead did.', 'Every note is the same length. Machine-tight is the point.'],
+      recipe: ['Two detuned saws, low-pass 650 Hz, envelope 2 octaves, decay 90 ms.', 'Every note short and identical. Sidechain does the rest.', 'High-pass the top layer at 100 Hz and put a sine sub on the same MIDI.', 'Open the filter and lengthen the decay through the build.'],
+      kit: {kick: 48, kd: .2, hat: 'hard', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .9, rel: .35, kdrive: .4},
+      prog: [0, -4, -2, 0], breakProg: [0, -4, -2, -2], fill: 'run', fill2: 'octave', breakMode: 'pad',
+      sound: sound({level: 0.5, osc: [{w: 'sawtooth', oct: 0, det: -9, g: .45}, {w: 'sawtooth', oct: 0, det: 9, g: .45}], cut: 650, res: 4, env: 2, dec: .09, drive: .45, sub: .8, hp: 70})},
+    [['Rolling', '. 0\' 0\' 0\' | . 0\' 0\' 0\' | . 0\' 0\' 0\' | . 0\' 0\' 0\'', '. 0\' 0\' 0\' | . 0\' 0\' 0\' | . 0\' 0\' 0\' | . 0\' 0\' 12\''],
+     ['Offbeat pump', '. . 0 . | . . 0 . | . . 0 . | . . 0 12\'', '. . 0 . | . . 0 . | . . 0 . | . 7\' 0 12\''],
+     ['Gate', '. 0\' 0\' 12\' | . 0\' 0\' 0\' | . 0\' 0\' 12\' | . 0\' 7\' 0\'', '. 0\' 0\' 12\' | . 0\' 0\' 0\' | . 0\' 0\' 12\' | . 10\' 7\' 12\'']]),
+    S({id: 'donk', name: 'Bounce donk', family: 'techno', genre: 'Hard bounce', bpm: 150, key: 7,
+      lane: 'The hard bounce and donk revival',
+      idea: 'Kick, donk, kick, donk. A hollow FM knock on every offbeat that is impossible not to bounce to.',
+      why: ['The donk is pitched percussion: a sharp FM attack and no sustain, so it never muddies the kick.', 'It sits on the offbeat like a second kick an octave up. Two-step bounce at 150.', 'A fifth or an octave on the last offbeat is all the melody it needs.'],
+      recipe: ['FM: sine carrier, sine modulator at 2:1, modulation falling to zero in 90 ms.', 'One octave above the sub. No filter, or one wide open.', 'Short amp decay. Add a sine sub on the same notes for weight.', 'Drive lightly, and keep it dry and mono.'],
+      kit: {kick: 50, kd: .18, hat: 'hard', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .85, rel: .3, kdrive: .4},
+      fill: 'run', fill2: 'stutter', answers: [0, 0, 0, 0], breakMode: 'tease',
+      sound: sound({level: 0.66, osc: [{w: 'sine', oct: 1, det: 0, g: .8}], fm: {ratio: 2, amt: 5, dec: .09}, cut: 3200, res: 1, env: .2, dec: .1, drive: .5, sub: .6, pluck: .6, wowDepth: 1, hp: 60})},
+    [['Donk', '. . 0\' . | . . 0\' . | . . 0\' . | . . 0\' 7\'', '. . 0\' . | . . 0\' . | . . 0\' . | . 7\' 0\' 12\''],
+     ['Double bounce', '. . 0\' 0\' | . . 0\' . | . . 0\' 0\' | . . 12\' .', '. . 0\' 0\' | . . 0\' . | . . 0\' 0\' | . 12\' 10\' 7\''],
+     ['Skip', '. . 0\' . | . 0\' 0\' . | . . 0\' . | . 0\' 7\' .', '. . 0\' . | . 0\' 0\' . | . . 3\' . | . 5\' 7\' 12\'']]),
+    S({id: 'acid', name: 'Acid line', family: 'techno', genre: 'Acid techno', bpm: 140, key: 9, kickFree: false,
+      lane: 'Regal, Boston 168, the 303 lineage',
+      idea: 'One oscillator, one resonant filter, and three tricks: accent, slide, and the octave jump. The pattern is nothing; the knob is everything.',
+      why: ['Slides and accents fall on different steps each beat, so 16 plain 16ths never sound plain.', 'Octave jumps into a slide are the 303\'s signature gesture.', 'The filter sweep across the phrase is the arrangement. Closed it is a bassline, open it is the lead.'],
+      recipe: ['One saw (or square), mono, legato with 60–70 ms glide.', 'Resonant low-pass, 18–24 dB, cutoff low, envelope amount high, decay short.', 'Accent raises volume and envelope amount together. Distortion after the filter.', 'High-pass at 60 Hz and put a separate sub under it if the track needs one.'],
+      kit: {kick: 48, kd: .22, hat: 'techno', clap: 1, perc: '. . . . . . x . . . . . . . x .', duck: .7, rel: .35, kdrive: .4},
+      fill: 'slide', fill2: 'run', answers: [0, 3, 0, 5], breakMode: 'tease', evolve: .4,
+      sound: sound({level: 0.4, osc: [{w: 'sawtooth', oct: 0, det: 0, g: .7}], cut: 320, res: 16, env: 3.2, dec: .16, drive: .7, sub: .35, glide: .07, wowDepth: 3, hp: 60})},
+    [['Three tricks', '0\' 0\' 12 0~ | 0\' . 0! 3\' | 0\' 0\' 10 12~ | 0\' 7! . 12\'', '0\' 0\' 12 0~ | 0\' . 0! 3\' | 0\' 0\' 15 12~ | 10\' 7! 3 0~'],
+     ['Squelch', '. 0\' 0! . | 0\' 12 0~ . | . 0\' 0! . | 3\' 5 3~ 0\'', '. 0\' 0! . | 0\' 12 0~ . | . 0\' 0! 7\' | 10 12~ - 0\''],
+     ['Climber', '0! . 0\' 0\' | 3! . 0\' 0\' | 5! . 0\' 0\' | 7 10~ 12~ 0\'', '0! . 0\' 0\' | 3! . 0\' 0\' | 5! . 7\' 0\' | 12 10~ 7~ 0~']]),
+    S({id: 'giant', name: 'Melodic techno giant', family: 'techno', genre: 'Melodic techno', bpm: 126, key: 4, kickFree: false,
+      lane: 'Tale Of Us, Anyma, Mind Against',
+      idea: 'A wall. One enormous detuned note held under the kick and pumped by the sidechain, with a growl that opens once per bar.',
+      why: ['The note is held; the sidechain plays the rhythm. Four swells a bar that you feel in your chest.', 'Chord roots move every two bars (i, III, VI, VII): slow, cinematic, inevitable.', 'One growl per bar gives the wall a face.'],
+      recipe: ['Two or three saws detuned 20+ cents, plus one an octave up. Mono below 150 Hz.', 'Low-pass 450 Hz with a slow envelope (400 ms decay). Macro the cutoff for the growl.', 'Sidechain deep with a long release, or draw a volume shape synced to 1/4.', 'Saturate, then a little stereo width above 300 Hz only.'],
+      kit: {kick: 46, kd: .32, hat: 'techno', clap: 1, perc: '. . . . . . . . . . . . . . x .', duck: .95, rel: .75},
+      prog: [0, 3, -4, -2], breakProg: [0, 3, -4, -2], fill: 'slide', fill2: 'octave', breakMode: 'pad',
+      sound: sound({level: 0.46, osc: [{w: 'sawtooth', oct: 0, det: -22, g: .4}, {w: 'sawtooth', oct: 0, det: 22, g: .4}, {w: 'sawtooth', oct: 1, det: 0, g: .16}], vowel: .2, word: ['o', 'a', 'o'], say: 'waow', cut: 450, res: 3, env: 1.2, dec: .4, drive: .5, sub: .9, rel: .05, atk: .01, wowDepth: 2.4, hp: 80})},
+    [['Giant', '0 - - - | - - 0 . | 0 - - - | - - 0 0\'', '0 - - - | - - 0 . | 0w - - - | - - 0 0\''],
+     ['Rolling stones', '. . 0 0\' | . 0\' 0 . | . . 0 0\' | . 0\' 12\' .', '. . 0 0\' | . 0\' 0 . | . . 0 0\' | . 7\' 12\' 10\''],
+     ['Growl answer', '0w - - - | . . 0\' . | 0w - - - | . 0\' 0\' .', '0w - - - | . . 0\' . | 0w - - - | . 7\' 5\' 3\'']]),
+
+    // ------------------------------------------------ more of now, and where it came from
+    S({id: 'latin', name: 'Latin tech tumbao', family: 'house', genre: 'Latin tech house', era: 'now', year: '2023–26', bpm: 126, key: 9, swing: .1,
+      lane: 'Hugel, Cloonee, the Latin house wave',
+      idea: 'The salsa bass player\'s trick in a tech house kit: every note arrives a 16th early and hangs over the beat.',
+      why: ['Anticipation. The note lands just before the kick and is still ringing when it hits, so the bar leans forward.', 'Root and fifth only: it is a tumbao, the most danced-to bass pattern there is.', 'It leaves the downbeat empty, which is exactly where the kick and the vocal chop want to be.'],
+      recipe: ['Round, woody tone: triangle plus a little saw, or a sampled upright or baby bass.', 'Low-pass 700 Hz, short envelope for a soft pluck.', 'Notes held long enough to cross the kick. The sidechain carves the hole.', 'Layer a conga or timbale loop and let the bass answer it.'],
+      kit: {kick: 50, kd: .24, hat: 'afro', clap: 1, perc: 'x . . x . . x . . x . x . . x .', duck: .8, rel: .5},
+      fill: 'run', fill2: 'octave', answers: [0, 0, 0, 0], breakMode: 'tease', sn: 'Baby bass',
+      sound: sound({level: 0.49, osc: [{w: 'triangle', oct: 0, det: 0, g: .65}, {w: 'sawtooth', oct: 0, det: 5, g: .2}], cut: 700, res: 3, env: 1.4, dec: .12, drive: .35, sub: .9, pluck: .25, glide: .08, wowDepth: 1.6, hp: 65})},
+    [['Tumbao', ". . . 0 | - . 7 - | . . . 0 | - . 7 -", ". . . 0 | - . 7 - | . . . 5 | - . 7 12'"],
+     ['Anticipated', ". . . 0 | - . . 7 | - . . 0 | - . 5 -", ". . . 0 | - . . 7 | - . . 3 | - 5' 7 -"],
+     ['Montuno answer', ". . 0' 0 | - . 7' . | . . 0' 0 | - . 10' .", ". . 0' 0 | - . 7' . | . 12' . 10 | - 7' 5' ."]]),
+    S({id: 'piano', name: 'Log drum', family: 'house', genre: 'Amapiano / afro tech', era: 'now', year: '2021–26', bpm: 113, key: 5, swing: .1, kickFree: false,
+      lane: 'Kabza De Small, Uncle Waffles, the amapiano crossover',
+      idea: 'The log drum: a pitched, knocking sub that plays a melody in the gaps and slides between its notes. Half bassline, half tom fill.',
+      why: ['It is percussion you can hum. Every hit knocks at the front and then drops into a sub.', 'The phrase is a whole two bars long and leaves real silence, so each entrance is an event.', 'Slides between the last notes are the signature. Without them it is just an 808.'],
+      recipe: ['Sine with a fast pitch drop: an octave down in 50 ms. Add a short FM or wood click.', 'Saturate hard so the knock is audible on a phone.', 'Mono, legato, glide 80–100 ms. Overlap notes to slide.', 'Sparse kick or no four-on-the-floor at all. The log drum is the low end.'],
+      kit: {kick: 52, kd: .2, hat: 'shuffle', clap: 1, kicks: [0, 4, 8, 12], perc: 'x . . x . . x . . . x . . x . .', duck: .5, rel: .4},
+      fill: 'slide', fill2: 'run', answers: [0, 0, 3, 0], breakMode: 'tease', sn: 'Log drum',
+      sound: sound({level: 0.50, osc: [{w: 'sine', oct: 0, det: 0, g: .8}, {w: 'triangle', oct: 1, det: 0, g: .15}], pitchEnv: {semi: 12, t: .05}, fm: {ratio: 2.5, amt: 2, dec: .03}, cut: 1200, res: 1, env: .6, dec: .1, drive: .75, sub: .9, pluck: .3, glide: .09, wowDepth: 1.3, hp: 40})},
+    [['Knock', "0 - . . | . . 0' . | . 0 - . | . . 3 5~", ". . 0 - | . . . 0' | . 7 - 5~ | - 3~ - 0'"],
+     ['Call', "0' . . 0 | - . . . | 0' . 3 - | . . . .", "0' . . 0 | - . . 7 | - 5~ - 3~ | - . 0' ."],
+     ['Tumble', ". . 0 - | . 0' . . | . . 0 - | 7' . 5' .", ". . 0 - | . 0' . . | 12 10~ 7~ - | 5~ - 0' ."]]),
+    S({id: 'slap', name: 'Slap house bounce', family: 'house', genre: 'Slap house / Brazilian bass', era: 'classic', year: '2019–22', bpm: 124, key: 4,
+      lane: 'Alok, the slap house years',
+      idea: 'A deep, clicky bass on every offbeat with a 16th pickup, following four pop chords. The sound of a hundred radio remixes.',
+      why: ['Offbeat plus pickup is a bounce anyone can feel in one bar.', 'The click at the front makes it readable on a car stereo; the sub underneath makes it work in a club.', 'Four chords, one bar pattern. The top line gets all the attention.'],
+      recipe: ['Square or saw, low-pass 500 Hz, very short pitch envelope for the slap.', 'Fast filter envelope, decay 80 ms.', 'Sine sub an octave below on the same MIDI.', 'Sidechain deep. The bass should feel like it is pushed out of the kick.'],
+      kit: {kick: 48, kd: .26, hat: 'house', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .9, rel: .5},
+      prog: [0, -4, 3, -2], breakProg: [0, -4, 3, -2], fill: 'run', fill2: 'octave', breakMode: 'pad', sn: 'Slap pluck',
+      sound: sound({level: 0.44, osc: [{w: 'square', oct: 0, det: -5, g: .4}, {w: 'sawtooth', oct: 0, det: 5, g: .35}], pitchEnv: {semi: 9, t: .025}, cut: 500, res: 4, env: 2.6, dec: .08, drive: .5, sub: 1, pluck: .3, hp: 80})},
+    [['Bounce', ". . 0' 0' | . . 0' . | . . 0' 0' | . . 0' .", ". . 0' 0' | . . 0' . | . . 0' 0' | . 0' 12' ."],
+     ['Pickup', ". 0' 0 . | . . 0 . | . 0' 0 . | . . 0 0'", ". 0' 0 . | . . 0 . | . 0' 0 . | . 7' 0 12'"],
+     ['Drop it low', ". . 0 - | . . 0' 0' | . . 0 - | . 0' . 0'", ". . 0 - | . . 0' 0' | . . 0 - | . 12' 7' 0'"]]),
+    S({id: 'future', name: 'Future house knock', family: 'house', genre: 'Future / bass house', era: 'classic', year: '2014–17', bpm: 126, key: 7,
+      lane: 'Tchami, Oliver Heldens, Jauz',
+      idea: 'A metallic, hollow pluck that jumps around the octave between kicks. The drop is the bassline and nothing else.',
+      why: ['FM gives each note a pitched "tok", so the line reads like a melody played on a pipe.', 'Big interval jumps on weak 16ths: the ear cannot predict it, the body can.', 'Dry and short. All the size comes from the contrast with the break.'],
+      recipe: ['FM: sine carrier, modulator at 1:1 or 3:1, modulation envelope 100 ms.', 'One octave above the sub. Add a sine sub below.', 'No reverb. A little drive, and a short pitch envelope if it needs more knock.', 'Automate the modulation amount up through the build.'],
+      kit: {kick: 49, kd: .24, hat: 'house', clap: 1, perc: '. . . . . . . x . . . . . . . .', duck: .8, rel: .45},
+      fill: 'octave', fill2: 'stutter', answers: [0, 3, 0, 7], breakMode: 'tease', sn: 'Hollow FM',
+      sound: sound({level: 0.57, osc: [{w: 'sine', oct: 1, det: 0, g: .7}, {w: 'square', oct: 0, det: 0, g: .12}], fm: {ratio: 3, amt: 3.2, dec: .11}, cut: 2600, res: 2, env: .8, dec: .12, drive: .45, sub: .8, pluck: .45, wowDepth: 1.2, hp: 70})},
+    [['Pipe', ". . 0' . | . 0' . 12' | . . 0' . | . 10' 7' .", ". . 0' . | . 0' . 12' | . . 3' . | . 7' 12' 15'"],
+     ['Tok tok', ". 0' 0' . | . . 12' . | . 0' 0' . | . . 7' 10'", ". 0' 0' . | . . 12' . | . 0' 0' . | . 15' 12' 7'"],
+     ['Stair', ". . 0' 3' | . . 7' . | . . 0' 3' | . 12' . 7'", ". . 0' 3' | . . 7' . | . 10' . 12' | . 7' 3' 0'"]]),
+    S({id: 'electro', name: 'Electro house saw', family: 'house', genre: 'Electro house', era: 'classic', year: '2006–10', bpm: 128, key: 5, kickFree: false,
+      lane: 'Benny Benassi, deadmau5, Wolfgang Gartner',
+      idea: 'One fat saw note held under the kick and pumped so hard by the sidechain that the compressor becomes the rhythm.',
+      why: ['The pump is the groove: four huge breaths a bar.', 'A held note has nowhere to hide, so the sound has to be big. That is the point.', 'Short stutters at the end of the phrase reset the ear before the loop comes round.'],
+      recipe: ['Three or more saws, detuned, plus a square an octave down. Lots of drive.', 'Low-pass around 900 Hz, little envelope. Ride the cutoff by hand.', 'Sidechain compressor: fast attack, release timed to just recover before the next kick.', 'Bit of chorus or unison width above 200 Hz, mono below.'],
+      kit: {kick: 48, kd: .28, hat: 'house', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .97, rel: .8},
+      fill: 'stutter', fill2: 'slide', answers: [0, 0, 0, 3], breakMode: 'pad', sn: 'Pumping saws',
+      sound: sound({level: 0.34, osc: [{w: 'sawtooth', oct: 0, det: -14, g: .4}, {w: 'sawtooth', oct: 0, det: 14, g: .4}, {w: 'square', oct: -1, det: 0, g: .2}], cut: 900, res: 3, env: .8, dec: .3, drive: .85, sub: .8, width: .6, wowDepth: 2, hp: 60})},
+    [['Pump', "0 - - - | 0 - - - | 0 - - - | 0 - 0' 0'", "0 - - - | 0 - - - | 0w - - - | 3 - 0' 0'"],
+     ['Pump and stutter', "0 - - 0' | . 0' 0 - | 0 - - 0' | . 0' 3 -", "0 - - 0' | . 0' 0 - | 0 - - 0' | 5' 3' 0 -"],
+     ['Grind', "0w - - - | - - 0' 0' | 0w - - - | - - 3' 0'", "0w - - - | - - 0' 0' | 3w - - - | 5 - 3' 0'"]]),
+    S({id: 'prog', name: 'Progressive roller', family: 'house', genre: 'Progressive house', era: 'classic', year: '2001 → revival', bpm: 124, key: 9,
+      lane: 'Sasha, Hernan Cattaneo, the prog revival',
+      idea: 'Root and octave in constant 16ths, ducked under the kick, changing chord every two bars. It never stops and never shouts.',
+      why: ['The octave on the third 16th gives a rolling, galloping feel with only one note name.', 'Constant motion means you can strip everything else away and the track still moves.', 'Slow chord changes over a busy bass: momentum and patience at once.'],
+      recipe: ['Saw and square, low-pass 600 Hz, medium resonance, short envelope.', 'All notes the same short length. Velocity to filter, a little.', 'Open the cutoff very slowly over 16 or 32 bars.', 'Dotted-8th delay on a high-passed copy for the shimmer on top.'],
+      kit: {kick: 48, kd: .26, hat: 'techno', clap: 1, perc: '. . . . . . x . . . . . . . x .', duck: .85, rel: .5},
+      prog: [0, 0, -4, -2], fill: 'run', fill2: 'octave', breakMode: 'pad', evolve: .35, sn: 'Rolling saw',
+      sound: sound({level: 0.46, osc: [{w: 'sawtooth', oct: 0, det: -6, g: .45}, {w: 'square', oct: 0, det: 6, g: .3}], cut: 600, res: 6, env: 1.6, dec: .09, drive: .35, sub: .8, echo: .22, width: .3, hp: 75})},
+    [['Root and octave', ". 0' 12' 0' | . 0' 12' 0' | . 0' 12' 0' | . 0' 12' 0'", ". 0' 12' 0' | . 0' 12' 0' | . 0' 12' 0' | . 0' 12' 10'"],
+     ['Gallop', ". 0' 0 12' | . 0' 0 12' | . 0' 0 12' | . 0' 0 7'", ". 0' 0 12' | . 0' 0 12' | . 0' 0 12' | . 10' 0 12'"],
+     ['Weave', ". 0' 7' 12' | . 0' 7' 0' | . 0' 7' 12' | . 0' 10' 7'", ". 0' 7' 12' | . 0' 7' 0' | . 0' 7' 12' | . 15' 12' 10'"]]),
+    S({id: 'french', name: 'French filter loop', family: 'house', genre: 'French / filter house', era: 'classic', year: '1997–2002', bpm: 123, key: 2, swing: .1, kickFree: false, evolve: 1,
+      lane: 'Daft Punk, Stardust, Cassius',
+      idea: 'A sampled disco bass riff, looped and run through a filter that somebody is riding the whole time.',
+      why: ['The riff is busy and funky, but the filter keeps changing how much of it you hear.', 'Closed, it is a pulse. Open, it is a bass solo. The crowd goes with the filter.', 'It lands on the one and walks back up to it: a loop that feels like a circle.'],
+      recipe: ['A plucky finger-bass tone: saw and square, fast envelope, medium resonance.', 'Resample it. Put the audio through a 24 dB low-pass and automate the cutoff by hand.', 'Compress the bass and drums together so they pump as one.', 'Phaser, very slow, on the whole loop.'],
+      kit: {kick: 52, kd: .2, hat: 'house', clap: 1, perc: '. . x . . . . x . . x . . . . x', duck: .7, rel: .5},
+      fill: 'run', fill2: 'octave', breakMode: 'tease', sn: 'Filtered finger bass',
+      sound: sound({level: 0.48, osc: [{w: 'sawtooth', oct: 0, det: -4, g: .45}, {w: 'square', oct: 0, det: 4, g: .3}], cut: 750, res: 8, env: 2, dec: .11, drive: .4, sub: .6, pluck: .25, width: .25, hp: 65})},
+    [['Circle walk', "0' . 0' 0' | . 3' . 5' | . 5' 7' . | 5' . 3' .", "0' . 0' 0' | . 3' . 5' | . 5' 7' . | 10' 7' 5' 3'"],
+     ['Filter ride', "0 . . 0' | . 0' 7 . | . 5' . 7 | . . 10' 12'", "0 . . 0' | . 0' 7 . | . 5' . 3 | . 5' 7' ."],
+     ['Loop de loop', "0' 0' . 12' | . 0' . 10' | 0' 0' . 7' | . 5' 7' .", "0' 0' . 12' | . 0' . 10' | 0' 0' . 7' | 10' . 12' ."]]),
+    S({id: 'garage', name: '2-step sub', family: 'house', genre: 'UK garage', era: 'classic', year: '1999 → revival', bpm: 132, key: 5, swing: .18, kickFree: false,
+      lane: 'MJ Cole, El-B, the UKG revival',
+      idea: 'A warm sub that sings a short melody around a broken kick. The drums skip; the bass is what you nod to.',
+      why: ['With no four-on-the-floor, the bass carries the pulse. It lands on the one and then syncopates.', 'Slides between notes make the sub feel like a voice.', 'Heavy swing on the 16ths. This is the lane where swing matters most.'],
+      recipe: ['Sine or triangle, a touch of saturation, mono, glide 80 ms.', 'No filter movement. The melody and the slides are the interest.', 'Leave space: three or four notes a bar.', 'Kick on 1 and the "and" of 3. Snare on 2 and 4. Shuffle the hats hard.'],
+      kit: {kick: 54, kd: .18, hat: 'garage', clap: 1, kicks: [0, 10], perc: '. . . x . . . . . . . . . x . .', duck: .6, rel: .4},
+      fill: 'slide', fill2: 'run', answers: [0, 0, 3, 0], breakMode: 'pad', sn: 'Warm sine sub',
+      sound: sound({level: 0.44, osc: [{w: 'sine', oct: 0, det: 0, g: .7}, {w: 'triangle', oct: 1, det: 0, g: .12}], cut: 900, res: 1, env: .4, dec: .15, drive: .4, sub: 1, glide: .08, atk: .006, rel: .03, wowDepth: 1.2, hp: 40})},
+    [['Two step', "0 - - . | . . 0' . | . . 3 - | . 0' . .", "0 - - . | . . 0' . | . . 7 5~ | - . 3' ."],
+     ['Sung sub', "0 - . 0' | . . . 7 | - . 5 - | . . 3' .", "0 - . 0' | . . . 7 | - . 10 - | 7~ - 5' ."],
+     ['Skippy sub', ". . 0 - | . 0' . . | 0 - . 3' | . . 5 -", ". . 0 - | . 0' . . | 0 - . 12' | . 10 7~ -"]]),
+    S({id: 'deep', name: 'Deep house sub', family: 'house', genre: 'Deep house', era: 'classic', year: '1986 → always', bpm: 120, key: 0, swing: .08, kickFree: false,
+      lane: 'Larry Heard, Kerri Chandler, Moodymann',
+      idea: 'A soft, round bass that plays a slow tune under jazz chords. Few notes, long notes, all the time in the world.',
+      why: ['Long notes and a slow harmonic rhythm make the kick feel deeper.', 'It moves by step and by fifth, like a bass player would.', 'At 120 BPM the space between notes is what makes people sway.'],
+      recipe: ['Sine with a little second harmonic, or a DX-style electric bass.', 'Soft attack, no filter movement.', 'Play it by hand and do not quantise fully.', 'Sidechain gently. The kick and bass should overlap, warmly.'],
+      kit: {kick: 54, kd: .26, hat: 'shuffle', clap: 1, perc: '. . . x . . . . . . x . . . . .', duck: .55, rel: .5},
+      prog: [0, 0, 5, 3], breakProg: [0, 0, 5, 3], fill: 'run', fill2: 'slide', breakMode: 'pad', sn: 'Round DX bass',
+      sound: sound({level: 0.63, osc: [{w: 'sine', oct: 0, det: 0, g: .7}, {w: 'sine', oct: 1, det: 0, g: .25}], fm: {ratio: 1, amt: 1.2, dec: .2}, cut: 1500, res: 1, env: .3, dec: .2, drive: .25, sub: .8, glide: .07, atk: .008, rel: .05, wowDepth: 1.2, hp: 40})},
+    [['Slow tune', "0 - - . | . . 0 - | . . . 0 | - . 3 -", "0 - - . | . . 0 - | . . 7 - | 5 - 3 -"],
+     ['Sway', "0 - - - | . . . 7 | - . . . | 0 - 10' .", "0 - - - | . . . 7 | - . 5 - | . 3 - ."],
+     ['Walk', "0 - . 0' | . . 3 - | 5 - . 5' | . . 7 -", "0 - . 0' | . . 3 - | 5 - . 7 | - 10 - 12'"]]),
+    S({id: 'italo', name: 'Italo sixteenths', family: 'house', genre: 'Italo / nu-disco', era: 'classic', year: '1977 → always', bpm: 118, key: 9, kickFree: false,
+      lane: 'Giorgio Moroder, Todd Terje, the Italo lineage',
+      idea: 'A sequencer playing root and octave in straight 16ths. The first electronic dance bassline, and it still works.',
+      why: ['Straight 16ths with an octave jump is a machine heartbeat. It is hypnotic by construction.', 'The chords change under it, the pattern does not.', 'Because it is so regular, a small filter move feels enormous.'],
+      recipe: ['One saw (or saw plus square), low-pass with resonance, short decay.', 'Sequencer-tight: every note the same length and velocity.', 'A 16th or dotted-8th delay doubles the pattern.', 'Slow filter sweep over 16 bars.'],
+      kit: {kick: 52, kd: .2, hat: 'house', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .6, rel: .4},
+      prog: [0, 0, -4, -2], fill: 'octave', fill2: 'run', breakMode: 'tease', evolve: .5, sn: 'Sequencer saw',
+      sound: sound({level: 0.49, osc: [{w: 'sawtooth', oct: 0, det: -3, g: .5}, {w: 'square', oct: 0, det: 3, g: .2}], cut: 650, res: 9, env: 2, dec: .08, drive: .3, sub: .55, echo: .2, hp: 60})},
+    [['Machine heart', "0' 0' 12' 0' | 0' 0' 12' 0' | 0' 0' 12' 0' | 0' 0' 12' 10'", "0' 0' 12' 0' | 0' 0' 12' 0' | 0' 0' 12' 0' | 0' 7' 10' 12'"],
+     ['Chase', "0' 12' 0' 12' | 0' 0' 12' 0' | 0' 12' 0' 12' | 0' 0' 10' 12'", "0' 12' 0' 12' | 0' 0' 12' 0' | 0' 12' 0' 12' | 7' 7' 10' 12'"],
+     ['Arp bass', "0' 7' 12' 7' | 0' 7' 12' 7' | 0' 7' 12' 7' | 0' 7' 10' 7'", "0' 7' 12' 7' | 0' 7' 12' 7' | 0' 7' 15' 12' | 10' 7' 3' 7'"]]),
+
+    S({id: 'schranz', name: 'Industrial drive', family: 'techno', genre: 'Industrial / schranz', era: 'now', year: '2003 → 2026', bpm: 150, key: 4,
+      lane: 'The schranz revival and the harder end of today',
+      idea: 'A distorted roll between the kicks with an accent that moves. Three notes, one pitch, relentless.',
+      why: ['The accent falls on a different 16th each beat, so a one-note line still has a shape.', 'It is distorted into the same space as the kick, so the two feel welded together.', 'No melody means nothing to get tired of. It can run all night.'],
+      recipe: ['Saw into heavy distortion, then a low-pass, then more distortion.', 'Velocity to volume and to filter, strongly.', 'Group it with the kick and clip the group.', 'Automate the low-pass down in the break and back up in the build.'],
+      kit: {kick: 47, kd: .2, hat: 'hard', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .95, rel: .3, kdrive: .9},
+      fill: 'stutter', fill2: 'gap', breakMode: 'drone', sn: 'Distorted roll',
+      sound: sound({level: 0.39, osc: [{w: 'sawtooth', oct: 0, det: -8, g: .5}, {w: 'sawtooth', oct: 0, det: 8, g: .4}], cut: 600, res: 4, env: 1.8, dec: .07, drive: 1, sub: .9, wowDepth: 1.5, hp: 45})},
+    [['Moving accent', ". 0! 0' 0' | . 0' 0! 0' | . 0' 0' 0! | . 0! 0' 0'", ". 0! 0' 0' | . 0' 0! 0' | . 0' 0' 0! | . 0! 0! 0!"],
+     ['Hammer', ". 0' 0! . | . 0' 0! . | . 0' 0! . | . 0' 0! 0'", ". 0' 0! . | . 0' 0! . | . 0' 0! 0' | . 0! 0' 0!"],
+     ['Saw teeth', ". 0! 0' 3' | . 0! 0' 0' | . 0! 0' 3' | . 0! 0' 0'", ". 0! 0' 3' | . 0! 0' 0' | . 0! 0' 5' | . 3! 0' 0'"]]),
+    S({id: 'ebm', name: 'EBM body bass', family: 'techno', genre: 'EBM / dark disco', era: 'classic', year: '1988 → revival', bpm: 124, key: 4, kickFree: false,
+      lane: 'Nitzer Ebb, Front 242, the dark disco revival',
+      idea: 'A hard sequenced saw in 16ths with the octave thrown in at odd places. Stiff, sweaty, and built for stomping.',
+      why: ['Every 16th is filled, so the groove comes entirely from where the octaves fall.', 'It is the lead instrument. Vocals shout over it; nothing else is needed.', 'Slower than techno, heavier than disco: the tempo where people stamp.'],
+      recipe: ['One or two saws, low-pass with resonance, envelope decay 70 ms.', 'Sequencer-tight. Accent the octaves.', 'Distortion after the filter, a short gated reverb for size.', 'Double it with a square an octave below for the sub.'],
+      kit: {kick: 50, kd: .22, hat: 'techno', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .7, rel: .35, kdrive: .4},
+      fill: 'run', fill2: 'stutter', answers: [0, 3, 0, -2], breakMode: 'tease', sn: 'Body saw',
+      sound: sound({level: 0.43, osc: [{w: 'sawtooth', oct: 0, det: -5, g: .5}, {w: 'square', oct: 0, det: 5, g: .25}], cut: 520, res: 10, env: 2.4, dec: .07, drive: .7, sub: .6, width: .2, hp: 55})},
+    [['Chant', "0' 0' 0' 12' | 0' 0' 10' 0' | 0' 0' 0' 12' | 0' 3' 0' 10'", "0' 0' 0' 12' | 0' 0' 10' 0' | 0' 0' 0' 12' | 0' 7' 10' 12'"],
+     ['Stomp', "0! 0' 12' 0' | 0! 0' 12' 0' | 0! 0' 12' 0' | 0! 0' 10' 12'", "0! 0' 12' 0' | 0! 0' 12' 0' | 3! 0' 15' 0' | 0! 12' 10' 7'"],
+     ['Muscle', "0' 0' 3' 0' | 0' 12' 0' 0' | 0' 0' 3' 0' | 0' 12' 10' 0'", "0' 0' 3' 0' | 0' 12' 0' 0' | 0' 0' 5' 0' | 7' 12' 10' 7'"]]),
+    S({id: 'detroit', name: 'Detroit stab bass', family: 'techno', genre: 'Detroit techno', era: 'classic', year: '1988 → always', bpm: 130, key: 2, swing: .06, kickFree: false,
+      lane: 'Underground Resistance, Robert Hood, Kevin Saunderson',
+      idea: 'A dry FM bass that plays a short, funky figure and repeats it without apology. Machine soul.',
+      why: ['The figure is three or four hits, placed like a funk bassline and then looped like a machine.', 'FM gives a hard, glassy attack that cuts through without being loud.', 'Minor third and fourth: just enough melody to be a tune.'],
+      recipe: ['Two-operator FM, modulator at 1:1, quick modulation decay. Or a DX "bass 1" patch.', 'No filter. Amp decay around 150 ms.', 'A little chorus, no reverb.', 'Keep it at one level all track. Bring other things in around it.'],
+      kit: {kick: 50, kd: .2, hat: 'techno', clap: 1, perc: '. . . x . . . . . . x . . . . .', duck: .6, rel: .35},
+      fill: 'none', fill2: 'run', answers: [0, 0, 0, 0], breakMode: 'tease', sn: 'Glass FM bass',
+      sound: sound({level: 0.75, osc: [{w: 'sine', oct: 0, det: 0, g: .8}, {w: 'sine', oct: 1, det: 4, g: .15}], fm: {ratio: 1, amt: 4, dec: .12}, cut: 2800, res: 1, env: .4, dec: .1, drive: .4, sub: .6, pluck: .4, width: .3, wowDepth: 1.2, hp: 45})},
+    [['Three hits', "0' . . 0' | . . 0' . | 0' . . 3' | . 0' . .", "0' . . 0' | . . 0' . | 0' . . 3' | . 5' . 3'"],
+     ['Machine funk', "0' . 0' . | . 3' . 0' | . . 5' . | 3' . 0' .", "0' . 0' . | . 3' . 0' | . . 5' . | 7' . 5' 3'"],
+     ['Late figure', ". . 0' 0' | . . 3' . | . 0' . 0' | . . 5' 3'", ". . 0' 0' | . . 3' . | . 0' . 0' | 10' . 7' 5'"]]),
+    S({id: 'dub', name: 'Dub techno depth', family: 'techno', genre: 'Dub techno', era: 'classic', year: '1993 → always', bpm: 124, key: 0,
+      lane: 'Basic Channel, Deepchord, the dub techno lineage',
+      idea: 'Two sub notes a bar and an echo that fills in the rest. The bassline is mostly the space after it.',
+      why: ['So few notes that each one resets the room.', 'The delay tail does the syncopation, and it is different every time.', 'It sits under the kick, not between: a floor, not a rhythm.'],
+      recipe: ['Sine or filtered triangle, soft attack, long release.', 'Send to a tape-style delay (dotted 8th, feedback 50%, high-passed) and a long reverb.', 'Low-pass the returns and let them drift.', 'Sidechain lightly. This lane wants overlap.'],
+      kit: {kick: 46, kd: .3, hat: 'techno', clap: 0, perc: '. . . . . . x . . . . . . . . .', duck: .6, rel: .6},
+      fill: 'none', fill2: 'none', breakMode: 'drone', evolve: .5, sn: 'Echo sub',
+      sound: sound({level: 0.57, osc: [{w: 'triangle', oct: 0, det: 0, g: .6}, {w: 'sawtooth', oct: 1, det: 0, g: .1}], cut: 500, res: 3, env: .8, dec: .3, drive: .3, sub: 1, echo: .5, width: .4, atk: .01, rel: .08, wowDepth: 1.6, hp: 45})},
+    [['Two a bar', ". . 0 - | - . . . | . . 0 - | . . . .", ". . 0 - | - . . . | . . 0 - | . . -2 -"],
+     ['Echo answer', ". . . 0 | - - . . | . 0' . . | . . 0 -", ". . . 0 | - - . . | . 0' . . | . 3 - -"],
+     ['Low tide', ". 0 - - | . . . . | . . . 0 | - . . .", ". 0 - - | . . . . | . . 7 - | . 5 - ."]]),
+    S({id: 'minus', name: 'Minimal click', family: 'techno', genre: 'Minimal techno', era: 'classic', year: '2004–08', bpm: 127, key: 7, swing: .12,
+      lane: 'Richie Hawtin, Ricardo Villalobos, the mnml years',
+      idea: 'Tiny dry blips of sub with a pitch drop, placed where you least expect them. Mostly silence, perfectly timed.',
+      why: ['Each note is a small event. Four of them in a bar feels busy.', 'Odd placements (the second and fourth 16th) make a simple kick sound funky.', 'So short that the swing is audible in the bass itself.'],
+      recipe: ['Sine with a fast pitch envelope: +7 semitones, 30 ms.', 'Amp decay 80–120 ms, no sustain.', 'Bone dry. Maybe one note in eight gets a delay throw.', 'Mix it quieter than you think. It is felt.'],
+      kit: {kick: 48, kd: .2, hat: 'shuffle', clap: 0, perc: '. x . . . . . x . . . x . . . .', duck: .6, rel: .35},
+      fill: 'gap', fill2: 'octave', answers: [0, 0, 5, 0], breakMode: 'tease', sn: 'Sub blip',
+      sound: sound({level: 0.60, osc: [{w: 'sine', oct: 0, det: 0, g: .8}, {w: 'triangle', oct: 1, det: 0, g: .1}], pitchEnv: {semi: 7, t: .03}, cut: 1100, res: 1, env: .5, dec: .08, drive: .3, sub: 1, pluck: .6, echo: .12, wowDepth: 1.2, hp: 40})},
+    [['Blips', ". . 0' . | . . . 0' | . 12' . . | . . 0' .", ". . 0' . | . . . 0' | . 12' . . | . 0' . 10'"],
+     ['Odd sixteenths', ". 0' . . | . . 0' . | . 0' . 0' | . . . 7'", ". 0' . . | . . 0' . | . 0' . 0' | . 12' . ."],
+     ['Sparse', ". . . 0' | . 0' . . | . . 3' . | . 0' . .", ". . . 0' | . 0' . . | . . 5' . | . 3' 0' ."]]),
+    S({id: 'hoover', name: 'Rave hoover', family: 'techno', genre: 'Rave / hardcore revival', era: 'classic', year: '1991 → revival', bpm: 145, key: 5, kickFree: false,
+      lane: 'Joey Beltram, Human Resource, the rave revival',
+      idea: 'A screaming detuned stack that swoops up into every note. It is a bassline, a lead and a siren at once.',
+      why: ['The pitch swoop into each note is the hook. Everyone in the room makes the noise with their mouth.', 'Long notes over a fast kick: the contrast makes both feel bigger.', 'Two notes, a minor third apart. Menace does not need more.'],
+      recipe: ['Three saws (one an octave down) heavily detuned, with PWM if you have it.', 'Pitch envelope: start an octave low, rise in 80 ms.', 'Chorus, then distortion. Low-pass fairly open.', 'Double with a plain sub so the swoop does not take the low end away.'],
+      kit: {kick: 48, kd: .2, hat: 'hard', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .85, rel: .4, kdrive: .5},
+      fill: 'slide', fill2: 'stutter', answers: [0, 3, 0, 5], breakMode: 'pad', sn: 'Hoover',
+      sound: sound({level: 0.29, osc: [{w: 'sawtooth', oct: 1, det: -28, g: .35}, {w: 'sawtooth', oct: 1, det: 28, g: .35}, {w: 'sawtooth', oct: 0, det: 0, g: .3}, {w: 'square', oct: 1, det: 9, g: .15}], pitchEnv: {semi: -12, t: .08}, vowel: .25, word: ['o', 'a', 'e'], say: 'whoa', cut: 1400, res: 4, env: .8, dec: .3, drive: .8, sub: .8, width: .8, glide: .09, wowDepth: 1.8, hp: 70})},
+    [['Swoop', "0w - - - | - - . . | 3w - - - | - - 0' 0'", "0w - - - | - - . . | 3w - - - | 5 - 3~ -"],
+     ['Stab and swoop', "0 - - 0' | . 0' 3 - | 0 - - 0' | . 0' 5 -", "0 - - 0' | . 0' 3 - | 0w - - - | 7 - 5~ -"],
+     ['Siren', "0w - - - | 3w - - - | 0w - - - | 3 - 5 -", "0w - - - | 3w - - - | 7w - - - | 5 - 3 -"]]),
+    S({id: 'e808', name: 'Electro 808', family: 'techno', genre: 'Electro', era: 'classic', year: '1982 → revival', bpm: 132, key: 4, kickFree: false,
+      lane: 'Drexciya, Dopplereffekt, the electro revival',
+      idea: 'A long 808-style sub that slides between notes over a broken beat. Cold, funky, and from the future since 1982.',
+      why: ['The kick is broken, so the bass holds the bar together with long notes.', 'Slides make a sine wave sound like it is speaking.', 'Leaving the second beat empty gives the snare the whole room.'],
+      recipe: ['Sine with a short click, long decay, glide 80 ms. An 808 kick sample, tuned, also works.', 'Light saturation so it is audible on small speakers.', 'Mono, legato. Overlap notes to slide.', 'Program the kick first (1, the "and" of 2, the "and" of 3), then fit the bass around it.'],
+      kit: {kick: 54, kd: .22, hat: 'techno', clap: 1, kicks: [0, 6, 10], perc: '. . . x . . . . . . . . . x . .', duck: .6, rel: .4},
+      fill: 'slide', fill2: 'run', answers: [0, 0, 3, 0], breakMode: 'tease', sn: '808 glide',
+      sound: sound({level: 0.40, osc: [{w: 'sine', oct: 0, det: 0, g: .8}, {w: 'triangle', oct: 1, det: 0, g: .1}], pitchEnv: {semi: 5, t: .03}, cut: 1000, res: 1, env: .5, dec: .12, drive: .5, sub: 1, glide: .08, rel: .04, wowDepth: 1.3, hp: 35})},
+    [['Glide', "0 - - . | . . 0 - | . . 0 - | 3~ - 0~ -", "0 - - . | . . 0 - | . . 0 - | 7 - 5~ -"],
+     ['Broken beat', "0 - . 0' | . . 0 - | - . 3 - | . . 0' .", "0 - . 0' | . . 0 - | - . 5 - | 3~ - 0' ."],
+     ['Cold', ". . 0 - | - . 0' . | . . 0 - | - 12' . 10'", ". . 0 - | - . 0' . | . . 3 - | 5~ - 7~ -"]]),
+    S({id: 'bleep', name: 'Bleep and bass', family: 'techno', genre: 'Bleep / UK techno', era: 'classic', year: '1990 → revival', bpm: 134, key: 5, kickFree: false,
+      lane: 'LFO, Sweet Exorcist, today\'s UK techno',
+      idea: 'A pure sine sub so low it is mostly felt, with a high bleep answering it. Sound-system music for a techno tempo.',
+      why: ['The sub note is long and plain; the answer is short and high. Chest, then ears.', 'There is nothing in the middle, so the system sounds huge.', 'The answer changes; the sub does not. Stability below, play above.'],
+      recipe: ['Sub: sine, no harmonics, soft attack. Check it on a system with real subs.', 'Bleep: sine or triangle two octaves up, short, with a little delay.', 'Keep both mono and dry.', 'Do not saturate the sub. This lane is about purity.'],
+      kit: {kick: 50, kd: .2, hat: 'techno', clap: 1, perc: '. . . . . . x . . . . . . x . .', duck: .7, rel: .4},
+      fill: 'octave', fill2: 'run', answers: [0, 3, 0, 7], breakMode: 'pad', sn: 'Pure sine',
+      sound: sound({level: 0.45, osc: [{w: 'sine', oct: 0, det: 0, g: .8}, {w: 'sine', oct: 2, det: 0, g: .06}], cut: 2000, res: 1, env: .2, dec: .1, drive: .12, sub: 1, echo: .2, atk: .006, rel: .04, wowDepth: 1, hp: 30})},
+    [['Chest and ears', "0 - - - | . . 12' . | 0 - - - | . 10' . 7'", "0 - - - | . . 12' . | 0 - - - | . 15' 12' ."],
+     ['Double bleep', "0 - - . | . 12' . 12' | 0 - - . | . . 7' .", "0 - - . | . 12' . 12' | 3 - - . | . 10' . 12'"],
+     ['System', ". . 0 - | - - . . | 12' . 0 - | - - . .", ". . 0 - | - - . . | 12' . 0 - | - 7' 10' 12'"]]),
+  ];
+  // Names for the sixteen original voices, and a little space where it helps.
+  const VOICE = {tech: ['Talking rubber', {width: .25}], stab: ['Bwomp', {}], minimal: ['Round pluck', {}], warp: ['Warp reese', {width: .5}], afro: ['Warm sub', {}], melodic: ['Wide saws', {width: .4}],
+    organ: ['Organ', {width: .2}], disco: ['Finger pluck', {}], rumble: ['Kick rumble', {}], hypnotic: ['Resonant tick', {echo: .22}], groove: ['Tuned tom', {}], hard: ['Clipped saw', {}],
+    trance: ['Trance saws', {width: .4}], donk: ['Donk', {}], acid: ['303', {echo: .18}], giant: ['Giant reese', {width: .6}]};
+  for (const st of STYLES) { if (VOICE[st.id]) { st.sn = VOICE[st.id][0]; Object.assign(st.sound, VOICE[st.id][1]); } st.sound.id = st.id; st.sound.name = st.sn; }
+  const styleById = id => STYLES.find(s => s.id === id) || STYLES[0];
+  // Options: any lane can borrow another lane's voice, chord movement, break and fill.
+  const MOVES = {auto: null, root: [0, 0, 0, 0], 'i-VII': [0, 0, -2, -2], 'i-iv': [0, 0, 5, 5], 'i-VI-VII': [0, 0, -4, -2], 'i-VI-III-VII': [0, -4, 3, -2], 'i-III-VI-VII': [0, 3, -4, -2]};
+  const MOVE_NAMES = {auto: 'Lane default', root: 'Stay on the root', 'i-VII': 'i – ♭VII', 'i-iv': 'i – iv', 'i-VI-VII': 'i – i – ♭VI – ♭VII', 'i-VI-III-VII': 'i – ♭VI – ♭III – ♭VII', 'i-III-VI-VII': 'i – ♭III – ♭VI – ♭VII'};
+  const BREAKS = {auto: 'Lane default', tease: 'Tease: top layer, no sub', pad: 'Pad: long notes on the chords', drone: 'Drone: one held root'};
+  const FILL_NAMES = {auto: 'Lane default', gap: 'Gap', octave: 'Octave pops', run: 'Run up', stutter: 'Stutter', slide: 'Slide down', none: 'No fills'};
+  function withOptions(style, o = {}) {
+    const out = {...style}, key = [];
+    if (o.sound && o.sound !== style.id && STYLES.some(s => s.id === o.sound)) { out.sound = styleById(o.sound).sound; key.push('s' + o.sound); }
+    if (MOVES[o.move]) { out.prog = MOVES[o.move]; out.breakProg = o.move === 'root' ? [0, 0, -4, -2] : MOVES[o.move]; key.push(o.move); }
+    if (o.brk && o.brk !== 'auto' && BREAKS[o.brk]) { out.breakMode = o.brk; key.push(o.brk); }
+    if (o.fill && o.fill !== 'auto' && FILL_NAMES[o.fill]) { out.fill = o.fill; if (o.fill === 'none') out.fill2 = 'none'; else if (out.fill2 === o.fill) out.fill2 = o.fill === 'run' ? 'octave' : 'run'; key.push('f' + o.fill); }
+    out.vkey = key.join(','); out.rigKey = style.id + '/' + out.sound.id;
+    return out;
+  }
+
+  // ------------------------------------------------------------- generator
+  // New ideas in the style's own grammar: its onset odds per 16th position, its
+  // note pool and note lengths are measured from the three written ideas.
+  function generate(style, seed) {
+    const r = rng(seed * 7919 + style.id.length * 131 + style.bpm), src = style.ideas.flatMap(i => i.notes);
+    const odds = [0, 0, 0, 0], pool = [], longs = [];
+    for (const n of src) { odds[n.s % 4] += 1 / (style.ideas.length * 8); if (n.semi !== 0) pool.push(n.semi); longs.push(n.l); }
+    const pick = a => a[Math.floor(r() * a.length)];
+    const shortRate = src.filter(n => n.short).length / src.length, wowRate = src.filter(n => n.wow).length / src.length, accRate = src.filter(n => n.acc).length / src.length;
+    const spice = .35 + r() * .35;
+    const bar = () => {
+      const out = []; let s = 0;
+      while (s < SPB) {
+        const p = clamp(odds[s % 4] * (.75 + r() * .5), 0, .95);
+        if ((style.kickFree && s % 4 === 0) || r() > p) { s++; continue; }
+        let l = pick(longs); l = Math.min(l, SPB - s);
+        if (style.kickFree) while (l > 1 && Array.from({length: l - 1}, (_, i) => s + 1 + i).some(x => x % 4 === 0 && r() < .5)) l--;
+        const late = s >= 10, semi = pool.length && r() < (late ? spice + .25 : spice * .35) ? pick(pool) : 0;
+        out.push({s, l, semi, acc: r() < accRate, slide: false, wow: l > 1 && r() < Math.max(wowRate * 3, style.sound.vowel ? .35 : 0), short: l === 1 && r() < shortRate * 1.2});
+        s += l;
+      }
+      return out;
+    };
+    let a = bar(), tries = 0;
+    while ((a.length < 2 || a.length > 13) && tries++ < 20) a = bar();
+    if (a.length < 2) a = style.ideas[0].notes.filter(n => n.s < SPB).map(n => ({...n}));
+    // Bar two repeats bar one and changes its last beat: question, answer.
+    const b = a.filter(n => n.s < 12).map(n => ({...n, l: Math.min(n.l, 12 - n.s)}));
+    const tail = []; let s = 12;
+    while (s < SPB) {
+      if ((style.kickFree && s === 12) || r() < .3) { s++; continue; }
+      const l = r() < .3 && s < 15 ? 2 : 1;
+      tail.push({s, l, semi: pool.length && r() < .75 ? pick(pool) : 0, acc: false, slide: false, wow: l > 1 && r() < .5, short: l === 1 && r() < shortRate});
+      s += l;
+    }
+    if (!tail.length) tail.push({s: 14, l: 1, semi: pool.length ? pick(pool) : 12, acc: false, slide: false, wow: false, short: true});
+    const notes = [...a, ...[...b, ...tail].map(n => ({...n, s: n.s + SPB}))];
+    // Slides only make sense between touching notes of different pitch.
+    for (let i = 1; i < notes.length; i++) {
+      const p = notes[i - 1], n = notes[i];
+      if (p.s + p.l === n.s && !p.short && p.semi !== n.semi && style.sound.glide > .06 && r() < .5) n.slide = true;
+    }
+    return {name: 'Idea ' + seed, text: unparse(notes), notes, seed};
+  }
+  const ideaFor = (style, idea, seed) => idea >= 0 && idea < style.ideas.length ? style.ideas[idea] : generate(style, seed);
+
+  // -------------------------------------------------------------- sections
+  const SECTIONS = [
+    {id: 'intro', name: 'Intro', reps: 1, role: 'Give the DJ something to mix. Hint at the rhythm, hide the notes.'},
+    {id: 'drop1', name: 'Drop 1', reps: 2, role: 'The idea, stated plainly. Let it loop long enough to be learned.'},
+    {id: 'break', name: 'Break', reps: 1, role: 'Take the floor away. Keep one thread of the bass so the drop is a return, not a surprise.'},
+    {id: 'build', name: 'Build', reps: 1, role: 'Wind it up: flat, rising, faster, then nothing.'},
+    {id: 'drop2', name: 'Drop 2', reps: 2, role: 'The same idea, developed. Everything the crowd already knows, plus the answers.'},
+    {id: 'outro', name: 'Outro', reps: 1, role: 'Hand the low end to the next track without dropping the groove.'},
+  ];
+  const ok = (style, s) => !(style.kickFree && s % 4 === 0);
+  const note = (t, l, semi, o = {}) => ({t, l, semi, vel: .8, slide: false, wow: false, short: false, ghost: false, ...o});
+  const tile = (loop, style, prog) => {
+    const out = [];
+    for (let rep = 0; rep < BARS / 2; rep++) for (const n of loop) out.push(note(rep * LOOP + n.s, n.l, n.semi + (prog ? prog[rep] : 0), {vel: n.acc ? 1 : .8, slide: n.slide, wow: n.wow, short: n.short, rep}));
+    return out;
+  };
+  // The notes that carry the rhythm: accents first, then long notes, then the earliest in each bar.
+  function skeleton(loop) {
+    const rank = n => (n.acc ? 4 : 0) + (n.wow ? 2 : 0) + Math.min(n.l, 3) + (n.s % SPB < 8 ? .5 : 0) + (n.s % 4 === 2 ? .4 : 0);
+    const keep = Math.max(2, Math.ceil(loop.length * .45));
+    const chosen = new Set([...loop].sort((a, b) => rank(b) - rank(a) || a.s - b.s).slice(0, keep));
+    return loop.filter(n => chosen.has(n)).map(n => ({...n, semi: 0, slide: false, wow: false, acc: false}));
+  }
+  const flat = loop => loop.map(n => ({...n, semi: 0, slide: false, wow: false}));
+  const inBar = (notes, bar) => notes.filter(n => n.t >= bar * SPB && n.t < (bar + 1) * SPB);
+  const without = (notes, from, to) => notes.filter(n => n.t < from || n.t >= to).map(n => n.t < from && n.t + n.l > from ? {...n, l: from - n.t} : n);
+  // The last beat of a bar, rewritten.
+  function fill(notes, style, bar, kind, prog) {
+    const from = bar * SPB + 12, to = from + 4, tr = prog || 0;
+    if (kind === 'none') return notes;
+    if (kind === 'turn') return notes.some(n => n.t >= from && n.t < to)
+      ? notes.map(n => n.t >= from && n.t < to && n.semi - tr < 8 ? {...n, semi: n.semi + 12} : n)
+      : [...notes, note(from + 2, 1, 12 + tr, {short: true})];
+    const out = without(notes, from, to);
+    const add = (...ns) => out.push(...ns.filter(n => ok(style, n.t)));
+    if (kind === 'gap') return out;
+    if (kind === 'octave') add(note(from + 1, 1, 12 + tr, {short: true}), note(from + 2, 1, 12 + tr, {short: true}), note(from + 3, 1, 10 + tr, {short: true}));
+    if (kind === 'run') add(note(from, 1, tr, {short: true}), note(from + 1, 1, 3 + tr, {short: true}), note(from + 2, 1, 5 + tr, {short: true}), note(from + 3, 1, 7 + tr, {short: true}));
+    if (kind === 'stutter') add(note(from, 1, tr, {short: true}), note(from + 1, 1, tr, {short: true}), note(from + 2, 1, tr, {short: true, vel: 1}), note(from + 3, 1, tr, {short: true, vel: 1}));
+    if (kind === 'slide') add(note(from + 1, 1, 12 + tr, {vel: 1}), note(from + 2, 2, tr, {slide: true, wow: true}));
+    return out.sort((a, b) => a.t - b.t);
+  }
+  const FILLS = {gap: 'the bass drops out for the last beat', octave: 'octave pops in the last beat', run: 'a four-note run up into the next phrase',
+    stutter: 'four 16ths on the root, the last two accented', slide: 'a slide from the octave down to the root', none: 'no fill: the loop is the point', turn: 'the last beat jumps an octave'};
+
+  function section(style, loop, id) {
+    const ramp = (a, b) => bar => a + (b - a) * bar / (BARS - 1);
+    const evolve = bar => 1 + style.evolve * Math.sin(Math.PI * 2 * (bar + .5) / BARS) * .5;
+    let notes, cut, sub = () => 1, wow = () => 1, drive = () => 1, what;
+    const sk = skeleton(loop), n0 = loop.length;
+    const drums = bar => ({kick: 1, clap: 1, hat: 1, oh: 1, perc: 1, ride: 0, roll: 0, cut: 16});
+    let plan = drums;
+    if (id === 'intro') {
+      notes = tile(sk, style, null); cut = ramp(.32, .62); sub = bar => bar < 4 ? 0 : 1; wow = () => 0;
+      plan = bar => ({kick: 1, clap: bar >= 4 ? 1 : 0, hat: 1, oh: bar >= 4 ? 1 : 0, perc: bar >= 6 ? 1 : 0, ride: 0, roll: 0, cut: 16});
+      what = [`Rhythm skeleton only: ${sk.length} of the loop's ${n0} notes, all on the root.`, 'Filter mostly closed, opening slowly over eight bars.', 'No sub for four bars, so the outgoing track keeps the low end. Sub in at bar 5.', 'No slides, no wow. Save the personality.'];
+    } else if (id === 'drop1') {
+      notes = tile(loop, style, style.prog);
+      notes = fill(notes, style, 3, style.fill === 'none' ? 'none' : 'turn', style.prog[1]); notes = fill(notes, style, 7, style.fill, style.prog[3]);
+      cut = style.evolve ? evolve : () => 1;
+      what = ['The loop exactly as written, four times.', style.prog.some(Boolean) ? 'It follows the chord roots: a new root every two bars.' : 'One root for all eight bars. The kick and bass are one instrument.',
+        style.fill === 'none' ? 'No fills. The filter drifts slowly instead.' : `Bar 4: ${FILLS.turn}. Bar 8: ${FILLS[style.fill]}.`, 'Play these eight bars twice before changing anything.'];
+    } else if (id === 'break') {
+      const pr = style.breakProg;
+      if (style.breakMode === 'pad') {
+        notes = pr.map((p, i) => note(i * LOOP, LOOP, p, {vel: .55, slide: i > 0 && p !== pr[i - 1]}));
+        notes[notes.length - 1].l = LOOP - 4;
+        cut = ramp(.3, .6); sub = () => .5; wow = () => 0;
+        what = ['Four long notes, two bars each, on the chord roots. The rhythm is gone.', 'Filter low, opening a little. Soft sub.', 'No kick. This is where the chords and the vocal get the room.', 'The last beat is silent.'];
+      } else if (style.breakMode === 'drone') {
+        notes = [note(0, BARS * SPB - 4, 0, {vel: .55})]; cut = bar => .28 + .3 * (.5 - .5 * Math.cos(Math.PI * 2 * bar / 4)) + bar * .03; sub = () => .45; wow = () => 0;
+        what = ['One root note held for the whole break.', 'The filter opens and closes over four bars: slow breathing instead of rhythm.', 'No kick, so no rumble either. The room gets quiet without going empty.', 'The last beat is silent.'];
+      } else {
+        notes = [...tile(sk, style, null).filter(n => n.t < 4 * SPB), ...tile(flat(loop), style, null).filter(n => n.t >= 4 * SPB)];
+        notes = without(notes, BARS * SPB - 4, BARS * SPB);
+        cut = ramp(.25, .75); sub = () => 0; wow = bar => bar >= 4 ? .6 : 0;
+        what = ['The bass keeps talking, but with no sub: top layer only, high-passed.', 'Skeleton for four bars, then the whole rhythm on one note.', 'Filter opens through the break. No kick underneath.', 'The last beat is silent.'];
+      }
+      plan = bar => ({kick: 0, clap: bar >= 4 ? 1 : 0, hat: bar >= 4 ? 1 : 0, oh: 0, perc: 1, ride: 0, roll: 0, cut: bar === 7 ? 12 : 16});
+    } else if (id === 'build') {
+      notes = [...tile(flat(loop), style, null).filter(n => n.t < 4 * SPB), ...tile(loop, style, null).filter(n => n.t >= 4 * SPB && n.t < 6 * SPB)];
+      notes = without(notes, 6 * SPB, 8 * SPB);
+      for (let s = 0; s < SPB; s++) if (ok(style, s)) notes.push(note(6 * SPB + s, 1, 0, {short: true, vel: .7 + .3 * s / 15}));
+      const climb = [0, 0, 3, 3, 7, 7, 12, 12];
+      for (let s = 0; s < 8; s++) notes.push(note(7 * SPB + s, 1, climb[s], {short: true, vel: 1}));
+      cut = ramp(.4, 1.25); sub = bar => bar === 7 ? 0 : 1; wow = bar => bar >= 4 && bar < 6 ? 1 : 0; drive = ramp(1, 1.3);
+      plan = bar => ({kick: bar < 7 ? 1 : 0, clap: bar < 6 ? 1 : 0, hat: 1, oh: bar < 6 ? 1 : 0, perc: bar < 4 ? 1 : 0, ride: 0, roll: bar < 4 ? 0 : bar < 6 ? 1 : bar === 6 ? 2 : 3, cut: bar === 7 ? 8 : 16});
+      what = ['Bars 1–4: the full rhythm on one note. Bars 5–6: the real loop comes back.', 'Bar 7: every 16th' + (style.kickFree ? ' between the kicks' : '') + ', getting louder.', 'Bar 8: the notes climb root, ♭3, 5, octave with no sub, then two beats of nothing.', 'Filter opens the whole way. The silence before the drop is the loudest part.'];
+    } else if (id === 'drop2') {
+      const dev = [];
+      for (let rep = 0; rep < BARS / 2; rep++) {
+        const last = loop[loop.length - 1];
+        for (const n of loop) {
+          let semi = n.semi + style.prog[rep];
+          if (n === last) semi += style.answers[rep];
+          if (rep % 2 === 1 && n.s >= SPB + 8 && n.semi < 8 && n !== last) semi += 12;
+          dev.push(note(rep * LOOP + n.s, n.l, semi, {vel: n.acc ? 1 : .84, slide: n.slide, wow: n.wow || n.l >= 2, short: n.short, rep}));
+        }
+      }
+      // Ghost 16ths lead into long or accented notes.
+      const taken = new Set(); for (const n of dev) for (let i = 0; i < n.l; i++) taken.add(n.t + i);
+      let ghosts = 0;
+      for (const n of [...dev]) if ((n.l >= 2 || n.vel === 1) && n.t > 0 && !taken.has(n.t - 1) && ok(style, n.t - 1) && !n.slide) { dev.push(note(n.t - 1, 1, n.semi, {short: true, vel: .5, ghost: true})); taken.add(n.t - 1); ghosts++; }
+      notes = dev.sort((a, b) => a.t - b.t);
+      notes = fill(notes, style, 3, style.fill === 'none' ? 'none' : style.fill, style.prog[1]); notes = fill(notes, style, 7, style.fill2, style.prog[3]);
+      cut = style.evolve ? bar => 1.2 * evolve(bar) : () => 1.2; drive = () => 1.2; wow = () => 1.25;
+      plan = bar => ({kick: 1, clap: 1, hat: 1, oh: 1, perc: 1, ride: 1, roll: 0, cut: 16});
+      const ans = style.answers.some(Boolean);
+      what = ['Same loop, same rhythm. Nobody has to relearn it.', (ans ? 'The last note answers differently each time round. ' : '') + 'In every second pass the end of the phrase jumps an octave.',
+        ghosts ? `${ghosts} quiet ghost 16ths lead into the long and accented notes.` : 'No ghost notes fit: the loop is already full.', `Filter 20% more open, more drive, every long note opens up. Bar 4: ${FILLS[style.fill]}. Bar 8: ${FILLS[style.fill2]}.`];
+    } else {
+      notes = [...tile(flat(loop), style, null).filter(n => n.t < 4 * SPB), ...tile(sk, style, null).filter(n => n.t >= 4 * SPB)];
+      cut = ramp(.85, .3); sub = bar => bar < 6 ? 1 : 0; wow = () => 0;
+      plan = bar => ({kick: 1, clap: bar < 4 ? 1 : 0, hat: 1, oh: bar < 4 ? 1 : 0, perc: bar < 2 ? 1 : 0, ride: 0, roll: 0, cut: 16});
+      what = ['Bars 1–4: the rhythm on one note. The melody leaves first.', 'Bars 5–8: skeleton only.', 'Filter closes. Sub out for the last two bars so the next track\'s bass can take over.', 'The kick stays to the end.'];
+    }
+    notes = notes.filter(n => n.t >= 0 && n.t < BARS * SPB).sort((a, b) => a.t - b.t);
+    // Keep notes monophonic and inside the phrase and register.
+    for (let i = 0; i < notes.length; i++) {
+      const n = notes[i], next = notes[i + 1];
+      n.semi = clamp(n.semi, -7, 19);
+      n.l = Math.min(n.l, (next ? next.t : BARS * SPB) - n.t);
+      if (n.slide && (i === 0 || notes[i - 1].t + notes[i - 1].l !== n.t || notes[i - 1].short)) n.slide = false;
+    }
+    notes = notes.filter(n => n.l > 0);
+    // legato: the next note slides out of this one, so this one is not released.
+    notes.forEach((n, i) => { const next = notes[i + 1]; n.legato = !!(next && next.slide && next.t === n.t + n.l); });
+    // A note held across bar lines leaves a "tie" in each later bar, so the sound can follow that bar's settings.
+    const ties = Array.from({length: BARS}, () => []);
+    for (const n of notes) for (let bar = Math.floor(n.t / SPB) + 1; bar * SPB < n.t + n.l; bar++) ties[bar].push({s: 0, l: Math.min(SPB, n.t + n.l - bar * SPB), semi: n.semi, wow: n.wow});
+    const bars = Array.from({length: BARS}, (_, bar) => ({section: id, bar, notes: inBar(notes, bar).map(n => ({...n, s: n.t - bar * SPB})), ties: ties[bar],
+      m: {cut: cut(bar), sub: sub(bar), wow: wow(bar), drive: drive(bar)}, d: plan(bar)}));
+    return {id, notes, bars, what};
+  }
+  const cache = new Map();
+  function sectionFor(style, idea, id) {
+    const key = style.id + '|' + (style.vkey || '') + '|' + idea.text + '|' + id;
+    if (!cache.has(key)) { if (cache.size > 400) cache.clear(); cache.set(key, section(style, idea.notes, id)); }
+    return cache.get(key);
+  }
+  // The whole track: 64 bars, each drop played twice.
+  function journey(style, idea) {
+    const out = [];
+    for (const s of SECTIONS) { const sec = sectionFor(style, idea, s.id); for (let r = 0; r < s.reps; r++) for (const b of sec.bars) out.push({...b, rep: r}); }
+    return out;
+  }
+
+  // ----------------------------------------------------------------- drums
+  const HATS = {
+    house: {ch: [0, .5, 0, .35, 0, .5, 0, .3, 0, .5, 0, .35, 0, .5, 0, .4], oh: [2, 6, 10, 14]},
+    shuffle: {ch: [0, .3, 0, .55, 0, .3, 0, .5, .2, .3, 0, .55, 0, .3, 0, .5], oh: [2, 6, 10, 14]},
+    garage: {ch: [0, 0, .5, .3, 0, 0, .5, 0, 0, .3, .5, 0, 0, 0, .5, .35], oh: [6, 14]},
+    afro: {ch: [.4, 0, .5, .3, .4, 0, .5, 0, .4, .3, .5, 0, .4, 0, .5, .3], oh: [6, 14]},
+    techno: {ch: [0, .3, 0, .3, 0, .3, 0, .3, 0, .3, 0, .3, 0, .3, 0, .35], oh: [2, 6, 10, 14]},
+    hard: {ch: [.3, .3, 0, .3, .3, .3, 0, .3, .3, .3, 0, .3, .3, .3, 0, .3], oh: [2, 6, 10, 14]},
+  };
+  // Drum hits for one bar: [{type, s (step, may be fractional), vel}]
+  function drumBar(style, b) {
+    const kit = style.kit, d = b.d, out = [], lim = d.cut;
+    const add = (type, s, vel) => { if (s < lim) out.push({type, s, vel}); };
+    if (d.kick) for (const s of kit.kicks || KICK) add('kick', s, 1);
+    if (d.clap && kit.clap) { add('clap', 4, .9); add('clap', 12, .9); }
+    const h = HATS[kit.hat];
+    if (d.hat) h.ch.forEach((v, s) => v && add('ch', s, v));
+    if (d.oh) for (const s of h.oh) add('oh', s, .6);
+    if (d.perc) kit.perc.split(' ').forEach((c, s) => c === 'x' && add('perc', s, .6));
+    if (d.ride) for (const s of [2, 6, 10, 14]) add('ride', s, .5);
+    if (d.roll) { const every = d.roll === 1 ? 4 : d.roll === 2 ? 2 : 1; for (let s = 0; s < SPB; s += every) add('snare', s, .45 + .5 * s / 15 * (d.roll / 3)); }
+    return out;
+  }
+
+  // -------------------------------------------------------------- measures
+  function measure(style, sec, root) {
+    const ns = sec.notes, on = ns.filter(n => n.t % 4 === 0).length, sounding = ns.reduce((a, n) => a + (n.short ? .5 : n.l), 0);
+    const semis = ns.map(n => n.semi), lo = ns.length ? Math.min(...semis) : 0, hi = ns.length ? Math.max(...semis) : 0;
+    const m = sec.bars.reduce((a, b) => a + b.m.cut, 0) / BARS, sub = sec.bars.reduce((a, b) => a + b.m.sub, 0) / BARS, kick = sec.bars.reduce((a, b) => a + b.d.kick, 0) / BARS;
+    return {notes: ns.length, perBar: ns.length / BARS, onKick: on, onKickPct: ns.length ? on / ns.length : 0, gate: sounding / (BARS * SPB),
+      offbeat: ns.length ? ns.filter(n => n.t % 2 === 1).length / ns.length : 0, lo: root + lo, hi: root + hi, loHz: hz(root + lo), rootHz: hz(root),
+      wow: ns.filter(n => n.wow).length, slides: ns.filter(n => n.slide).length, pitches: new Set(semis).size,
+      energy: clamp(.3 * Math.min(1, ns.length / BARS / 9) + .3 * Math.min(1, m / 1.2) + .2 * sub + .2 * kick, 0, 1)};
+  }
+  const subVerdict = f => f < 38 ? 'very low: most club systems roll off here, check it on a big rig' : f <= 58 ? 'in the sub sweet spot' : f <= 70 ? 'punchy; tighter than a deep sub' : 'high for a sub: consider the octave below for weight';
+
+  // ------------------------------------------------------------------ MIDI
+  const vlq = n => { const b = [n & 127]; while ((n >>= 7)) b.unshift(n & 127 | 128); return b; };
+  const str = s => [...new TextEncoder().encode(s)];
+  function track(events) {
+    events.sort((a, b) => a.t - b.t || a.o - b.o);
+    const body = []; let last = 0;
+    for (const e of events) { body.push(...vlq(Math.max(0, Math.round(e.t - last))), ...e.d); last = Math.max(last, Math.round(e.t)); }
+    body.push(0, 0xFF, 0x2F, 0);
+    return [0x4D, 0x54, 0x72, 0x6B, body.length >>> 24 & 255, body.length >>> 16 & 255, body.length >>> 8 & 255, body.length & 255, ...body];
+  }
+  const DRUM_NOTE = {kick: 36, clap: 39, ch: 42, oh: 46, perc: 37, ride: 51, snare: 38};
+  // bars: output of section().bars or journey(). Straight grid; add your own groove in the DAW.
+  function midi(style, bars, {root, bpm, drums = true, name = 'Wow'} = {}) {
+    const PPQ = 480, T = PPQ / 4, us = Math.round(6e7 / bpm);
+    const meta = (t, type, bytes) => ({t, o: 0, d: [0xFF, type, ...vlq(bytes.length), ...bytes]});
+    const cond = [meta(0, 0x03, str(name)), meta(0, 0x51, [us >>> 16 & 255, us >>> 8 & 255, us & 255]), meta(0, 0x58, [4, 2, 24, 8])];
+    const bass = [meta(0, 0x03, str(style.name + ' bass'))], kit = [meta(0, 0x03, str('Drums'))];
+    let prevSec = null;
+    bars.forEach((b, i) => {
+      const t0 = i * SPB * T;
+      if (b.section !== prevSec || b.bar === 0) cond.push(meta(t0, 0x06, str(SECTIONS.find(s => s.id === b.section).name + (b.rep ? ' (again)' : ''))));
+      prevSec = b.section;
+      bass.push({t: t0, o: 1, d: [0xB0, 74, clamp(Math.round(b.m.cut / 1.3 * 127), 0, 127)]});
+      b.notes.forEach((n, j) => {
+        const legato = n.legato;
+        const on = t0 + n.s * T, len = n.short ? T * .5 : n.l * T - (legato ? -T * .1 : T * .1), pitch = root + n.semi;
+        bass.push({t: on, o: 3, d: [0x90, pitch, clamp(Math.round(n.vel * 110) + (n.wow ? 10 : 0), 1, 127)]}, {t: on + len, o: n.slide ? 4 : 2, d: [0x80, pitch, 0]});
+        if (n.wow) { const steps = 6; for (let k = 0; k <= steps; k++) bass.push({t: on + len * k / steps, o: 1, d: [0xB0, 1, Math.round(127 * Math.sin(Math.PI * k / steps))]}); }
+      });
+      if (drums) for (const h of drumBar(style, b)) { const on = t0 + h.s * T; kit.push({t: on, o: 3, d: [0x99, DRUM_NOTE[h.type], clamp(Math.round(h.vel * 120), 1, 127)]}, {t: on + T * .5, o: 2, d: [0x89, DRUM_NOTE[h.type], 0]}); }
+    });
+    const tracks = [cond, bass, ...(drums ? [kit] : [])];
+    return new Uint8Array([0x4D, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 1, 0, tracks.length, PPQ >> 8, PPQ & 255, ...tracks.flatMap(track)]);
+  }
+  // 16-bit stereo WAV from two Float32Arrays.
+  function wav(l, r, sr) {
+    const n = l.length, buf = new ArrayBuffer(44 + n * 4), v = new DataView(buf), w = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+    w(0, 'RIFF'); v.setUint32(4, 36 + n * 4, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true);
+    v.setUint32(24, sr, true); v.setUint32(28, sr * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 4, true);
+    for (let i = 0; i < n; i++) { v.setInt16(44 + i * 4, Math.round(clamp(l[i], -1, 1) * 32767), true); v.setInt16(46 + i * 4, Math.round(clamp(r[i], -1, 1) * 32767), true); }
+    return new Uint8Array(buf);
+  }
+
+  // ----------------------------------------------------------------- state
+  const defaults = () => ({style: 'tech', idea: 0, seed: 1, section: 'drop1', bpm: 128, key: 7, wow: 70, drive: 50, sub: 70, tone: 50, drums: 80, family: 'all',
+    sound: '', move: 'auto', brk: 'auto', fill: 'auto', swing: 10, gate: 100, pump: 100, space: 100});
+  function validate(s) {
+    const d = defaults(), out = {...d};
+    if (!s || typeof s !== 'object') return d;
+    if (STYLES.some(x => x.id === s.style)) out.style = s.style;
+    if (SECTIONS.some(x => x.id === s.section)) out.section = s.section;
+    if (['all', 'house', 'techno', 'now', 'classic'].includes(s.family)) out.family = s.family;
+    if (s.sound === '' || STYLES.some(x => x.id === s.sound)) out.sound = s.sound || '';
+    if (MOVE_NAMES[s.move]) out.move = s.move; if (BREAKS[s.brk]) out.brk = s.brk; if (FILL_NAMES[s.fill]) out.fill = s.fill;
+    const int = (k, a, b) => { if (Number.isFinite(+s[k])) out[k] = clamp(Math.round(+s[k]), a, b); };
+    int('idea', -1, 2); int('seed', 1, 99999); int('bpm', 100, 170); int('key', 0, 11); int('wow', 0, 100); int('drive', 0, 100); int('sub', 0, 100); int('tone', 0, 100); int('drums', 0, 100); int('swing', 0, 30); int('gate', 30, 100); int('pump', 0, 150); int('space', 0, 200);
+    return out;
+  }
+
+  return {SPB, LOOP, BARS, KICK, NAMES, VOWELS, STYLES, SECTIONS, FILLS, MOVES, MOVE_NAMES, BREAKS, FILL_NAMES, withOptions, HATS, DRUM_NOTE, hz, rootMidi, noteName, rng, parse, unparse, checkLoop, styleById,
+    generate, ideaFor, skeleton, tileCount: loop => loop.length * BARS / 2, section, sectionFor, journey, drumBar, measure, subVerdict, midi, wav, defaults, validate};
+})();
+if (typeof module !== 'undefined') module.exports = WOW;
+</script>
+<script>// Wow audio: one mono bass voice with a mouth, a drum machine, a kick-reverb rumble,
+// a bar-synced player and an offline renderer. Works on AudioContext and OfflineAudioContext.
+const WowAudio = (() => {
+  const W = WOW, clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  function curve(amount) {
+    const n = 2048, c = new Float32Array(n), k = 1 + amount * 9, norm = Math.tanh(k);
+    for (let i = 0; i < n; i++) { const x = i / (n - 1) * 2 - 1; c[i] = Math.tanh(k * x) / norm; }
+    return c;
+  }
+  function shaper(ctx, amount) { const s = ctx.createWaveShaper(); s.curve = curve(amount); s.oversample = '2x'; return s; }
+  function noise(ctx, secs, seed) {
+    const r = W.rng(seed), b = ctx.createBuffer(1, Math.round(secs * ctx.sampleRate), ctx.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = r() * 2 - 1;
+    return b;
+  }
+  function impulse(ctx) {
+    const secs = 1.3, n = Math.round(secs * ctx.sampleRate), b = ctx.createBuffer(2, n, ctx.sampleRate);
+    for (let ch = 0; ch < 2; ch++) { const r = W.rng(77 + ch), d = b.getChannelData(ch); let lp = 0; for (let i = 0; i < n; i++) { lp += ((r() * 2 - 1) - lp) * .12; d[i] = lp * Math.pow(1 - i / n, 2.2) * 3; } }
+    return b;
+  }
+  const gain = (ctx, v) => { const g = ctx.createGain(); g.gain.value = v; return g; };
+  const biquad = (ctx, type, f, q) => { const b = ctx.createBiquadFilter(); b.type = type; b.frequency.value = f; if (q != null) b.Q.value = q; return b; };
+
+  // ------------------------------------------------------------ bass voice
+  function bass(ctx, sound, dest, knobs) {
+    const mix = gain(ctx, 1), pre = gain(ctx, 1), shape = shaper(ctx, .55), lp1 = biquad(ctx, 'lowpass', sound.cut, sound.res), lp2 = biquad(ctx, 'lowpass', sound.cut, .5);
+    const dry = gain(ctx, 1), amp = gain(ctx, 0), hp = biquad(ctx, 'highpass', sound.hp, .7), post = gain(ctx, sound.level * .3);
+    const oscs = sound.osc.map(o => {
+      const osc = ctx.createOscillator(), g = gain(ctx, o.g); osc.type = o.w; osc.detune.value = o.det || 0; osc.frequency.value = 55;
+      osc.connect(g).connect(mix); osc.start();
+      return {osc, ratio: Math.pow(2, o.oct + (o.semi || 0) / 12)};
+    });
+    let mod = null, modGain = null;
+    if (sound.fm) { mod = ctx.createOscillator(); modGain = gain(ctx, 0); mod.connect(modGain); for (const o of oscs) modGain.connect(o.osc.frequency); mod.start(); }
+    mix.connect(pre).connect(shape); shape.connect(lp1).connect(lp2).connect(dry).connect(amp);
+    const bps = [], vg = gain(ctx, 0);
+    if (sound.vowel) [1, .6, .25].forEach((g, j) => { const bp = biquad(ctx, 'bandpass', W.VOWELS[sound.rest][j], 8), fg = gain(ctx, g); shape.connect(bp).connect(fg).connect(vg); bps.push(bp); });
+    vg.connect(amp); amp.connect(hp).connect(post).connect(dest);
+    // Space: a short stereo spread above 300 Hz, and a dotted-8th echo. The low end stays mono and dry.
+    const widthGain = gain(ctx, 0), echoSend = gain(ctx, 0), echo = ctx.createDelay(1.5);
+    if (sound.width || sound.echo) {
+      const top = biquad(ctx, 'highpass', 300, .7); post.connect(top);
+      [[.011, -.85], [.017, .85]].forEach(([d, pan]) => { const dl = ctx.createDelay(.05), pn = ctx.createStereoPanner(); dl.delayTime.value = d; pn.pan.value = pan; top.connect(dl).connect(pn).connect(widthGain); });
+      widthGain.connect(dest);
+      const fb = gain(ctx, .42), tone = biquad(ctx, 'bandpass', 1200, .5), pn = ctx.createStereoPanner(); pn.pan.value = .3;
+      top.connect(echoSend).connect(echo).connect(tone).connect(fb).connect(echo); tone.connect(pn).connect(dest);
+    }
+    const sub = ctx.createOscillator(), subAmp = gain(ctx, 0), subGain = gain(ctx, 0); sub.type = 'sine'; sub.frequency.value = 55; sub.connect(subAmp).connect(subGain).connect(dest); sub.start();
+    let lastF = 0, lastCut = sound.cut;
+    const applyKnobs = t => {
+      const kw = knobs.wow / 70, v = clamp(sound.vowel * Math.min(kw, 1.4), 0, .9);
+      dry.gain.setTargetAtTime(1 - v * .7, t, .02); vg.gain.setTargetAtTime(v * 7, t, .02);
+      subGain.gain.setTargetAtTime(sound.sub * knobs.sub / 70 * sound.level * .5, t, .02);
+      const sp = (knobs.space == null ? 100 : knobs.space) / 100;
+      widthGain.gain.setTargetAtTime(Math.min(1.2, sound.width * sp) * .7, t, .02); echoSend.gain.setTargetAtTime(Math.min(.9, sound.echo * sp), t, .02);
+    };
+    applyKnobs(0);
+    const base = m => clamp(sound.cut * m.cut * Math.pow(2, (knobs.tone - 50) / 50 * 1.3), 50, 12000);
+    // t: start, dur: gate in seconds, n: engine note, m: the bar's settings, step: one 16th in seconds
+    function play(t, dur, midi, n, m, step) {
+      const f = W.hz(midi), slide = n.slide && lastF > 0, vel = n.vel, glide = Math.min(sound.glide, dur * .8);
+      const pe = sound.pitchEnv;
+      const pitch = (p, target, from) => {
+        if (slide) { p.setValueAtTime(from, t); p.exponentialRampToValueAtTime(target, t + glide); }
+        else if (pe) { p.setValueAtTime(target * Math.pow(2, pe.semi * (.6 + .4 * vel) / 12), t); p.exponentialRampToValueAtTime(target, t + Math.min(pe.t, dur * .8)); }
+        else p.setValueAtTime(target, t);
+      };
+      for (const o of oscs) pitch(o.osc.frequency, f * o.ratio, lastF * o.ratio);
+      pitch(sub.frequency, f, lastF);
+      if (mod) {
+        const fc = f * oscs[0].ratio;
+        mod.frequency.setValueAtTime(fc * sound.fm.ratio, t);
+        modGain.gain.setValueAtTime(fc * sound.fm.amt * (.6 + .4 * vel), t); modGain.gain.exponentialRampToValueAtTime(Math.max(.01, fc * sound.fm.amt * .02), t + Math.min(sound.fm.dec, dur));
+      }
+      pre.gain.setValueAtTime(.35 + sound.drive * knobs.drive / 50 * m.drive * 1.6, t);
+      // amplitude
+      const rel = Math.min(sound.rel, dur * .3), atk = Math.min(sound.atk, dur * .2), end = t + dur;
+      const env = (g, level) => {
+        let hold = level;
+        if (slide) g.linearRampToValueAtTime(level, t + glide);
+        else {
+          g.setValueAtTime(0, t); g.linearRampToValueAtTime(level, t + atk);
+          if (sound.pluck) { hold = level * (1 - sound.pluck); g.linearRampToValueAtTime(hold, Math.max(t + atk + .001, Math.min(end - rel, t + atk + .16))); }
+        }
+        if (!n.legato) { g.setValueAtTime(hold, end - rel); g.linearRampToValueAtTime(0, end); }
+      };
+      const talking = n.wow && knobs.wow > 0 && m.wow > 0;
+      env(amp.gain, talking ? vel * (1 + .35 * Math.min(1, knobs.wow / 70)) : vel);
+      lp1.Q.setValueAtTime(talking ? sound.res + 6 * Math.min(1.4, knobs.wow / 70) : sound.res, t);
+      if (m.sub > 0) env(subAmp.gain, m.sub * (.75 + .25 * vel)); else subAmp.gain.setValueAtTime(0, t);
+      // the filter, and the mouth
+      const b = base(m), kw = knobs.wow / 70 * m.wow, wow = n.wow && kw > 0, set = (when, v, ramp) => { v = clamp(v, 40, 15000); for (const l of [lp1, lp2]) ramp ? l.frequency.exponentialRampToValueAtTime(v, when) : l.frequency.setValueAtTime(v, when); lastCut = v; };
+      if (wow) { set(t, b * .7); set(t + dur * .45, b * Math.pow(2, sound.wowDepth * Math.min(kw, 1.7)), true); set(end, b * .8, true); }
+      else if (sound.lfo && dur > step * 1.5 && knobs.wow > 0) {
+        const period = sound.lfo.rate * step, depth = sound.lfo.depth * Math.min(knobs.wow / 70, 1.6);
+        for (let c = t; c < end - .01; c += period) { set(c, b * .8); set(Math.min(end, c + period / 2), b * Math.pow(2, depth), true); set(Math.min(end, c + period), b * .8, true); }
+      }
+      else if (slide) { set(t, lastCut); set(t + glide, b, true); }
+      else { set(t, b * Math.pow(2, sound.env * (vel >= 1 ? 1.4 : 1))); set(t + Math.min(sound.dec, dur), b, true); }
+      if (bps.length) {
+        const path = wow ? sound.word : [sound.rest];
+        bps.forEach((bp, j) => { bp.frequency.setValueAtTime(W.VOWELS[path[0]][j], t); for (let k = 1; k < path.length; k++) bp.frequency.linearRampToValueAtTime(W.VOWELS[path[k]][j], t + dur * k / (path.length - 1)); });
+      }
+      lastF = f;
+    }
+    // A held note crossing into a new bar follows that bar's filter setting.
+    function tie(t, dur, m) {
+      const b = base(m);
+      for (const l of [lp1, lp2]) { l.frequency.setValueAtTime(lastCut, t); l.frequency.exponentialRampToValueAtTime(b, t + dur * .95); }
+      lastCut = b;
+    }
+    const tempo = (bpm, t) => { echo.delayTime.setTargetAtTime(Math.min(1.4, 60 / bpm * .75), t, .05); };
+    return {play, tie, applyKnobs, tempo};
+  }
+
+  // ------------------------------------------------------------------- rig
+  function rig(ctx, style, knobs) {
+    const sound = style.sound, kit = style.kit;
+    const sum = gain(ctx, 1), comp = ctx.createDynamicsCompressor(), makeup = gain(ctx, .78), clip = shaper(ctx, .03), master = gain(ctx, knobs.raw ? 1 : .9);
+    comp.threshold.value = -15; comp.knee.value = 8; comp.ratio.value = 3; comp.attack.value = .012; comp.release.value = .14;
+    if (knobs.raw) sum.connect(master).connect(ctx.destination); else sum.connect(comp).connect(makeup).connect(clip).connect(master).connect(ctx.destination);
+    const analyser = ctx.createAnalyser ? ctx.createAnalyser() : null;
+    if (analyser) { analyser.fftSize = 2048; clip.connect(analyser); }
+    const drumBus = gain(ctx, 1), duck = gain(ctx, 1), bassBus = gain(ctx, 1);
+    drumBus.connect(sum); duck.connect(bassBus).connect(sum);
+    const kickBus = gain(ctx, .95);
+    if (kit.kdrive) kickBus.connect(shaper(ctx, kit.kdrive)).connect(gain(ctx, .8)).connect(drumBus); else kickBus.connect(drumBus);
+    let rumbleDuck = null;
+    if (sound.rumble) {
+      const send = gain(ctx, sound.rumble), conv = ctx.createConvolver(), lp = biquad(ctx, 'lowpass', 105, 1.2), sh = shaper(ctx, .6), level = gain(ctx, .1);
+      conv.buffer = impulse(ctx); rumbleDuck = gain(ctx, 1);
+      kickBus.connect(send).connect(conv).connect(lp).connect(sh).connect(rumbleDuck).connect(level).connect(bassBus);
+    }
+    const voice = bass(ctx, sound, duck, knobs), nz = noise(ctx, 2, 5);
+    const burst = (t, len) => { const s = ctx.createBufferSource(); s.buffer = nz; s.start(t, (t * 7.13) % 1.5, len + .05); return s; };
+    const hits = {
+      kick(t, vel) {
+        const o = ctx.createOscillator(), g = gain(ctx, 0), f = kit.kick, len = kit.kd + .1;
+        o.frequency.setValueAtTime(f * 5, t); o.frequency.exponentialRampToValueAtTime(f * 1.9, t + .022); o.frequency.exponentialRampToValueAtTime(f, t + .1);
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vel, t + .002); g.gain.setValueAtTime(vel, t + .035); g.gain.exponentialRampToValueAtTime(.001, t + len);
+        o.connect(g).connect(kickBus); o.start(t); o.stop(t + len + .02);
+        const c = burst(t, .01), cg = gain(ctx, 0); cg.gain.setValueAtTime(.22 * vel, t); cg.gain.exponentialRampToValueAtTime(.001, t + .012); c.connect(biquad(ctx, 'highpass', 2500)).connect(cg).connect(drumBus);
+      },
+      clap(t, vel) {
+        const s = burst(t, .25), g = gain(ctx, 0), v = vel * .5;
+        for (const d of [0, .011, .023]) { g.gain.setValueAtTime(v, t + d); g.gain.exponentialRampToValueAtTime(v * .2, t + d + .009); }
+        g.gain.setValueAtTime(v * .8, t + .032); g.gain.exponentialRampToValueAtTime(.001, t + .21);
+        s.connect(biquad(ctx, 'bandpass', 1350, .9)).connect(biquad(ctx, 'highpass', 700)).connect(g).connect(drumBus);
+      },
+      noiseHit(t, vel, hpf, dec, level, bp) {
+        const s = burst(t, dec), g = gain(ctx, 0); g.gain.setValueAtTime(vel * level, t); g.gain.exponentialRampToValueAtTime(.001, t + dec);
+        let n = s.connect(biquad(ctx, 'highpass', hpf)); if (bp) n = n.connect(biquad(ctx, 'bandpass', bp, 1.2)); n.connect(g).connect(drumBus);
+      },
+      ch(t, vel) { hits.noiseHit(t, vel, 8200, .04, .34); },
+      oh(t, vel) { hits.noiseHit(t, vel, 7000, .17, .26); },
+      ride(t, vel) { hits.noiseHit(t, vel, 5200, .3, .2, 7200); },
+      perc(t, vel) {
+        const o = ctx.createOscillator(), g = gain(ctx, 0); o.type = 'triangle'; o.frequency.setValueAtTime(680, t); o.frequency.exponentialRampToValueAtTime(430, t + .05);
+        g.gain.setValueAtTime(vel * .3, t); g.gain.exponentialRampToValueAtTime(.001, t + .07); o.connect(g).connect(drumBus); o.start(t); o.stop(t + .09);
+      },
+      snare(t, vel) {
+        hits.noiseHit(t, vel, 900, .09, .4, 2100);
+        const o = ctx.createOscillator(), g = gain(ctx, 0); o.type = 'triangle'; o.frequency.setValueAtTime(230, t); o.frequency.exponentialRampToValueAtTime(170, t + .05);
+        g.gain.setValueAtTime(vel * .3, t); g.gain.exponentialRampToValueAtTime(.001, t + .07); o.connect(g).connect(drumBus); o.start(t); o.stop(t + .09);
+      },
+    };
+    function hit(type, t, vel, beat) {
+      hits[type](t, vel);
+      if (type !== 'kick') return;
+      // Sidechain: the bass ducks under every kick and swells back.
+      const tau = kit.rel * beat * .28, at = Math.max(0, t - .006), depth = Math.min(.98, kit.duck * (knobs.pump == null ? 100 : knobs.pump) / 100);
+      duck.gain.setTargetAtTime(1 - depth, at, .002); duck.gain.setTargetAtTime(1, t + .03, tau);
+      if (rumbleDuck) { rumbleDuck.gain.setTargetAtTime(.02, at, .002); rumbleDuck.gain.setTargetAtTime(1, t + .05, beat * .2); }
+    }
+    const setKnobs = () => { voice.applyKnobs(ctx.currentTime); drumBus.gain.setTargetAtTime(knobs.drums / 80 * .78, ctx.currentTime, .02); };
+    drumBus.gain.value = knobs.drums / 80 * .78;
+    return {ctx, style, key: style.rigKey || style.id, knobs, voice, hit, analyser, setKnobs, stop(t) { master.gain.setTargetAtTime(0, t, .012); setTimeout(() => { try { master.disconnect(); } catch {} }, 400); }};
+  }
+
+  // One beat (q = 0..3) of one engine bar, starting from the bar's start time t0.
+  function scheduleBeat(r, bar, q, t0, bpm, root) {
+    const style = r.style, step = 60 / bpm / 4, beat = step * 4, k = r.knobs, swing = k.swing == null ? style.swing : k.swing / 100, gate = (k.gate == null ? 100 : k.gate) / 100;
+    const time = s => t0 + (s + (Math.floor(s) % 2 === 1 ? swing : 0)) * step;
+    if (q === 0) r.voice.tempo(bpm, t0);
+    if (q === 0) for (const t of bar.ties) if (!(t.wow && bar.m.wow > 0)) r.voice.tie(t0, t.l * step, bar.m);
+    for (const n of bar.notes) {
+      if (Math.floor(n.s / 4) !== q) continue;
+      const a = time(n.s), b = n.short ? a + step * .5 : time(n.s + n.l);
+      r.voice.play(a, (b - a) * (n.legato ? 1 : .92 * gate), root + n.semi, n, bar.m, step);
+    }
+    for (const h of W.drumBar(style, bar)) if (Math.floor(h.s / 4) === q) r.hit(h.type, time(h.s), h.vel, beat);
+  }
+
+  // ---------------------------------------------------------------- player
+  // program(): {bars, loop} is asked for at every beat, so a change of lane or section lands on the next beat.
+  function player(getState, program) {
+    const P = {playing: false, ctx: null, rig: null, pos: 0, q: 0, t0: 0, queue: [], timer: null, onbar: null};
+    function tick() {
+      if (!P.playing) return;
+      const st = getState();
+      while (true) {
+        const step = 60 / st.bpm / 4, tb = P.t0 + P.q * 4 * step;
+        if (tb > P.ctx.currentTime + .14) break;
+        if (P.q === 0) {
+          const prog = program();
+          if (P.pos >= prog.bars.length) P.pos = prog.loop ? P.pos % prog.bars.length : 0;
+          P.queue.push({t: P.t0, dur: 16 * step, pos: P.pos});
+          if (P.queue.length > 6) P.queue.shift();
+        }
+        P.bars = program().bars;
+        if (P.rig.key !== (st.style.rigKey || st.style.id)) { P.rig.stop(tb); P.rig = rig(P.ctx, st.style, st.knobs); }
+        scheduleBeat(P.rig, P.bars[P.pos % P.bars.length], P.q, P.t0, st.bpm, st.root);
+        if (++P.q === 4) { P.q = 0; P.t0 += 16 * step; P.pos = P.next != null ? P.next : P.pos + 1; P.next = null; }
+      }
+    }
+    P.start = from => {
+      if (P.playing) P.stop();
+      P.ctx = P.ctx || new (window.AudioContext || window.webkitAudioContext)({latencyHint: 'interactive'});
+      P.ctx.resume();
+      const st = getState();
+      P.rig = rig(P.ctx, st.style, st.knobs); P.pos = from || 0; P.q = 0; P.next = null; P.t0 = P.ctx.currentTime + .08; P.queue = []; P.playing = true;
+      tick(); P.timer = setInterval(tick, 25);
+    };
+    P.stop = () => { if (!P.playing) return; P.playing = false; clearInterval(P.timer); P.rig.stop(P.ctx.currentTime); P.rig = null; P.queue = []; };
+    // Jump at the next bar line.
+    P.seek = pos => { if (P.q === 0) P.pos = pos; else P.next = pos; };
+    // Where the listener is now: {pos, frac} of the bar being heard.
+    P.now = () => {
+      if (!P.playing) return null;
+      const t = P.ctx.currentTime; let cur = null;
+      for (const b of P.queue) if (b.t <= t) cur = b;
+      return cur ? {pos: cur.pos, frac: clamp((t - cur.t) / cur.dur, 0, 1)} : null;
+    };
+    P.knobs = () => P.rig && P.rig.setKnobs();
+    return P;
+  }
+
+  // ---------------------------------------------------------------- render
+  async function render(style, bars, {bpm, root, knobs, sampleRate = 44100}) {
+    const step = 60 / bpm / 4, len = bars.length * 16 * step;
+    const ctx = new OfflineAudioContext(2, Math.round(len * sampleRate), sampleRate), r = rig(ctx, style, knobs);
+    bars.forEach((bar, i) => { for (let q = 0; q < 4; q++) scheduleBeat(r, bar, q, i * 16 * step, bpm, root); });
+    return ctx.startRendering();
+  }
+  return {rig, scheduleBeat, player, render, curve};
+})();
+</script>
+<script>// Wow app: the page. State in, DOM out.
+(() => {
+  const W = WOW, $ = id => document.getElementById(id), esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const KEY = 'fieldwork-wow-1';
+  let state = W.defaults();
+  try { state = W.validate(JSON.parse(localStorage.getItem(KEY) || 'null')); } catch {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+  const lane = () => W.styleById(state.style), style = () => W.withOptions(lane(), state), idea = () => W.ideaFor(style(), state.idea, state.seed), root = () => W.rootMidi(state.key);
+  const sec = id => W.sectionFor(style(), idea(), id || state.section);
+  const KNOBS = ['wow', 'drive', 'sub', 'tone', 'drums', 'swing', 'gate', 'pump', 'space'];
+  const STARTS = []; { let n = 0; for (const s of W.SECTIONS) { STARTS.push(n); n += s.reps * W.BARS; } }
+  const TOTAL = STARTS[STARTS.length - 1] + W.BARS;
+  let mode = 'loop';
+  const player = WowAudio.player(
+    () => ({style: style(), bpm: state.bpm, root: root(), knobs: state}),
+    () => mode === 'journey' ? {bars: W.journey(style(), idea()), loop: true} : {bars: sec().bars, loop: true});
+
+  // ------------------------------------------------------------ style grid
+  function mini(notes) {
+    const semis = notes.map(n => n.semi), lo = Math.min(...semis), hi = Math.max(...semis), span = Math.max(1, hi - lo);
+    return `<svg viewBox="0 0 128 34" preserveAspectRatio="none" aria-hidden="true">${[0, 16, 32, 48, 64, 80, 96, 112].map(x => `<line x1="${x}" x2="${x}" y1="0" y2="34"/>`).join('')}` +
+      notes.map(n => `<rect class="${n.wow ? 'w' : ''}" x="${n.s * 4 + .4}" y="${(27 - (n.semi - lo) / span * 24).toFixed(1)}" width="${((n.short ? .55 : n.l) * 4 - .8).toFixed(1)}" height="5" rx="1.5"/>`).join('') + '</svg>';
+  }
+  function renderStyles() {
+    const n = f => W.STYLES.filter(s => f === 'all' || s.family === f || s.era === f).length;
+    $('family').innerHTML = [['all', 'All'], ['house', 'House'], ['techno', 'Techno'], ['now', 'Right now'], ['classic', 'Classics & revivals']].map(([id, label]) => [id, `${label} · ${n(id)}`]).map(([id, label]) => `<button data-family="${id}" aria-pressed="${state.family === id}">${label}</button>`).join('');
+    $('styles').innerHTML = W.STYLES.filter(s => state.family === 'all' || s.family === state.family || s.era === state.family).map(s =>
+      `<button class="style ${s.family}" role="listitem" data-style="${s.id}" aria-pressed="${s.id === state.style}"><span class="meta"><span>${esc(s.genre)}</span><span>${s.bpm}</span></span><b>${esc(s.name)}</b><small><i>${esc(s.year)}</i> · ${esc(s.lane)}</small>${mini(s.ideas[0].notes)}</button>`).join('');
+  }
+
+  // ------------------------------------------------------------------ deck
+  function renderDeck() {
+    const s = style(), id = idea();
+    $('deck').className = 'deck ' + s.family;
+    $('deck-genre').textContent = `${s.genre} · ${s.year} · ${s.bpm} BPM · ${s.family}`;
+    $('deck-name').textContent = s.name; $('deck-idea').textContent = s.idea; $('deck-lane').textContent = 'In the lane of ' + s.lane + '.';
+    $('ideas').innerHTML = s.ideas.map((x, i) => `<button data-idea="${i}" aria-pressed="${state.idea === i}">${esc(x.name)}</button>`).join('') +
+      `<button class="dice" data-idea="-1" aria-pressed="${state.idea === -1}" title="Write a new loop in this lane's grammar">⚄ New idea${state.idea === -1 ? ' #' + state.seed : ''}</button>`;
+    const t = id.text.replace(/\|/g, ' ').trim().split(/\s+/), row = b => [0, 4, 8, 12].map(q => t.slice(b * 16 + q, b * 16 + q + 4).map(x => x.padEnd(4)).join('')).join('│ ');
+    $('pattern').textContent = 'bar 1  ' + row(0) + '\nbar 2  ' + row(1) + '\n\n.  rest   -  hold   !  accent   ~  slide   w  wow   \'  short';
+    $('bpm').value = state.bpm; $('key').value = state.key;
+    const hzv = W.hz(root());
+    $('hz').textContent = `${W.noteName(root())} = ${hzv.toFixed(1)} Hz · ${W.subVerdict(hzv)}`;
+    $('why').innerHTML = s.why.map(x => `<li>${esc(x)}</li>`).join('');
+    $('recipe').innerHTML = s.recipe.map(x => `<li>${esc(x)}</li>`).join('');
+    $('sound-note').textContent = `Preview voice "${s.sound.name}": ${s.sound.osc.map(o => o.w).join(' + ')}${s.sound.fm ? ', FM' : ''}${s.sound.vowel ? `, formant filter saying "${s.sound.say}"` : ''}${s.sound.lfo ? ', filter wobble on 8ths' : ''}${s.sound.rumble ? ', kick reverb rumble' : ''}${s.sound.echo ? ', dotted-8th echo' : ''}${s.sound.width ? ', stereo spread above 300 Hz' : ''}; sidechain ${Math.round(s.kit.duck * 100)}%. A browser synth for judging the notes. Build the real one in your own synth.`;
+    $('map').innerHTML = W.SECTIONS.map((x, i) => { const m = W.measure(s, sec(x.id), root()); return `<button data-section="${x.id}" class="${x.reps > 1 ? 'long' : ''}" aria-pressed="${x.id === state.section}" style="--e:${Math.round(m.energy * 100)}%"><span class="prog"></span><b>${i + 1} · ${x.name}</b><small>${x.reps * W.BARS} bars · ${m.perBar.toFixed(1)} notes/bar</small><i></i></button>`; }).join('');
+    $('versions').tBodies[0].innerHTML = W.SECTIONS.map(x => {
+      const sc = sec(x.id), m = W.measure(s, sc, root()), cuts = sc.bars.map(b => b.m.cut), pct = v => Math.round(v / 1.25 * 100) + '%';
+      const subs = sc.bars.map(b => b.m.sub > 0), kicks = sc.bars.map(b => b.d.kick > 0), span = a => a.every(Boolean) ? 'on' : a.some(Boolean) ? (a[0] ? `out at bar ${a.indexOf(false) + 1}` : `in at bar ${a.indexOf(true) + 1}`) : 'off';
+      return `<tr data-row="${x.id}" class="${x.id === state.section ? 'cur' : ''}"><td>${x.name}</td><td class="num">${x.reps * W.BARS}</td><td>${esc(sc.what[0])}</td><td class="num">${m.perBar.toFixed(1)}</td><td class="num">${pct(cuts[0])} → ${pct(cuts[7])}</td><td class="num">${span(subs)}</td><td class="num">${span(kicks)}</td></tr>`;
+    }).join('');
+    for (const k of KNOBS) { $(k).value = state[k]; $(k + '-o').textContent = state[k]; }
+    $('sound').value = state.sound || state.style; $('move').value = state.move; $('brk').value = state.brk; $('fill').value = state.fill;
+    $('recipe-title').textContent = state.sound && state.sound !== state.style ? `The sound this lane was written for (you are hearing “${s.sound.name}”)` : 'The sound';
+    for (const b of document.querySelectorAll('.style')) b.setAttribute('aria-pressed', b.dataset.style === state.style);
+    renderSection();
+  }
+
+  // --------------------------------------------------------------- section
+  const RW = 1280, RH = 330, PAD = 20, LANES = 62;
+  function renderSection() {
+    const s = style(), sc = sec(), info = W.SECTIONS.find(x => x.id === state.section), m = W.measure(s, sc, root());
+    // One pitch range for all six sections, so the roll does not jump when you switch.
+    let lo = 0, hi = 12; for (const x of W.SECTIONS) for (const n of sec(x.id).notes) { lo = Math.min(lo, n.semi); hi = Math.max(hi, n.semi); }
+    const rows = hi - lo + 1, h = (RH - PAD - LANES) / rows, y = semi => PAD + (hi - semi) * h, sw = RW / (W.BARS * W.SPB);
+    let g = '<defs><linearGradient id="wowgrad" x1="0" x2="1"><stop offset="0" stop-color="var(--a)"/><stop offset=".5" stop-color="var(--b)"/><stop offset="1" stop-color="var(--a)"/></linearGradient></defs>';
+    for (let i = 0; i <= W.BARS * 4; i++) { const x = i * 4 * sw; g += `<line class="${i % 4 ? 'beat' : 'bar'}" x1="${x}" x2="${x}" y1="${i % 4 ? PAD : 0}" y2="${RH}"/>`; }
+    for (let b = 0; b < W.BARS; b++) g += `<text x="${b * 16 * sw + 6}" y="13">${b + 1}</text>`;
+    g += `<line class="root" x1="0" x2="${RW}" y1="${y(0) + h / 2}" y2="${y(0) + h / 2}"/>`;
+    const nh = Math.max(4, Math.min(h - 1.5, 15));
+    sc.notes.forEach((n, i) => {
+      const x = n.t * sw, w = Math.max(3, (n.short ? .55 : n.l) * sw - 2), yy = y(n.semi) + (h - nh) / 2;
+      if (n.slide && i) { const p = sc.notes[i - 1]; g += `<path class="sl" d="M${x - 5} ${y(p.semi) + h / 2} L${x + 5} ${yy + nh / 2}"/>`; }
+      g += `<rect class="n${n.wow ? ' w' : ''}${n.ghost ? ' g' : ''}" x="${x.toFixed(1)}" y="${yy.toFixed(1)}" width="${w.toFixed(1)}" height="${nh.toFixed(1)}" rx="3"${n.vel >= 1 ? ' stroke="#fff" stroke-width="1.5"' : ''}><title>${W.noteName(root() + n.semi)}${n.wow ? ' · wow' : ''}${n.slide ? ' · slide' : ''}${n.ghost ? ' · ghost' : ''}</title></rect>`;
+    });
+    // Lanes under the notes: filter, sub, kick.
+    const ly = RH - LANES;
+    g += `<rect class="lane" x="0" y="${ly}" width="${RW}" height="${LANES}"/>`;
+    sc.bars.forEach((b, i) => {
+      const x = i * 16 * sw, fh = Math.min(1, b.m.cut / 1.3) * 22;
+      g += `<rect class="cut" x="${x + 1}" y="${ly + 26 - fh}" width="${16 * sw - 2}" height="${fh}"/>`;
+      if (b.m.sub > 0) g += `<rect class="subon" x="${x + 1}" y="${ly + 32}" width="${16 * sw - 2}" height="${4 + 6 * b.m.sub}" rx="2"/>`;
+      for (const hit of W.drumBar(s, b)) if (hit.type === 'kick') g += `<rect class="kick" x="${x + hit.s * sw}" y="${ly + 48}" width="${sw - 2}" height="9" rx="2"/>`;
+    });
+    g += `<text x="6" y="${ly + 12}">FILTER</text><text x="6" y="${ly + 45}">SUB</text><text x="6" y="${ly + 61}" style="fill:#8f89a3">KICK</text>`;
+    g += `<line id="head" x1="0" x2="0" y1="0" y2="${RH}" visibility="hidden"/>`;
+    $('roll').innerHTML = g;
+    $('sec-eyebrow').textContent = `Section ${W.SECTIONS.indexOf(info) + 1} of 6 · ${info.reps * W.BARS} bars`;
+    $('sec-name').textContent = info.name; $('sec-role').textContent = info.role;
+    $('sec-what').innerHTML = sc.what.map(x => `<li>${esc(x)}</li>`).join('');
+    const kicked = sc.bars.reduce((a, b) => a + b.notes.filter(n => b.d.kick && n.s % 4 === 0 && n.s < b.d.cut).length, 0);
+    const cell = (k, v, sub) => `<div><dt>${k}</dt><dd>${v}<small>${sub}</small></dd></div>`;
+    $('measures').innerHTML = cell('Notes / bar', m.perBar.toFixed(1), `${m.notes} in 8 bars`) + cell('On a kick', kicked, kicked ? 'sidechain separates them' : 'the kick has its own space') +
+      cell('Bass sounding', Math.round(m.gate * 100) + '%', 'of the time') + cell('Off the grid', Math.round(m.offbeat * 100) + '%', 'on odd 16ths') +
+      cell('Pitches', m.pitches, `${W.noteName(m.lo)} to ${W.noteName(m.hi)}`) + cell('Gestures', m.wow + m.slides, `${m.wow} wow · ${m.slides} slide`);
+    for (const b of document.querySelectorAll('#map button')) b.setAttribute('aria-pressed', b.dataset.section === state.section);
+    for (const r of document.querySelectorAll('#versions tbody tr')) r.className = r.dataset.row === state.section ? 'cur' : '';
+  }
+
+  // ------------------------------------------------------------- transport
+  function buttons() {
+    const loop = player.playing && mode === 'loop', all = player.playing && mode === 'journey';
+    $('play').textContent = loop ? '■ Stop' : '▶ Loop section'; $('play').classList.toggle('on', loop);
+    $('journey').textContent = all ? '■ Stop' : '▶ Play the whole track'; $('journey').classList.toggle('on', all);
+    $('hero-play').textContent = player.playing ? '■ Stop' : '▶ Drop it'; $('hero-play').classList.toggle('on', player.playing);
+    if (!player.playing) { const h = $('head'); if (h) h.setAttribute('visibility', 'hidden'); for (const p of document.querySelectorAll('.prog')) p.style.width = '0'; $('pos').textContent = 'BAR 1 / 8'; }
+  }
+  function toggle(m) {
+    if (player.playing && mode === m) player.stop();
+    else { mode = m; player.start(m === 'journey' ? STARTS[W.SECTIONS.findIndex(x => x.id === state.section)] : 0); }
+    buttons();
+  }
+  function setSection(id, fromPlayer) {
+    if (state.section === id) return;
+    state.section = id; save(); renderSection();
+    if (!fromPlayer && player.playing && mode === 'journey') player.seek(STARTS[W.SECTIONS.findIndex(x => x.id === id)]);
+  }
+  function frame() {
+    requestAnimationFrame(frame);
+    scope();
+    const now = player.now(); if (!now) return;
+    let bar = now.pos % W.BARS, secIdx = W.SECTIONS.findIndex(x => x.id === state.section);
+    if (mode === 'journey') {
+      const pos = now.pos % TOTAL; secIdx = STARTS.findLastIndex(s => s <= pos); bar = (pos - STARTS[secIdx]) % W.BARS;
+      setSection(W.SECTIONS[secIdx].id, true);
+      const len = W.SECTIONS[secIdx].reps * W.BARS;
+      document.querySelectorAll('.prog').forEach((p, i) => { p.style.width = i === secIdx ? ((pos - STARTS[secIdx] + now.frac) / len * 100).toFixed(1) + '%' : '0'; });
+      $('pos').textContent = `${W.SECTIONS[secIdx].name.toUpperCase()} · BAR ${pos + 1} / ${TOTAL}`;
+    } else $('pos').textContent = `BAR ${bar + 1} / ${W.BARS}`;
+    const h = $('head'), x = (bar + now.frac) / W.BARS * RW;
+    if (h) { h.setAttribute('x1', x); h.setAttribute('x2', x); h.setAttribute('visibility', 'visible'); }
+  }
+
+  // ----------------------------------------------------------------- scope
+  const cv = $('scope'), cx = cv.getContext('2d'), still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let buf = null, phase = 0, drawn = false;
+  function scope() {
+    const playing = player.playing && player.rig && player.rig.analyser;
+    if (!playing && drawn && still) return;
+    const dpr = Math.min(2, devicePixelRatio || 1), w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return;
+    if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, w, h);
+    const N = 220, ys = new Float32Array(N);
+    if (playing) {
+      const an = player.rig.analyser; if (!buf || buf.length !== an.fftSize) buf = new Float32Array(an.fftSize);
+      an.getFloatTimeDomainData(buf);
+      for (let i = 0; i < N; i++) ys[i] = buf[Math.floor(i / N * buf.length * .8)] * 1.5;
+    } else {
+      phase += still ? 0 : .012;
+      for (let i = 0; i < N; i++) { const x = i / N; ys[i] = Math.sin(x * 9 + phase * 2) * Math.sin(x * Math.PI) * .32 * (.6 + .4 * Math.sin(x * 2.3 - phase)); }
+    }
+    const grad = cx.createLinearGradient(0, 0, w, 0); grad.addColorStop(0, '#ff3d8b'); grad.addColorStop(.45, '#ffb23d'); grad.addColorStop(.7, '#c6ff3d'); grad.addColorStop(1, '#3de1ff');
+    cx.strokeStyle = grad; cx.lineJoin = 'round';
+    for (let k = 0; k < 7; k++) {
+      cx.globalAlpha = .5 - k * .065; cx.lineWidth = k === 0 ? 2.5 : 1.2; cx.beginPath();
+      for (let i = 0; i < N; i++) { const x = i / (N - 1) * w, yy = h * .42 + ys[i] * h * (.42 - k * .035) + k * 13; i ? cx.lineTo(x, yy) : cx.moveTo(x, yy); }
+      cx.stroke();
+    }
+    cx.globalAlpha = 1; drawn = true;
+  }
+
+  // --------------------------------------------------------------- exports
+  function download(bytes, name, type) {
+    const a = document.createElement('a'), url = URL.createObjectURL(new Blob([bytes], {type}));
+    a.href = url; a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+  const fileName = (part, ext) => `wow-${state.style}-${idea().name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${part}-${W.NAMES[state.key].replace('♯', 's')}-${state.bpm}bpm.${ext}`;
+  const barsFor = all => all ? W.journey(style(), idea()) : sec().bars;
+  function exportMidi(all) {
+    download(W.midi(style(), barsFor(all), {root: root(), bpm: state.bpm, drums: $('with-drums').checked, name: `Wow: ${style().name} (${idea().name})`}), fileName(all ? 'track' : state.section, 'mid'), 'audio/midi');
+    $('export-note').textContent = `Saved ${all ? '64 bars with section markers' : 'the ' + state.section + ' section'}. Straight grid; the preview swings its 16ths ${state.swing}%, so add groove to taste.`;
+  }
+  async function renderWav(all, btn) {
+    const label = btn.textContent; btn.disabled = true; btn.textContent = 'Rendering…';
+    try {
+      const out = await WowAudio.render(style(), barsFor(all), {bpm: state.bpm, root: root(), knobs: {...state, drums: $('with-drums').checked ? state.drums : 0}});
+      download(W.wav(out.getChannelData(0), out.getChannelData(1), out.sampleRate), fileName(all ? 'track' : state.section, 'wav'), 'audio/wav');
+      $('export-note').textContent = `Rendered ${(out.length / out.sampleRate).toFixed(1)} s at ${out.sampleRate / 1000} kHz, cut exactly on the bar line so it loops.`;
+    } catch (e) { $('export-note').textContent = 'Could not render audio in this browser: ' + e.message; }
+    btn.disabled = false; btn.textContent = label;
+  }
+
+  // ---------------------------------------------------------------- events
+  $('key').innerHTML = W.NAMES.map((n, i) => `<option value="${i}">${n}</option>`).join('');
+  document.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.family) { state.family = b.dataset.family; save(); renderStyles(); }
+    else if (b.dataset.style) {
+      const first = b.dataset.style !== state.style; state.style = b.dataset.style;
+      if (first) { const s = lane(); state.bpm = s.bpm; state.key = s.key; state.idea = 0; state.swing = Math.round(s.swing * 100); state.sound = ''; state.move = state.brk = state.fill = 'auto'; }
+      save(); renderDeck();
+      if (!player.playing) { mode = 'loop'; player.start(0); buttons(); }
+      if (first && innerWidth < 980) $('deck').scrollIntoView({block: 'start'});
+    }
+    else if (b.dataset.idea != null) { const i = +b.dataset.idea; if (i === -1) state.seed = state.idea === -1 ? state.seed + 1 : state.seed; state.idea = i; save(); renderDeck(); }
+    else if (b.dataset.section) setSection(b.dataset.section);
+  });
+  $('play').onclick = () => toggle('loop'); $('journey').onclick = () => toggle('journey');
+  $('hero-play').onclick = () => { if (player.playing) { player.stop(); buttons(); } else { state.section = 'drop1'; renderSection(); toggle('loop'); } };
+  $('bpm').onchange = () => { state.bpm = W.validate({...state, bpm: $('bpm').value}).bpm; save(); renderDeck(); };
+  $('sound').innerHTML = ['house', 'techno'].map(f => `<optgroup label="${f === 'house' ? 'House voices' : 'Techno voices'}">${W.STYLES.filter(s => s.family === f).map(s => `<option value="${s.id}">${esc(s.sn)} (${esc(s.name)})</option>`).join('')}</optgroup>`).join('');
+  const options = (id, map) => { $(id).innerHTML = Object.entries(map).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join(''); };
+  options('move', W.MOVE_NAMES); options('brk', W.BREAKS); options('fill', W.FILL_NAMES);
+  $('sound').onchange = () => { state.sound = $('sound').value === state.style ? '' : $('sound').value; save(); renderDeck(); };
+  for (const k of ['move', 'brk', 'fill']) $(k).onchange = () => { state[k] = $(k).value; save(); renderDeck(); };
+  $('surprise').onclick = () => {
+    const pick = a => a[Math.floor(Math.random() * a.length)], s = pick(W.STYLES);
+    Object.assign(state, {style: s.id, bpm: s.bpm, key: s.key, swing: Math.round(s.swing * 100), idea: pick([0, 1, 2, -1]), seed: 1 + Math.floor(Math.random() * 999), sound: '', move: 'auto', brk: 'auto', fill: 'auto', family: 'all'});
+    save(); renderStyles(); renderDeck(); if (!player.playing) { mode = 'loop'; player.start(0); buttons(); }
+  };
+  $('key').onchange = () => { state.key = +$('key').value; save(); renderDeck(); };
+  for (const k of KNOBS) $(k).oninput = () => { state[k] = +$(k).value; $(k + '-o').textContent = state[k]; save(); player.knobs(); };
+  $('midi-sec').onclick = () => exportMidi(false); $('midi-all').onclick = () => exportMidi(true);
+  $('wav-sec').onclick = e => renderWav(false, e.currentTarget); $('wav-all').onclick = e => renderWav(true, e.currentTarget);
+  addEventListener('keydown', e => {
+    if (e.target.closest('input,select,textarea') || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.code === 'Space') { if (e.target.closest('button,a')) return; e.preventDefault(); toggle(mode); }
+    else if (/^[1-6]$/.test(e.key)) setSection(W.SECTIONS[+e.key - 1].id);
+  });
+  renderStyles(); renderDeck(); buttons(); requestAnimationFrame(frame);
+  window.WOW_QA = {get state() { return state; }, player, style, idea, sec, get mode() { return mode; }};
+})();
+</script>
+</body></html>

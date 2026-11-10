@@ -1,0 +1,103 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0a10"><title>Wow — the bassline cheat sheet · Fieldwork</title>
+<meta name="description" content="Thirty-four house and techno basslines, from this year's floors back to 1977, each rewritten for every section of a track. Play them, change them, export MIDI and WAV.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>/*STYLE*/</style></head><body>
+<!-- site-nav:start --><div id="site-nav" role="navigation" aria-label="All Fieldwork pages"><style>#site-nav{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:2px;width:100%;padding:6px 12px;overflow-x:auto;background:#171e22;color:#c9cdc2;font:500 13px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;position:relative;z-index:1000;scrollbar-width:thin}#site-nav a{all:unset;display:inline-block;padding:5px 9px;border-radius:4px;color:#c9cdc2;white-space:nowrap;cursor:pointer}#site-nav a:hover{color:#fff;background:#283237}#site-nav a:focus-visible{outline:2px solid #ffc96e;outline-offset:1px}#site-nav a[aria-current=page]{color:#171e22;background:#ffc96e}#site-nav .sn-brand{font-weight:800;letter-spacing:.08em;color:#fff;margin-right:6px}@media print{#site-nav{display:none}}</style><a href="index.html" data-files="index.html" class="sn-brand">FIELDWORK</a><a href="fieldwork-v3.html" data-files="fieldwork-v3.html">Motif Studio</a><a href="breeder.html" data-files="breeder.html">Breeder</a><a href="orbit.html" data-files="orbit.html">Arps</a><a href="pocket.html" data-files="pocket.html">Pocket</a><a href="wow.html" data-files="wow.html">Basslines</a><a href="talk.html" data-files="talk.html">Tech House</a><a href="studio-v2.html" data-files="studio-v2.html melody-v2.html chords-v2.html bass-v2.html">V2 Studio</a><a href="trance.html" data-files="trance.html">Trance</a><a href="xray.html" data-files="xray.html">X-Ray</a><a href="blueprint.html" data-files="blueprint.html">Blueprint</a><a href="transplant.html" data-files="transplant.html">Transplant</a><a href="drum-library.html" data-files="drum-library.html">Drums</a><a href="rumble.html" data-files="rumble.html">Rumble</a><a href="serum-v2.html" data-files="serum-v2.html serum.html patch-lab.html sampling.html">Sound design</a><a href="field-guides-v1.html" data-files="field-guides-v1.html groove-cheatsheet.html groove-vol2.html low-end.html melody.html chords.html between.html inkey.html keyboard.html arrangement.html buildorder.html the-move.html disco-house-cheatsheet.html">Field guides</a><script data-site-nav>(()=>{const f=decodeURIComponent(location.pathname.split('/').pop()||'index.html');for(const a of document.querySelectorAll('#site-nav a'))if(a.dataset.files.split(' ').includes(f)){a.setAttribute('aria-current','page');break}})()</script></div><!-- site-nav:end -->
+<main>
+<header class="hero">
+  <canvas id="scope" aria-hidden="true"></canvas>
+  <div class="hero-text">
+    <p class="eyebrow">FIELDWORK &nbsp;·&nbsp; THE BASSLINE CHEAT SHEET &nbsp;·&nbsp; HOUSE &amp; TECHNO, 1977–2026</p>
+    <h1><span>Wow.</span> <em>Weow.</em> <span>Wow.</span></h1>
+    <p class="intro"><b>34 lanes, 102 written basslines</b> and a generator for more: what is filling floors right now, and the classics those ideas came from. Each one is written <b>six ways</b>, one for every section of a track. Swap the sound, the chords, the break and the fill, then take the MIDI.</p>
+    <div class="hero-actions"><button id="hero-play" class="play big">▶ Drop it</button><button id="surprise" class="play alt big">⚄ Surprise me</button><a class="ghost" href="#lanes">Pick a lane ↓</a></div>
+  </div>
+</header>
+
+<section id="lanes" aria-labelledby="lanes-title">
+  <div class="section-heading"><div><p class="eyebrow">01 / PICK A LANE</p><h2 id="lanes-title">Thirty-four basslines the floor already understands.</h2></div>
+    <div class="chips" id="family" role="group" aria-label="Filter by family"></div></div>
+  <div id="styles" class="styles" role="list"></div>
+</section>
+
+<section id="deck" class="deck" aria-labelledby="deck-name">
+  <div class="deck-head">
+    <div><p class="eyebrow" id="deck-genre"></p><h2 id="deck-name"></h2><p id="deck-idea" class="idea"></p><p id="deck-lane" class="lane"></p></div>
+    <div class="ideas-box"><p class="label">Ideas in this lane</p><div id="ideas" class="ideas" role="group" aria-label="Ideas"></div>
+      <pre id="pattern" class="pattern" aria-label="The loop as 32 steps"></pre></div>
+  </div>
+  <div class="transport">
+    <button id="play" class="play">▶ Loop section</button>
+    <button id="journey" class="play alt">▶ Play the whole track</button>
+    <span id="pos" class="pos">BAR 1 / 8</span>
+    <label>Tempo<input id="bpm" type="number" min="100" max="170" step="1"><small>BPM</small></label>
+    <label>Root<select id="key"></select></label>
+    <span id="hz" class="hz"></span>
+  </div>
+  <div class="options">
+    <label>Sound<select id="sound"></select></label>
+    <label>Chords<select id="move"></select></label>
+    <label>Break<select id="brk"></select></label>
+    <label>Fill<select id="fill"></select></label>
+  </div>
+  <div id="map" class="map" role="group" aria-label="Sections of the track"></div>
+  <div class="roll-wrap"><svg id="roll" viewBox="0 0 1280 330" preserveAspectRatio="none" role="img" aria-label="Piano roll of the bassline for this section"></svg></div>
+  <div class="deck-grid">
+    <div class="sec">
+      <p class="eyebrow" id="sec-eyebrow"></p><h3 id="sec-name"></h3><p id="sec-role" class="role"></p>
+      <ul id="sec-what" class="what"></ul>
+      <dl id="measures" class="measures"></dl>
+    </div>
+    <div class="knobs">
+      <h3>Bend it</h3>
+      <label class="slider"><span>Wow <output id="wow-o"></output></span><input id="wow" type="range" min="0" max="100"><small>How far the filter and the mouth open on the talking notes.</small></label>
+      <label class="slider"><span>Drive <output id="drive-o"></output></span><input id="drive" type="range" min="0" max="100"><small>Saturation before the filter.</small></label>
+      <label class="slider"><span>Sub <output id="sub-o"></output></span><input id="sub" type="range" min="0" max="100"><small>The clean sine underneath.</small></label>
+      <label class="slider"><span>Tone <output id="tone-o"></output></span><input id="tone" type="range" min="0" max="100"><small>Filter cutoff, darker to brighter.</small></label>
+      <label class="slider"><span>Drums <output id="drums-o"></output></span><input id="drums" type="range" min="0" max="100"><small>Turn them down to hear the bass alone.</small></label>
+      <label class="slider"><span>Swing <output id="swing-o"></output></span><input id="swing" type="range" min="0" max="30"><small>How late the off 16ths land, in percent of a 16th.</small></label>
+      <label class="slider"><span>Length <output id="gate-o"></output></span><input id="gate" type="range" min="30" max="100"><small>Note length. Shorter is tighter and funkier.</small></label>
+      <label class="slider"><span>Pump <output id="pump-o"></output></span><input id="pump" type="range" min="0" max="150"><small>Sidechain depth, as a percentage of the lane's own.</small></label>
+      <label class="slider"><span>Space <output id="space-o"></output></span><input id="space" type="range" min="0" max="200"><small>Stereo spread and echo on the top layer. The sub stays mono and dry.</small></label>
+    </div>
+    <div class="export">
+      <h3>Take it</h3>
+      <button id="midi-sec">MIDI · this section</button>
+      <button id="midi-all">MIDI · whole track, 64 bars</button>
+      <button id="wav-sec">WAV · this section, 8 bars</button>
+      <button id="wav-all">WAV · whole track</button>
+      <label class="check"><input id="with-drums" type="checkbox" checked> Include drums</label>
+      <p id="export-note" class="note">MIDI is on a straight grid with section markers, CC74 for the filter and CC1 on the wow notes. Overlapping notes are slides: use a mono, legato patch.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sheet" aria-labelledby="sheet-title">
+  <div class="section-heading"><div><p class="eyebrow">02 / THE CHEAT SHEET</p><h2 id="sheet-title">Why it works, and how to build it.</h2></div></div>
+  <div class="sheet-grid">
+    <article><h3>Why it moves a floor</h3><ul id="why"></ul></article>
+    <article><h3 id="recipe-title">The sound</h3><ol id="recipe"></ol><p id="sound-note" class="note"></p></article>
+    <article class="wide"><h3>Six versions, one idea</h3><div class="table-wrap"><table id="versions"><thead><tr><th>Section</th><th>Bars</th><th>What the bass does</th><th>Notes / bar</th><th>Filter</th><th>Sub</th><th>Kick</th></tr></thead><tbody></tbody></table></div></article>
+  </div>
+</section>
+
+<section id="rules" aria-labelledby="rules-title">
+  <div class="section-heading"><div><p class="eyebrow">03 / EIGHT RULES</p><h2 id="rules-title">What all thirty-four have in common.</h2></div></div>
+  <ol class="rules">
+    <li><b>Know where the kick is.</b> Either never start a note on it, or land on it on purpose and let the sidechain separate them. Half-decisions make mud.</li>
+    <li><b>Two bars: a question, then an answer.</b> Bar two repeats bar one and changes only the last beat. That is enough to loop for five minutes.</li>
+    <li><b>Rests are notes.</b> The gap before a hit is what makes it heavy. If the loop feels weak, delete something.</li>
+    <li><b>Length is groove.</b> Short, short, long. Change the note lengths before you change the pitches.</li>
+    <li><b>One gesture per bar.</b> One slide, one wow, one octave jump. A bassline with a single feature is a hook; with five it is a solo.</li>
+    <li><b>Put the root where the system is.</b> Roots between F and A (44–55 Hz) hit hardest on most club rigs. Check the Hz readout when you change key.</li>
+    <li><b>Change one thing per section.</b> Rhythm in the intro, notes in the drop, development in drop two. Keep the rhythm and people keep dancing.</li>
+    <li><b>The silence is part of the bassline.</b> Pull the sub a bar before the drop and stop everything for two beats. The drop is only as big as the hole in front of it.</li>
+  </ol>
+  <p class="note honest">These are patterns and starting sounds, not finished records. The readouts count notes and time; they do not measure taste, and nothing here can promise a chart position. Read the notes in <a href="WOW.md">WOW.md</a> for what is and is not checked.</p>
+</section>
+</main>
+<footer><p>Wow is one standalone page. Settings are remembered in this browser. <kbd>Space</kbd> plays and stops, <kbd>1</kbd>–<kbd>6</kbd> pick a section.</p></footer>
+<script>/*ENGINE*/</script>
+<script>/*AUDIO*/</script>
+<script>/*APP*/</script>
+</body></html>

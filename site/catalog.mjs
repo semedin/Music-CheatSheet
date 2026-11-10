@@ -12,6 +12,9 @@ export const SECTIONS = [
     title: 'Write ideas',
     blurb: 'Studios that generate, edit and export MIDI. Start here when you want notes to drag into Ableton.',
     pages: [
+      {file: 'wow.html', title: 'Wow — the bassline cheat sheet', edition: 'New', badge: 'Latest',
+        text: '34 bassline lanes and 102 written ideas for house and techno: what fills floors in 2025–26 (tech house, speed garage warp, afro, Latin tech, log drum, peak-time rumble, hard techno) and the classics behind it (French filter, 2-step, Italo, electro house, Detroit, dub techno, EBM, rave hoover). Each idea is rewritten for six sections of a track. Swap the sound (34 voices), chords, break and fill on any lane; a talking filter, a generator, a why-it-works sheet and sound recipe; MIDI and WAV for one section or all 64 bars.',
+        doc: 'WOW.md', src: 'wow-src'},
       {file: 'breeder.html', title: 'Breeder — grow a groove', edition: 'New', badge: 'Latest',
         text: 'Don\'t write the groove, grow it. Eight whole loops (drums, bass, riff, chords) in any of Orbit\'s 14 genres, or bred from your own MIDI. Star the ones that move you and breed: children cross over gene by gene and mutate inside the genre\'s grammar, each measured against the genre and telling you how it was made. Locks, drift, a family tree, lineage MIDI, WAV loops, and straight into Transplant.',
         doc: 'BREEDER.md', src: 'breeder-src'},
@@ -130,6 +133,7 @@ export const SECTIONS = [
 
 export const DOCS = [
   {file: 'README.md', title: 'README', text: 'What is in this folder and how it fits together.'},
+  {file: 'WOW.md', title: 'Wow notes', text: 'The bassline cheat sheet: the sixteen lanes, how each section is derived, the preview synth, what is checked and the limits.'},
   {file: 'TODO.md', title: 'TODO: pages to build', text: 'Ranked wish list of new pages and folder-wide features.'},
   {file: 'BREEDER.md', title: 'Breeder notes', text: 'Growing grooves by interactive evolution: the genes, crossover, mutation inside the grammar, selection, drift, what is measured and the limits.'},
   {file: 'TRANSPLANT.md', title: 'Transplant notes', text: 'Borrowing a reference\'s arrangement for your loop: the model, the layering, every move rebuilt, what is measured and the limits.'},
@@ -164,6 +168,7 @@ export const NAV = [
   {file: 'breeder.html', label: 'Breeder'},
   {file: 'orbit.html', label: 'Arps'},
   {file: 'pocket.html', label: 'Pocket'},
+  {file: 'wow.html', label: 'Basslines'},
   {file: 'talk.html', label: 'Tech House'},
   {file: 'studio-v2.html', label: 'V2 Studio', match: ['melody-v2.html', 'chords-v2.html', 'bass-v2.html']},
   {file: 'trance.html', label: 'Trance'},
@@ -194,4 +199,5 @@ export const TEMPLATES = [
   'talk-src/template.html',
   'transplant-src/template.html',
   'breeder-src/template.html',
+  'wow-src/template.html',
 ];
