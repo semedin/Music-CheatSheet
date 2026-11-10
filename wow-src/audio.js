@@ -74,7 +74,7 @@ const WowAudio = (() => {
       }
       pre.gain.setValueAtTime(.35 + sound.drive * knobs.drive / 50 * m.drive * 1.6, t);
       // amplitude
-      const rel = Math.min(sound.rel, dur * .3), atk = Math.min(sound.atk, dur * .2), end = t + dur;
+      const rel = Math.min(sound.rel, dur * .3), atk = Math.min(sound.atk, dur * (sound.atk > .03 ? .6 : .2)), end = t + dur;
       const env = (g, level) => {
         let hold = level;
         if (slide) g.linearRampToValueAtTime(level, t + glide);

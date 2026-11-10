@@ -21,8 +21,8 @@ try {
   page.on('console', m => m.type() === 'error' && !m.text().includes('Failed to load resource') && report.errors.push(m.text()));
   await page.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
   await page.goto(url); await page.waitForFunction(() => window.WOW_QA);
-  check('35 lanes, 24 bank patterns, 48 voices, six sections, six ideas and the generator', await page.locator('.style').count() === 35 && await page.locator('.bankcard').count() === 24 && await page.locator('#sound option').count() === 48 && await page.locator('#map button').count() === 6 && await page.locator('#ideas button').count() === 7);
-  await page.click('[data-family="techno"]'); check('The filters show 17 techno lanes and 15 classics', await page.locator('.style').count() === 17 && await page.locator('.style.techno').count() === 17 && (await page.click('[data-family="classic"]'), await page.locator('.style').count()) === 15);
+  check('45 lanes, 28 bank patterns, 58 voices, six sections, six ideas and the generator', await page.locator('.style').count() === 45 && await page.locator('.bankcard').count() === 28 && await page.locator('#sound option').count() === 58 && await page.locator('#map button').count() === 6 && await page.locator('#ideas button').count() === 7);
+  await page.click('[data-family="techno"]'); check('The filters show 27 techno lanes and 18 classics', await page.locator('.style').count() === 27 && await page.locator('.style.techno').count() === 27 && (await page.click('[data-family="classic"]'), await page.locator('.style').count()) === 18);
   await page.click('[data-family="all"]');
   await page.click('#play'); await page.waitForTimeout(900);
   check('Playback runs and the playhead moves', await page.evaluate(() => WOW_QA.player.playing && WOW_QA.player.now().frac > 0 && document.getElementById('head').getAttribute('visibility') === 'visible'));
@@ -52,7 +52,7 @@ try {
   });
   report.audio = audio;
   const lanes = Object.entries(audio).filter(([k]) => k.includes('/'));
-  check('All 70 offline renders are finite, audible and below full scale', lanes.length === 70 && lanes.every(([, a]) => a.bad === 0 && a.rms > .01 && a.peak < .98));
+  check('All 90 offline renders are finite, audible and below full scale', lanes.length === 90 && lanes.every(([, a]) => a.bad === 0 && a.rms > .01 && a.peak < .98));
   check('Eight bars render to exactly eight bars', Math.abs(audio['tech/drop1'].secs - 8 * 4 * 60 / 128) < .001);
   check('The wow knob makes the talking notes measurably brighter', audio.wow100.bright > audio.wow0.bright * 1.15);
   check('The sub knob adds real level', audio.sub100.rms > audio.sub0.rms * 1.3);

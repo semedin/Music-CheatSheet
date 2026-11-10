@@ -1,10 +1,10 @@
 # Wow — the bassline cheat sheet
 
-Wow is a cheat sheet you can play. It holds 35 bassline lanes for house and techno, 20 from the floors of 2025–26 and 15 classics and revivals those ideas came from, with 119 written basslines between them, 48 voices, and a bank of the 24 rhythms that basslines are built from. It writes each idea **six ways**, one for every section of a track, and does the same for a loop you draw yourself. Open `wow.html`; everything runs locally in one standalone file.
+Wow is a cheat sheet you can play. It holds 45 bassline lanes, 27 techno and 18 house: 27 from the floors of 2025–26 and 18 classics and revivals those ideas came from, with 149 written basslines between them, 58 voices, and a bank of the 28 rhythms that basslines are built from. It writes each idea **six ways**, one for every section of a track, and does the same for a loop you draw yourself. Open `wow.html`; everything runs locally in one standalone file.
 
 The page is built on one claim: **a bassline that works in the drop should not be rewritten for the rest of the track, only edited.** The rhythm is what people dance to, so every section keeps the rhythm and changes one other thing.
 
-## The 35 lanes
+## The 45 lanes
 
 ### Right now
 
@@ -34,7 +34,27 @@ Also current: **Latin tech tumbao** (126), **Log drum** (amapiano crossover, 113
 | Deep house sub | 1986 → always | 120 | Bleep and bass | 1990 → revival | 134 |
 | Italo sixteenths | 1977 → always | 118 | | | |
 
-Filter the grid by family (house, techno) or by era (right now, classics and revivals). **Surprise me** picks a lane and an idea at random. The years are rough markers for when each idea was everywhere, not a discography. 2-step and Electro 808 play over a broken kick instead of four-on-the-floor.
+Filter the grid by family (house, techno) or by era (right now, classics and revivals). **Surprise me** picks a lane and an idea at random. The years are rough markers for when each idea was everywhere, not a discography. 2-step, Electro 808 and Broken techno play over a broken kick instead of four-on-the-floor.
+
+### More techno
+
+Techno is the larger half of the page, and the grid lists it first.
+
+| Lane | Years | BPM | The idea |
+|---|---|---|---|
+| Warehouse roller | 2010 → 2026 | 133 | A dull tom-like bass behind the kick, the last 16th pushed hard |
+| Deep techno pulse | 2015 → 2026 | 130 | A soft sub at odd spacings with an echo, opening over the whole phrase |
+| Broken techno | 2018 → 2026 | 136 | A heavy sub leaning on a kick that is not four-on-the-floor |
+| Reverse bass | 2023–26 | 155 | A distorted note that swells after each kick and is cut by the next |
+| Hard acid | 1995 → 2026 | 150 | A 303 at full speed and distortion, between the kicks |
+| Psy-techno roll | 2024–26 | 154 | Kick and three, stepping up a semitone and back |
+| Melodic techno arp | 2019 → 2026 | 125 | Root, fifth, octave in the gaps, following four chords |
+| Rominimal roller | 2012 → 2026 | 127 | A quiet, swung sub full of ghost notes and small slides |
+| Tribal techno toms | 2000 → revival | 134 | The bassline as tuned toms |
+| Ghetto tech 808 | 1996 → revival | 150 | A booming 808 that jacks with the kick |
+| Tekno kick-bass | 1994 → always | 168 | A short distorted note on every offbeat |
+
+Broken techno plays over a broken kick. Reverse bass uses a slow attack, so each note fades in.
 
 Each lane has three to six written ideas, a one-line statement of the idea, three reasons it moves a floor, a four-step sound recipe for your own synth, and a few artists whose records sit in that lane. The artist names are a pointer to what to listen to; no pattern here is transcribed from a record.
 
@@ -42,13 +62,13 @@ Each lane has three to six written ideas, a one-line statement of the idea, thre
 
 An idea is two bars of 16ths, written as 32 tokens: `.` rest, `-` hold, a number for semitones above the root, and the flags `!` accent, `~` slide into this note, `w` wow, `'` short, `g` ghost (quiet, short and dull). The page shows the tokens for the idea you are hearing.
 
-Every loop obeys a grammar that the tests check: notes never overlap, a slide needs a touching note to slide from, the loop stays between a fifth below the root and an octave and a fifth above it, and in the nineteen **kick-free** lanes no note starts on a kick. The other sixteen land on the kick on purpose (afro, organ, deep house, Italo, acid, EBM and others), and the page counts the notes that do.
+Every loop obeys a grammar that the tests check: notes never overlap, a slide needs a touching note to slide from, the loop stays between a fifth below the root and an octave and a fifth above it, and in the 25 **kick-free** lanes no note starts on a kick. The other 20 land on the kick on purpose (afro, organ, deep house, Italo, acid, EBM and others), and the page counts the notes that do.
 
 **New idea** writes a loop in the lane's own grammar: it measures where the three written ideas put their notes (per 16th position), their note lengths and their note pool, generates bar one from those odds, then repeats it as bar two with a new last beat. It is seeded, so idea #7 is always the same loop.
 
 ## The pattern bank
 
-Twenty-four rhythms, each written on the root with at most an octave, a fifth and a ♭3: offbeat, double offbeat, offbeat with octave and ghost, rolling eighths, rolling 16ths, kick and three, stab and sustain, gliding legato, tresillo, tumbao, octave eighths, offbeat octave pop, question and answer, ghost pickups, pedal and ping, push into the one, three against four, chromatic roll, two hits, sub drop, hold and pump, two-step skip, machine sixteenths and hocket with the kick.
+Twenty-eight rhythms, each written on the root with at most an octave, a fifth and a ♭3 (four are techno-specific: reverse bass, kick and tail, late sixteenth, five against four): offbeat, double offbeat, offbeat with octave and ghost, rolling eighths, rolling 16ths, kick and three, stab and sustain, gliding legato, tresillo, tumbao, octave eighths, offbeat octave pop, question and answer, ghost pickups, pedal and ping, push into the one, three against four, chromatic roll, two hits, sub drop, hold and pump, two-step skip, machine sixteenths and hocket with the kick.
 
 Click one and it becomes **your loop** on the lane you are in. It keeps the lane's sound, drums, tempo and fills, so the same rhythm can be heard as tech house, as hard techno or as dub. If the rhythm lands on the kick, the lane stops dodging the kick for that loop and the page counts the hits.
 
@@ -93,7 +113,7 @@ The fills are: a gap, octave pops, a four-note run, a stutter, and a slide from 
 
 Every lane starts with its own settings, and all of them can be changed:
 
-- **Sound**: any lane can play through any of 48 voices: the 35 lane voices plus thirteen that belong to no lane (wide reese, FM growl, a talker that says *yoy*, 16th wobble, square sub, hollow organ square, short pluck, tape sub, metal knock, bright saw stack, rubber band, sub drop, square acid). The recipe on the page still describes the lane's original sound, and says so.
+- **Sound**: any lane can play through any of 58 voices: the 45 lane voices plus thirteen that belong to no lane (wide reese, FM growl, a talker that says *yoy*, 16th wobble, square sub, hollow organ square, short pluck, tape sub, metal knock, bright saw stack, rubber band, sub drop, square acid). The recipe on the page still describes the lane's original sound, and says so.
 - **Chords**: the lane's own movement, stay on the root, or one of five two- and four-chord movements. The loop is transposed to each root for two bars.
 - **Break**: tease, pad or drone, as in the table above.
 - **Fill**: gap, octave pops, run, stutter, slide, or none.
@@ -127,9 +147,9 @@ Settings are remembered in this browser.
 
 ## What is checked, and what is not
 
-`node wow-src/test.mjs` checks the engine with no browser: all 119 written ideas and 300 generated ideas per lane against the grammar; all 24 bank patterns on every lane in every section; ghost notes and accent shapes; the editor's normaliser; that no two written ideas are the same; every combination of the options; every section of every idea for overlaps, register and slides; that kick-free lanes never start a note on a kick that is actually playing; that each section does what the table above says (root-only intro, silent beats, the climb, sub and kick in and out); that the energy readout puts drop 2 at or above drop 1, and drop 1 above the intro, the break and the outro; and that the MIDI files are well formed with every note-on closed.
+`node wow-src/test.mjs` checks the engine with no browser: all 149 written ideas and 300 generated ideas per lane against the grammar; all 28 bank patterns on every lane in every section; ghost notes and accent shapes; the editor's normaliser; that no two written ideas are the same; every combination of the options; every section of every idea for overlaps, register and slides; that kick-free lanes never start a note on a kick that is actually playing; that each section does what the table above says (root-only intro, silent beats, the climb, sub and kick in and out); that the energy readout puts drop 2 at or above drop 1, and drop 1 above the intro, the break and the outro; and that the MIDI files are well formed with every note-on closed.
 
-`node wow-src/browser-check.mjs` drives the page in Chromium: playback, switching lanes and sections while playing, the whole-track mode, exports, a reload and a phone-width layout. It adds, changes and removes notes in the editor, stamps a bank pattern, saves to the crate and opens a share link. It renders the drop and the break of all 35 lanes offline and checks each is finite, audible and below full scale. It also checks that turning Wow up makes a talking lane measurably brighter, that the Sub knob adds level, that a swapped voice is playing within a beat, and that Space adds stereo width and is mono at zero.
+`node wow-src/browser-check.mjs` drives the page in Chromium: playback, switching lanes and sections while playing, the whole-track mode, exports, a reload and a phone-width layout. It adds, changes and removes notes in the editor, stamps a bank pattern, saves to the crate and opens a share link. It renders the drop and the break of all 45 lanes offline and checks each is finite, audible and below full scale. It also checks that turning Wow up makes a talking lane measurably brighter, that the Sub knob adds level, that a swapped voice is playing within a beat, and that Space adds stereo width and is mono at zero.
 
 Those are checks of rules and signal integrity. The readouts on the page (notes per bar, notes on a kick, how much of the time the bass sounds, gestures, the root in Hz) count things. **None of this measures whether a bassline is good, and nothing here can promise a chart position.** The lanes, the tempos and the reasons given are a producer's reading of current club music, not a statistical study of the charts. Trust your ears and a loud system.
 

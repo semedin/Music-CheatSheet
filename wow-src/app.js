@@ -27,8 +27,8 @@
   }
   function renderStyles() {
     const n = f => W.STYLES.filter(s => f === 'all' || s.family === f || s.era === f).length;
-    $('family').innerHTML = [['all', 'All'], ['house', 'House'], ['techno', 'Techno'], ['now', 'Right now'], ['classic', 'Classics & revivals']].map(([id, label]) => [id, `${label} · ${n(id)}`]).map(([id, label]) => `<button data-family="${id}" aria-pressed="${state.family === id}">${label}</button>`).join('');
-    $('styles').innerHTML = W.STYLES.filter(s => state.family === 'all' || s.family === state.family || s.era === state.family).map(s =>
+    $('family').innerHTML = [['all', 'All'], ['techno', 'Techno'], ['house', 'House'], ['now', 'Right now'], ['classic', 'Classics & revivals']].map(([id, label]) => [id, `${label} · ${n(id)}`]).map(([id, label]) => `<button data-family="${id}" aria-pressed="${state.family === id}">${label}</button>`).join('');
+    $('styles').innerHTML = [...W.STYLES].sort((a, b) => (a.family === 'techno' ? 0 : 1) - (b.family === 'techno' ? 0 : 1) || (a.era === 'now' ? 0 : 1) - (b.era === 'now' ? 0 : 1)).filter(s => state.family === 'all' || s.family === state.family || s.era === state.family).map(s =>
       `<button class="style ${s.family}" role="listitem" data-style="${s.id}" aria-pressed="${s.id === state.style}"><span class="meta"><span>${esc(s.genre)}</span><span>${s.bpm}</span></span><b>${esc(s.name)}</b><small><i>${esc(s.year)}</i> · ${esc(s.lane)}</small>${mini(s.ideas[0].notes)}</button>`).join('');
   }
 

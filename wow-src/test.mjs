@@ -6,15 +6,15 @@ let count = 0;
 const test = (name, fn) => { fn(); count++; console.log('PASS ' + name); };
 const each = fn => { for (const st of W.STYLES) for (const idea of [...st.ideas, W.generate(st, 1), W.generate(st, 2), W.generate(st, 3)]) fn(st, idea); };
 
-test('Thirty-five lanes (18 house, 17 techno; 20 current, 15 classic), 119 written ideas, 48 voices', () => {
-  assert.equal(W.STYLES.length, 35);
-  assert.equal(new Set(W.STYLES.map(s => s.id)).size, 35);
-  assert.equal(W.SOUNDS.length, 48); assert.equal(new Set(W.SOUNDS.map(s => s.id)).size, 48); assert.equal(new Set(W.SOUNDS.map(s => s.name)).size, 48, 'every voice has its own name');
-  assert.equal(W.STYLES.reduce((a, s) => a + s.ideas.length, 0), 119);
-  assert.equal(new Set(W.STYLES.flatMap(s => s.ideas.map(i => i.text))).size, 119, 'no two written ideas are the same');
-  assert.equal(W.STYLES.filter(s => s.family === 'house').length, 18); assert.equal(W.STYLES.filter(s => s.family === 'techno').length, 17);
-  assert.equal(W.STYLES.filter(s => s.era === 'now').length, 20); assert.equal(W.STYLES.filter(s => s.era === 'classic').length, 15);
-  for (const st of W.STYLES) { assert(st.ideas.length >= 3 && st.ideas.length <= 6, st.id); assert(st.why.length >= 3 && st.recipe.length >= 4 && st.idea && st.lane, st.id); assert(st.bpm >= 110 && st.bpm <= 156, st.id); }
+test('Forty-five lanes (27 techno, 18 house; 27 current, 18 classic), 149 written ideas, 58 voices', () => {
+  assert.equal(W.STYLES.length, 45);
+  assert.equal(new Set(W.STYLES.map(s => s.id)).size, 45);
+  assert.equal(W.SOUNDS.length, 58); assert.equal(new Set(W.SOUNDS.map(s => s.id)).size, 58); assert.equal(new Set(W.SOUNDS.map(s => s.name)).size, 58, 'every voice has its own name');
+  assert.equal(W.STYLES.reduce((a, s) => a + s.ideas.length, 0), 149);
+  assert.equal(new Set(W.STYLES.flatMap(s => s.ideas.map(i => i.text))).size, 149, 'no two written ideas are the same');
+  assert.equal(W.STYLES.filter(s => s.family === 'house').length, 18); assert.equal(W.STYLES.filter(s => s.family === 'techno').length, 27);
+  assert.equal(W.STYLES.filter(s => s.era === 'now').length, 27); assert.equal(W.STYLES.filter(s => s.era === 'classic').length, 18);
+  for (const st of W.STYLES) { assert(st.ideas.length >= 3 && st.ideas.length <= 6, st.id); assert(st.why.length >= 3 && st.recipe.length >= 4 && st.idea && st.lane, st.id); assert(st.bpm >= 110 && st.bpm <= 170, st.id); }
 });
 test('Every written idea obeys its lane\'s grammar', () => {
   for (const st of W.STYLES) for (const idea of st.ideas) assert.deepEqual(W.checkLoop(idea.notes, st), [], st.id + ' / ' + idea.name);
@@ -129,8 +129,8 @@ test('Options: any lane takes any voice, chord movement, break and fill, and sti
   assert.equal(a.notes.length, 4); assert.equal(b.notes.length, 1);
   assert.notDeepEqual(W.sectionFor(W.withOptions(base, {move: 'i-VI-VII'}), base.ideas[0], 'drop1').notes, W.sectionFor(base, base.ideas[0], 'drop1').notes);
 });
-test('The pattern bank: 24 distinct rhythms that work on every lane, in every section', () => {
-  assert.equal(W.BANK.length, 24); assert.equal(new Set(W.BANK.map(b => b.text)).size, 24); assert.equal(new Set(W.BANK.map(b => b.id)).size, 24);
+test('The pattern bank: 28 distinct rhythms that work on every lane, in every section', () => {
+  assert.equal(W.BANK.length, 28); assert.equal(new Set(W.BANK.map(b => b.text)).size, 28); assert.equal(new Set(W.BANK.map(b => b.id)).size, 28);
   assert(W.SOURCES.length >= 8 && W.SOURCES.every(s => /^https:\/\//.test(s.url) && s.title && s.used));
   for (const b of W.BANK) {
     assert.deepEqual(W.checkLoop(b.notes, null), [], b.id); assert.deepEqual(W.normalize(b.notes), b.notes, b.id + ' is already normal');
