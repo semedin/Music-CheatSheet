@@ -6,14 +6,15 @@ let count = 0;
 const test = (name, fn) => { fn(); count++; console.log('PASS ' + name); };
 const each = fn => { for (const st of W.STYLES) for (const idea of [...st.ideas, W.generate(st, 1), W.generate(st, 2), W.generate(st, 3)]) fn(st, idea); };
 
-test('Thirty-four lanes (18 house, 16 techno; 19 current, 15 classic), three written ideas each', () => {
-  assert.equal(W.STYLES.length, 34);
-  assert.equal(new Set(W.STYLES.map(s => s.id)).size, 34);
-  assert.equal(new Set(W.STYLES.map(s => s.sn)).size, 34, 'every voice has its own name');
-  assert.equal(new Set(W.STYLES.flatMap(s => s.ideas.map(i => i.text))).size, 102, 'no two written ideas are the same');
-  assert.equal(W.STYLES.filter(s => s.family === 'house').length, 18); assert.equal(W.STYLES.filter(s => s.family === 'techno').length, 16);
-  assert.equal(W.STYLES.filter(s => s.era === 'now').length, 19); assert.equal(W.STYLES.filter(s => s.era === 'classic').length, 15);
-  for (const st of W.STYLES) { assert.equal(st.ideas.length, 3, st.id); assert(st.why.length >= 3 && st.recipe.length >= 4 && st.idea && st.lane, st.id); assert(st.bpm >= 110 && st.bpm <= 156, st.id); }
+test('Thirty-five lanes (18 house, 17 techno; 20 current, 15 classic), 119 written ideas, 48 voices', () => {
+  assert.equal(W.STYLES.length, 35);
+  assert.equal(new Set(W.STYLES.map(s => s.id)).size, 35);
+  assert.equal(W.SOUNDS.length, 48); assert.equal(new Set(W.SOUNDS.map(s => s.id)).size, 48); assert.equal(new Set(W.SOUNDS.map(s => s.name)).size, 48, 'every voice has its own name');
+  assert.equal(W.STYLES.reduce((a, s) => a + s.ideas.length, 0), 119);
+  assert.equal(new Set(W.STYLES.flatMap(s => s.ideas.map(i => i.text))).size, 119, 'no two written ideas are the same');
+  assert.equal(W.STYLES.filter(s => s.family === 'house').length, 18); assert.equal(W.STYLES.filter(s => s.family === 'techno').length, 17);
+  assert.equal(W.STYLES.filter(s => s.era === 'now').length, 20); assert.equal(W.STYLES.filter(s => s.era === 'classic').length, 15);
+  for (const st of W.STYLES) { assert(st.ideas.length >= 3 && st.ideas.length <= 6, st.id); assert(st.why.length >= 3 && st.recipe.length >= 4 && st.idea && st.lane, st.id); assert(st.bpm >= 110 && st.bpm <= 156, st.id); }
 });
 test('Every written idea obeys its lane\'s grammar', () => {
   for (const st of W.STYLES) for (const idea of st.ideas) assert.deepEqual(W.checkLoop(idea.notes, st), [], st.id + ' / ' + idea.name);
@@ -112,7 +113,7 @@ test('Roots stay in the sub register and the WAV header is right', () => {
 test('Options: any lane takes any voice, chord movement, break and fill, and still obeys the rules', () => {
   const base = W.styleById('tech');
   assert.equal(W.withOptions(base, {}).vkey, ''); assert.equal(W.withOptions(base, {sound: 'tech', move: 'auto', brk: 'auto', fill: 'auto'}).vkey, '');
-  for (const st of W.STYLES) for (const sound of ['', 'acid', 'hoover']) for (const move of Object.keys(W.MOVES)) for (const brk of Object.keys(W.BREAKS)) for (const fill of Object.keys(W.FILL_NAMES)) {
+  for (const st of W.STYLES) for (const sound of ['', 'acid', 'x-yoy']) for (const move of Object.keys(W.MOVES)) for (const brk of Object.keys(W.BREAKS)) for (const fill of Object.keys(W.FILL_NAMES)) {
     const o = W.withOptions(st, {sound, move, brk, fill});
     assert.equal(o.sound.id, sound || st.id); assert.equal(o.rigKey, st.id + '/' + (sound || st.id));
     if (move !== 'auto') assert.deepEqual(o.prog, W.MOVES[move]);
@@ -128,6 +129,42 @@ test('Options: any lane takes any voice, chord movement, break and fill, and sti
   assert.equal(a.notes.length, 4); assert.equal(b.notes.length, 1);
   assert.notDeepEqual(W.sectionFor(W.withOptions(base, {move: 'i-VI-VII'}), base.ideas[0], 'drop1').notes, W.sectionFor(base, base.ideas[0], 'drop1').notes);
 });
+test('The pattern bank: 24 distinct rhythms that work on every lane, in every section', () => {
+  assert.equal(W.BANK.length, 24); assert.equal(new Set(W.BANK.map(b => b.text)).size, 24); assert.equal(new Set(W.BANK.map(b => b.id)).size, 24);
+  assert(W.SOURCES.length >= 8 && W.SOURCES.every(s => /^https:\/\//.test(s.url) && s.title && s.used));
+  for (const b of W.BANK) {
+    assert.deepEqual(W.checkLoop(b.notes, null), [], b.id); assert.deepEqual(W.normalize(b.notes), b.notes, b.id + ' is already normal');
+    for (const st of W.STYLES) {
+      const o = W.withOptions(st, {}, b);
+      assert.equal(o.kickFree, st.kickFree && !b.notes.some(n => n.s % 4 === 0), 'a loop that lands on the kick switches the dodge off');
+      for (const s of W.SECTIONS) { const sec = W.sectionFor(o, b, s.id); let end = 0; assert(sec.notes.length > 0); for (const n of sec.notes) { assert(n.t >= end && n.t + n.l <= 128, `${b.id} on ${st.id} ${s.id}`); end = n.t + n.l; } }
+    }
+  }
+});
+test('Ghost notes are quiet, short and never chosen for the skeleton; accent shapes set a hierarchy', () => {
+  const g = W.parse(". 0g 0 . | . 0g 0 . | . 0g 0 . | . 0g 0 0g " + ". 0g 0 . | . 0g 0 . | . 0g 0 . | 0g 0g 0 .");
+  assert(g.filter(n => n.ghost).every(n => n.short && n.l === 1)); assert.deepEqual(W.parse(W.unparse(g)), g);
+  const st = W.styleById('disco'), drop = W.section(st, g, 'drop1');
+  assert(drop.notes.filter(n => n.ghost).length >= 20 && drop.notes.filter(n => n.ghost).every(n => n.vel === .35));
+  assert(W.skeleton(g).every(n => !n.ghost) && W.skeleton(g).length >= 2);
+  for (const k of ['offbeat', 'roll', 'back', 'flat']) {
+    const sec = W.section(W.withOptions(st, {accent: k}), g, 'drop1');
+    for (const n of sec.notes) assert.equal(n.vel, n.ghost ? .35 : W.ACCENTS[k].v[n.t % 4]);
+  }
+  assert.equal(W.withOptions(st, {accent: 'auto'}).vkey, '');
+});
+test('The editor\'s normaliser makes any note list legal', () => {
+  const r = W.rng(5);
+  for (let i = 0; i < 2000; i++) {
+    const notes = Array.from({length: 1 + Math.floor(r() * 14)}, () => ({s: Math.floor(r() * 40) - 4, l: Math.floor(r() * 9), semi: Math.floor(r() * 40) - 15, acc: r() < .3, slide: r() < .4, wow: r() < .3, short: r() < .3, ...(r() < .2 ? {ghost: true} : {})}));
+    const n = W.normalize(notes);
+    assert(n.length >= 1); assert.deepEqual(W.checkLoop(n, null).filter(p => !p.includes('fewer')), []); assert.deepEqual(W.parse(W.unparse(n)), n); assert.deepEqual(W.normalize(n), n);
+    const v = W.validate({idea: -2, custom: W.unparse(n)}); assert.equal(v.idea, -2); assert.equal(v.custom, W.unparse(n));
+    for (const s of W.SECTIONS) W.section(W.styleById('tech'), n, s.id);
+  }
+  assert.equal(W.validate({idea: -2, custom: 'rubbish'}).idea, 0); assert.equal(W.validate({idea: 9, style: 'afro'}).idea, 0);
+  assert.equal(W.ideaFor(W.styleById('tech'), -2, 1, W.BANK[0].text).custom, true);
+});
 test('Broken-beat lanes put the kick where they say', () => {
   const g = W.styleById('garage'), bar = W.section(g, g.ideas[0].notes, 'drop1').bars[0];
   assert.deepEqual(W.drumBar(g, bar).filter(h => h.type === 'kick').map(h => h.s), [0, 10]);
@@ -135,7 +172,7 @@ test('Broken-beat lanes put the kick where they say', () => {
 test('Saved state is validated', () => {
   assert.deepEqual(W.validate(null), W.defaults());
   const s = W.validate({style: 'nope', section: 'x', bpm: 999, key: -3, wow: 'a', idea: 7, family: 'jazz'});
-  assert.equal(s.style, 'tech'); assert.equal(s.section, 'drop1'); assert.equal(s.bpm, 170); assert.equal(s.key, 0); assert.equal(s.wow, 70); assert.equal(s.idea, 2); assert.equal(s.family, 'all');
+  assert.equal(s.style, 'tech'); assert.equal(s.section, 'drop1'); assert.equal(s.bpm, 170); assert.equal(s.key, 0); assert.equal(s.wow, 70); assert.equal(s.idea, 0); assert.equal(s.family, 'all');
   const o = W.validate({sound: 'nope', move: 'x', brk: 'pad', fill: 'gap', swing: 99, gate: 1, pump: 500, family: 'classic'});
   assert.equal(o.sound, ''); assert.equal(o.move, 'auto'); assert.equal(o.brk, 'pad'); assert.equal(o.fill, 'gap'); assert.equal(o.swing, 30); assert.equal(o.gate, 30); assert.equal(o.pump, 150); assert.equal(o.family, 'classic');
   assert.equal(W.validate({style: 'acid', idea: -1, seed: 42}).seed, 42);
