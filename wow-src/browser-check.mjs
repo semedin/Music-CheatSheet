@@ -21,8 +21,8 @@ try {
   page.on('console', m => m.type() === 'error' && !m.text().includes('Failed to load resource') && report.errors.push(m.text()));
   await page.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
   await page.goto(url); await page.waitForFunction(() => window.WOW_QA);
-  check('Sixteen lanes, six sections, three ideas and the generator', await page.locator('.style').count() === 16 && await page.locator('#map button').count() === 6 && await page.locator('#ideas button').count() === 4);
-  await page.click('[data-family="techno"]'); check('The family filter shows eight techno lanes', await page.locator('.style').count() === 8 && await page.locator('.style.techno').count() === 8);
+  check('Thirty-four lanes, six sections, three ideas and the generator', await page.locator('.style').count() === 34 && await page.locator('#map button').count() === 6 && await page.locator('#ideas button').count() === 4);
+  await page.click('[data-family="techno"]'); check('The filters show 16 techno lanes and 15 classics', await page.locator('.style').count() === 16 && await page.locator('.style.techno').count() === 16 && (await page.click('[data-family="classic"]'), await page.locator('.style').count()) === 15);
   await page.click('[data-family="all"]');
   await page.click('#play'); await page.waitForTimeout(900);
   check('Playback runs and the playhead moves', await page.evaluate(() => WOW_QA.player.playing && WOW_QA.player.now().frac > 0 && document.getElementById('head').getAttribute('visibility') === 'visible'));
@@ -45,17 +45,27 @@ try {
   await page.screenshot({path: path.join(qa, 'desktop.png'), fullPage: true});
   const audio = await page.evaluate(async () => {
     const out = {}, stat = b => { const d = b.getChannelData(0); let peak = 0, sq = 0, bad = 0, hi = 0, prev = 0; for (const x of d) { if (!Number.isFinite(x)) bad++; peak = Math.max(peak, Math.abs(x)); sq += x * x; hi += (x - prev) * (x - prev); prev = x; } return {peak, rms: Math.sqrt(sq / d.length), bright: Math.sqrt(hi / sq), bad, secs: b.length / b.sampleRate}; };
-    for (const st of WOW.STYLES) for (const id of ['drop1', 'break']) out[st.id + '/' + id] = stat(await WowAudio.render(st, WOW.sectionFor(st, st.ideas[0], id).bars, {bpm: st.bpm, root: WOW.rootMidi(st.key), knobs: WOW.defaults()}));
+    for (const st of WOW.STYLES) for (const id of ['drop1', 'break']) out[st.id + '/' + id] = stat(await WowAudio.render(st, WOW.sectionFor(st, st.ideas[0], id).bars, {bpm: st.bpm, root: WOW.rootMidi(st.key), knobs: {...WOW.defaults(), swing: null}}));
     const tech = WOW.STYLES[0], r = async k => stat(await WowAudio.render(tech, WOW.sectionFor(tech, tech.ideas[0], 'drop1').bars, {bpm: 128, root: 31, knobs: {...WOW.defaults(), drums: 0, ...k}}));
     out.wow0 = await r({wow: 0, sub: 0}); out.wow100 = await r({wow: 100, sub: 0}); out.sub0 = await r({sub: 0}); out.sub100 = await r({sub: 100});
     return out;
   });
   report.audio = audio;
   const lanes = Object.entries(audio).filter(([k]) => k.includes('/'));
-  check('All 32 offline renders are finite, audible and below full scale', lanes.length === 32 && lanes.every(([, a]) => a.bad === 0 && a.rms > .01 && a.peak < .98));
+  check('All 68 offline renders are finite, audible and below full scale', lanes.length === 68 && lanes.every(([, a]) => a.bad === 0 && a.rms > .01 && a.peak < .98));
   check('Eight bars render to exactly eight bars', Math.abs(audio['tech/drop1'].secs - 8 * 4 * 60 / 128) < .001);
   check('The wow knob makes the talking notes measurably brighter', audio.wow100.bright > audio.wow0.bright * 1.15);
   check('The sub knob adds real level', audio.sub100.rms > audio.sub0.rms * 1.3);
+  await page.click('#play');
+  await page.selectOption('#sound', 'hoover'); await page.selectOption('#move', 'i-VI-VII'); await page.selectOption('#brk', 'drone'); await page.selectOption('#fill', 'stutter');
+  check('Sound, chords, break and fill can be swapped on any lane', await page.evaluate(() => { const s = WOW_QA.style(); return s.sound.id === 'hoover' && s.prog[2] === -4 && s.breakMode === 'drone' && s.fill === 'stutter' && WOW_QA.sec('break').notes.length === 1 && WOW_QA.player.playing; }));
+  await page.waitForTimeout(700);
+  check('A new voice is swapped in on the next beat', await page.evaluate(() => WOW_QA.player.rig.key === 'tech/hoover'));
+  const swapped = await page.evaluate(async () => { const st = WOW_QA.style(), b = await WowAudio.render(st, WOW_QA.sec('drop1').bars, {bpm: 128, root: 31, knobs: {...WOW_QA.state, space: 0}}), w = await WowAudio.render(st, WOW_QA.sec('drop1').bars, {bpm: 128, root: 31, knobs: {...WOW_QA.state, space: 200}}); const side = x => { const l = x.getChannelData(0), r = x.getChannelData(1); let s = 0; for (let i = 0; i < l.length; i++) s += (l[i] - r[i]) ** 2; return Math.sqrt(s / l.length); }; return [side(b), side(w)]; });
+  check('Space adds stereo width, and zero is mono', swapped[0] < 1e-4 && swapped[1] > .005);
+  await page.click('#surprise');
+  check('Surprise me picks a lane and keeps playing', await page.evaluate(() => WOW_QA.player.playing && WOW_QA.state.sound === ''));
+  await page.click('[data-style="tech"]'); await page.click('#play');
   for (const [btn, ext, min] of [['#midi-sec', '.mid', 300], ['#midi-all', '.mid', 3000], ['#wav-sec', '.wav', 1e6]]) {
     const [dl] = await Promise.all([page.waitForEvent('download'), page.click(btn)]), file = path.join(qa, dl.suggestedFilename()); await dl.saveAs(file);
     check(`${btn} downloads a ${ext} file`, file.endsWith(ext) && fs.statSync(file).size > min);

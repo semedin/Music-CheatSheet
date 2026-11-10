@@ -13,7 +13,7 @@ export const SECTIONS = [
     blurb: 'Studios that generate, edit and export MIDI. Start here when you want notes to drag into Ableton.',
     pages: [
       {file: 'wow.html', title: 'Wow — the bassline cheat sheet', edition: 'New', badge: 'Latest',
-        text: 'Sixteen 2025–26 house and techno basslines, from rubbery tech house and speed garage warp to peak-time rumble and hard techno. Each idea is rewritten for six sections of a track (intro, drop, break, build, second drop, outro), with a talking filter, a why-it-works sheet, a sound recipe, a generator for new ideas in the same grammar, and MIDI and WAV for one section or all 64 bars.',
+        text: '34 bassline lanes and 102 written ideas for house and techno: what fills floors in 2025–26 (tech house, speed garage warp, afro, Latin tech, log drum, peak-time rumble, hard techno) and the classics behind it (French filter, 2-step, Italo, electro house, Detroit, dub techno, EBM, rave hoover). Each idea is rewritten for six sections of a track. Swap the sound (34 voices), chords, break and fill on any lane; a talking filter, a generator, a why-it-works sheet and sound recipe; MIDI and WAV for one section or all 64 bars.',
         doc: 'WOW.md', src: 'wow-src'},
       {file: 'breeder.html', title: 'Breeder — grow a groove', edition: 'New', badge: 'Latest',
         text: 'Don\'t write the groove, grow it. Eight whole loops (drums, bass, riff, chords) in any of Orbit\'s 14 genres, or bred from your own MIDI. Star the ones that move you and breed: children cross over gene by gene and mutate inside the genre\'s grammar, each measured against the genre and telling you how it was made. Locks, drift, a family tree, lineage MIDI, WAV loops, and straight into Transplant.',

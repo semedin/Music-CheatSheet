@@ -6,11 +6,14 @@ let count = 0;
 const test = (name, fn) => { fn(); count++; console.log('PASS ' + name); };
 const each = fn => { for (const st of W.STYLES) for (const idea of [...st.ideas, W.generate(st, 1), W.generate(st, 2), W.generate(st, 3)]) fn(st, idea); };
 
-test('Sixteen lanes, eight house and eight techno, three written ideas each', () => {
-  assert.equal(W.STYLES.length, 16);
-  assert.equal(new Set(W.STYLES.map(s => s.id)).size, 16);
-  for (const f of ['house', 'techno']) assert.equal(W.STYLES.filter(s => s.family === f).length, 8);
-  for (const st of W.STYLES) { assert.equal(st.ideas.length, 3, st.id); assert(st.why.length >= 3 && st.recipe.length >= 4 && st.idea && st.lane, st.id); assert(st.bpm >= 118 && st.bpm <= 156, st.id); }
+test('Thirty-four lanes (18 house, 16 techno; 19 current, 15 classic), three written ideas each', () => {
+  assert.equal(W.STYLES.length, 34);
+  assert.equal(new Set(W.STYLES.map(s => s.id)).size, 34);
+  assert.equal(new Set(W.STYLES.map(s => s.sn)).size, 34, 'every voice has its own name');
+  assert.equal(new Set(W.STYLES.flatMap(s => s.ideas.map(i => i.text))).size, 102, 'no two written ideas are the same');
+  assert.equal(W.STYLES.filter(s => s.family === 'house').length, 18); assert.equal(W.STYLES.filter(s => s.family === 'techno').length, 16);
+  assert.equal(W.STYLES.filter(s => s.era === 'now').length, 19); assert.equal(W.STYLES.filter(s => s.era === 'classic').length, 15);
+  for (const st of W.STYLES) { assert.equal(st.ideas.length, 3, st.id); assert(st.why.length >= 3 && st.recipe.length >= 4 && st.idea && st.lane, st.id); assert(st.bpm >= 110 && st.bpm <= 156, st.id); }
 });
 test('Every written idea obeys its lane\'s grammar', () => {
   for (const st of W.STYLES) for (const idea of st.ideas) assert.deepEqual(W.checkLoop(idea.notes, st), [], st.id + ' / ' + idea.name);
@@ -106,10 +109,35 @@ test('Roots stay in the sub register and the WAV header is right', () => {
   const w = W.wav(new Float32Array([0, 1, -1, 2]), new Float32Array(4), 44100), v = new DataView(w.buffer);
   assert.equal(w.length, 44 + 16); assert.equal(v.getUint32(24, true), 44100); assert.equal(v.getInt16(48, true), 32767); assert.equal(v.getInt16(56, true), 32767);
 });
+test('Options: any lane takes any voice, chord movement, break and fill, and still obeys the rules', () => {
+  const base = W.styleById('tech');
+  assert.equal(W.withOptions(base, {}).vkey, ''); assert.equal(W.withOptions(base, {sound: 'tech', move: 'auto', brk: 'auto', fill: 'auto'}).vkey, '');
+  for (const st of W.STYLES) for (const sound of ['', 'acid', 'hoover']) for (const move of Object.keys(W.MOVES)) for (const brk of Object.keys(W.BREAKS)) for (const fill of Object.keys(W.FILL_NAMES)) {
+    const o = W.withOptions(st, {sound, move, brk, fill});
+    assert.equal(o.sound.id, sound || st.id); assert.equal(o.rigKey, st.id + '/' + (sound || st.id));
+    if (move !== 'auto') assert.deepEqual(o.prog, W.MOVES[move]);
+    if (fill === 'none') assert.equal(o.fill2, 'none'); else assert.notEqual(o.fill === o.fill2 && o.fill !== 'none', true);
+    if (sound) continue;
+    for (const s of W.SECTIONS) {
+      const sec = W.sectionFor(o, st.ideas[0], s.id); let end = 0;
+      for (const n of sec.notes) { assert(n.t >= end && n.t + n.l <= 128 && n.semi >= -7 && n.semi <= 19, `${st.id} ${move} ${brk} ${fill} ${s.id}`); end = n.t + n.l; }
+      if (st.kickFree) for (const b of sec.bars) { const kicks = new Set(W.drumBar(o, b).filter(h => h.type === 'kick').map(h => h.s)); for (const n of b.notes) assert(!kicks.has(n.s)); }
+    }
+  }
+  const a = W.sectionFor(W.withOptions(base, {brk: 'pad'}), base.ideas[0], 'break'), b = W.sectionFor(W.withOptions(base, {brk: 'drone'}), base.ideas[0], 'break');
+  assert.equal(a.notes.length, 4); assert.equal(b.notes.length, 1);
+  assert.notDeepEqual(W.sectionFor(W.withOptions(base, {move: 'i-VI-VII'}), base.ideas[0], 'drop1').notes, W.sectionFor(base, base.ideas[0], 'drop1').notes);
+});
+test('Broken-beat lanes put the kick where they say', () => {
+  const g = W.styleById('garage'), bar = W.section(g, g.ideas[0].notes, 'drop1').bars[0];
+  assert.deepEqual(W.drumBar(g, bar).filter(h => h.type === 'kick').map(h => h.s), [0, 10]);
+});
 test('Saved state is validated', () => {
   assert.deepEqual(W.validate(null), W.defaults());
   const s = W.validate({style: 'nope', section: 'x', bpm: 999, key: -3, wow: 'a', idea: 7, family: 'jazz'});
   assert.equal(s.style, 'tech'); assert.equal(s.section, 'drop1'); assert.equal(s.bpm, 170); assert.equal(s.key, 0); assert.equal(s.wow, 70); assert.equal(s.idea, 2); assert.equal(s.family, 'all');
+  const o = W.validate({sound: 'nope', move: 'x', brk: 'pad', fill: 'gap', swing: 99, gate: 1, pump: 500, family: 'classic'});
+  assert.equal(o.sound, ''); assert.equal(o.move, 'auto'); assert.equal(o.brk, 'pad'); assert.equal(o.fill, 'gap'); assert.equal(o.swing, 30); assert.equal(o.gate, 30); assert.equal(o.pump, 150); assert.equal(o.family, 'classic');
   assert.equal(W.validate({style: 'acid', idea: -1, seed: 42}).seed, 42);
 });
 console.log(`${count} Wow engine tests passed.`);

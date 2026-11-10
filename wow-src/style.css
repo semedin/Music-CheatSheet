@@ -46,7 +46,7 @@ h3{font-size:19px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
 .style[aria-pressed=true]{border-color:var(--a);background:linear-gradient(160deg,color-mix(in srgb,var(--a) 16%,var(--panel)),var(--panel) 62%);box-shadow:0 0 0 1px var(--a),0 18px 40px -20px var(--a)}
 .style .meta{display:flex;justify-content:space-between;font:600 11px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--a)}
 .style b{font-size:19px;line-height:1.12;letter-spacing:-.01em}
-.style small{color:var(--muted);font-size:12.5px;line-height:1.35}
+.style small{color:var(--muted);font-size:12.5px;line-height:1.35}.style small i{font-style:normal;color:var(--ink)}
 .style svg{width:100%;height:34px;margin-top:2px}
 .style svg rect{fill:var(--a)}
 .style svg rect.w{fill:var(--b)}
@@ -69,6 +69,7 @@ h3{font-size:19px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
 .transport select{width:auto}
 .pos,.hz{font:600 12.5px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.06em;color:var(--muted)}
 .pos{color:var(--ink);min-width:15ch}
+.options{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px 12px;margin:0 0 14px}.options label{display:grid;gap:4px;font:600 10.5px/1.2 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.options select{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 8px;font:500 14px "Bricolage Grotesque",system-ui,sans-serif;letter-spacing:0;text-transform:none;color:var(--ink);min-width:0;width:100%}.options select:hover{border-color:var(--a)}
 .map{display:flex;gap:4px;margin-bottom:8px}
 .map button{position:relative;flex:1 1 0;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 10px 9px;text-align:left;overflow:hidden;display:grid;gap:5px}
 .map button.long{flex-grow:2}
@@ -102,6 +103,7 @@ h3{font-size:19px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
 .measures dt{font:600 10.5px/1.2 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .measures dd{margin:4px 0 0;font-weight:800;font-size:19px}
 .measures dd small{display:block;font-weight:500;font-size:12px;color:var(--muted);line-height:1.3}
+.knobs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0 18px;align-content:start}.knobs h3{grid-column:1/-1}
 .slider{display:grid;gap:3px;margin-bottom:12px}
 .slider span{display:flex;justify-content:space-between;font-weight:800}
 .slider output{font:600 12px "JetBrains Mono",ui-monospace,monospace;color:var(--a)}

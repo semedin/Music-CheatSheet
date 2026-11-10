@@ -36,12 +36,23 @@ const WowAudio = (() => {
     const bps = [], vg = gain(ctx, 0);
     if (sound.vowel) [1, .6, .25].forEach((g, j) => { const bp = biquad(ctx, 'bandpass', W.VOWELS[sound.rest][j], 8), fg = gain(ctx, g); shape.connect(bp).connect(fg).connect(vg); bps.push(bp); });
     vg.connect(amp); amp.connect(hp).connect(post).connect(dest);
+    // Space: a short stereo spread above 300 Hz, and a dotted-8th echo. The low end stays mono and dry.
+    const widthGain = gain(ctx, 0), echoSend = gain(ctx, 0), echo = ctx.createDelay(1.5);
+    if (sound.width || sound.echo) {
+      const top = biquad(ctx, 'highpass', 300, .7); post.connect(top);
+      [[.011, -.85], [.017, .85]].forEach(([d, pan]) => { const dl = ctx.createDelay(.05), pn = ctx.createStereoPanner(); dl.delayTime.value = d; pn.pan.value = pan; top.connect(dl).connect(pn).connect(widthGain); });
+      widthGain.connect(dest);
+      const fb = gain(ctx, .42), tone = biquad(ctx, 'bandpass', 1200, .5), pn = ctx.createStereoPanner(); pn.pan.value = .3;
+      top.connect(echoSend).connect(echo).connect(tone).connect(fb).connect(echo); tone.connect(pn).connect(dest);
+    }
     const sub = ctx.createOscillator(), subAmp = gain(ctx, 0), subGain = gain(ctx, 0); sub.type = 'sine'; sub.frequency.value = 55; sub.connect(subAmp).connect(subGain).connect(dest); sub.start();
     let lastF = 0, lastCut = sound.cut;
     const applyKnobs = t => {
       const kw = knobs.wow / 70, v = clamp(sound.vowel * Math.min(kw, 1.4), 0, .9);
       dry.gain.setTargetAtTime(1 - v * .7, t, .02); vg.gain.setTargetAtTime(v * 7, t, .02);
       subGain.gain.setTargetAtTime(sound.sub * knobs.sub / 70 * sound.level * .5, t, .02);
+      const sp = (knobs.space == null ? 100 : knobs.space) / 100;
+      widthGain.gain.setTargetAtTime(Math.min(1.2, sound.width * sp) * .7, t, .02); echoSend.gain.setTargetAtTime(Math.min(.9, sound.echo * sp), t, .02);
     };
     applyKnobs(0);
     const base = m => clamp(sound.cut * m.cut * Math.pow(2, (knobs.tone - 50) / 50 * 1.3), 50, 12000);
@@ -98,7 +109,8 @@ const WowAudio = (() => {
       for (const l of [lp1, lp2]) { l.frequency.setValueAtTime(lastCut, t); l.frequency.exponentialRampToValueAtTime(b, t + dur * .95); }
       lastCut = b;
     }
-    return {play, tie, applyKnobs};
+    const tempo = (bpm, t) => { echo.delayTime.setTargetAtTime(Math.min(1.4, 60 / bpm * .75), t, .05); };
+    return {play, tie, applyKnobs, tempo};
   }
 
   // ------------------------------------------------------------------- rig
@@ -156,24 +168,25 @@ const WowAudio = (() => {
       hits[type](t, vel);
       if (type !== 'kick') return;
       // Sidechain: the bass ducks under every kick and swells back.
-      const tau = kit.rel * beat * .28, at = Math.max(0, t - .006);
-      duck.gain.setTargetAtTime(1 - kit.duck, at, .002); duck.gain.setTargetAtTime(1, t + .03, tau);
+      const tau = kit.rel * beat * .28, at = Math.max(0, t - .006), depth = Math.min(.98, kit.duck * (knobs.pump == null ? 100 : knobs.pump) / 100);
+      duck.gain.setTargetAtTime(1 - depth, at, .002); duck.gain.setTargetAtTime(1, t + .03, tau);
       if (rumbleDuck) { rumbleDuck.gain.setTargetAtTime(.02, at, .002); rumbleDuck.gain.setTargetAtTime(1, t + .05, beat * .2); }
     }
     const setKnobs = () => { voice.applyKnobs(ctx.currentTime); drumBus.gain.setTargetAtTime(knobs.drums / 80 * .78, ctx.currentTime, .02); };
     drumBus.gain.value = knobs.drums / 80 * .78;
-    return {ctx, style, voice, hit, analyser, setKnobs, stop(t) { master.gain.setTargetAtTime(0, t, .012); setTimeout(() => { try { master.disconnect(); } catch {} }, 400); }};
+    return {ctx, style, key: style.rigKey || style.id, knobs, voice, hit, analyser, setKnobs, stop(t) { master.gain.setTargetAtTime(0, t, .012); setTimeout(() => { try { master.disconnect(); } catch {} }, 400); }};
   }
 
   // One beat (q = 0..3) of one engine bar, starting from the bar's start time t0.
   function scheduleBeat(r, bar, q, t0, bpm, root) {
-    const style = r.style, step = 60 / bpm / 4, beat = step * 4;
-    const time = s => t0 + (s + (Math.floor(s) % 2 === 1 ? style.swing : 0)) * step;
+    const style = r.style, step = 60 / bpm / 4, beat = step * 4, k = r.knobs, swing = k.swing == null ? style.swing : k.swing / 100, gate = (k.gate == null ? 100 : k.gate) / 100;
+    const time = s => t0 + (s + (Math.floor(s) % 2 === 1 ? swing : 0)) * step;
+    if (q === 0) r.voice.tempo(bpm, t0);
     if (q === 0) for (const t of bar.ties) if (!(t.wow && bar.m.wow > 0)) r.voice.tie(t0, t.l * step, bar.m);
     for (const n of bar.notes) {
       if (Math.floor(n.s / 4) !== q) continue;
       const a = time(n.s), b = n.short ? a + step * .5 : time(n.s + n.l);
-      r.voice.play(a, (b - a) * (n.legato ? 1 : .92), root + n.semi, n, bar.m, step);
+      r.voice.play(a, (b - a) * (n.legato ? 1 : .92 * gate), root + n.semi, n, bar.m, step);
     }
     for (const h of W.drumBar(style, bar)) if (Math.floor(h.s / 4) === q) r.hit(h.type, time(h.s), h.vel, beat);
   }
@@ -195,7 +208,7 @@ const WowAudio = (() => {
           if (P.queue.length > 6) P.queue.shift();
         }
         P.bars = program().bars;
-        if (P.rig.style.id !== st.style.id) { P.rig.stop(tb); P.rig = rig(P.ctx, st.style, st.knobs); }
+        if (P.rig.key !== (st.style.rigKey || st.style.id)) { P.rig.stop(tb); P.rig = rig(P.ctx, st.style, st.knobs); }
         scheduleBeat(P.rig, P.bars[P.pos % P.bars.length], P.q, P.t0, st.bpm, st.root);
         if (++P.q === 4) { P.q = 0; P.t0 += 16 * step; P.pos = P.next != null ? P.next : P.pos + 1; P.next = null; }
       }

@@ -5,8 +5,9 @@
   let state = W.defaults();
   try { state = W.validate(JSON.parse(localStorage.getItem(KEY) || 'null')); } catch {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
-  const style = () => W.styleById(state.style), idea = () => W.ideaFor(style(), state.idea, state.seed), root = () => W.rootMidi(state.key);
+  const lane = () => W.styleById(state.style), style = () => W.withOptions(lane(), state), idea = () => W.ideaFor(style(), state.idea, state.seed), root = () => W.rootMidi(state.key);
   const sec = id => W.sectionFor(style(), idea(), id || state.section);
+  const KNOBS = ['wow', 'drive', 'sub', 'tone', 'drums', 'swing', 'gate', 'pump', 'space'];
   const STARTS = []; { let n = 0; for (const s of W.SECTIONS) { STARTS.push(n); n += s.reps * W.BARS; } }
   const TOTAL = STARTS[STARTS.length - 1] + W.BARS;
   let mode = 'loop';
@@ -21,16 +22,17 @@
       notes.map(n => `<rect class="${n.wow ? 'w' : ''}" x="${n.s * 4 + .4}" y="${(27 - (n.semi - lo) / span * 24).toFixed(1)}" width="${((n.short ? .55 : n.l) * 4 - .8).toFixed(1)}" height="5" rx="1.5"/>`).join('') + '</svg>';
   }
   function renderStyles() {
-    $('family').innerHTML = [['all', 'All 16'], ['house', 'House'], ['techno', 'Techno']].map(([id, label]) => `<button data-family="${id}" aria-pressed="${state.family === id}">${label}</button>`).join('');
-    $('styles').innerHTML = W.STYLES.filter(s => state.family === 'all' || s.family === state.family).map(s =>
-      `<button class="style ${s.family}" role="listitem" data-style="${s.id}" aria-pressed="${s.id === state.style}"><span class="meta"><span>${esc(s.genre)}</span><span>${s.bpm}</span></span><b>${esc(s.name)}</b><small>${esc(s.lane)}</small>${mini(s.ideas[0].notes)}</button>`).join('');
+    const n = f => W.STYLES.filter(s => f === 'all' || s.family === f || s.era === f).length;
+    $('family').innerHTML = [['all', 'All'], ['house', 'House'], ['techno', 'Techno'], ['now', 'Right now'], ['classic', 'Classics & revivals']].map(([id, label]) => [id, `${label} · ${n(id)}`]).map(([id, label]) => `<button data-family="${id}" aria-pressed="${state.family === id}">${label}</button>`).join('');
+    $('styles').innerHTML = W.STYLES.filter(s => state.family === 'all' || s.family === state.family || s.era === state.family).map(s =>
+      `<button class="style ${s.family}" role="listitem" data-style="${s.id}" aria-pressed="${s.id === state.style}"><span class="meta"><span>${esc(s.genre)}</span><span>${s.bpm}</span></span><b>${esc(s.name)}</b><small><i>${esc(s.year)}</i> · ${esc(s.lane)}</small>${mini(s.ideas[0].notes)}</button>`).join('');
   }
 
   // ------------------------------------------------------------------ deck
   function renderDeck() {
     const s = style(), id = idea();
     $('deck').className = 'deck ' + s.family;
-    $('deck-genre').textContent = `${s.genre} · ${s.bpm} BPM · ${s.family}`;
+    $('deck-genre').textContent = `${s.genre} · ${s.year} · ${s.bpm} BPM · ${s.family}`;
     $('deck-name').textContent = s.name; $('deck-idea').textContent = s.idea; $('deck-lane').textContent = 'In the lane of ' + s.lane + '.';
     $('ideas').innerHTML = s.ideas.map((x, i) => `<button data-idea="${i}" aria-pressed="${state.idea === i}">${esc(x.name)}</button>`).join('') +
       `<button class="dice" data-idea="-1" aria-pressed="${state.idea === -1}" title="Write a new loop in this lane's grammar">⚄ New idea${state.idea === -1 ? ' #' + state.seed : ''}</button>`;
@@ -41,14 +43,16 @@
     $('hz').textContent = `${W.noteName(root())} = ${hzv.toFixed(1)} Hz · ${W.subVerdict(hzv)}`;
     $('why').innerHTML = s.why.map(x => `<li>${esc(x)}</li>`).join('');
     $('recipe').innerHTML = s.recipe.map(x => `<li>${esc(x)}</li>`).join('');
-    $('sound-note').textContent = `Preview voice: ${s.sound.osc.map(o => o.w).join(' + ')}${s.sound.fm ? ', FM' : ''}${s.sound.vowel ? `, formant filter saying "${s.sound.say}"` : ''}${s.sound.lfo ? ', filter wobble on 8ths' : ''}${s.sound.rumble ? ', kick reverb rumble' : ''}; sidechain ${Math.round(s.kit.duck * 100)}%. A browser synth for judging the notes. Build the real one in your own synth.`;
+    $('sound-note').textContent = `Preview voice "${s.sound.name}": ${s.sound.osc.map(o => o.w).join(' + ')}${s.sound.fm ? ', FM' : ''}${s.sound.vowel ? `, formant filter saying "${s.sound.say}"` : ''}${s.sound.lfo ? ', filter wobble on 8ths' : ''}${s.sound.rumble ? ', kick reverb rumble' : ''}${s.sound.echo ? ', dotted-8th echo' : ''}${s.sound.width ? ', stereo spread above 300 Hz' : ''}; sidechain ${Math.round(s.kit.duck * 100)}%. A browser synth for judging the notes. Build the real one in your own synth.`;
     $('map').innerHTML = W.SECTIONS.map((x, i) => { const m = W.measure(s, sec(x.id), root()); return `<button data-section="${x.id}" class="${x.reps > 1 ? 'long' : ''}" aria-pressed="${x.id === state.section}" style="--e:${Math.round(m.energy * 100)}%"><span class="prog"></span><b>${i + 1} · ${x.name}</b><small>${x.reps * W.BARS} bars · ${m.perBar.toFixed(1)} notes/bar</small><i></i></button>`; }).join('');
     $('versions').tBodies[0].innerHTML = W.SECTIONS.map(x => {
       const sc = sec(x.id), m = W.measure(s, sc, root()), cuts = sc.bars.map(b => b.m.cut), pct = v => Math.round(v / 1.25 * 100) + '%';
       const subs = sc.bars.map(b => b.m.sub > 0), kicks = sc.bars.map(b => b.d.kick > 0), span = a => a.every(Boolean) ? 'on' : a.some(Boolean) ? (a[0] ? `out at bar ${a.indexOf(false) + 1}` : `in at bar ${a.indexOf(true) + 1}`) : 'off';
       return `<tr data-row="${x.id}" class="${x.id === state.section ? 'cur' : ''}"><td>${x.name}</td><td class="num">${x.reps * W.BARS}</td><td>${esc(sc.what[0])}</td><td class="num">${m.perBar.toFixed(1)}</td><td class="num">${pct(cuts[0])} → ${pct(cuts[7])}</td><td class="num">${span(subs)}</td><td class="num">${span(kicks)}</td></tr>`;
     }).join('');
-    for (const k of ['wow', 'drive', 'sub', 'tone', 'drums']) { $(k).value = state[k]; $(k + '-o').textContent = state[k]; }
+    for (const k of KNOBS) { $(k).value = state[k]; $(k + '-o').textContent = state[k]; }
+    $('sound').value = state.sound || state.style; $('move').value = state.move; $('brk').value = state.brk; $('fill').value = state.fill;
+    $('recipe-title').textContent = state.sound && state.sound !== state.style ? `The sound this lane was written for (you are hearing “${s.sound.name}”)` : 'The sound';
     for (const b of document.querySelectorAll('.style')) b.setAttribute('aria-pressed', b.dataset.style === state.style);
     renderSection();
   }
@@ -166,7 +170,7 @@
   const barsFor = all => all ? W.journey(style(), idea()) : sec().bars;
   function exportMidi(all) {
     download(W.midi(style(), barsFor(all), {root: root(), bpm: state.bpm, drums: $('with-drums').checked, name: `Wow: ${style().name} (${idea().name})`}), fileName(all ? 'track' : state.section, 'mid'), 'audio/midi');
-    $('export-note').textContent = `Saved ${all ? '64 bars with section markers' : 'the ' + state.section + ' section'}. Straight grid; this lane swings its 16ths ${Math.round(style().swing * 100)}% in the preview, so add groove to taste.`;
+    $('export-note').textContent = `Saved ${all ? '64 bars with section markers' : 'the ' + state.section + ' section'}. Straight grid; the preview swings its 16ths ${state.swing}%, so add groove to taste.`;
   }
   async function renderWav(all, btn) {
     const label = btn.textContent; btn.disabled = true; btn.textContent = 'Rendering…';
@@ -185,7 +189,7 @@
     if (b.dataset.family) { state.family = b.dataset.family; save(); renderStyles(); }
     else if (b.dataset.style) {
       const first = b.dataset.style !== state.style; state.style = b.dataset.style;
-      if (first) { const s = style(); state.bpm = s.bpm; state.key = s.key; state.idea = 0; }
+      if (first) { const s = lane(); state.bpm = s.bpm; state.key = s.key; state.idea = 0; state.swing = Math.round(s.swing * 100); state.sound = ''; state.move = state.brk = state.fill = 'auto'; }
       save(); renderDeck();
       if (!player.playing) { mode = 'loop'; player.start(0); buttons(); }
       if (first && innerWidth < 980) $('deck').scrollIntoView({block: 'start'});
@@ -196,8 +200,18 @@
   $('play').onclick = () => toggle('loop'); $('journey').onclick = () => toggle('journey');
   $('hero-play').onclick = () => { if (player.playing) { player.stop(); buttons(); } else { state.section = 'drop1'; renderSection(); toggle('loop'); } };
   $('bpm').onchange = () => { state.bpm = W.validate({...state, bpm: $('bpm').value}).bpm; save(); renderDeck(); };
+  $('sound').innerHTML = ['house', 'techno'].map(f => `<optgroup label="${f === 'house' ? 'House voices' : 'Techno voices'}">${W.STYLES.filter(s => s.family === f).map(s => `<option value="${s.id}">${esc(s.sn)} (${esc(s.name)})</option>`).join('')}</optgroup>`).join('');
+  const options = (id, map) => { $(id).innerHTML = Object.entries(map).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join(''); };
+  options('move', W.MOVE_NAMES); options('brk', W.BREAKS); options('fill', W.FILL_NAMES);
+  $('sound').onchange = () => { state.sound = $('sound').value === state.style ? '' : $('sound').value; save(); renderDeck(); };
+  for (const k of ['move', 'brk', 'fill']) $(k).onchange = () => { state[k] = $(k).value; save(); renderDeck(); };
+  $('surprise').onclick = () => {
+    const pick = a => a[Math.floor(Math.random() * a.length)], s = pick(W.STYLES);
+    Object.assign(state, {style: s.id, bpm: s.bpm, key: s.key, swing: Math.round(s.swing * 100), idea: pick([0, 1, 2, -1]), seed: 1 + Math.floor(Math.random() * 999), sound: '', move: 'auto', brk: 'auto', fill: 'auto', family: 'all'});
+    save(); renderStyles(); renderDeck(); if (!player.playing) { mode = 'loop'; player.start(0); buttons(); }
+  };
   $('key').onchange = () => { state.key = +$('key').value; save(); renderDeck(); };
-  for (const k of ['wow', 'drive', 'sub', 'tone', 'drums']) $(k).oninput = () => { state[k] = +$(k).value; $(k + '-o').textContent = state[k]; save(); player.knobs(); };
+  for (const k of KNOBS) $(k).oninput = () => { state[k] = +$(k).value; $(k + '-o').textContent = state[k]; save(); player.knobs(); };
   $('midi-sec').onclick = () => exportMidi(false); $('midi-all').onclick = () => exportMidi(true);
   $('wav-sec').onclick = e => renderWav(false, e.currentTarget); $('wav-all').onclick = e => renderWav(true, e.currentTarget);
   addEventListener('keydown', e => {
