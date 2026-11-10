@@ -19,7 +19,8 @@ const WOW = (() => {
   // ------------------------------------------------------------- notation
   // 32 tokens, one per 16th. "." rest, "-" hold the previous note, a number is
   // semitones from the root. Flags: ! accent, ~ slide into this note, w wow
-  // (the filter opens and closes across the note), ' short. "|" is decoration.
+  // (the filter opens and closes across the note), ' short, g ghost (quiet, short
+  // and dull). "|" is decoration.
   function parse(text) {
     const tok = text.replace(/\|/g, ' ').trim().split(/\s+/);
     if (tok.length !== LOOP) throw Error('A loop needs 32 steps, got ' + tok.length + ': ' + text);
@@ -27,16 +28,16 @@ const WOW = (() => {
     tok.forEach((t, s) => {
       if (t === '.') return;
       if (t === '-') { const last = notes[notes.length - 1]; if (!last || last.s + last.l !== s || last.short) throw Error('Nothing to hold at step ' + s + ': ' + text); last.l++; return; }
-      const m = /^(-?\d+)([!~w']*)$/.exec(t);
+      const m = /^(-?\d+)([!~w'g]*)$/.exec(t);
       if (!m) throw Error('Bad token "' + t + '" in: ' + text);
       const f = m[2];
-      notes.push({s, l: 1, semi: +m[1], acc: f.includes('!'), slide: f.includes('~'), wow: f.includes('w'), short: f.includes("'")});
+      notes.push({s, l: 1, semi: +m[1], acc: f.includes('!'), slide: f.includes('~'), wow: f.includes('w'), short: f.includes("'") || f.includes('g'), ...(f.includes('g') ? {ghost: true} : {})});
     });
     return notes;
   }
   const unparse = notes => {
     const out = Array(LOOP).fill('.');
-    for (const n of notes) { out[n.s] = n.semi + (n.acc ? '!' : '') + (n.slide ? '~' : '') + (n.wow ? 'w' : '') + (n.short ? "'" : ''); for (let i = 1; i < n.l; i++) out[n.s + i] = '-'; }
+    for (const n of notes) { out[n.s] = n.semi + (n.acc ? '!' : '') + (n.slide ? '~' : '') + (n.wow ? 'w' : '') + (n.ghost ? 'g' : n.short ? "'" : ''); for (let i = 1; i < n.l; i++) out[n.s + i] = '-'; }
     return out.join(' ');
   };
   // What every loop must obey. kickFree styles never start a note on a kick.
@@ -444,6 +445,129 @@ const WOW = (() => {
     [['Chest and ears', "0 - - - | . . 12' . | 0 - - - | . 10' . 7'", "0 - - - | . . 12' . | 0 - - - | . 15' 12' ."],
      ['Double bleep', "0 - - . | . 12' . 12' | 0 - - . | . . 7' .", "0 - - . | . 12' . 12' | 3 - - . | . 10' . 12'"],
      ['System', ". . 0 - | - - . . | 12' . 0 - | - - . .", ". . 0 - | - - . . | 12' . 0 - | - 7' 10' 12'"]]),
+    S({id: 'psy', name: 'Psy-techno roll', family: 'techno', genre: 'Psy techno / hard trance', era: 'now', year: '2024–26', bpm: 154, key: 4,
+      lane: 'The psy-influenced end of hard techno and trance',
+      idea: 'Kick and three: every 16th between the kicks, tight and identical, stepping up a semitone and back to wind the room up.',
+      why: ['Three identical notes after every kick is the fastest-feeling groove there is at a given tempo.', 'The semitone step is all the melody it has. It creates tension without ever leaving the root.', 'The notes are so short the kick tail has room, which is what keeps it clean at 154 BPM.'],
+      recipe: ['One saw (or two, barely detuned), low-pass 800 Hz, envelope 2 octaves, decay 50 ms.', 'Every note the same very short length and velocity.', 'A sine sub on the same MIDI, high-pass the saw at 100 Hz.', 'Sidechain hard and keep the kick tail short. If they overlap it turns to mud.'],
+      kit: {kick: 50, kd: .16, hat: 'hard', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .95, rel: .25, kdrive: .5},
+      fill: 'stutter', fill2: 'run', breakMode: 'drone', sn: 'Psy saw',
+      sound: sound({level: 0.39, osc: [{w: 'sawtooth', oct: 0, det: -4, g: .5}, {w: 'sawtooth', oct: 0, det: 4, g: .4}], cut: 800, res: 5, env: 2, dec: .05, drive: .5, sub: .9, wowDepth: 1.5, hp: 70})},
+    [['Chromatic roll', ". 0' 0' 0' | . 0' 0' 0' | . 1' 1' 1' | . 0' 0' 0'", ". 0' 0' 0' | . 0' 0' 0' | . 3' 3' 3' | . 1' 1' 1'"],
+     ['Kick and three', ". 0' 0' 0' | . 0' 0' 0' | . 0' 0' 0' | . 0' 0' 0'", ". 0' 0' 0' | . 0' 0' 0' | . 0' 0' 0' | . 0' 12' 12'"],
+     ['Step up', ". 0' 0' 0' | . 0' 0' 3' | . 0' 0' 0' | . 0' 1' 0'", ". 0' 0' 0' | . 0' 0' 3' | . 0' 0' 5' | . 3' 1' 0'"]]),
+
+    // ------------------------------------------------------------- more techno
+    S({id: 'warehouse', name: 'Warehouse roller', family: 'techno', genre: 'Berlin / warehouse techno', era: 'now', year: '2010 → 2026', bpm: 133, key: 4,
+      lane: 'Ben Klock, Marcel Dettmann, the Berlin warehouse sound',
+      idea: 'A low, dull, tom-like bass tucked in behind the kick, with the last 16th of the bar pushed hard into the next one.',
+      why: ['It is felt as part of the kick drum, not as a bassline. The room just gets heavier.', 'The accent on the last 16th is a shove into the downbeat.', 'Dark and filtered, so the hats and the room reverb own the top.'],
+      recipe: ['Saw or a pitched tom sample, low-pass at 200–250 Hz, some resonance.', 'Drive it, then low-pass again.', 'Short notes, velocity to volume. Accent the pickup.', 'A little of the kick reverb underneath, ducked hard.'],
+      kit: {kick: 47, kd: .26, hat: 'techno', clap: 0, perc: '. . . . . . x . . . . . . . . .', duck: .9, rel: .4, kdrive: .4},
+      fill: 'gap', fill2: 'stutter', breakMode: 'drone', evolve: .3, sn: 'Dull tom bass',
+      sound: sound({level: 0.31, osc: [{w: 'sawtooth', oct: 0, det: 0, g: .5}, {w: 'sine', oct: 0, det: 0, g: .4}], cut: 230, res: 5, env: 1.2, dec: .08, drive: .7, sub: .9, rumble: .45, wowDepth: 1.5, hp: 35})},
+    [['Push', ". . 0' 0 | . . 0' 0 | . . 0' 0 | . 0' 0' 0!", ". . 0' 0 | . . 0' 0 | . . 0' 0 | . 0! 0' 0!"],
+     ['Concrete', ". 0 - 0' | . . 0' . | . 0 - 0' | . . 0' .", ". 0 - 0' | . . 0' . | . 0 - 0' | . 0' 0' 3'"],
+     ['Late shift', ". . . 0! | . . 0' 0 | . . . 0! | . . 0' 0", ". . . 0! | . . 0' 0 | . . . 0! | . 0' 0' 0"]]),
+    S({id: 'deept', name: 'Deep techno pulse', family: 'techno', genre: 'Deep / hypnotic techno', era: 'now', year: '2015 → 2026', bpm: 130, key: 2, evolve: .9,
+      lane: 'Donato Dozzy, Wata Igarashi, Mike Parker',
+      idea: 'A soft sub pulse at odd spacings, with an echo answering it and a filter that takes the whole phrase to open.',
+      why: ['The notes are few and unevenly spaced, so the loop never quite resolves.', 'The echo fills the gaps differently each bar.', 'Change happens over minutes. That is what makes it a trip.'],
+      recipe: ['Triangle or filtered saw, soft attack, low-pass 350 Hz with resonance.', 'Dotted-8th delay, feedback 40%, high-passed.', 'A very slow LFO or a hand on the cutoff across 16 bars.', 'Keep the sub plain and mono under it.'],
+      kit: {kick: 46, kd: .24, hat: 'techno', clap: 0, perc: '. . . x . . . . . x . . . . . .', duck: .7, rel: .45},
+      fill: 'none', fill2: 'none', breakMode: 'drone', sn: 'Soft echo pulse',
+      sound: sound({level: 0.49, osc: [{w: 'triangle', oct: 0, det: 0, g: .6}, {w: 'sawtooth', oct: 0, det: 5, g: .15}], cut: 350, res: 7, env: .9, dec: .15, drive: .3, sub: .9, echo: .35, width: .35, atk: .006, rel: .04, wowDepth: 1.8, hp: 50})},
+    [['Tide', ". . 0 . | . 0' . . | . . 0 . | . . . 0'", ". . 0 . | . 0' . . | . . 0 . | . 0' . 0'"],
+     ['Drift', ". 0' . . | . . 0' . | . . . 0' | . . 0' .", ". 0' . . | . . 0' . | . 0' . . | . . 0' 0'"],
+     ['Undertow', ". 0 - - | . . 0' . | . 0 - - | . . . 3'", ". 0 - - | . . 0' . | . 0 - - | . 0' . -2'"]]),
+    S({id: 'broken', name: 'Broken techno', family: 'techno', genre: 'Broken / UK techno', era: 'now', year: '2018 → 2026', bpm: 136, key: 5, kickFree: false,
+      lane: 'Batu, Pangaea, the Bristol end of techno',
+      idea: 'No four-on-the-floor. The kick lurches, and a heavy sub leans on it and then away from it.',
+      why: ['With the kick off the grid, the bass decides where "one" is.', 'Long sub notes against a stumbling kick feel like weight being thrown around.', 'Half the bar is empty. Sound-system pressure needs room.'],
+      recipe: ['Sine sub with a square or FM layer for growl, mono.', 'Low-pass 400 Hz, drive for harmonics.', 'Glide 60 ms on overlaps.', 'Write the kick first: 1, the "a" of 2, the "and" of 3. Then place the sub in the holes.'],
+      kit: {kick: 52, kd: .22, hat: 'techno', clap: 1, kicks: [0, 7, 10], perc: '. . . x . . . . . . . . . x . .', duck: .7, rel: .4, kdrive: .3},
+      fill: 'slide', fill2: 'gap', answers: [0, 0, 3, 0], breakMode: 'drone', sn: 'Growl sub',
+      sound: sound({level: 0.31, osc: [{w: 'sine', oct: 0, det: 0, g: .6}, {w: 'square', oct: 0, det: 0, g: .25}], cut: 400, res: 3, env: 1, dec: .15, drive: .65, sub: 1, glide: .06, rel: .03, wowDepth: 1.6, hp: 35})},
+    [['Lurch', "0 - - . | . . . 0 | - . 0' . | . . 3 -", "0 - - . | . . . 0 | - . 0' . | 7' . 5 -"],
+     ['Half step', "0 - - - | . . . . | . . 0 - | . 0' . .", "0 - - - | . . . . | . . 0 - | 3~ - 0' ."],
+     ['Stagger', ". . 0' . | . 0 - 0' | . . 0 - | . . 0' 0'", ". . 0' . | . 0 - 0' | . . 0 - | . 12' 10' ."]]),
+    S({id: 'reverse', name: 'Reverse bass', family: 'techno', genre: 'Hard techno / hardstyle crossover', era: 'now', year: '2023–26', bpm: 155, key: 5,
+      lane: 'The hardstyle-leaning end of hard techno',
+      idea: 'A distorted bass that swells up after every kick and is cut off by the next one. The groove is the suck and the slam.',
+      why: ['Each note fades in, so the bar breathes in before every kick.', 'It fills the entire gap between kicks. Nothing is louder at 155 BPM.', 'One pitch for a long time, then a single root move that feels huge.'],
+      recipe: ['Saw and square, hard distortion, low-pass around 1.2 kHz.', 'Slow attack (60–80 ms) or a volume shape that ramps up between kicks.', 'Or the classic way: reverse a distorted kick tail and place it after each kick.', 'Kick and bass on one bus, clipped together.'],
+      kit: {kick: 48, kd: .2, hat: 'hard', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .98, rel: .3, kdrive: .9},
+      fill: 'stutter', fill2: 'gap', breakMode: 'drone', sn: 'Reverse swell',
+      sound: sound({level: 0.41, osc: [{w: 'sawtooth', oct: 0, det: -8, g: .5}, {w: 'square', oct: 0, det: 8, g: .4}], cut: 1200, res: 2, env: .3, dec: .2, drive: 1, sub: 1, atk: .09, wowDepth: 1.4, hp: 40})},
+    [['Suck', ". 0 - - | . 0 - - | . 0 - - | . 0 - -", ". 0 - - | . 0 - - | . 0 - - | . 0 - 3'"],
+     ['Swell and stab', ". 0 - - | . 0 - 0' | . 0 - - | . 0 - 0'", ". 0 - - | . 0 - 0' | . 3 - - | . 0 - 12'"],
+     ['Melodic reverse', ". 0 - - | . 0 - - | . 3 - - | . 5 - -", ". 0 - - | . 0 - - | . 7 - - | . 5 - 3'"]]),
+    S({id: 'acidcore', name: 'Hard acid', family: 'techno', genre: 'Acid techno / acidcore', era: 'now', year: '1995 → 2026', bpm: 150, key: 9,
+      lane: 'The London acid techno lineage and today\'s acidcore',
+      idea: 'A 303 at full speed and full distortion, squeezed into the gaps between kicks. Less melody, more squeal.',
+      why: ['At 150 BPM the slides blur into a scream. That is the hook.', 'Accents on the offbeat make the filter bark against the kick.', 'It stays out of the kick\'s way, so both can be distorted to the limit.'],
+      recipe: ['Square (or saw) 303, resonance near the top, envelope amount high.', 'Distortion after the filter, a lot of it.', 'Glide 50 ms. Accent raises volume and envelope together.', 'Sweep the cutoff by hand over 16 bars. That sweep is the track.'],
+      kit: {kick: 48, kd: .2, hat: 'hard', clap: 1, perc: '. . . . . . . . . . . . . . . .', duck: .85, rel: .3, kdrive: .7},
+      fill: 'slide', fill2: 'stutter', answers: [0, 3, 0, 5], breakMode: 'tease', evolve: .6, sn: 'Screaming 303',
+      sound: sound({level: 0.29, osc: [{w: 'square', oct: 0, det: 0, g: .65}], cut: 380, res: 17, env: 3.4, dec: .1, drive: .95, sub: .5, glide: .05, echo: .12, wowDepth: 3, hp: 60})},
+    [['Rinse', ". 0' 12 0~ | . 0' 0! 3' | . 0' 10 12~ | . 7! 0' 12'", ". 0' 12 0~ | . 0' 0! 3' | . 0' 15 12~ | . 10' 7! 0'"],
+     ['Stutter acid', ". 0! 0' 0' | . 0! 0' 0' | . 3! 0' 0' | . 0! 12 0~", ". 0! 0' 0' | . 0! 0' 0' | . 5! 0' 0' | . 3! 12 10~"],
+     ['Ladder', ". 0' 3' 0' | . 5' 0' 7' | . 0' 10' 0' | . 12 10~ 7~", ". 0' 3' 0' | . 5' 0' 7' | . 0' 10' 0' | . 15 12~ 0~"]]),
+    S({id: 'arp', name: 'Melodic techno arp', family: 'techno', genre: 'Melodic techno', era: 'now', year: '2019 → 2026', bpm: 125, key: 9,
+      lane: 'ARTBAT, Stephan Bodzin, Innellea',
+      idea: 'The bass is an arpeggio: root, fifth, octave in the gaps, following four chords. Low enough to be the bass, busy enough to be the riff.',
+      why: ['One part does two jobs, which leaves the whole mix for a big lead and a vocal.', 'It climbs after every kick, so the bar keeps lifting.', 'The chord change every two bars moves the whole pattern, not just a root note.'],
+      recipe: ['Saw with a resonant low-pass, envelope 2 octaves, decay 100 ms. Analog-style, slightly detuned.', 'Open the filter and lengthen the decay through the build.', 'Dotted-8th delay on the top, mono sub underneath on the root only.', 'Sidechain so the first note after each kick swells.'],
+      kit: {kick: 47, kd: .28, hat: 'techno', clap: 1, perc: '. . . . . . . . . . . . . . x .', duck: .9, rel: .55},
+      prog: [0, -4, 3, -2], breakProg: [0, -4, 3, -2], fill: 'run', fill2: 'octave', breakMode: 'pad', sn: 'Analog arp',
+      sound: sound({level: 0.41, osc: [{w: 'sawtooth', oct: 0, det: -7, g: .5}, {w: 'sawtooth', oct: 0, det: 7, g: .35}], cut: 600, res: 8, env: 2, dec: .1, drive: .45, sub: .8, echo: .28, width: .4, hp: 75})},
+    [['Climb', ". 0' 7' 12' | . 0' 7' 15' | . 0' 7' 12' | . 0' 10' 7'", ". 0' 7' 12' | . 0' 7' 15' | . 0' 7' 12' | . 15' 12' 10'"],
+     ['Pulse arp', ". . 0 12' | . 7' 0 . | . . 0 12' | . 7' 3 .", ". . 0 12' | . 7' 0 . | . . 0 15' | . 12' 10 7'"],
+     ['Saw tide', ". 0 - 7' | . 0 - 12' | . 0 - 7' | . 0 - 10'", ". 0 - 7' | . 0 - 12' | . 0 - 15' | . 12' 10' 7'"]]),
+    S({id: 'romin', name: 'Rominimal roller', family: 'techno', genre: 'Romanian minimal', era: 'now', year: '2012 → 2026', bpm: 127, key: 0, swing: .14,
+      lane: 'Raresh, Rhadoo, Petre Inspirescu',
+      idea: 'A round, quiet sub that rolls and never repeats quite the same way, full of ghost notes and small slides. Made for eight-hour sets.',
+      why: ['Ghost notes keep it moving without ever getting loud.', 'It is swung hard, so it walks instead of marching.', 'Nothing in it demands attention. You notice it when it stops.'],
+      recipe: ['Sine or triangle, soft pluck, mono, glide 80 ms.', 'Low-pass 700 Hz, barely any envelope.', 'Velocity does the work: half the notes at a third of the level.', 'Mix it low and long. No distortion.'],
+      kit: {kick: 49, kd: .2, hat: 'shuffle', clap: 0, perc: '. x . . . . . x . . x . . . . x', duck: .6, rel: .4},
+      fill: 'none', fill2: 'run', answers: [0, 0, 3, 0], breakMode: 'tease', sn: 'Round roller',
+      sound: sound({level: 0.57, osc: [{w: 'sine', oct: 0, det: 0, g: .7}, {w: 'triangle', oct: 1, det: 0, g: .12}], cut: 700, res: 2, env: .8, dec: .09, drive: .2, sub: 1, glide: .08, pluck: .3, wowDepth: 1.3, hp: 40})},
+    [['Endless', ". 0' 0 . | . 0g 0' 3' | . 0' 0 . | . 0g 0' .", ". 0' 0 . | . 0g 0' 3' | . 0' 0 . | . 5' 3 0g"],
+     ['Liquid', ". . 0 3~ | - . 0' . | . 0g 0 . | . 7' . 5'", ". . 0 3~ | - . 0' . | . 0g 0 . | . 10' 7 5~"],
+     ['After hours', ". 0g 0' . | . . 0 - | . 0g 0' . | . 0' . 12'", ". 0g 0' . | . . 0 - | . 0g 0' . | . 10' 7' ."]]),
+    S({id: 'tribal', name: 'Tribal techno toms', family: 'techno', genre: 'Tribal techno', era: 'classic', year: '2000 → revival', bpm: 134, key: 7, swing: .06, kickFree: false,
+      lane: 'Ben Sims, Cristian Varela, the tribal revival',
+      idea: 'The bassline is a set of tuned toms: low on the beat, high in the gaps, like a drummer who never stops.',
+      why: ['Two or three pitches played as drums give melody and rhythm in one part.', 'It doubles the kick on the one, then talks back.', 'Loops of this run for minutes while percussion comes and goes over the top.'],
+      recipe: ['Sine with a pitch envelope (+7 semitones, 50 ms), or real tom samples tuned to the key.', 'Saturate. Short decay, no sustain.', 'Pan the higher toms slightly; keep the low one mono.', 'Bus with the percussion and compress together.'],
+      kit: {kick: 50, kd: .2, hat: 'techno', clap: 0, perc: 'x . x . . x . x . . x . x . . x', duck: .55, rel: .3, kdrive: .3},
+      fill: 'run', fill2: 'stutter', breakMode: 'tease', sn: 'Tuned toms',
+      sound: sound({level: 0.62, osc: [{w: 'sine', oct: 0, det: 0, g: .75}, {w: 'triangle', oct: 1, det: 0, g: .2}], pitchEnv: {semi: 7, t: .05}, cut: 900, res: 2, env: .8, dec: .09, drive: .55, sub: .8, pluck: .55, wowDepth: 1.3, hp: 45})},
+    [['Drum circle', "0' . . 0' | . 0' 7' . | 0' . . 0' | . 5' . 3'", "0' . . 0' | . 0' 7' . | 0' . 5' 0' | . 7' 5' 3'"],
+     ['Low tom, high tom', ". 0' . 0' | 7' . 0' . | . 0' . 0' | 7' . 5' .", ". 0' . 0' | 7' . 0' . | . 0' 12' 0' | 7' . 5' 3'"],
+     ['Talking drum', ". . 0' 0' | . 3' . 0' | . . 0' 0' | . 5 3~ .", ". . 0' 0' | . 3' . 0' | . 7' 0' 0' | . 5 3~ 0'"]]),
+    S({id: 'ghetto', name: 'Ghetto tech 808', family: 'techno', genre: 'Ghetto house / ghetto tech', era: 'classic', year: '1996 → revival', bpm: 150, key: 2, kickFree: false,
+      lane: 'DJ Assault, DJ Deeon, the Dance Mania lineage',
+      idea: 'A booming 808 that jacks with the kick, raw and fast. Three sounds and a chant.',
+      why: ['The 808 lands with the kick and rings past it, so every downbeat is twice as big.', 'Short jabs between the booms are the jack.', 'It is deliberately crude. Polish would ruin it.'],
+      recipe: ['808 kick sample with a long tail, tuned, or a sine with a pitch drop.', 'Overdrive it into the mixer.', 'Short notes choke the long ones (mono).', 'Claps on every beat or 2 and 4, and nothing else in the low end.'],
+      kit: {kick: 54, kd: .16, hat: 'hard', clap: 1, perc: '. . x . . . x . . . x . . . x .', duck: .5, rel: .3, kdrive: .5},
+      fill: 'stutter', fill2: 'run', breakMode: 'tease', sn: 'Booming 808',
+      sound: sound({level: 0.49, osc: [{w: 'sine', oct: 0, det: 0, g: .85}], pitchEnv: {semi: 9, t: .04}, cut: 800, res: 1, env: .4, dec: .1, drive: .8, sub: 1, rel: .04, wowDepth: 1.2, hp: 30})},
+    [['Boom', "0 - - . | . . 0' . | 0 - . 0' | . . 0' .", "0 - - . | . . 0' . | 0 - . 0' | . 3' 0' ."],
+     ['Jack', "0' . 0' . | . 0' . 0' | 0' . 0' . | . 0' 0' .", "0' . 0' . | . 0' . 0' | 0' . 0' . | 3' 0' . 0'"],
+     ['Juke step', "0 - . 0' | . . 0 - | . 0' . . | 0' . 0' 0'", "0 - . 0' | . . 0 - | . 0' . . | 5' 3' 0' ."]]),
+    S({id: 'tekno', name: 'Tekno kick-bass', family: 'techno', genre: 'Freetekno / tribe', era: 'classic', year: '1994 → always', bpm: 168, key: 4,
+      lane: 'Spiral Tribe and the free party sound',
+      idea: 'Kick, bass, kick, bass at 168. A short distorted note on every offbeat, built to be heard across a field.',
+      why: ['At this tempo the offbeat is all the groove anyone needs.', 'The note is short and hard, so the kick keeps its punch.', 'A single root move every few bars is the whole arrangement.'],
+      recipe: ['Square or saw into distortion, low-pass around 1 kHz.', 'Very short decay. No release tail.', 'Often it is simply a second, pitched kick on the offbeat.', 'Everything through one overdriven bus.'],
+      kit: {kick: 52, kd: .15, hat: 'hard', clap: 0, perc: '. . . . . . . . . . . . . . . .', duck: .9, rel: .25, kdrive: .9},
+      fill: 'stutter', fill2: 'run', breakMode: 'drone', sn: 'Field square',
+      sound: sound({level: 0.45, osc: [{w: 'square', oct: 0, det: -5, g: .5}, {w: 'sawtooth', oct: 0, det: 5, g: .3}], pitchEnv: {semi: 5, t: .025}, cut: 1000, res: 3, env: 1.2, dec: .07, drive: 1, sub: .9, pluck: .4, wowDepth: 1.4, hp: 45})},
+    [['Tribe', ". . 0 . | . . 0 . | . . 0 . | . . 0 0'", ". . 0 . | . . 0 . | . . 3 . | . . 0 0'"],
+     ['Mental', ". 0' 0 . | . 0' 0 . | . 0' 0 . | . 0' 0 12'", ". 0' 0 . | . 0' 0 . | . 0' 3 . | . 0' 0 10'"],
+     ['Sound system', ". . 0 0' | . . 0 . | . . 0 0' | . . 3 .", ". . 0 0' | . . 0 . | . . 5 3' | . . 0 12'"]]),
   ];
   // Names for the sixteen original voices, and a little space where it helps.
   const VOICE = {tech: ['Talking rubber', {width: .25}], stab: ['Bwomp', {}], minimal: ['Round pluck', {}], warp: ['Warp reese', {width: .5}], afro: ['Warm sub', {}], melodic: ['Wide saws', {width: .4}],
@@ -456,15 +580,104 @@ const WOW = (() => {
   const MOVE_NAMES = {auto: 'Lane default', root: 'Stay on the root', 'i-VII': 'i – ♭VII', 'i-iv': 'i – iv', 'i-VI-VII': 'i – i – ♭VI – ♭VII', 'i-VI-III-VII': 'i – ♭VI – ♭III – ♭VII', 'i-III-VI-VII': 'i – ♭III – ♭VI – ♭VII'};
   const BREAKS = {auto: 'Lane default', tease: 'Tease: top layer, no sub', pad: 'Pad: long notes on the chords', drone: 'Drone: one held root'};
   const FILL_NAMES = {auto: 'Lane default', gap: 'Gap', octave: 'Octave pops', run: 'Run up', stutter: 'Stutter', slide: 'Slide down', none: 'No fills'};
-  function withOptions(style, o = {}) {
+  // Velocity by 16th position in the beat: [on the beat, e, and, a].
+  const ACCENTS = {auto: null, offbeat: {name: 'Offbeat push', v: [.7, .62, 1, .66]}, roll: {name: 'Rolling: beat, and, fillers', v: [1, .64, .84, .64]}, back: {name: 'Late push: the last 16th leads', v: [.72, .66, .8, 1]}, flat: {name: 'Flat: every note the same', v: [.8, .8, .8, .8]}};
+  const ACCENT_NAMES = {auto: 'As written', ...Object.fromEntries(Object.entries(ACCENTS).filter(([, v]) => v).map(([k, v]) => [k, v.name]))};
+  const soundById = id => SOUNDS.find(x => x.id === id);
+  function withOptions(style, o = {}, idea) {
     const out = {...style}, key = [];
-    if (o.sound && o.sound !== style.id && STYLES.some(s => s.id === o.sound)) { out.sound = styleById(o.sound).sound; key.push('s' + o.sound); }
+    if (o.sound && o.sound !== style.id && soundById(o.sound)) { out.sound = soundById(o.sound); key.push('s' + o.sound); }
+    if (ACCENTS[o.accent]) { out.accent = o.accent; key.push('a' + o.accent); }
+    // A loop you wrote may land on the kick on purpose; then the lane stops dodging it.
+    if (idea && style.kickFree && idea.notes.some(n => n.s % 4 === 0)) { out.kickFree = false; key.push('onkick'); }
     if (MOVES[o.move]) { out.prog = MOVES[o.move]; out.breakProg = o.move === 'root' ? [0, 0, -4, -2] : MOVES[o.move]; key.push(o.move); }
     if (o.brk && o.brk !== 'auto' && BREAKS[o.brk]) { out.breakMode = o.brk; key.push(o.brk); }
     if (o.fill && o.fill !== 'auto' && FILL_NAMES[o.fill]) { out.fill = o.fill; if (o.fill === 'none') out.fill2 = 'none'; else if (out.fill2 === o.fill) out.fill2 = o.fill === 'run' ? 'octave' : 'run'; key.push('f' + o.fill); }
     out.vkey = key.join(','); out.rigKey = style.id + '/' + out.sound.id;
     return out;
   }
+
+  // ------------------------------------------------------- more ideas, voices and the bank
+  const addIdeas = (id, ideas) => styleById(id).ideas.push(...ideas.map(([name, a, b]) => ({name, text: a + ' | ' + b, notes: parse(a + ' ' + b)})));
+  addIdeas('tech', [['Rolling three', ". 0' 0 0' | . 0' 0 0' | . 0' 0 0' | . 0' 3 0'", ". 0' 0 0' | . 0' 0 0' | . 0' 0 0' | . 7' 5 3'"],
+    ['Stab and sustain', ". 0w - - | - - 0' . | . . 0' . | . 0' 0 .", ". 0w - - | - - 0' . | . . 0' . | . 12' 10 ."],
+    ['Ghost roller', ". 0g 0 . | . 0g 0 0g | . 0g 0 . | . 0g 3w -", ". 0g 0 . | . 0g 0 0g | . 0g 0 . | . 0g 12w -"]]);
+  addIdeas('stab', [['Call, silence', ". . 0! - | - . . . | . . . . | . 0g 0! -", ". . 0! - | - . . . | . . . 0g | . 3w - -"]]);
+  addIdeas('minimal', [['Three note roll', ". 0' 0 3' | . 0' 0 . | . 0' 0 3' | . 0' 5 .", ". 0' 0 3' | . 0' 0 . | . 0' 0 3' | . 7' 5 3'"],
+    ['Ghost bounce', ". 0g 0' . | . 0' 0g 12' | . 0g 0' . | . 0 10~ -", ". 0g 0' . | . 0' 0g 12' | . 0g 0' 3' | . 0 -2~ -"]]);
+  addIdeas('warp', [['Ghost skip', ". 0g 0w - | - . 0' 0g | . 0g 3w - | - . 0' .", ". 0g 0w - | - . 0' 0g | . 0g 7w - | - 5~ 3~ -"]]);
+  addIdeas('afro', [['Sub drop', "12 0~ - - | . . 0 - | . . 0 - | . 0 . 3", "0 - - . | . . 0 - | . . 0 - | . 7 - 5~"]]);
+  addIdeas('melodic', [['Sustain and answer', ". 0 - - | - - 0' . | . 0 - - | - . 0' 12'", ". 0 - - | - - 0' . | . 0 - - | . 7' 5' 3'"]]);
+  addIdeas('rumble', [['Ghost gallop', ". 0g 0 0' | . 0g 0 0' | . 0g 0 0' | . 0g 0 0'", ". 0g 0 0' | . 0g 0 0' | . 0g 0 0' | . 0! 0 0!"]]);
+  addIdeas('groove', [['Ghost funk', "0' 0g 0' . | 0g 0' . 0' | 0' 0g 0' . | 0g 3' 0' .", "0' 0g 0' . | 0g 0' . 0' | 0' 0g 0' . | 0g 5' 3' 0'"]]);
+  addIdeas('hard', [['Double slam', ". . 0! 0' | . . 0! 0' | . . 0! 0' | . . 0! 0!", ". . 0! 0' | . . 0! 0' | . . 0! 0' | . 0' 0! 0!"]]);
+  addIdeas('trance', [['Low high', ". . 0 12' | . . 0 12' | . . 0 12' | . . 0 10'", ". . 0 12' | . . 0 12' | . . 0 12' | . 7' 0 12'"]]);
+  addIdeas('donk', [['Double offbeat', ". . 0' 0' | . . 0' 0' | . . 0' 0' | . . 0' 0'", ". . 0' 0' | . . 0' 0' | . . 0' 0' | . . 12' 0'"]]);
+
+  // Voices that belong to no lane. Any lane can borrow them.
+  const X = (id, name, o) => ({...sound({level: .5, ...o}), id, name, extra: true});
+  const SOUNDS = [...STYLES.map(s => s.sound),
+    X('x-reese', 'Wide reese', {level: 0.30, osc: [{w: 'sawtooth', oct: 0, det: -30, g: .4}, {w: 'sawtooth', oct: 0, det: 30, g: .4}, {w: 'sawtooth', oct: 1, det: 7, g: .15}], cut: 520, res: 4, env: .8, dec: .5, drive: .6, sub: .9, width: .8, glide: .08, wowDepth: 2.4, hp: 85}),
+    X('x-growl', 'FM growl', {level: 0.45, osc: [{w: 'sawtooth', oct: 0, det: 0, g: .6}, {w: 'square', oct: 0, det: 6, g: .2}], fm: {ratio: 1, amt: 5, dec: .25}, vowel: .35, word: ['a', 'e', 'a'], say: 'yeah', cut: 900, res: 5, env: 1.5, dec: .2, drive: .8, sub: .8, wowDepth: 2.2, hp: 90}),
+    X('x-yoy', 'Yoy talker', {level: 0.42, osc: [{w: 'sawtooth', oct: 0, det: -6, g: .5}, {w: 'square', oct: 0, det: 6, g: .3}], vowel: .75, rest: 'u', word: ['i', 'o', 'i'], say: 'yoy', cut: 800, res: 5, env: 1.2, dec: .12, drive: .6, sub: .8, width: .2, hp: 95}),
+    X('x-wub', 'Sixteenth wobble', {level: 0.34, osc: [{w: 'sawtooth', oct: 0, det: -12, g: .45}, {w: 'sawtooth', oct: 0, det: 12, g: .45}], lfo: {rate: 1, depth: 1.8}, cut: 350, res: 8, env: 1, dec: .15, drive: .6, sub: .85, wowDepth: 2.6, hp: 85}),
+    X('x-square', 'Square sub', {level: 0.35, osc: [{w: 'square', oct: 0, det: 0, g: .5}], cut: 300, res: 1, env: .6, dec: .15, drive: .3, sub: .9, glide: .08, wowDepth: 1.8, hp: 40}),
+    X('x-hollow', 'Hollow organ square', {level: 0.40, osc: [{w: 'square', oct: 0, det: 0, g: .45}, {w: 'square', oct: 1, det: 7, g: .2}], cut: 1100, res: 3, env: 1.2, dec: .12, drive: .35, sub: .7, pluck: .25, width: .2, wowDepth: 1.6, hp: 60}),
+    X('x-pluck', 'Short pluck', {level: 0.50, osc: [{w: 'sawtooth', oct: 0, det: 0, g: .6}], cut: 500, res: 4, env: 3, dec: .05, drive: .4, sub: .7, pluck: .7, hp: 70}),
+    X('x-tape', 'Tape sub', {level: 0.42, osc: [{w: 'sine', oct: 0, det: 0, g: .7}, {w: 'triangle', oct: 0, det: 0, g: .3}], cut: 700, res: 1, env: .2, dec: .2, drive: .9, sub: .8, atk: .008, rel: .04, glide: .07, wowDepth: 1.3, hp: 35}),
+    X('x-metal', 'Metal knock', {level: 0.47, osc: [{w: 'sine', oct: 1, det: 0, g: .8}], fm: {ratio: 1.41, amt: 4, dec: .08}, cut: 3000, res: 1, env: .3, dec: .1, drive: .5, sub: .7, pluck: .5, wowDepth: 1, hp: 60}),
+    X('x-stack', 'Bright saw stack', {level: 0.35, osc: [{w: 'sawtooth', oct: 1, det: -12, g: .35}, {w: 'sawtooth', oct: 1, det: 12, g: .35}, {w: 'sawtooth', oct: 0, det: 0, g: .3}], cut: 1800, res: 3, env: 1, dec: .15, drive: .5, sub: .8, width: .7, wowDepth: 1.8, hp: 80}),
+    X('x-rubber', 'Rubber band', {level: 0.49, osc: [{w: 'triangle', oct: 0, det: 0, g: .7}, {w: 'sawtooth', oct: 0, det: 4, g: .2}], pitchEnv: {semi: 12, t: .03}, cut: 800, res: 6, env: 1.8, dec: .1, drive: .45, sub: .85, glide: .12, pluck: .3, wowDepth: 2, hp: 60}),
+    X('x-drop', 'Sub drop', {level: 0.45, osc: [{w: 'sine', oct: 0, det: 0, g: .8}], pitchEnv: {semi: 12, t: .18}, cut: 600, res: 1, env: .3, dec: .2, drive: .5, sub: 1, rel: .05, wowDepth: 1.2, hp: 30}),
+    X('x-acidsq', 'Square acid', {level: 0.30, osc: [{w: 'square', oct: 0, det: 0, g: .6}], cut: 300, res: 16, env: 3, dec: .18, drive: .65, sub: .4, glide: .07, echo: .18, wowDepth: 3, hp: 60}),
+  ];
+
+  // The pattern bank: the rhythms that producers and tutorials keep coming back to.
+  // Written on the root (and its octave, fifth and ♭3) so any lane can take them.
+  const B = (id, name, a, b, why, home) => ({id, name, text: a + ' | ' + b, notes: parse(a + ' ' + b), why, home});
+  const BANK = [
+    B('offbeat', 'Offbeat', ". . 0 . | . . 0 . | . . 0 . | . . 0 .", ". . 0 . | . . 0 . | . . 0 . | . . 0 0'", 'Kick, bass, kick, bass. The bass answers every kick, so the two never meet.', 'Everywhere'),
+    B('double', 'Double offbeat', ". . 0' 0' | . . 0' 0' | . . 0' 0' | . . 0' 0'", ". . 0' 0' | . . 0' 0' | . . 0' 0' | . 0' 0' 0'", 'The offbeat at twice the density: more forward motion at the same tempo.', 'Hard house, bounce, trance'),
+    B('offoct', 'Offbeat, octave and ghost', ". . 12 . | . 0g 0 . | . . 0 . | . 0g 0 .", ". . 12 . | . 0g 0 . | . . 0 . | . 0g 0 12'", 'The first hit of the bar is an octave up, and a quiet note fills between the hits.', 'Tech house'),
+    B('eighths', 'Rolling eighths', "0' . 0' . | 0' . 0' . | 0' . 0' . | 0' . 0' .", "0' . 0' . | 0' . 0' . | 0' . 0' . | 0' . 0' 0'", 'Eight even hits a bar on one note. All the character comes from the sound and the sidechain.', 'Tech house, electro house'),
+    B('roll', 'Rolling 16ths', ". 0' 0 0' | . 0' 0 0' | . 0' 0 0' | . 0' 0 0'", ". 0' 0 0' | . 0' 0 0' | . 0' 0 0' | . 0' 0 3'", 'Three notes between every kick, with the offbeat one longest and loudest.', 'Tech house, techno, trance'),
+    B('full', 'Kick and three', ". 0' 0' 0' | . 0' 0' 0' | . 0' 0' 0' | . 0' 0' 0'", ". 0' 0' 0' | . 0' 0' 0' | . 0' 0' 0' | . 0' 12' 0'", 'Every 16th that is not a kick, all the same length. A machine gallop.', 'Trance, psy, peak time'),
+    B('sustain', 'Stab and sustain', "0 - - - | - - . . | . . 0' . | . 0' 0' .", "0 - - - | - - . . | . . 0' . | . 12' 0' .", 'A long note on the one is the call; a short rhythm is the response.', 'Tech house, melodic'),
+    B('legato', 'Gliding legato', ". . 0 - | 3~ - 0~ - | . . 0 - | 7~ - 5~ -", ". . 0 - | 3~ - 0~ - | . . 0 - | 12~ - 0~ -", 'Overlapping notes slide into each other, so a simple line sounds like a voice.', 'Deep tech, UKG, electro'),
+    B('tresillo', 'Tresillo 3-3-2', "0 - . 0 | - . 0 - | 0 - . 0 | - . 0 -", "0 - . 0 | - . 0 - | 0 - . 0 | - . 7 5~", 'Three, three, two: the oldest syncopation in dance music, laid across the four-on-the-floor.', 'Afro house, Latin, reggaeton-leaning house'),
+    B('tumbao', 'Tumbao', ". . . 0 | - . 7 - | . . . 0 | - . 7 -", ". . . 0 | - . 7 - | . . . 5 | - . 7 -", 'Every note arrives a 16th early and rings over the beat. The bar leans forward.', 'Latin tech'),
+    B('octaves', 'Octave eighths', "0' . 12' . | 0' . 12' . | 0' . 12' . | 0' . 12' .", "0' . 12' . | 0' . 12' . | 0' . 12' . | 0' 10' 12' .", 'Low on the beat, high on the offbeat. The high notes lift the whole drop.', 'Disco, hard house, trance'),
+    B('pop', 'Offbeat octave pop', ". . 0' . | . . 12' . | . . 0' . | . . 12' .", ". . 0' . | . . 12' . | . . 0' . | . 12' 10' .", 'The octave on alternate offbeats: a bounce without touching the kick.', 'Tech house, future house'),
+    B('qa', 'Question and answer', ". . 0 . | . . 0 0' | . . 0 . | . 3 - .", ". . 0 . | . . 0 0' | . . 0 . | . 7 5~ -", 'Bar two repeats bar one and changes only the last beat.', 'Everywhere'),
+    B('ghosts', 'Ghost pickups', ". 0g 0 . | . 0g 0 . | . 0g 0 . | . 0g 0 0g", ". 0g 0 . | . 0g 0 . | . 0g 0 . | 0g 0g 0 .", 'Quiet, short notes just before the main hits. Felt more than heard.', 'Tech house, minimal'),
+    B('pedal', 'Pedal and ping', ". 0 - 0' | . 0 - 0' | . 0 - 12' | . 0 - 0'", ". 0 - 0' | . 0 - 10' | . 0 - 0' | . 0 - 12'", 'A low note that never moves and a high one that does.', 'Hypnotic techno, bleep'),
+    B('push', 'Push into the one', ". . 0 . | . . 0 . | . . 0 . | . . 0 0", ". . 0 . | . . 0 . | . . 0 . | . 0' 0 0", 'The last 16th of the bar leads into the downbeat and pulls the loop round.', 'House, techno'),
+    B('three', 'Three against four', "0' . . 0' | . . 0' . | . 0' . . | 0' . . 0'", ". . 0' . | . 0' . . | 0' . . 0' | . . 0' .", 'A hit every three 16ths. It only lines up with the bar every three bars.', 'Hypnotic, hard groove'),
+    B('chroma', 'Chromatic roll', ". 0' 0' 0' | . 0' 0' 0' | . 1' 1' 1' | . 0' 0' 0'", ". 0' 0' 0' | . 0' 0' 0' | . 3' 3' 3' | . 1' 1' 1'", 'Rolling 16ths that step up a semitone and back. Tension without a chord change.', 'Psy techno, hard trance'),
+    B('space', 'Two hits', ". . 0! - | . . . . | . . 0! - | . . . .", ". . 0! - | . . . . | . . . 0g | . 0! - .", 'Almost nothing. The gaps make each hit heavier.', 'Mainstage tech house, dub techno'),
+    B('subdrop', 'Sub drop', "12 0~ - - | - - . . | . . 0' . | . . 0' .", ". . 0 - | - - . . | . . 0' . | . 0' 0' .", 'The first note of the phrase falls an octave into the root. A weight landing.', 'Afro tech, bass house'),
+    B('hold', 'Hold and pump', "0 - - - | 0 - - - | 0 - - - | 0 - - -", "0 - - - | 0 - - - | 0 - - - | 0 - 0' 0'", 'One note retriggered on every kick. The sidechain is the rhythm.', 'Electro house, melodic techno'),
+    B('skip', 'Two-step skip', "0 - - . | . . 0' . | . . 3 - | . 0' . .", "0 - - . | . . 0' . | . . 7 5~ | - . 3' .", 'Lands on the one, then dodges. Made for a broken or swung beat.', 'UK garage, breaks'),
+    B('machine', 'Machine sixteenths', "0' 0' 12' 0' | 0' 0' 12' 0' | 0' 0' 12' 0' | 0' 0' 12' 0'", "0' 0' 12' 0' | 0' 0' 12' 0' | 0' 0' 12' 0' | 0' 0' 12' 10'", 'A sequencer on root and octave. Hypnotic by construction.', 'Italo, EBM, nu-disco'),
+    B('reverse', 'Reverse bass', ". 0 - - | . 0 - - | . 0 - - | . 0 - -", ". 0 - - | . 0 - - | . 0 - - | . 0 - 0'", 'A long note fills every gap and is cut off by the next kick. Give it a slow attack and it sucks.', 'Hard techno, hardstyle'),
+    B('tail', 'Kick and tail', "0 - . . | 0 - . . | 0 - . . | 0 - . .", "0 - . . | 0 - . . | 0 - . . | 0 - 0' 0'", 'The bass is the kick\'s own tail: it starts with it and is gone before the next.', 'Hard techno, industrial'),
+    B('late', 'Late sixteenth', ". . . 0 | . . . 0 | . . . 0 | . . . 0", ". . . 0 | . . . 0 | . . . 0 | . . 0' 0", 'Only the last 16th of each beat: the note that shoves you into the kick.', 'Warehouse and hypnotic techno'),
+    B('five', 'Five against four', "0' . . . | . 0' . . | . . 0' . | . . . 0'", ". . . . | 0' . . . | . 0' . . | . . 0' .", 'A hit every five 16ths. It drifts across the bar and takes five bars to come home.', 'Hypnotic and deep techno'),
+    B('hocket', 'Hocket with the kick', "0' . 0' 0' | . 0' . 0' | 0' . 0' 0' | . 0' . 0'", "0' . 0' 0' | . 0' . 0' | 0' . 0' 0' | . 0' 3' 0'", 'The bass plays like a second drummer, trading hits with the kick.', 'Hard groove, Detroit'),
+  ];
+  // Where the bank's vocabulary and the lane notes were cross-checked. Read as search results; see WOW.md.
+  const SOURCES = [
+    {title: 'The Producer School: 5 Tech House Bass Patterns Every Producer Needs to Master', url: 'https://theproducerschool.com/blogs/featured-blogs/5-tech-house-bass-patterns-every-producer-needs-to-master', used: 'syncopated offbeat, rolling eighths, ghost notes (quiet, short, duller), slides, stab-and-sustain'},
+    {title: 'The Producer School: Master Modern Tech House Bass Lines', url: 'https://theproducerschool.com/blogs/featured-blogs/master-modern-tech-house-bass-lines-complete-tutorial-guide', used: 'offbeat variation with an octave on the first hit and a quieter note between hits'},
+    {title: 'The Producer School: Building a Rolling Bassline Like Chris Stussy', url: 'https://theproducerschool.com/blogs/featured-blogs/building-a-rolling-bassline-like-chris-stussy-the-3-note-pattern-that-defines-modern-tech-house', used: 'rolling 16ths with the offbeat notes longest, and a velocity hierarchy'},
+    {title: 'The Producer School: 5 Essential Bass Patterns That Define Hard House and Trance', url: 'https://theproducerschool.com/blogs/featured-blogs/5-essential-bass-patterns-that-define-hard-house-and-trance-music', used: 'offbeat donk, double offbeat, 16th roll, octave jump; sidechain a rolling line'},
+    {title: 'Attack Magazine: Warehouse Rolling Techno Bass', url: 'https://www.attackmagazine.com/technique/tutorials/warehouse-rolling-techno-bass/', used: 'layered sub and rolling bass, fast envelopes, sidechain for separation'},
+    {title: 'Attack Magazine: Low End Theory, eight common bassline styles', url: 'https://www.attackmagazine.com/technique/tutorials/low-end-theory-exploring-eight-common-bassline-styles/', used: 'the idea of a small shared vocabulary of bassline styles'},
+    {title: 'Production Music Live: How to make afro tech', url: 'https://www.productionmusiclive.com/blogs/news/how-to-make-afro-tech', used: 'sub, mid bass and sub drop as three layers; tune the kick to the root'},
+    {title: 'Native Instruments: Afro house production 101', url: 'https://www.native-instruments.com/blogs/blog/afro-house-production-101', used: 'syncopation against the four-on-the-floor'},
+    {title: 'Wikipedia: Tresillo (rhythm) and Tumbao', url: 'https://en.wikipedia.org/wiki/Tresillo_(rhythm)', used: 'the 3-3-2 cell and the anticipated bass'},
+    {title: 'Beatportal: The Top-Selling Tracks, Artists, and Labels of 2026 (Mid-Year Review)', url: 'https://www.beatportal.com/articles/1489584-the-top-selling-tracks-artists-and-labels-of-2026-mid-year-review', used: 'which lanes count as current: tech house leading, melodic house & techno climbing, hard and psy techno at peak time'},
+  ];
 
   // ------------------------------------------------------------- generator
   // New ideas in the style's own grammar: its onset odds per 16th position, its
@@ -510,7 +723,19 @@ const WOW = (() => {
     }
     return {name: 'Idea ' + seed, text: unparse(notes), notes, seed};
   }
-  const ideaFor = (style, idea, seed) => idea >= 0 && idea < style.ideas.length ? style.ideas[idea] : generate(style, seed);
+  const ideaFor = (style, idea, seed, custom) => idea === -2 && custom ? {name: 'Your loop', text: custom, notes: parse(custom), custom: true} : idea >= 0 && idea < style.ideas.length ? style.ideas[idea] : generate(style, seed);
+  // Make any edited note list legal: in range, monophonic, flags only where they mean something.
+  function normalize(notes) {
+    const out = [];
+    for (const n of [...notes].sort((a, b) => a.s - b.s)) {
+      const s = clamp(Math.round(n.s), 0, LOOP - 1), prev = out[out.length - 1];
+      if (prev && prev.s === s) out.pop(); else if (prev && prev.s + prev.l > s) prev.l = s - prev.s;
+      const short = !!(n.short || n.ghost);
+      out.push({s, l: short ? 1 : clamp(Math.round(n.l) || 1, 1, LOOP - s), semi: clamp(Math.round(n.semi), -7, 19), acc: !!n.acc && !n.ghost, slide: !!n.slide, wow: !!n.wow && !n.ghost, short, ...(n.ghost ? {ghost: true} : {})});
+    }
+    out.forEach((n, i) => { const p = out[i - 1]; if (n.slide && !(p && p.s + p.l === n.s && !p.short)) n.slide = false; });
+    return out;
+  }
 
   // -------------------------------------------------------------- sections
   const SECTIONS = [
@@ -525,15 +750,15 @@ const WOW = (() => {
   const note = (t, l, semi, o = {}) => ({t, l, semi, vel: .8, slide: false, wow: false, short: false, ghost: false, ...o});
   const tile = (loop, style, prog) => {
     const out = [];
-    for (let rep = 0; rep < BARS / 2; rep++) for (const n of loop) out.push(note(rep * LOOP + n.s, n.l, n.semi + (prog ? prog[rep] : 0), {vel: n.acc ? 1 : .8, slide: n.slide, wow: n.wow, short: n.short, rep}));
+    for (let rep = 0; rep < BARS / 2; rep++) for (const n of loop) out.push(note(rep * LOOP + n.s, n.l, n.semi + (prog ? prog[rep] : 0), {vel: n.ghost ? .35 : n.acc ? 1 : .8, slide: n.slide, wow: n.wow, short: n.short, ghost: !!n.ghost, rep}));
     return out;
   };
   // The notes that carry the rhythm: accents first, then long notes, then the earliest in each bar.
   function skeleton(loop) {
-    const rank = n => (n.acc ? 4 : 0) + (n.wow ? 2 : 0) + Math.min(n.l, 3) + (n.s % SPB < 8 ? .5 : 0) + (n.s % 4 === 2 ? .4 : 0);
+    const rank = n => (n.ghost ? -5 : 0) + (n.acc ? 4 : 0) + (n.wow ? 2 : 0) + Math.min(n.l, 3) + (n.s % SPB < 8 ? .5 : 0) + (n.s % 4 === 2 ? .4 : 0);
     const keep = Math.max(2, Math.ceil(loop.length * .45));
     const chosen = new Set([...loop].sort((a, b) => rank(b) - rank(a) || a.s - b.s).slice(0, keep));
-    return loop.filter(n => chosen.has(n)).map(n => ({...n, semi: 0, slide: false, wow: false, acc: false}));
+    return loop.filter(n => chosen.has(n)).map(n => ({...n, semi: 0, slide: false, wow: false, acc: false, ghost: false}));
   }
   const flat = loop => loop.map(n => ({...n, semi: 0, slide: false, wow: false}));
   const inBar = (notes, bar) => notes.filter(n => n.t >= bar * SPB && n.t < (bar + 1) * SPB);
@@ -608,13 +833,13 @@ const WOW = (() => {
           let semi = n.semi + style.prog[rep];
           if (n === last) semi += style.answers[rep];
           if (rep % 2 === 1 && n.s >= SPB + 8 && n.semi < 8 && n !== last) semi += 12;
-          dev.push(note(rep * LOOP + n.s, n.l, semi, {vel: n.acc ? 1 : .84, slide: n.slide, wow: n.wow || n.l >= 2, short: n.short, rep}));
+          dev.push(note(rep * LOOP + n.s, n.l, semi, {vel: n.ghost ? .35 : n.acc ? 1 : .84, slide: n.slide, wow: n.wow || n.l >= 2, short: n.short, ghost: !!n.ghost, rep}));
         }
       }
       // Ghost 16ths lead into long or accented notes.
       const taken = new Set(); for (const n of dev) for (let i = 0; i < n.l; i++) taken.add(n.t + i);
       let ghosts = 0;
-      for (const n of [...dev]) if ((n.l >= 2 || n.vel === 1) && n.t > 0 && !taken.has(n.t - 1) && ok(style, n.t - 1) && !n.slide) { dev.push(note(n.t - 1, 1, n.semi, {short: true, vel: .5, ghost: true})); taken.add(n.t - 1); ghosts++; }
+      for (const n of [...dev]) if (!n.ghost && (n.l >= 2 || n.vel === 1) && n.t > 0 && !taken.has(n.t - 1) && ok(style, n.t - 1) && !n.slide) { dev.push(note(n.t - 1, 1, n.semi, {short: true, vel: .35, ghost: true})); taken.add(n.t - 1); ghosts++; }
       notes = dev.sort((a, b) => a.t - b.t);
       notes = fill(notes, style, 3, style.fill === 'none' ? 'none' : style.fill, style.prog[1]); notes = fill(notes, style, 7, style.fill2, style.prog[3]);
       cut = style.evolve ? bar => 1.2 * evolve(bar) : () => 1.2; drive = () => 1.2; wow = () => 1.25;
@@ -637,6 +862,9 @@ const WOW = (() => {
       if (n.slide && (i === 0 || notes[i - 1].t + notes[i - 1].l !== n.t || notes[i - 1].short)) n.slide = false;
     }
     notes = notes.filter(n => n.l > 0);
+    // Accent shape: a velocity hierarchy by position in the beat. Ghosts stay ghosts.
+    const shape = ACCENTS[style.accent];
+    if (shape) for (const n of notes) if (!n.ghost) n.vel = shape.v[n.t % 4];
     // legato: the next note slides out of this one, so this one is not released.
     notes.forEach((n, i) => { const next = notes[i + 1]; n.legato = !!(next && next.slide && next.t === n.t + n.l); });
     // A note held across bar lines leaves a "tie" in each later bar, so the sound can follow that bar's settings.
@@ -740,21 +968,25 @@ const WOW = (() => {
 
   // ----------------------------------------------------------------- state
   const defaults = () => ({style: 'tech', idea: 0, seed: 1, section: 'drop1', bpm: 128, key: 7, wow: 70, drive: 50, sub: 70, tone: 50, drums: 80, family: 'all',
-    sound: '', move: 'auto', brk: 'auto', fill: 'auto', swing: 10, gate: 100, pump: 100, space: 100});
+    sound: '', move: 'auto', brk: 'auto', fill: 'auto', accent: 'auto', swing: 10, gate: 100, pump: 100, space: 100, tune: 1, custom: ''});
   function validate(s) {
     const d = defaults(), out = {...d};
     if (!s || typeof s !== 'object') return d;
     if (STYLES.some(x => x.id === s.style)) out.style = s.style;
     if (SECTIONS.some(x => x.id === s.section)) out.section = s.section;
     if (['all', 'house', 'techno', 'now', 'classic'].includes(s.family)) out.family = s.family;
-    if (s.sound === '' || STYLES.some(x => x.id === s.sound)) out.sound = s.sound || '';
+    if (s.sound === '' || soundById(s.sound)) out.sound = s.sound || '';
+    if (ACCENT_NAMES[s.accent]) out.accent = s.accent;
+    if (typeof s.custom === 'string' && s.custom.length < 400) { try { const n = normalize(parse(s.custom)); if (n.length) out.custom = unparse(n); } catch {} }
     if (MOVE_NAMES[s.move]) out.move = s.move; if (BREAKS[s.brk]) out.brk = s.brk; if (FILL_NAMES[s.fill]) out.fill = s.fill;
     const int = (k, a, b) => { if (Number.isFinite(+s[k])) out[k] = clamp(Math.round(+s[k]), a, b); };
-    int('idea', -1, 2); int('seed', 1, 99999); int('bpm', 100, 170); int('key', 0, 11); int('wow', 0, 100); int('drive', 0, 100); int('sub', 0, 100); int('tone', 0, 100); int('drums', 0, 100); int('swing', 0, 30); int('gate', 30, 100); int('pump', 0, 150); int('space', 0, 200);
+    int('idea', -2, 9); int('tune', 0, 1); int('seed', 1, 99999); int('bpm', 100, 170); int('key', 0, 11); int('wow', 0, 100); int('drive', 0, 100); int('sub', 0, 100); int('tone', 0, 100); int('drums', 0, 100); int('swing', 0, 30); int('gate', 30, 100); int('pump', 0, 150); int('space', 0, 200);
+    if (out.idea === -2 && !out.custom) out.idea = 0;
+    if (out.idea >= styleById(out.style).ideas.length) out.idea = 0;
     return out;
   }
 
-  return {SPB, LOOP, BARS, KICK, NAMES, VOWELS, STYLES, SECTIONS, FILLS, MOVES, MOVE_NAMES, BREAKS, FILL_NAMES, withOptions, HATS, DRUM_NOTE, hz, rootMidi, noteName, rng, parse, unparse, checkLoop, styleById,
+  return {SPB, LOOP, BARS, KICK, NAMES, VOWELS, STYLES, SOUNDS, BANK, SOURCES, ACCENTS, ACCENT_NAMES, soundById, normalize, SECTIONS, FILLS, MOVES, MOVE_NAMES, BREAKS, FILL_NAMES, withOptions, HATS, DRUM_NOTE, hz, rootMidi, noteName, rng, parse, unparse, checkLoop, styleById,
     generate, ideaFor, skeleton, tileCount: loop => loop.length * BARS / 2, section, sectionFor, journey, drumBar, measure, subVerdict, midi, wav, defaults, validate};
 })();
 if (typeof module !== 'undefined') module.exports = WOW;

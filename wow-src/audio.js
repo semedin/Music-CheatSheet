@@ -74,7 +74,7 @@ const WowAudio = (() => {
       }
       pre.gain.setValueAtTime(.35 + sound.drive * knobs.drive / 50 * m.drive * 1.6, t);
       // amplitude
-      const rel = Math.min(sound.rel, dur * .3), atk = Math.min(sound.atk, dur * .2), end = t + dur;
+      const rel = Math.min(sound.rel, dur * .3), atk = Math.min(sound.atk, dur * (sound.atk > .03 ? .6 : .2)), end = t + dur;
       const env = (g, level) => {
         let hold = level;
         if (slide) g.linearRampToValueAtTime(level, t + glide);
@@ -96,7 +96,8 @@ const WowAudio = (() => {
         for (let c = t; c < end - .01; c += period) { set(c, b * .8); set(Math.min(end, c + period / 2), b * Math.pow(2, depth), true); set(Math.min(end, c + period), b * .8, true); }
       }
       else if (slide) { set(t, lastCut); set(t + glide, b, true); }
-      else { set(t, b * Math.pow(2, sound.env * (vel >= 1 ? 1.4 : 1))); set(t + Math.min(sound.dec, dur), b, true); }
+      // velocity opens the filter; ghosts stay dull
+      else { set(t, b * Math.pow(2, sound.env * (vel >= 1 ? 1.4 : .3 + .875 * vel))); set(t + Math.min(sound.dec, dur), b, true); }
       if (bps.length) {
         const path = wow ? sound.word : [sound.rest];
         bps.forEach((bp, j) => { bp.frequency.setValueAtTime(W.VOWELS[path[0]][j], t); for (let k = 1; k < path.length; k++) bp.frequency.linearRampToValueAtTime(W.VOWELS[path[k]][j], t + dur * k / (path.length - 1)); });
@@ -135,7 +136,7 @@ const WowAudio = (() => {
     const burst = (t, len) => { const s = ctx.createBufferSource(); s.buffer = nz; s.start(t, (t * 7.13) % 1.5, len + .05); return s; };
     const hits = {
       kick(t, vel) {
-        const o = ctx.createOscillator(), g = gain(ctx, 0), f = kit.kick, len = kit.kd + .1;
+        const o = ctx.createOscillator(), g = gain(ctx, 0), f = knobs.tune !== 0 && R.rootHz ? R.rootHz : kit.kick, len = kit.kd + .1;  // the kick is tuned to the root unless told otherwise
         o.frequency.setValueAtTime(f * 5, t); o.frequency.exponentialRampToValueAtTime(f * 1.9, t + .022); o.frequency.exponentialRampToValueAtTime(f, t + .1);
         g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vel, t + .002); g.gain.setValueAtTime(vel, t + .035); g.gain.exponentialRampToValueAtTime(.001, t + len);
         o.connect(g).connect(kickBus); o.start(t); o.stop(t + len + .02);
@@ -174,7 +175,8 @@ const WowAudio = (() => {
     }
     const setKnobs = () => { voice.applyKnobs(ctx.currentTime); drumBus.gain.setTargetAtTime(knobs.drums / 80 * .78, ctx.currentTime, .02); };
     drumBus.gain.value = knobs.drums / 80 * .78;
-    return {ctx, style, key: style.rigKey || style.id, knobs, voice, hit, analyser, setKnobs, stop(t) { master.gain.setTargetAtTime(0, t, .012); setTimeout(() => { try { master.disconnect(); } catch {} }, 400); }};
+    const R = {rootHz: 0, ctx, style, key: style.rigKey || style.id, knobs, voice, hit, analyser, setKnobs, stop(t) { master.gain.setTargetAtTime(0, t, .012); setTimeout(() => { try { master.disconnect(); } catch {} }, 400); }};
+    return R;
   }
 
   // One beat (q = 0..3) of one engine bar, starting from the bar's start time t0.
@@ -182,6 +184,7 @@ const WowAudio = (() => {
     const style = r.style, step = 60 / bpm / 4, beat = step * 4, k = r.knobs, swing = k.swing == null ? style.swing : k.swing / 100, gate = (k.gate == null ? 100 : k.gate) / 100;
     const time = s => t0 + (s + (Math.floor(s) % 2 === 1 ? swing : 0)) * step;
     if (q === 0) r.voice.tempo(bpm, t0);
+    r.rootHz = W.hz(root);
     if (q === 0) for (const t of bar.ties) if (!(t.wow && bar.m.wow > 0)) r.voice.tie(t0, t.l * step, bar.m);
     for (const n of bar.notes) {
       if (Math.floor(n.s / 4) !== q) continue;
