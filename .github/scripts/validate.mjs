@@ -5,7 +5,7 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 const run = (cmd, args) => execFileSync(cmd, args, {cwd: root, stdio: 'inherit'});
 
 // Verify that committed distributables actually match their shared source.
-for (const script of ['arp-src/build.mjs', 'pocket-src/build.mjs', 'talk-src/build.mjs', 'blueprint-src/build.mjs', 'transplant-src/build.mjs', 'breeder-src/build.mjs', 'wow-src/build.mjs', 'site/build.mjs']) {
+for (const script of ['arp-src/build.mjs', 'pocket-src/build.mjs', 'talk-src/build.mjs', 'blueprint-src/build.mjs', 'transplant-src/build.mjs', 'breeder-src/build.mjs', 'wow-src/build.mjs', 'outside-src/build.mjs', 'site/build.mjs']) {
   run(process.execPath, [script]);
 }
 run('git', ['diff', '--exit-code', '--', '*.html', '*-src/template.html']);
@@ -13,7 +13,7 @@ run('git', ['diff', '--exit-code', '--', '*.html', '*-src/template.html']);
 const suites = [
   'site/check.mjs', 'pocket-src/test.mjs', 'arp-src/test.mjs', 'talk-src/test.mjs',
   'v2-src/test.mjs', 'v3-src/test.mjs', 'drum-library-src/test.mjs',
-  'rumble-tests.mjs', 'xray-tests.mjs', 'blueprint-src/test.mjs', 'trance-src/test.mjs', 'transplant-src/test.mjs', 'breeder-src/test.mjs', 'wow-src/test.mjs',
+  'rumble-tests.mjs', 'xray-tests.mjs', 'blueprint-src/test.mjs', 'trance-src/test.mjs', 'transplant-src/test.mjs', 'breeder-src/test.mjs', 'wow-src/test.mjs', 'outside-src/test.mjs',
 ];
 let next = 0;
 const failures = [];

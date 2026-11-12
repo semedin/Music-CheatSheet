@@ -47,8 +47,11 @@ export const SECTIONS = [
   {
     id: 'analyse',
     title: 'Listen & analyse',
-    blurb: 'Take a reference track apart: tempo, key, arrangement, groove, harmony, low end and loudness, measured in your browser.',
+    blurb: 'Take a reference track apart, or take your own mix outside: tempo, key, arrangement, groove, low end, loudness and translation, measured in your browser.',
     pages: [
+      {file: 'outside.html', title: 'Outside — hear your track everywhere but the studio', edition: 'New', badge: 'Latest',
+        text: 'Drop in your mix and walk it through a club night while it plays: the booth, the floor, the sub stack, the back bar, the toilets, the smoking area, the queue on the street, a festival field, the car home, a Bluetooth speaker, a laptop and a phone. Each place is a modelled room and playback system with its own crowd, doors and road noise. A report scores every place, says what broke (the bass note, the kick, mono, the gaps in the low end) and ranks the fixes for Live. A/B against a reference in the same room.',
+        doc: 'OUTSIDE.md', src: 'outside-src'},
       {file: 'xray.html', title: 'X-Ray — look inside a reference track', edition: 'New',
         text: 'Drop in an MP3, WAV, FLAC or AAC. Get the arrangement in bars, drum pattern and swing, chords, kick note, LUFS and tonal balance; A/B it against your mix; export a skeleton MIDI for Ableton.',
         doc: 'XRAY.md'},
@@ -134,6 +137,7 @@ export const SECTIONS = [
 export const DOCS = [
   {file: 'README.md', title: 'README', text: 'What is in this folder and how it fits together.'},
   {file: 'WOW.md', title: 'Wow notes', text: 'The bassline cheat sheet: the sixteen lanes, how each section is derived, the preview synth, what is checked and the limits.'},
+  {file: 'OUTSIDE.md', title: 'Outside notes', text: 'The translation check: the twelve places, how each is modelled, what the report measures, how it was validated and the limits.'},
   {file: 'TODO.md', title: 'TODO: pages to build', text: 'Ranked wish list of new pages and folder-wide features.'},
   {file: 'BREEDER.md', title: 'Breeder notes', text: 'Growing grooves by interactive evolution: the genes, crossover, mutation inside the grammar, selection, drift, what is measured and the limits.'},
   {file: 'TRANSPLANT.md', title: 'Transplant notes', text: 'Borrowing a reference\'s arrangement for your loop: the model, the layering, every move rebuilt, what is measured and the limits.'},
@@ -175,6 +179,7 @@ export const NAV = [
   {file: 'xray.html', label: 'X-Ray'},
   {file: 'blueprint.html', label: 'Blueprint'},
   {file: 'transplant.html', label: 'Transplant'},
+  {file: 'outside.html', label: 'Outside'},
   {file: 'drum-library.html', label: 'Drums'},
   {file: 'rumble.html', label: 'Rumble'},
   {file: 'serum-v2.html', label: 'Sound design', match: ['serum.html', 'patch-lab.html', 'sampling.html']},
@@ -200,4 +205,5 @@ export const TEMPLATES = [
   'transplant-src/template.html',
   'breeder-src/template.html',
   'wow-src/template.html',
+  'outside-src/template.html',
 ];

@@ -75,6 +75,11 @@ Arc's Transitions lab covers *where* transitions go. This page covers the sounds
   build. Remove one layer and watch the curve go flat.
 - Export: rolls as MIDI, risers as WAV, filter sweeps as MIDI CC.
 
+### `outside.html` — **Outside** · hear your track everywhere but the studio ✅ built
+
+Built as [`outside.html`](outside.html) from `outside-src/`. See [OUTSIDE.md](OUTSIDE.md). It covers part of what
+`mixdown.html` and `loudness.html` were meant to: feedback on a finished mix. Those two are still worth building.
+
 ### `breeder.html` — **Breeder** · grow a groove ✅ built
 Shipped: see [BREEDER.md](BREEDER.md). Next steps: breeding sounds as well as notes (patch parameters as genes),
 longer drum lines with fills as genes, and a "breed toward this reference" mode that uses X-Ray's measured groove of a
