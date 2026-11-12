@@ -1,0 +1,1213 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07080d"><title>Outside — hear your track everywhere but the studio · Fieldwork</title>
+<meta name="description" content="Drop in your mix and walk it through a club night: the booth, the floor, the sub stack, the toilets, the queue outside, the car home and a phone speaker. Each place is a modelled room and playback system, with a report on what breaks and how to fix it.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#07080d;--panel:#10121a;--panel2:#161925;--line:#242a3b;--ink:#eef0f4;--muted:#939ab0;--amber:#ffb347;--pink:#ff4d9d;--cyan:#4de3ff;--ok:#6ee7a0;--warn:#ffc857;--bad:#ff5c6c;--sub:#7b5cff;--bass:#4d8dff;--lowmid:#29c7c7;--mid:#6ee7a0;--pres:#ffc857;--air:#ff7eb6;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Space Grotesk",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;overflow-x:hidden;padding-bottom:96px}
+main{max-width:1320px;margin:0 auto;padding:0 20px}
+a{color:var(--cyan)}
+h1,h2,h3,p{margin:0}
+kbd{font:600 12px "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--panel2);color:var(--ink)}
+.eyebrow,.label{font:600 11.5px/1.2 "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
+.label{color:var(--muted)}
+.note{color:var(--muted);font-size:13.5px;line-height:1.5}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+.hero{padding:64px 0 28px;position:relative;isolation:isolate}
+.hero::before{content:"";position:absolute;z-index:-1;left:-10%;right:-10%;top:0;height:520px;background:radial-gradient(560px 300px at 16% 30%,rgba(255,179,71,.16),transparent 70%),radial-gradient(700px 360px at 78% 12%,rgba(77,227,255,.08),transparent 70%)}
+h1{font-weight:700;font-size:clamp(64px,15vw,210px);line-height:.84;letter-spacing:-.055em;white-space:nowrap}
+h1 .out{color:var(--ink);text-shadow:0 0 42px rgba(255,179,71,.35)}
+h1 .side{color:#8c93a8;filter:blur(.045em);opacity:.62}
+.intro{max-width:64ch;margin:28px 0 24px;font-size:clamp(16px,1.6vw,19px);color:#d5d9e4}
+.intro b{color:var(--amber);font-weight:700}
+.drop{border:1.5px dashed #3a4258;border-radius:18px;padding:26px 24px;background:linear-gradient(180deg,rgba(22,25,37,.9),rgba(16,18,26,.9));cursor:pointer;max-width:760px;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--amber);background:rgba(255,179,71,.07)}
+.drop strong{display:block;font-size:22px;font-weight:700}
+.drop span{color:var(--muted);font-size:14px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:18px}
+.play{border:0;border-radius:999px;padding:11px 20px;font-weight:700;background:var(--amber);color:#1a1002;transition:transform .12s,box-shadow .2s}
+.play:hover{transform:translateY(-1px);box-shadow:0 6px 26px -8px rgba(255,179,71,.8)}
+.play.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.play.alt:hover{border-color:var(--ok);box-shadow:none}
+.play.big{padding:15px 28px;font-size:18px}
+.status{min-height:22px;margin-top:14px;color:var(--cyan);font:600 13px "JetBrains Mono",ui-monospace,monospace}
+.status.err{color:var(--bad)}
+
+section{padding:40px 0}
+.section-heading{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;align-items:end;margin-bottom:20px}
+h2{font-weight:700;font-size:clamp(26px,3.4vw,42px);line-height:1.05;letter-spacing:-.03em;max-width:24ch;text-wrap:balance}
+h3{font-size:19px;font-weight:700;letter-spacing:-.01em;margin-bottom:10px}
+.keys kbd{margin:0 2px}
+
+.night-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:18px;align-items:start}
+.map-card,.place,article,.empty{background:var(--panel);border:1px solid var(--line);border-radius:18px}
+.map-card{padding:14px;position:sticky;top:12px}
+#map{width:100%;height:auto;display:block;border-radius:12px;background:#090b12}
+.street{fill:#0c0e16}.lane{stroke:#252b3c;stroke-width:2;stroke-dasharray:22 18}
+.room{fill:#0e1019;stroke:#4a5370;stroke-width:5}
+.yard{fill:#0a0c13;stroke:#4a5370;stroke-width:2;stroke-dasharray:7 7}
+.doorway{stroke:#090b12;stroke-width:7}.leaf{stroke:var(--amber);stroke-width:3;stroke-linecap:round;transition:transform .3s;transform-box:fill-box}
+.leaf.open{filter:drop-shadow(0 0 6px var(--amber))}
+#door-toilets{transform-origin:100% 0}#door-smoke,#door-queue{transform-origin:0 0}
+#door-toilets.open{transform:rotate(-42deg)}#door-smoke.open{transform:rotate(42deg)}#door-queue.open{transform:rotate(-42deg)}
+.stack{fill:#1b2030;stroke:#59627f;stroke-width:1.5}.cone{fill:#090b12;stroke:var(--pink);stroke-width:2}
+.booth{fill:#161a28;stroke:#59627f;stroke-width:1.5}.deck{fill:#090b12;stroke:#59627f;stroke-width:1.5}
+.counter{fill:#1b2030;stroke:#59627f;stroke-width:1.5}
+.lbl{font:600 10.5px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;fill:#aab1c6}.lbl.dim{fill:#48506a}
+.ring-wave{fill:none;stroke:var(--pink);stroke-width:1.5;opacity:0}
+.playing .ring-wave{animation:wave var(--beat,.476s) linear infinite}
+.playing .cone{animation:thump var(--beat,.476s) ease-out infinite}
+@keyframes wave{0%{r:18px;opacity:.55}100%{r:150px;opacity:0}}
+@keyframes thump{0%{stroke-width:5}100%{stroke-width:2}}
+.dancer{fill:#3a425a}
+.playing .dancer{animation:bob var(--beat,.476s) ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-2.5px);fill:#59627f}}
+.spot{cursor:pointer}
+.spot circle.hit{fill:#141826;stroke:#6a7392;stroke-width:1.5;transition:stroke .15s,fill .15s}
+.spot:hover circle.hit,.spot:focus-visible circle.hit{stroke:var(--cyan)}
+.spot[aria-pressed=true] circle.hit{stroke:var(--cyan);fill:#0d2530}
+.spot text{pointer-events:none}
+.spot .sc{font:600 11px "JetBrains Mono",ui-monospace,monospace;text-anchor:middle;dominant-baseline:central;fill:var(--muted)}
+.spot.g-ok .sc{fill:var(--ok)}.spot.g-warn .sc{fill:var(--warn)}.spot.g-bad .sc{fill:var(--bad)}
+.spot.g-ok circle.hit{stroke:var(--ok)}.spot.g-warn circle.hit{stroke:var(--warn)}.spot.g-bad circle.hit{stroke:var(--bad)}
+.spot .nm{font:700 13px "Space Grotesk",system-ui,sans-serif;fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:#090b12;stroke-width:4px}
+#you{transition:transform .55s cubic-bezier(.4,.1,.2,1),opacity .3s;pointer-events:none}
+.you-dot{fill:var(--cyan);stroke:#fff;stroke-width:2}
+#you.away{opacity:0}
+.elsewhere{margin-top:12px}
+.world{display:flex;flex-wrap:wrap;gap:8px}
+.world button,.chip{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:500;display:inline-flex;gap:8px;align-items:center}
+.world button:hover,.chip:hover:not(:disabled){border-color:var(--cyan)}
+.world button[aria-pressed=true],.chip[aria-pressed=true]{border-color:var(--cyan);background:#0d2530}
+.world .sc{font:600 12px "JetBrains Mono",ui-monospace,monospace;color:var(--muted)}
+.world .g-ok .sc{color:var(--ok)}.world .g-warn .sc{color:var(--warn)}.world .g-bad .sc{color:var(--bad)}
+
+.place{padding:22px}
+.place-head{display:flex;justify-content:space-between;gap:16px;align-items:start}
+.place h3{font-size:clamp(26px,3vw,38px);line-height:1.02;letter-spacing:-.03em;margin:0}
+.blurb{margin-top:12px;font-size:17px;color:#d5d9e4}
+.always{margin-top:10px;padding-left:12px;border-left:2px solid var(--amber);color:var(--muted);font-size:14.5px}
+.ring{--v:0;--c:var(--ok);flex:none;width:76px;height:76px;border-radius:50%;display:grid;place-items:center;align-content:center;background:radial-gradient(closest-side,var(--panel) 80%,transparent 81%),conic-gradient(var(--c) calc(var(--v)*1%),#242a3b 0)}
+.ring b{font:600 24px/1 "JetBrains Mono",ui-monospace,monospace;color:var(--c)}
+.ring span{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+.ring.big{width:132px;height:132px}.ring.big b{font-size:44px}.ring.big span{font-size:11px}
+.scope-wrap{margin-top:16px}
+#scope,#wave{width:100%;display:block;border-radius:10px;background:#090b12}
+.legend{margin-top:6px;font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.legend .k{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:-6px}
+.k.ghost{background:#6a7392}.k.here{background:var(--cyan)}.k.amb{background:var(--amber)}
+.mix{margin-top:16px}
+.mixrow{display:grid;grid-template-columns:56px 1fr;gap:10px;align-items:center;font-size:13px;color:var(--muted);margin-bottom:6px}
+.bar{display:flex;height:16px;border-radius:5px;overflow:hidden;background:#090b12}
+.bar i{display:block;height:100%;transition:width .4s}
+.legend .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px}
+.place-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.findings{margin-top:16px;display:grid;gap:10px}
+.finding{border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:10px;padding:12px 14px;background:var(--panel2)}
+.finding.s2{border-left-color:var(--bad)}
+.finding h4{margin:0 0 4px;font-size:16px}
+.finding p{font-size:14.5px;color:#d5d9e4}
+.finding .fix{margin-top:8px;font-size:14px;color:var(--muted)}
+.finding .fix b{color:var(--ok)}
+.good{font-size:14.5px;color:#c4c9d6;padding-left:22px;position:relative}
+.good::before{content:"✓";position:absolute;left:2px;color:var(--ok);font-weight:700}
+.model{margin-top:16px;font-size:14px;color:var(--muted)}
+.model summary,.how-grid summary{cursor:pointer;color:var(--ink);font-weight:500}
+.model ul{margin:8px 0 0;padding-left:18px}
+
+.empty{padding:28px;color:var(--muted)}
+.report-top{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center;margin-bottom:18px}
+.overall{display:flex;gap:20px;align-items:center}
+.overall h3{font-size:clamp(20px,2.4vw,28px);letter-spacing:-.02em;max-width:26ch}
+.report-actions{display:flex;flex-wrap:wrap;gap:8px}
+.planted{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:18px}
+.planted ul{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:8px 22px}
+.planted li{font-size:14px;color:var(--muted);padding-left:24px;position:relative}
+.planted li b{color:var(--ink);display:block}
+.planted li::before{content:"✓";position:absolute;left:0;top:0;color:var(--ok);font-weight:700}
+.planted li.miss::before{content:"·";color:var(--muted)}
+.report-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:18px;align-items:start}
+article{padding:20px}
+.fixes{margin:0;padding-left:22px;display:grid;gap:14px}
+.fixes li b{display:block;font-size:17px}
+.fixes .gain{font:600 12px "JetBrains Mono",ui-monospace,monospace;color:var(--ok)}
+.fixes p{font-size:14.5px;color:#c4c9d6;margin-top:4px}
+.fixes .none{list-style:none;margin-left:-22px;color:var(--muted)}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;font:600 11px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:6px 10px 8px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px 9px 0;border-bottom:1px solid #1a1f2d;vertical-align:top}
+#card tbody tr{cursor:pointer}#card tbody tr:hover td{background:rgba(77,227,255,.04)}
+#card td:first-child{font-weight:700;white-space:nowrap}
+.num{font:600 13px "JetBrains Mono",ui-monospace,monospace;white-space:nowrap}
+.c-ok{color:var(--ok)}.c-warn{color:var(--warn)}.c-bad{color:var(--bad)}
+.refcol{display:none}.has-ref .refcol{display:table-cell}
+.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.how-grid .wide{grid-column:1/-1}
+.steps{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15px;color:#c4c9d6}
+.steps b{color:var(--ink)}
+.how-grid details{padding:8px 0;border-bottom:1px solid var(--line)}.how-grid details p{color:var(--muted);font-size:14.5px;margin-top:6px}
+footer{padding:28px 0 12px;color:var(--muted);font-size:14px}
+
+.transport{position:fixed;left:0;right:0;bottom:0;z-index:900;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:10px 16px;background:rgba(12,14,22,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.transport .play{width:46px;height:46px;padding:0;font-size:17px;flex:none}
+.wave-wrap{flex:1 1 260px;min-width:200px;position:relative}
+#wave{cursor:pointer}
+.time{position:absolute;right:8px;top:4px;font:600 11px "JetBrains Mono",ui-monospace,monospace;color:var(--muted);pointer-events:none}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:8px 14px;font-size:14px;font-weight:500}
+.seg button[aria-pressed=true]{background:var(--ink);color:#111}
+.check{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:#c4c9d6;white-space:nowrap}
+.slider{display:inline-flex;gap:8px;align-items:center;font-size:14px;color:#c4c9d6;white-space:nowrap}
+.slider input{width:96px;accent-color:var(--amber)}
+.check input{accent-color:var(--amber)}
+.where{font:600 12px "JetBrains Mono",ui-monospace,monospace;color:var(--cyan);letter-spacing:.08em;text-transform:uppercase;margin-left:auto}
+
+@media (max-width:980px){.night-grid,.report-grid,.how-grid{grid-template-columns:1fr}.map-card{position:static}.how-grid .wide{grid-column:auto}body{padding-bottom:170px}.where{display:none}}
+@media (max-width:560px){main{padding:0 14px}.hero{padding-top:36px}.place{padding:16px}.keys{display:none}.overall{flex-direction:column;align-items:flex-start}.transport{padding:8px 10px;gap:8px 10px}.slider input{width:70px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<!-- site-nav:start --><div id="site-nav" role="navigation" aria-label="All Fieldwork pages"><style>#site-nav{all:initial;box-sizing:border-box;display:flex;align-items:center;gap:2px;width:100%;padding:6px 12px;overflow-x:auto;background:#171e22;color:#c9cdc2;font:500 13px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;position:relative;z-index:1000;scrollbar-width:thin}#site-nav a{all:unset;display:inline-block;padding:5px 9px;border-radius:4px;color:#c9cdc2;white-space:nowrap;cursor:pointer}#site-nav a:hover{color:#fff;background:#283237}#site-nav a:focus-visible{outline:2px solid #ffc96e;outline-offset:1px}#site-nav a[aria-current=page]{color:#171e22;background:#ffc96e}#site-nav .sn-brand{font-weight:800;letter-spacing:.08em;color:#fff;margin-right:6px}@media print{#site-nav{display:none}}</style><a href="index.html" data-files="index.html" class="sn-brand">FIELDWORK</a><a href="fieldwork-v3.html" data-files="fieldwork-v3.html">Motif Studio</a><a href="breeder.html" data-files="breeder.html">Breeder</a><a href="orbit.html" data-files="orbit.html">Arps</a><a href="pocket.html" data-files="pocket.html">Pocket</a><a href="wow.html" data-files="wow.html">Basslines</a><a href="talk.html" data-files="talk.html">Tech House</a><a href="studio-v2.html" data-files="studio-v2.html melody-v2.html chords-v2.html bass-v2.html">V2 Studio</a><a href="trance.html" data-files="trance.html">Trance</a><a href="xray.html" data-files="xray.html">X-Ray</a><a href="blueprint.html" data-files="blueprint.html">Blueprint</a><a href="transplant.html" data-files="transplant.html">Transplant</a><a href="outside.html" data-files="outside.html">Outside</a><a href="drum-library.html" data-files="drum-library.html">Drums</a><a href="rumble.html" data-files="rumble.html">Rumble</a><a href="serum-v2.html" data-files="serum-v2.html serum.html patch-lab.html sampling.html">Sound design</a><a href="field-guides-v1.html" data-files="field-guides-v1.html groove-cheatsheet.html groove-vol2.html low-end.html melody.html chords.html between.html inkey.html keyboard.html arrangement.html buildorder.html the-move.html disco-house-cheatsheet.html">Field guides</a><script data-site-nav>(()=>{const f=decodeURIComponent(location.pathname.split('/').pop()||'index.html');for(const a of document.querySelectorAll('#site-nav a'))if(a.dataset.files.split(' ').includes(f)){a.setAttribute('aria-current','page');break}})()</script></div><!-- site-nav:end -->
+<main>
+<header class="hero">
+  <div class="hero-text">
+    <p class="eyebrow">FIELDWORK &nbsp;·&nbsp; THE TRANSLATION CHECK &nbsp;·&nbsp; 12 PLACES THAT ARE NOT YOUR STUDIO</p>
+    <h1 aria-label="Outside."><span class="out">Out</span><span class="side" aria-hidden="true">side.</span></h1>
+    <p class="intro">Nobody will ever hear your track in your studio. Drop in a mix and <b>walk it through a club night</b>: the booth, the floor, the sub stack, the toilets, the queue on the street, the car home, a phone on a kitchen counter. Then read what broke in each place, and what to change.</p>
+    <div id="drop" class="drop" tabindex="0" role="button" aria-label="Choose an audio file">
+      <div><strong>Drop your mix here</strong><span>or click to choose a file · WAV, MP3, FLAC, AAC · nothing leaves this computer</span></div>
+      <input id="file" type="file" accept="audio/*,.wav,.mp3,.flac,.m4a,.aac,.ogg" hidden>
+    </div>
+    <div class="hero-actions"><button id="demo-bad" class="play big">▶ Play the demo mix</button><button id="demo-good" class="play alt">▶ …and the same mix, fixed</button><span class="note">No track to hand? The demo has seven problems planted in it.</span></div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </div>
+</header>
+
+<section id="night" aria-labelledby="night-title">
+  <div class="section-heading"><div><p class="eyebrow">01 / THE NIGHT</p><h2 id="night-title">Pick a place. Stand in it.</h2></div>
+    <p class="note keys"><kbd>Space</kbd> play · <kbd>←</kbd><kbd>→</kbd> walk · <kbd>S</kbd> flip to the studio and back · <kbd>D</kbd> hold the door · <kbd>R</kbd> reference</p></div>
+  <div class="night-grid">
+    <div class="map-card">
+      <svg id="map" viewBox="0 0 760 620" role="group" aria-label="Floor plan of the club">
+        <defs>
+          <radialGradient id="glow"><stop offset="0" stop-color="#ffb347" stop-opacity=".5"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+          <radialGradient id="you-glow"><stop offset="0" stop-color="#4de3ff" stop-opacity=".7"/><stop offset="1" stop-color="#4de3ff" stop-opacity="0"/></radialGradient>
+          <pattern id="tiles" width="14" height="14" patternUnits="userSpaceOnUse"><path d="M14 0H0V14" fill="none" stroke="#232838" stroke-width="1"/></pattern>
+        </defs>
+        <rect x="0" y="528" width="760" height="92" class="street"/>
+        <path d="M0 574H760" class="lane"/>
+        <circle cx="96" cy="556" r="90" fill="url(#glow)"/><circle cx="96" cy="556" r="4" fill="#ffb347"/>
+        <rect x="40" y="30" width="480" height="490" class="room"/>
+        <rect x="520" y="30" width="200" height="220" class="room" fill="url(#tiles)"/>
+        <rect x="520" y="250" width="200" height="270" class="yard"/>
+        <path d="M520 130V170M520 360V400M230 520H290" class="doorway"/>
+        <path id="door-toilets" d="M520 130l-26 14" class="leaf"/><path id="door-smoke" d="M520 360l26 14" class="leaf"/><path id="door-queue" d="M230 520l14 26" class="leaf"/>
+        <g id="rings"></g>
+        <rect x="76" y="52" width="64" height="56" rx="4" class="stack"/><circle cx="108" cy="80" r="17" class="cone"/><rect x="420" y="52" width="64" height="56" rx="4" class="stack"/><circle cx="452" cy="80" r="17" class="cone"/>
+        <rect x="216" y="48" width="128" height="50" rx="6" class="booth"/><circle cx="252" cy="73" r="13" class="deck"/><circle cx="308" cy="73" r="13" class="deck"/>
+        <rect x="64" y="452" width="236" height="26" rx="4" class="counter"/>
+        <g id="dancers"></g>
+        <g id="queue-people"></g>
+        <text x="50" y="512" class="lbl dim">MAIN ROOM</text><text x="530" y="46" class="lbl dim">TOILETS</text><text x="530" y="266" class="lbl dim">SMOKING AREA</text><text x="620" y="606" class="lbl dim">STREET</text>
+        <g id="spots"></g>
+        <g id="you"><circle r="34" fill="url(#you-glow)"/><circle r="7" class="you-dot"/></g>
+      </svg>
+      <div class="elsewhere"><p class="label">Out in the world</p><div id="world" class="world" role="group" aria-label="Places outside the club"></div></div>
+    </div>
+
+    <div class="place" id="place" aria-live="polite">
+      <div class="place-head">
+        <div><p class="eyebrow" id="p-eyebrow"></p><h3 id="p-name"></h3></div>
+        <div id="p-score" class="ring" hidden><b></b><span></span></div>
+      </div>
+      <p id="p-blurb" class="blurb"></p>
+      <p id="p-always" class="always"></p>
+      <div class="scope-wrap"><canvas id="scope" height="190" aria-label="Spectrum: your mix in the studio against this place"></canvas>
+        <p class="legend"><span class="k ghost"></span>studio <span class="k here"></span>here <span class="k amb"></span>the place itself</p></div>
+      <div id="p-mix" class="mix" hidden>
+        <p class="label">What the mix is made of</p>
+        <div class="mixrow"><span>Studio</span><div id="mix-studio" class="bar"></div></div>
+        <div class="mixrow"><span>Here</span><div id="mix-here" class="bar"></div></div>
+        <p id="mix-legend" class="legend"></p>
+      </div>
+      <div class="place-controls">
+        <button id="door" class="chip" hidden>Hold the door open</button>
+        <button id="bounce" class="chip" disabled>WAV · the drop, in this place</button>
+      </div>
+      <div id="p-findings" class="findings"></div>
+      <details class="model"><summary>How this place is modelled</summary><ul id="p-model"></ul></details>
+    </div>
+  </div>
+</section>
+
+<section id="report" aria-labelledby="report-title">
+  <div class="section-heading"><div><p class="eyebrow">02 / THE MORNING AFTER</p><h2 id="report-title">What survived, and what to fix first.</h2></div></div>
+  <div id="report-empty" class="empty">Drop a mix or play the demo. The report is written from the loudest 32 seconds of the track, which is usually the drop.</div>
+  <div id="report-body" hidden>
+    <div class="report-top">
+      <div class="overall"><div id="overall" class="ring big"><b></b><span></span></div><div><h3 id="overall-line"></h3><p id="facts" class="note"></p><p id="ref-line" class="note"></p></div></div>
+      <div class="report-actions">
+        <button id="add-ref" class="chip">＋ Add a reference track</button><input id="ref-file" type="file" accept="audio/*,.wav,.mp3,.flac,.m4a,.aac,.ogg" hidden>
+        <button id="md" class="chip">Report · Markdown</button><button id="copy" class="chip">Copy report</button>
+      </div>
+    </div>
+    <div id="planted" class="planted" hidden></div>
+    <div class="report-grid">
+      <article><h3>Fix first</h3><ol id="fixes" class="fixes"></ol></article>
+      <article><h3>Place by place</h3><div class="table-wrap"><table id="card"><thead><tr><th>Place</th><th>Score</th><th class="refcol">Reference</th><th>Loudness</th><th>What happens</th></tr></thead><tbody></tbody></table></div></article>
+    </div>
+  </div>
+</section>
+
+<section id="how" aria-labelledby="how-title">
+  <div class="section-heading"><div><p class="eyebrow">03 / THE SMALL PRINT</p><h2 id="how-title">What is modelled, and what is not.</h2></div></div>
+  <div class="how-grid">
+    <article class="wide"><h3>Twelve places, one table</h3><div class="table-wrap"><table id="models"><thead><tr><th>Place</th><th>The chain</th><th>What it checks</th></tr></thead><tbody></tbody></table></div></article>
+    <article><h3>How to use it</h3><ol class="steps">
+      <li>Bounce your mix and drop it in. Play the drop.</li>
+      <li>Walk the night with <kbd>→</kbd>. In each place, press <kbd>S</kbd> to flip to the studio and back: the difference is the place.</li>
+      <li>Read the report. Fix the first thing on the list in your project, bounce again, drop it in again.</li>
+      <li>Add a reference track you trust. If the reference breaks in a place too, that place is hard on everybody, not on you.</li>
+    </ol></article>
+    <article><h3>Limits</h3><ul class="steps">
+      <li><b>These are models, not measurements.</b> Every room, wall and speaker is built from typical figures. A real club will differ; the direction of the change will not.</li>
+      <li><b>Loudness is matched by default.</b> A phone is not as loud as a club. Matching lets you compare tone; turn it off to hear roughly real levels.</li>
+      <li><b>Your own speakers are in the chain.</b> On laptop speakers the sub stack cannot be heard. Use headphones or monitors.</li>
+      <li><b>The report reads the loudest 32 seconds</b> and its thresholds are rules of thumb. A reference track is a better yardstick than any of them.</li>
+      <li><b>“The bassline” is whatever sits on the low note's harmonic series.</b> A chord that doubles the root counts, because it carries the note too.</li>
+    </ul></article>
+    <article class="wide"><details><summary>Does anything leave my computer?</summary><p>No. There is no server. The file is read and decoded by your browser, and only your settings (never audio) are remembered, in this browser.</p></details>
+      <details><summary>Why is the fixed demo mix scored so much higher?</summary><p>Because the seven problems were planted on purpose and the report is tested against them: it must find all seven in the first mix and none in the second. That is how this page is validated. See OUTSIDE.md.</p></details>
+      <details><summary>Why does my track get louder through a wall?</summary><p>It does not. With loudness matching on, every place is brought to the same level so you can compare tone. The Loudness column in the report shows what each place does to the level before matching.</p></details></article>
+  </div>
+</section>
+<footer><p>Outside is one standalone page. Every room, wall, crowd and street is synthesised in your browser; there are no audio files in it. Notes: <a href="OUTSIDE.md">OUTSIDE.md</a>.</p></footer>
+</main>
+
+<div id="bar" class="transport" hidden>
+  <button id="play" class="play" aria-label="Play">▶</button>
+  <div class="wave-wrap"><canvas id="wave" height="52" aria-label="Waveform. Click to move the playhead."></canvas><span id="time" class="time">0:00</span></div>
+  <div class="seg" role="group" aria-label="Which track"><button id="ab-mine" aria-pressed="true">Yours</button><button id="ab-ref" aria-pressed="false" disabled>Reference</button></div>
+  <button id="flip" class="chip" aria-pressed="false">Studio ⇄</button>
+  <label class="check"><input id="loop" type="checkbox" checked> Loop the drop</label>
+  <label class="check"><input id="match" type="checkbox" checked> Match loudness</label>
+  <label class="slider">Place noise<input id="amb" type="range" min="0" max="100" value="60"></label>
+  <span id="where" class="where"></span>
+</div>
+<script>// Outside engine: pure functions, no Web Audio. Runs in the page and in Node tests.
+// A place is a chain of stages (filters, a room, a wall, a width). The same chain
+// spec builds the audio graph in audio.js and the power response used here, so the
+// report describes the thing you are listening to.
+const OUTSIDE = (() => {
+  'use strict';
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const dB = p => 10 * Math.log10(Math.max(p, 1e-30));
+  const lin = d => Math.pow(10, d / 20);
+  const NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+  function rng(seed) { let a = (seed >>> 0) || 1; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const noteOf = hz => { const m = Math.round(69 + 12 * Math.log2(hz / 440)); return NAMES[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1); };
+
+  // ---------------------------------------------------------------- filters
+  // RBJ biquads plus first-order sections, normalised so a[0] = 1.
+  function biquad(t, f, sr, q = Math.SQRT1_2, g = 0) {
+    const w = 2 * Math.PI * clamp(f, 1, sr * 0.49) / sr, c = Math.cos(w), s = Math.sin(w);
+    if (t === 'lp1' || t === 'hp1') { const k = Math.tan(w / 2), n = 1 / (1 + k); return t === 'lp1' ? {b: [k * n, k * n, 0], a: [1, (k - 1) * n, 0]} : {b: [n, -n, 0], a: [1, (k - 1) * n, 0]}; }
+    const A = Math.pow(10, g / 40), al = s / (2 * q); let b0, b1, b2, a0, a1, a2;
+    if (t === 'lowpass') { b0 = (1 - c) / 2; b1 = 1 - c; b2 = b0; a0 = 1 + al; a1 = -2 * c; a2 = 1 - al; }
+    else if (t === 'highpass') { b0 = (1 + c) / 2; b1 = -(1 + c); b2 = b0; a0 = 1 + al; a1 = -2 * c; a2 = 1 - al; }
+    else if (t === 'peaking') { b0 = 1 + al * A; b1 = -2 * c; b2 = 1 - al * A; a0 = 1 + al / A; a1 = -2 * c; a2 = 1 - al / A; }
+    else if (t === 'lowshelf') { const r = 2 * Math.sqrt(A) * al; b0 = A * ((A + 1) - (A - 1) * c + r); b1 = 2 * A * ((A - 1) - (A + 1) * c); b2 = A * ((A + 1) - (A - 1) * c - r); a0 = (A + 1) + (A - 1) * c + r; a1 = -2 * ((A - 1) + (A + 1) * c); a2 = (A + 1) + (A - 1) * c - r; }
+    else if (t === 'highshelf') { const r = 2 * Math.sqrt(A) * al; b0 = A * ((A + 1) + (A - 1) * c + r); b1 = -2 * A * ((A - 1) + (A + 1) * c); b2 = A * ((A + 1) + (A - 1) * c - r); a0 = (A + 1) - (A - 1) * c + r; a1 = 2 * ((A - 1) - (A + 1) * c); a2 = (A + 1) - (A - 1) * c - r; }
+    else throw Error('Unknown filter ' + t);
+    return {b: [b0 / a0, b1 / a0, b2 / a0], a: [1, a1 / a0, a2 / a0]};
+  }
+  function mag2(c, f, sr) {
+    const w = 2 * Math.PI * f / sr, c1 = Math.cos(w), s1 = Math.sin(w), c2 = Math.cos(2 * w), s2 = Math.sin(2 * w);
+    const nr = c.b[0] + c.b[1] * c1 + c.b[2] * c2, ni = -(c.b[1] * s1 + c.b[2] * s2), dr = 1 + c.a[1] * c1 + c.a[2] * c2, di = -(c.a[1] * s1 + c.a[2] * s2);
+    return (nr * nr + ni * ni) / (dr * dr + di * di);
+  }
+  // A filter in a place spec is a short array: ['highpass', 32, .71], ['peaking', 300, .9, -2.5],
+  // ['lowshelf', 85, 7], ['lp1', 180], ['gain', -6].
+  function coefs(list, sr) {
+    const out = {cs: [], gain: 1};
+    for (const [t, a, b, c] of list || []) {
+      if (t === 'gain') out.gain *= lin(a);
+      else if (t === 'lowshelf' || t === 'highshelf') out.cs.push(biquad(t, a, sr, Math.SQRT1_2, b));
+      else if (t === 'peaking') out.cs.push(biquad(t, a, sr, b, c));
+      else out.cs.push(biquad(t, a, sr, b == null ? Math.SQRT1_2 : b));
+    }
+    return out;
+  }
+  function run(x, c) { // one biquad over a Float32Array, new array out
+    const y = new Float32Array(x.length), [b0, b1, b2] = c.b, a1 = c.a[1], a2 = c.a[2]; let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+    for (let i = 0; i < x.length; i++) { const v = x[i], o = b0 * v + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = v; y2 = y1; y1 = o; y[i] = o; }
+    return y;
+  }
+  const chainRun = (x, list, sr) => { const k = coefs(list, sr); let y = x; for (const c of k.cs) y = run(y, c); if (k.gain !== 1) { if (y === x) y = Float32Array.from(x); for (let i = 0; i < y.length; i++) y[i] *= k.gain; } return y; };
+
+  // ---------------------------------------------------------------- places
+  // The club's own sound, shared by every place inside or behind its walls.
+  const PA = [['highpass', 32, .6], ['highpass', 32, 1.2], ['lowshelf', 85, 7], ['peaking', 300, .9, -2.5], ['peaking', 3000, 1.2, 2], ['highshelf', 9000, -3]];
+  const HALL = {rt: [1.7, 1.1, .6], pre: 18, wet: -7, er: .25, seed: 11};
+  const PLACES = [
+    {id: 'studio', name: 'Studio', group: 'home', short: 'Studio', level: 0, tag: 'What you mixed',
+      blurb: 'Your file, untouched. Every other place is measured against this one.',
+      always: 'Nothing is modelled here. If something is wrong in this place, it is in the mix.',
+      model: ['No processing'], chain: [], checks: []},
+    {id: 'booth', name: 'The booth', group: 'club', short: 'Booth', level: 2, tag: 'What the DJ hears',
+      blurb: 'Two loud monitors a metre from your head, and the room arriving late and bassy over the top of them.',
+      always: 'The room\'s low end reaches the booth about 45 ms after the monitors. Long bass turns into a second, late bass.',
+      model: ['Booth monitors: +2 dB shelf under 100 Hz, +3 dB at 2.5 kHz', 'Floor bleed: 45 ms late, low-passed at 300 Hz, −7 dB', 'Small room, 0.35 s', 'Limiter'],
+      chain: [{k: 'eq', f: [['lowshelf', 100, 2], ['peaking', 2500, 1, 3]]}, {k: 'slap', ms: 45, g: -7, lp: 300}, {k: 'room', rt: [.5, .35, .25], pre: 4, wet: -12, er: .4, seed: 21}, {k: 'limit'}],
+      checks: ['punch', 'harsh']},
+    {id: 'floor', name: 'Middle of the floor', group: 'club', short: 'Floor', level: 4, tag: 'The reason you made it',
+      blurb: 'A big rig tuned heavy, mono subs, a room that rings for over a second, and a few hundred bodies soaking up the top.',
+      always: 'The subs are mono and the room holds bass for 1.7 seconds. Whatever gap you left between kicks, the room fills part of it.',
+      model: ['Mono below 100 Hz', 'High-pass 32 Hz, 24 dB/oct', '+7 dB shelf under 85 Hz, −2.5 dB at 300 Hz, +2 dB at 3 kHz, −3 dB above 9 kHz', 'Room: 1.7 s in the lows, 1.1 s in the mids, 0.6 s in the highs', 'System limiter'],
+      chain: [{k: 'width', w: 1, below: 100}, {k: 'eq', f: PA}, {k: 'room', ...HALL}, {k: 'limit'}],
+      checks: ['punch', 'mono', 'infra', 'lows', 'harsh']},
+    {id: 'sub', name: 'At the sub stack', group: 'club', short: 'Sub stack', level: 6, tag: 'One metre from the bins',
+      blurb: 'The tops fire over your head. What is left is the bottom two octaves, fourteen decibels up, and your ribcage.',
+      always: 'Everything above 3.5 kHz is shadowed here. This place only asks one thing: is the bottom octave clean and in the centre?',
+      model: ['Mono below 120 Hz', '+14 dB shelf under 95 Hz, +3 dB at 50 Hz', 'Tops shadowed: −6 dB/oct above 3.5 kHz, −6 dB above 5 kHz', 'Soft saturation', 'Room at −12 dB'],
+      chain: [{k: 'width', w: 1, below: 120}, {k: 'eq', f: [['highpass', 30, .6], ['highpass', 30, 1.2], ['lowshelf', 95, 14], ['peaking', 50, 1.4, 3], ['lp1', 3500], ['highshelf', 5000, -6], ['gain', -6]]}, {k: 'drive', pre: 3, amt: .25}, {k: 'room', ...HALL, wet: -12, seed: 12}, {k: 'limit'}],
+      checks: ['lows', 'infra', 'mono']},
+    {id: 'bar', name: 'The back bar', group: 'club', short: 'Back bar', level: -2, tag: 'Thirty metres back',
+      blurb: 'Past the point where the room is louder than the speakers. Mostly reverb, a boom off the back wall, and people ordering.',
+      always: 'Back here the reverb is louder than the direct sound. Detail goes first; rhythm and bass note are what get through.',
+      model: ['Width 60%', 'Club rig curve', '+3 dB room mode at 140 Hz', '−7 dB above 5 kHz, −6 dB/oct above 7 kHz', 'Room at +1 dB: more reverb than direct sound', 'Bar crowd'],
+      chain: [{k: 'width', w: .6, below: 100}, {k: 'eq', f: [...PA, ['peaking', 140, 1.2, 3], ['highshelf', 5000, -7], ['lp1', 7000]]}, {k: 'room', rt: [1.9, 1.2, .6], pre: 30, wet: 1, er: .15, seed: 13}, {k: 'limit'}],
+      noise: {kind: 'bar', snr: 9}, checks: ['punch', 'boom', 'mono']},
+    {id: 'toilets', name: 'The toilets', group: 'wall', short: 'Toilets', level: -12, tag: 'One wall and a door',
+      blurb: 'The whole room squeezed through a wall into a tiled box. Then someone opens the door and the track walks in.',
+      always: 'A wall passes roughly everything under 200 Hz. If the kick and bass are one smear in the club, in here they are one note.',
+      model: ['The club room first', 'Wall: −6 dB/oct above 180 Hz, −12 dB/oct above 260 Hz, +5 dB resonance at 62 Hz', 'Door open: low-pass 2.5 kHz', 'Tiled room, 0.9 s in the mids', 'Hand dryer'],
+      chain: [{k: 'eq', f: PA}, {k: 'room', ...HALL, wet: -3, seed: 14}, {k: 'door', every: [9, 16], hold: 2.6, shut: [['lp1', 180], ['lowpass', 260, .71], ['peaking', 62, 3, 5]], open: [['lowpass', 2500, .71], ['highshelf', 4000, -6], ['gain', 3]]}, {k: 'width', w: 0}, {k: 'room', rt: [.5, .9, .7], pre: 5, wet: -4, er: .35, seed: 31}],
+      noise: {kind: 'tiles', snr: 12}, checks: ['groove']},
+    {id: 'smoke', name: 'The smoking area', group: 'wall', short: 'Smoking area', level: -14, tag: 'Outside, door swinging',
+      blurb: 'A wall, an open sky and forty conversations. The door swings every few bars and lets the mids out.',
+      always: 'No room out here, so nothing hides behind reverb. People decide to go back in on kick and bass alone.',
+      model: ['The club room first', 'Wall: −6 dB/oct above 140 Hz, −12 dB/oct above 220 Hz, +4 dB at 55 Hz', 'Door open: low-pass 3 kHz', 'Mono by distance', 'Crowd talking'],
+      chain: [{k: 'eq', f: PA}, {k: 'room', ...HALL, wet: -3, seed: 15}, {k: 'door', every: [5, 10], hold: 2.2, shut: [['lp1', 140], ['lowpass', 220, .71], ['peaking', 55, 2.5, 4]], open: [['lowpass', 3000, .71], ['gain', 2]]}, {k: 'width', w: .3}],
+      noise: {kind: 'crowd', snr: 5}, checks: ['groove']},
+    {id: 'queue', name: 'The queue', group: 'wall', short: 'Queue', level: -20, tag: 'On the street',
+      blurb: 'The building is the speaker now. One resonance near 48 Hz, a slap off the flats opposite, and traffic.',
+      always: 'From the street a club is a thump at one pitch. This is the only version of your track most of the city will ever hear.',
+      model: ['The club room first', 'Building: −6 dB/oct above 90 Hz, −24 dB/oct above 150 Hz, +6 dB resonance at 48 Hz', 'Echo off the street: 80 ms, −10 dB', 'Door open: low-pass 1.2 kHz', 'Street'],
+      chain: [{k: 'eq', f: PA}, {k: 'room', ...HALL, wet: -3, seed: 16}, {k: 'door', every: [14, 24], hold: 1.8, shut: [['lp1', 90], ['lowpass', 150, .6], ['lowpass', 150, 1.1], ['peaking', 48, 4, 6]], open: [['lowpass', 1200, .71], ['gain', 2]]}, {k: 'width', w: 0}, {k: 'slap', ms: 80, g: -10, lp: 400}],
+      noise: {kind: 'street', snr: 6}, checks: ['groove']},
+    {id: 'field', name: 'Festival field', group: 'world', short: 'Festival', level: -4, tag: 'Sixty metres from the stage',
+      blurb: 'No walls. The air eats the top, the ground takes a bite out of the low mids, and the wind moves what is left around.',
+      always: 'Sixty metres of air removes about 9 dB above 6 kHz, and the wind makes it come and go. Hats are the first thing a field loses.',
+      model: ['Width 50%', 'High-pass 35 Hz, +5 dB shelf under 80 Hz', 'Ground dip: −3 dB at 250 Hz', 'Air: −9 dB above 6 kHz, −6 dB/oct above 9 kHz', 'Late echo: 180 ms, −14 dB', 'Wind on the top end', 'Open-air crowd'],
+      chain: [{k: 'width', w: .5, below: 100}, {k: 'eq', f: [['highpass', 35, .71], ['lowshelf', 80, 5], ['peaking', 250, .8, -3], ['highshelf', 6000, -9], ['lp1', 9000]]}, {k: 'slap', ms: 180, g: -14, lp: 2000}, {k: 'wind', depth: 5}, {k: 'limit'}],
+      noise: {kind: 'wind', snr: 13}, checks: ['tops', 'mono', 'lows']},
+    {id: 'car', name: 'The car home', group: 'world', short: 'Car', level: -6, tag: 'Driver\'s seat, 80 km/h',
+      blurb: 'A small sealed box that adds bass for free, door speakers that boom at 130 Hz, and the road underneath all of it.',
+      always: 'A car cabin lifts everything under 70 Hz by about 7 dB and booms around 130 Hz. Low-mid build-up that was polite on monitors is not polite here.',
+      model: ['Cabin gain: +7 dB shelf under 70 Hz', 'Door speakers: +5 dB at 130 Hz, −4 dB at 350 Hz, +3 dB at 2.2 kHz, −3 dB above 8 kHz', 'Driver\'s seat: left +2 dB, right −1.5 dB and 0.5 ms late', 'Cabin reflections, 0.08 s', 'Road noise'],
+      chain: [{k: 'width', w: .8}, {k: 'eq', f: [['lowshelf', 70, 7], ['peaking', 130, 2.2, 5], ['peaking', 350, 1, -4], ['peaking', 2200, 1.5, 3], ['highshelf', 8000, -3], ['gain', -3]]}, {k: 'offset', l: 2, r: -1.5, ms: .5}, {k: 'room', rt: [.12, .08, .05], pre: 2, wet: -8, er: .5, seed: 41}, {k: 'limit'}],
+      noise: {kind: 'road', snr: 11}, checks: ['boom', 'lows']},
+    {id: 'bt', name: 'Bluetooth speaker', group: 'world', short: 'Speaker', level: -8, tag: 'On a kitchen counter',
+      blurb: 'One driver, a port tuned to 62 Hz, and a chip that turns everything up until the limiter says no.',
+      always: 'Mono, and nothing under 60 Hz. A bass note below that is heard through its harmonics or not at all.',
+      model: ['Mono', 'High-pass 62 Hz, 24 dB/oct, with a port bump', '+4 dB at 95 Hz, +2 dB at 4 kHz, −4 dB above 10 kHz', 'Soft saturation', 'Limiter'],
+      chain: [{k: 'width', w: 0}, {k: 'eq', f: [['highpass', 62, .7], ['highpass', 62, 1.3], ['peaking', 95, 1.4, 4], ['peaking', 4000, 1, 2], ['highshelf', 10000, -4]]}, {k: 'drive', pre: 3, amt: .2}, {k: 'limit'}],
+      checks: ['bass', 'mono']},
+    {id: 'laptop', name: 'Laptop speakers', group: 'world', short: 'Laptop', level: -12, tag: 'Where demos get judged',
+      blurb: 'Two coins of speaker under the keyboard. Nothing below 190 Hz, a honk at 900, and whoever you sent the demo to.',
+      always: 'Nothing under 190 Hz for any track. The kick is its knock and the bass is its harmonics.',
+      model: ['Width 70%', 'High-pass 190 Hz, 24 dB/oct', '+4 dB at 900 Hz, +3 dB at 3.5 kHz, −3 dB above 11 kHz', 'Limiter'],
+      chain: [{k: 'width', w: .7}, {k: 'eq', f: [['highpass', 190, .8], ['highpass', 190, 1], ['peaking', 900, 1.2, 4], ['peaking', 3500, 1.5, 3], ['highshelf', 11000, -3]]}, {k: 'limit'}],
+      checks: ['bass', 'kick', 'mono']},
+    {id: 'phone', name: 'Phone speaker', group: 'world', short: 'Phone', level: -16, tag: 'Where most people hear it first',
+      blurb: 'One speaker the size of a fingernail. Nothing below 430 Hz, a spike at 2.8 kHz, and it clips.',
+      always: 'Everything under 430 Hz is gone, for every track ever made. What counts is what you put above it.',
+      model: ['Mono', 'High-pass 430 Hz, 30 dB/oct', '+6 dB at 2.8 kHz, +3 dB at 1 kHz', 'Low-pass 9 kHz', 'Clipping', 'Limiter'],
+      chain: [{k: 'width', w: 0}, {k: 'eq', f: [['highpass', 430, .7], ['highpass', 430, 1.3], ['hp1', 300], ['peaking', 2800, 1.6, 6], ['peaking', 1000, 1, 3], ['lowpass', 9000, .71]]}, {k: 'drive', pre: 6, amt: .5}, {k: 'limit'}],
+      checks: ['bass', 'kick', 'mono']},
+  ];
+  const GROUPS = [['club', 'Inside'], ['wall', 'Through the wall'], ['world', 'Out in the world']];
+  const placeById = id => PLACES.find(p => p.id === id);
+
+  // Reverberation time at a frequency: low value to 125 Hz, mid at 1 kHz, high from 8 kHz.
+  function rtAt(room, f) {
+    const [l, m, h] = room.rt;
+    if (f <= 125) return l; if (f >= 8000) return h;
+    return f < 1000 ? l + (m - l) * Math.log(f / 125) / Math.log(8) : m + (h - m) * Math.log(f / 1000) / Math.log(8);
+  }
+  const roomColour = (room, f) => { const er = room.er == null ? .2 : room.er; return er + (1 - er) * rtAt(room, f) / room.rt[1]; };
+
+  // Compile a place for a sample rate, then ask for its power response and width at any frequency.
+  function compile(place, sr) {
+    return {place, sr, stages: place.chain.map(s => s.k === 'eq' ? {...s, c: coefs(s.f, sr)} : s.k === 'door' ? {...s, c: coefs(s.shut, sr), co: coefs(s.open, sr)} : s.k === 'slap' ? {...s, c: coefs([['lowpass', s.lp, .71]], sr)} : s)};
+  }
+  function respond(cp, f, doorOpen = false) {
+    let h2 = 1, w = 1;
+    for (const s of cp.stages) {
+      if (s.k === 'eq' || s.k === 'door') { const k = s.k === 'door' && doorOpen ? s.co : s.c; for (const c of k.cs) h2 *= mag2(c, f, cp.sr); h2 *= k.gain * k.gain; }
+      else if (s.k === 'room') h2 *= 1 + lin(s.wet) ** 2 * roomColour(s, f);
+      else if (s.k === 'slap') h2 *= 1 + lin(s.g) ** 2 * mag2(s.c.cs[0], f, cp.sr);
+      else if (s.k === 'width') w *= s.below && f < s.below ? 0 : s.w;
+    }
+    return {h2, w};
+  }
+
+  // A room as an impulse response: a few early reflections, then three bands of noise that
+  // each die at their own rate. Scaled so the response adds roomColour(f) of energy.
+  function impulse(room, sr) {
+    const [rl, rm, rh] = room.rt, pre = Math.round((room.pre || 0) / 1000 * sr), er = room.er == null ? .2 : room.er;
+    const n = pre + Math.ceil(Math.max(rl, rm, rh) * 1.15 * sr), scale = Math.sqrt((1 - er) / (rm * sr / 13.816)), out = [];
+    for (let ch = 0; ch < 2; ch++) {
+      const r = rng((room.seed || 1) * 2 + ch + 1), w = new Float32Array(n - pre);
+      for (let i = 0; i < w.length; i++) w[i] = (r() + r() + r() - 1.5) * 2; // variance 1
+      const lo = chainRun(w, [['lowpass', 250, .54], ['lowpass', 250, 1.31]], sr), hi = chainRun(w, [['highpass', 4000, .54], ['highpass', 4000, 1.31]], sr);
+      const d = new Float32Array(n), kl = 6.908 / (rl * sr), km = 6.908 / (rm * sr), kh = 6.908 / (rh * sr), ramp = .008 * sr;
+      for (let i = 0; i < w.length; i++) d[pre + i] = (lo[i] * Math.exp(-kl * i) + (w[i] - lo[i] - hi[i]) * Math.exp(-km * i) + hi[i] * Math.exp(-kh * i)) * scale * Math.min(1, i / ramp);
+      let e = 0; const taps = []; for (let k = 0; k < 6; k++) { const a = Math.pow(.78, k) * (r() < .5 ? -1 : 1); taps.push([pre + Math.round((.004 + (k + r()) * .011 * (rm > .5 ? 1 : .3)) * sr), a]); e += a * a; }
+      for (const [i, a] of taps) if (i < n) d[i] += a * Math.sqrt(er / e);
+      out.push(d);
+    }
+    return out;
+  }
+
+  // ---------------------------------------------------------------- ambience
+  // Every background is synthesised: there are no audio files in this folder.
+  function crowd(sr, n, r, voices, bright = 1) {
+    const L = new Float32Array(n), R = new Float32Array(n);
+    for (let v = 0; v < voices; v++) {
+      const pan = r(), gl = Math.cos(pan * Math.PI / 2), gr = Math.sin(pan * Math.PI / 2), base = 95 + r() * 150, lvl = .4 + r() * .6;
+      let ph = r(), i = Math.floor(-r() * sr), y1a = 0, y2a = 0, x1 = 0, x2 = 0, y1b = 0, y2b = 0;
+      while (i < n) {
+        const talk = r() < .72, syl = talk ? 2 + Math.floor(r() * 9) : 1;
+        for (let s = 0; s < syl && i < n; s++) {
+          const len = Math.round((talk ? .11 + r() * .16 : .25 + r() * 1.1) * sr), f1 = 300 + r() * 560, f2 = (900 + r() * 1400) * bright, f0 = base * (.85 + r() * .4), amp = talk ? lvl * (.5 + r() * .5) : 0;
+          const ca = biquad('peaking', f1, sr, 7, 0), wa = 2 * Math.PI * f1 / sr, wb = 2 * Math.PI * f2 / sr, ra = .985, rb = .98;
+          const a1a = -2 * ra * Math.cos(wa), a2a = ra * ra, a1b = -2 * rb * Math.cos(wb), a2b = rb * rb; void ca;
+          for (let k = 0; k < len && i < n; k++, i++) {
+            if (i < 0) continue;
+            ph += f0 / sr; if (ph >= 1) ph -= 1;
+            const src = (ph * 2 - 1) + (r() - .5) * .3, d = src - x2; x2 = x1; x1 = src; // differentiated source, two resonators
+            const ya = d - a1a * y1a - a2a * y2a; y2a = y1a; y1a = ya;
+            const yb = d - a1b * y1b - a2b * y2b; y2b = y1b; y1b = yb;
+            const o = (ya * (1 - ra) * 6 + yb * (1 - rb) * 3) * amp * Math.sin(Math.PI * k / len) ** 1.5;
+            L[i] += o * gl; R[i] += o * gr;
+          }
+        }
+      }
+    }
+    return [L, R];
+  }
+  function colour(n, r, list, sr) { const w = new Float32Array(n); for (let i = 0; i < n; i++) w[i] = r() * 2 - 1; return chainRun(w, list, sr); }
+  function slow(n, r, sr, hz) { // a smooth random curve between 0 and 1
+    const out = new Float32Array(n), step = Math.max(1, Math.round(sr / hz)); let a = r(), b = r();
+    for (let i = 0; i < n; i++) { const k = i % step; if (!k && i) { a = b; b = r(); } const t = k / step, s = t * t * (3 - 2 * t); out[i] = a + (b - a) * s; }
+    return out;
+  }
+  function ambience(kind, sr = 44100, secs = 8, seed = 7) {
+    const fade = Math.round(sr * .8), n = Math.round(secs * sr) + fade, r = rng(seed + kind.length * 131 + kind.charCodeAt(0));
+    let L = new Float32Array(n), R = new Float32Array(n);
+    const add = (l, rr, g) => { for (let i = 0; i < n; i++) { L[i] += l[i] * g; R[i] += rr[i] * g; } };
+    const norm = x => { let s = 0; for (const v of x[0]) s += v * v; for (const v of x[1]) s += v * v; const k = 1 / Math.sqrt(s / (2 * n) + 1e-12); for (let i = 0; i < n; i++) { x[0][i] *= k; x[1][i] *= k; } return x; };
+    if (kind === 'crowd' || kind === 'bar') {
+      add(...norm(crowd(sr, n, r, kind === 'bar' ? 26 : 20)), 1);
+      if (kind === 'bar') for (let c = 0; c < 9; c++) { const t0 = Math.floor(r() * (n - sr)), f = 3200 + r() * 2600, g = .5 + r(), p = r(); for (let i = 0; i < sr * .25; i++) { const o = Math.sin(2 * Math.PI * f * i / sr) * Math.exp(-i / (sr * .035)) * g; L[t0 + i] += o * p; R[t0 + i] += o * (1 - p); } }
+      add(colour(n, r, [['lp1', 300]], sr), colour(n, r, [['lp1', 300]], sr), 1.2);
+    } else if (kind === 'street') {
+      add(colour(n, r, [['lp1', 45], ['lp1', 200]], sr), colour(n, r, [['lp1', 45], ['lp1', 200]], sr), 60);
+      add(colour(n, r, [['lowpass', 700, .5]], sr), colour(n, r, [['lowpass', 700, .5]], sr), .5);
+      const car = colour(n, r, [['lowpass', 900, .6], ['hp1', 90]], sr), mid = n * .55, wd = sr * 1.5;
+      for (let i = 0; i < n; i++) { const g = Math.exp(-(((i - mid) / wd) ** 2)) * 5, p = clamp(.5 + (i - mid) / (wd * 4), 0, 1); L[i] += car[i] * g * (1 - p); R[i] += car[i] * g * p; }
+      const c = norm(crowd(sr, n, r, 7, .8)); add(chainRun(c[0], [['lowpass', 1500, .7]], sr), chainRun(c[1], [['lowpass', 1500, .7]], sr), .35);
+    } else if (kind === 'road') {
+      add(colour(n, r, [['lp1', 55], ['lp1', 160]], sr), colour(n, r, [['lp1', 55], ['lp1', 160]], sr), 60);
+      add(colour(n, r, [['peaking', 1000, .6, 12], ['lowpass', 2500, .7]], sr), colour(n, r, [['peaking', 1000, .6, 12], ['lowpass', 2500, .7]], sr), .09);
+      const wob = slow(n, r, sr, .7); for (let i = 0; i < n; i++) { const t = i / sr, o = (Math.sin(2 * Math.PI * 87 * t) + .5 * Math.sin(2 * Math.PI * 174 * t + 1) + .25 * Math.sin(2 * Math.PI * 261 * t + 2)) * (.6 + .4 * wob[i]) * .25; L[i] += o; R[i] += o; }
+    } else if (kind === 'tiles') {
+      const c = norm(crowd(sr, n, r, 5, .8)); add(chainRun(c[0], [['lowpass', 900, .7]], sr), chainRun(c[1], [['lowpass', 900, .7]], sr), .35);
+      const dl = colour(n, r, [['peaking', 1800, .5, 14], ['hp1', 300], ['lowpass', 6000, .7]], sr), dr = colour(n, r, [['peaking', 1800, .5, 14], ['hp1', 300], ['lowpass', 6000, .7]], sr), a = sr * 2.2, b = sr * 5.6;
+      for (let i = 0; i < n; i++) { const g = clamp((i - a) / (sr * .15), 0, 1) * clamp((b - i) / (sr * .5), 0, 1), t = i / sr, tone = Math.sin(2 * Math.PI * 310 * t) * 1.2; L[i] += (dl[i] + tone) * g * .5; R[i] += (dr[i] + tone) * g * .5; }
+      for (let i = 0; i < n; i++) { const o = Math.sin(2 * Math.PI * 120 * i / sr) * .12; L[i] += o; R[i] += o; }
+    } else if (kind === 'wind') {
+      const g = slow(n, r, sr, .45), g2 = slow(n, r, sr, .3), wl = colour(n, r, [['lp1', 420], ['hp1', 60]], sr), wr = colour(n, r, [['lp1', 420], ['hp1', 60]], sr);
+      for (let i = 0; i < n; i++) { L[i] += wl[i] * (.15 + g[i] ** 2) * 9; R[i] += wr[i] * (.15 + g2[i] ** 2) * 9; }
+      const c = norm(crowd(sr, n, r, 14)); add(chainRun(c[0], [['hp1', 400]], sr), chainRun(c[1], [['hp1', 400]], sr), .55);
+    } else throw Error('Unknown ambience ' + kind);
+    const m = n - fade, l = new Float32Array(m), rr = new Float32Array(m); // fold the tail over the head so the loop has no seam
+    for (let i = 0; i < m; i++) { const k = i < fade ? i / fade : 1, a = Math.sqrt(k), b = Math.sqrt(1 - k); l[i] = L[i] * a + (i < fade ? L[m + i] * b : 0); rr[i] = R[i] * a + (i < fade ? R[m + i] * b : 0); }
+    let s = 0; for (let i = 0; i < m; i++) s += l[i] * l[i] + rr[i] * rr[i];
+    const k = .1 / Math.sqrt(s / (2 * m) + 1e-12); for (let i = 0; i < m; i++) { l[i] *= k; rr[i] *= k; }
+    return [l, rr];
+  }
+
+  // ---------------------------------------------------------------- demo mix
+  // Sixteen bars of house at 126 BPM, written twice: once with five planted problems,
+  // once with each of them fixed. The tests check that the report finds exactly those five.
+  const PLANTED = [
+    ['harmonics', 'The bassline is a pure sine at 44 Hz', 'No harmonics, so it vanishes on anything smaller than a club.'],
+    ['basswide', 'The bass has a stereo widener on it', 'Left and right are 140° apart: summed to mono it drops about 9 dB.'],
+    ['tail', 'The kick rings for half a second and the bass is never ducked', 'There is no gap in the low end for a room to leave alone.'],
+    ['click', 'The kick has no click', 'On a speaker with no bass there is nothing left of it.'],
+    ['infra', 'A 21 Hz rumble runs under everything', 'No speaker here plays it. It only eats headroom.'],
+    ['wide', 'The chord stab is nearly out of phase and dull', 'It is the hook, and it cancels in mono.'],
+    ['mud', 'A pad sits at 90–300 Hz', 'Polite on monitors, a boom in a car.'],
+  ];
+  function demo(fixed, sr = 44100) {
+    const bpm = 126, beat = 60 / bpm, step = beat / 4, bars = 16, n = Math.round(bars * 4 * beat * sr), L = new Float32Array(n), R = new Float32Array(n), r = rng(fixed ? 5 : 4), TAU = 2 * Math.PI;
+    const hz = m => 440 * Math.pow(2, (m - 69) / 12), at = t => Math.round(t * sr);
+    // kick
+    const click = (() => { const len = at(.04), a = new Float32Array(len); for (let i = 0; i < len; i++) a[i] = (r() * 2 - 1) * Math.exp(-i / (sr * .007)); return chainRun(a, [['peaking', 2200, 1, 12], ['hp1', 600]], sr); })();
+    for (let b = 0; b < bars * 4; b++) {
+      const i0 = at(b * beat), len = at(fixed ? .32 : .47); let ph = 0;
+      for (let i = 0; i < len && i0 + i < n; i++) {
+        const t = i / sr, f = fixed ? 50 + 135 * Math.exp(-t / .028) : 47 + 115 * Math.exp(-t / .04); ph += TAU * f / sr;
+        let o = Math.sin(ph) * Math.exp(-t / (fixed ? .085 : .4)) * Math.min(1, i / (fixed ? 40 : 260)) * Math.min(1, (len - i) / 200);
+        if (fixed) o = Math.tanh(o * 1.6) * .72 + (i < click.length ? click[i] * .3 : 0); else o *= .9;
+        L[i0 + i] += o * .62; R[i0 + i] += o * .62;
+      }
+    }
+    // bass
+    const pat = [[[2, 0], [3, 0], [6, 0], [10, 0], [11, 3], [14, 0]], [[2, 0], [3, 0], [6, 0], [7, -2], [10, 0], [14, 3], [15, 0]]];
+    let lp = 0;
+    for (let bar = 0; bar < bars; bar++) {
+      const p = pat[bar % 2];
+      p.forEach(([s, semi], j) => {
+        const next = j + 1 < p.length ? p[j + 1][0] : 18, f = hz(29 + semi), i0 = at((bar * 16 + s) * step), len = at((fixed ? Math.min(next - s, 2) * .82 : (next - s)) * step);
+        for (let i = 0; i < len && i0 + i < n; i++) {
+          const t = i / sr, ph = TAU * f * t, env = Math.min(1, i / (sr * .004)) * Math.min(1, (len - i) / (sr * .02));
+          if (!fixed) { L[i0 + i] += Math.sin(ph) * env * .36; R[i0 + i] += Math.sin(ph + 2.44) * env * .36; continue; }
+          const tb = ((i0 + i) / sr) % beat, duck = 1 - .85 * Math.exp(-tb / .08), saw = ((f * 2 * t) % 1) * 2 - 1; lp += (saw - lp) * .2;
+          const o = (Math.sin(ph) * .34 + Math.tanh(Math.sin(ph) * 3) * .12 + lp * .17) * env * duck;
+          L[i0 + i] += o; R[i0 + i] += o;
+        }
+      });
+    }
+    if (!fixed) for (let i = 0; i < n; i++) { const o = Math.sin(TAU * 21 * i / sr) * .14; L[i] += o; R[i] += o; }
+    // hats and clap
+    const hat = (t0, g, dec) => { const i0 = at(t0), len = at(dec * 5), a = new Float32Array(len), b = new Float32Array(len); for (let i = 0; i < len; i++) { const e = Math.exp(-i / (sr * dec)); a[i] = (r() * 2 - 1) * e; b[i] = (r() * 2 - 1) * e; } const fa = chainRun(a, [['highpass', 7000, .8]], sr), fb = chainRun(b, [['highpass', 7000, .8]], sr); for (let i = 0; i < len && i0 + i < n; i++) { L[i0 + i] += (fa[i] * .8 + fb[i] * .2) * g; R[i0 + i] += (fb[i] * .8 + fa[i] * .2) * g; } };
+    for (let s = 0; s < bars * 16; s++) hat(s * step, s % 4 === 2 ? .5 : s % 4 ? .16 : 0, s % 4 === 2 ? .045 : .012);
+    for (let b = 0; b < bars * 4; b++) if (b % 2 === 1) { const i0 = at(b * beat), len = at(.3), a = new Float32Array(len); for (let i = 0; i < len; i++) { const t = i / sr; a[i] = (r() * 2 - 1) * (t < .03 ? (Math.floor(t / .01) % 2 ? .4 : 1) * Math.exp(-(t % .01) / .004) + .3 : Math.exp(-(t - .03) / .07)); } const f = chainRun(a, [['peaking', 1600, 1.2, 10], ['hp1', 500], ['lowpass', 6000, .7]], sr); for (let i = 0; i < len && i0 + i < n; i++) { L[i0 + i] += f[i] * .2; R[i0 + i] += f[i] * .2; } }
+    // chord stab (the hook) and pad, from bar 5
+    const chord = [53, 56, 60, 63], stabs = [[3, 9], [3, 11, 14]];
+    for (let bar = 4; bar < bars; bar++) for (const s of stabs[bar % 2]) {
+      const i0 = at((bar * 16 + s) * step), len = at(.34), a = new Float32Array(len), b = new Float32Array(len);
+      for (let i = 0; i < len; i++) { const t = i / sr, e = Math.exp(-t / .13) * Math.min(1, i / 60); let x = 0, y = 0; for (const m of chord) { x += ((hz(m - .06) * t) % 1) * 2 - 1; y += ((hz(m + .06) * t + .3) % 1) * 2 - 1; } a[i] = x * e; b[i] = y * e; }
+      const lpf = fixed ? [['lowpass', 3200, .9], ['hp1', 220]] : [['lowpass', 1100, .7], ['lowpass', 1100, .7]], fa = chainRun(a, lpf, sr), fb = chainRun(b, lpf, sr), g = fixed ? .2 : .28;
+      for (let i = 0; i < len && i0 + i < n; i++) { L[i0 + i] += fa[i] * g; R[i0 + i] += (fixed ? fa[i] * .7 + fb[i] * .3 : -.85 * fa[i]) * g; }
+    }
+    { const i0 = at(16 * 4 * step), len = n - i0, a = new Float32Array(len); for (let i = 0; i < len; i++) { const t = i / sr; a[i] = (((87.31 * t) % 1) + ((130.81 * t) % 1) + ((207.65 * t) % 1)) * 2 - 3; }
+      const f = chainRun(a, fixed ? [['lowpass', 900, .7], ['highpass', 220, .7]] : [['lowpass', 320, .7], ['lowpass', 320, .7]], sr), g = fixed ? .035 : .16;
+      for (let i = 0; i < len; i++) { const e = Math.min(1, i / (sr * .5)) * Math.min(1, (len - i) / (sr * .05)); L[i0 + i] += f[i] * g * e; R[i0 + i] += f[i] * g * e; } }
+    let peak = 0; for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(L[i]), Math.abs(R[i]));
+    const k = .89 / peak; for (let i = 0; i < n; i++) { L[i] *= k; R[i] *= k; }
+    return {L, R, sr, bpm, bars, name: fixed ? 'Demo mix, fixed' : 'Demo mix, seven planted problems'};
+  }
+
+  // ---------------------------------------------------------------- analysis
+  function fftPlan(N) {
+    const rev = new Uint32Array(N), bits = Math.log2(N), cos = new Float64Array(N / 2), sin = new Float64Array(N / 2), win = new Float64Array(N); let ws = 0;
+    for (let i = 0; i < N; i++) { let x = i, y = 0; for (let b = 0; b < bits; b++) { y = y << 1 | x & 1; x >>= 1; } rev[i] = y; win[i] = .5 - .5 * Math.cos(2 * Math.PI * i / N); ws += win[i] * win[i]; }
+    for (let i = 0; i < N / 2; i++) { cos[i] = Math.cos(2 * Math.PI * i / N); sin[i] = -Math.sin(2 * Math.PI * i / N); }
+    return {N, rev, cos, sin, win, ws};
+  }
+  function fft(re, im, p) {
+    const N = p.N;
+    for (let i = 0; i < N; i++) { const j = p.rev[i]; if (j > i) { let t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; } }
+    for (let size = 2; size <= N; size <<= 1) { const half = size >> 1, stride = N / size;
+      for (let s = 0; s < N; s += size) for (let k = 0; k < half; k++) { const c = p.cos[k * stride], sn = p.sin[k * stride], a = s + k, b = a + half, tr = re[b] * c - im[b] * sn, ti = re[b] * sn + im[b] * c; re[b] = re[a] - tr; im[b] = im[a] - ti; re[a] += tr; im[a] += ti; } }
+  }
+  const KW = sr => [biquad('highpass', 38.135, sr, .5), biquad('highshelf', 1681.97, sr, Math.SQRT1_2, 4)];
+  const GROUPS6 = [['sub', 'Sub', 20, 60], ['bass', 'Bass', 60, 120], ['lowmid', 'Low mids', 120, 300], ['mid', 'Mids', 300, 2000], ['pres', 'Presence', 2000, 6000], ['air', 'Air', 6000, 20000]];
+  const ENV_BANDS = [[35, 120], [120, 300], [300, 1000], [1000, 4000], [4000, 12000]];
+
+  // Where the loudest stretch of the track is: that is the part every place gets judged on.
+  function overview(L, R, sr, want = 32) {
+    const blk = Math.round(sr * .05), nb = Math.floor(L.length / blk), rms = new Float32Array(nb);
+    for (let b = 0; b < nb; b++) { let s = 0; for (let i = b * blk, e = i + blk; i < e; i++) s += L[i] * L[i] + R[i] * R[i]; rms[b] = Math.sqrt(s / (2 * blk)); }
+    const w = Math.min(nb, Math.round(want / .05)); let sum = 0, best = -1, at = 0;
+    for (let b = 0; b < nb; b++) { sum += rms[b] * rms[b]; if (b >= w) sum -= rms[b - w] * rms[b - w]; if (b >= w - 1 && sum > best * 1.0001) { best = sum; at = b - w + 1; } }
+    return {rms, block: .05, start: at * .05, len: w * .05, secs: L.length / sr};
+  }
+
+  function analyse(L, R, sr, win) {
+    const total = L.length; win = win || overview(L, R, sr);
+    const i0 = clamp(Math.round(win.start * sr), 0, total), n = Math.max(1, Math.min(total - i0, Math.round(win.len * sr)));
+    const N = 1 << Math.round(Math.log2(sr * .186)), hop = N >> 2, plan = fftPlan(N), half = N / 2, df = sr / N, norm = 2 / (N * plan.ws);
+    const psdM = new Float64Array(half + 1), psdS = new Float64Array(half + 1), re = new Float64Array(N), im = new Float64Array(N), re2 = new Float64Array(N), im2 = new Float64Array(N);
+    const frames = Math.max(1, Math.floor((n - N) / hop) + 1), fr = [], lo = Math.max(2, Math.round(30 / df)), hi = Math.round(130 / df);
+    let peak = 0, sq = 0;
+    for (let i = i0; i < i0 + n; i++) { const a = Math.abs(L[i]), b = Math.abs(R[i]); if (a > peak) peak = a; if (b > peak) peak = b; sq += L[i] * L[i] + R[i] * R[i]; }
+    const pm = new Float64Array(half + 1), ps = new Float64Array(half + 1);
+    for (let f = 0; f < frames; f++) {
+      const o = i0 + f * hop;
+      for (let i = 0; i < N; i++) { const k = o + i, l = k < total ? L[k] : 0, r = k < total ? R[k] : 0, w = plan.win[i]; re[i] = (l + r) * .5 * w; im[i] = 0; re2[i] = (l - r) * .5 * w; im2[i] = 0; }
+      fft(re, im, plan); fft(re2, im2, plan);
+      for (let k = 1; k < half; k++) { pm[k] = (re[k] * re[k] + im[k] * im[k]) * norm; ps[k] = (re2[k] * re2[k] + im2[k] * im2[k]) * norm; psdM[k] += pm[k]; psdS[k] += ps[k]; }
+      // the bassline: the strongest low peak and everything locked to its harmonic series
+      let kb = lo; for (let k = lo; k <= hi; k++) if (pm[k] > pm[kb]) kb = k;
+      const a = pm[kb - 1], b = pm[kb], c = pm[kb + 1], den = a - 2 * b + c, f0 = (kb + (den ? clamp(.5 * (a - c) / den, -.5, .5) : 0)) * df;
+      const sum = (arr, fc) => { const k = Math.round(fc / df); let s = 0; for (let j = k - 2; j <= k + 2; j++) if (j > 0 && j < half) s += arr[j]; return s; };
+      const p1 = sum(pm, f0) + sum(ps, f0), pts = [];
+      for (let h = 1; h * f0 <= 2000; h++) { const on = sum(pm, h * f0), ons = sum(ps, h * f0), off = (sum(pm, (h - .5) * f0) + sum(pm, (h + .5) * f0)) / 2, offs = (sum(ps, (h - .5) * f0) + sum(ps, (h + .5) * f0)) / 2; pts.push([h * f0, on - off, ons - offs, on]); }
+      fr.push({f0, p1, pts});
+    }
+    for (let k = 0; k <= half; k++) { psdM[k] /= frames; psdS[k] /= frames; }
+    // gather the bassline into twelfth-octave bins from 25 Hz to 2 kHz
+    const BN = 78, bassM = new Float64Array(BN), bassS = new Float64Array(BN), bassOn = new Float64Array(BN), bassF = Array.from({length: BN}, (_, j) => 25 * Math.pow(2, j / 12)), maxP1 = Math.max(...fr.map(f => f.p1)), hist = new Map(); let used = 0;
+    for (const f of fr) if (f.p1 > maxP1 * .05) { used++; for (const [hz, m, s, on] of f.pts) { const j = Math.round(12 * Math.log2(hz / 25)); if (j >= 0 && j < BN) { bassM[j] += m; bassS[j] += s; bassOn[j] += on; } } const semi = Math.round(12 * Math.log2(f.f0 / 440)); hist.set(semi, (hist.get(semi) || 0) + f.p1); }
+    for (let j = 0; j < BN; j++) { const real = bassM[j] > bassOn[j] * .37; bassM[j] = real ? bassM[j] / (used || 1) : 0; bassS[j] = real ? Math.max(0, bassS[j]) / (used || 1) : 0; } // a partial counts when it stands 2 dB clear of what lies between the partials
+    const semi = [...hist].sort((a, b) => b[1] - a[1])[0], lowHz = semi ? 440 * Math.pow(2, semi[0] / 12) : 0;
+
+    // envelopes of five bands at 5 ms, for the kick and the gaps between kicks
+    const M = new Float32Array(n); for (let i = 0; i < n; i++) M[i] = (L[i0 + i] + R[i0 + i]) * .5;
+    const eh = Math.round(sr * .005), en = Math.floor(n / eh), env = ENV_BANDS.map(([a, b]) => { const y = chainRun(M, [['highpass', a, .71], ['highpass', a, .71], ['lowpass', b, .71], ['lowpass', b, .71]], sr), e = new Float32Array(en); for (let j = 0; j < en; j++) { let s = 0; for (let i = j * eh, x = i + eh; i < x; i++) s += y[i] * y[i]; e[j] = s / eh; } return e; });
+    const envHopS = () => eh / sr;
+    const low = env[0], maxLow = low.reduce((a, b) => Math.max(a, b), 0), onsets = [];
+    for (let j = 6; j < en - 10; j++) { const rise = dB(low[j + 2] + maxLow * 1e-4) - dB(low[j - 3] + maxLow * 1e-4); if (rise < 5 || low[j + 4] < maxLow * .05) continue; let top = true; for (let k = -12; k <= 12 && top; k++) if (k && j + k > 5 && j + k < en - 10 && dB(low[j + k + 2] + maxLow * 1e-4) - dB(low[j + k - 3] + maxLow * 1e-4) > rise) top = false; if (top && (!onsets.length || j - onsets[onsets.length - 1] > 24)) onsets.push(j); }
+    const pct = (arr, q) => { const s = Float64Array.from(arr).sort(); return s.length ? s[Math.min(s.length - 1, Math.floor(q * s.length))] : 0; };
+    const rise = new Float32Array(en); for (let j = 3; j < en - 2; j++) rise[j] = Math.max(0, dB(low[j + 2] + maxLow * 1e-4) - dB(low[j - 3] + maxLow * 1e-4));
+    let bpm = null, kicks = [];
+    if (onsets.length >= 8) {
+      const mean = low.reduce((a, b) => a + b, 0) / en, ac = lag => { let s = 0; for (let j = lag; j < en; j++) s += (low[j] - mean) * (low[j - lag] - mean); return s / (en - lag); }; let best = -Infinity;
+      for (let b = 85; b <= 180; b += .25) { const T = 60 / b / envHopS(); if (4 * T >= en * .6) continue; const s = ac(Math.round(T)) + ac(Math.round(2 * T)) + ac(Math.round(4 * T)); if (s > best) { best = s; bpm = b; } }
+      // follow the beat: best phase for the grid, then snap each beat to the nearest rise
+      const T = 60 / bpm / envHopS(); let ph = 0, top = -1;
+      for (let p = 0; p < Math.ceil(T); p++) { let s = 0; for (let x = p; x < en; x += T) s += rise[Math.round(x)] || 0; if (s > top) { top = s; ph = p; } }
+      for (let x = ph; x < en - 10; x += T) { let at = Math.round(x), bestR = 0; for (let k = -3; k <= 3; k++) { const j = Math.round(x) + k; if (j > 5 && j < en && rise[j] > bestR) { bestR = rise[j]; at = j; } } if (bestR >= 3) { kicks.push(at); x = at; } }
+    }
+    if (kicks.length < 8) kicks = onsets;
+    // a kick reads when it rises out of what came before it and is not dwarfed by the loud hits in the same band
+    const contrast = env.map(e => { const v = [], loud = dB(pct(e, .9) + 1e-12); for (const j of kicks) { let pk = 0; for (let k = j - 2; k <= j + 8; k++) if (k >= 0 && k < en) pk = Math.max(pk, e[k]); const before = []; for (let k = j - 30; k <= j - 4; k++) if (k >= 0) before.push(e[k]); if (before.length > 6) v.push(Math.min(dB(pk + 1e-12) - dB(pct(before, .5) + 1e-12), dB(pk + 1e-12) - loud + 10)); } return v.length >= 4 ? pct(v, .3) : null; });
+    const m = {sr, N, df, psdM, psdS, bassM, bassS, bassF, lowHz, lowNote: lowHz ? noteOf(lowHz) : null, env, envHop: eh / sr, onsets: onsets.length, kicks: kicks.length, contrast, bpm,
+      peak: dB(peak * peak), rms: dB(sq / (2 * n)), start: i0 / sr, len: n / sr, secs: total / sr};
+    m.crest = m.peak - m.rms;
+    const st = hear(m, compile(PLACES[0], sr));
+    m.lufs = st.lufs; m.corr = (st.pM - st.pS) / (st.pM + st.pS + 1e-30);
+    return m;
+  }
+
+  // What a place does to the measured track: loudness, the balance of six bands, the bassline, mono loss.
+  function hear(m, cp) {
+    const half = m.psdM.length - 1, kw = KW(m.sr), o = {groups: {}, mono: {}};
+    if (!cp.h2 || cp.h2.length !== half + 1) { cp.h2 = new Float64Array(half + 1); cp.w2 = new Float64Array(half + 1); cp.kw = new Float64Array(half + 1); for (let k = 1; k <= half; k++) { const r = respond(cp, k * m.df); cp.h2[k] = r.h2; cp.w2[k] = r.w * r.w; cp.kw[k] = mag2(kw[0], k * m.df, m.sr) * mag2(kw[1], k * m.df, m.sr); } }
+    let z = 0, zFull = 0, pM = 0, pS = 0, tot = 0; const g = GROUPS6.map(() => 0), gFull = GROUPS6.map(() => 0);
+    for (let k = 1; k < half; k++) {
+      const f = k * m.df, a = m.psdM[k] * cp.h2[k], b = m.psdS[k] * cp.h2[k], p = a + cp.w2[k] * b; z += p * cp.kw[k]; zFull += (a + b) * cp.kw[k]; pM += a; pS += b; tot += p;
+      for (let i = 0; i < 6; i++) if (f >= GROUPS6[i][2] && f < GROUPS6[i][3]) { g[i] += p; gFull[i] += a + b; }
+    }
+    o.pM = pM; o.pS = pS; o.power = dB(tot); o.lufs = -0.691 + dB(2 * z); o.monoLoss = dB(z) - dB(zFull);
+    GROUPS6.forEach(([id], i) => { o.groups[id] = g[i] / (tot + 1e-30); o.mono[id] = dB(g[i] + 1e-30) - dB(gFull[i] + 1e-30); });
+    let bz = 0, bl = 0, bFull = 0;
+    for (let j = 0; j < m.bassF.length; j++) { const f = m.bassF[j], r = respond(cp, f), k = mag2(kw[0], f, m.sr) * mag2(kw[1], f, m.sr), a = (m.bassM[j] + r.w * r.w * m.bassS[j]) * r.h2 * k; bz += a; if (f < 200) { bl += a; bFull += (m.bassM[j] + m.bassS[j]) * r.h2 * k; } }
+    o.bass = dB(bz + 1e-30) - dB(z + 1e-30); // the bassline under the whole mix, in this place
+    o.bassMono = bl > z * .01 ? dB(bl + 1e-30) - dB(bFull + 1e-30) : 0; // only where this place plays the bass at all
+    // the kick: the best contrast among the bands this place still plays
+    const gains = ENV_BANDS.map(([a, b]) => dB(respond(cp, Math.sqrt(a * b)).h2)), top = Math.max(...gains); let kc = null, kb = -1;
+    m.contrast.forEach((c, i) => { if (i < 4 && c != null && gains[i] > top - 14 && (kc == null || c > kc)) { kc = c; kb = i; } });
+    o.kick = kc; o.kickBand = kb;
+    // gaps in the low end, after every room and echo in the chain has filled them
+    let e = Float64Array.from(m.env[0]); const hopS = m.envHop;
+    for (const s of cp.stages) {
+      if (s.k === 'room') { const er = s.er == null ? .2 : s.er, w2 = lin(s.wet) ** 2, a = Math.exp(-13.816 * hopS / s.rt[0]), y = new Float64Array(e.length); let acc = 0; for (let i = 0; i < e.length; i++) { acc = a * acc + (1 - a) * e[i]; y[i] = e[i] * (1 + w2 * er) + w2 * (1 - er) * (s.rt[0] / s.rt[1]) * acc; } e = y; }
+      else if (s.k === 'slap' && s.lp <= 500) { const d = Math.round(s.ms / 1000 / hopS), g2 = lin(s.g) ** 2, y = Float64Array.from(e); for (let i = d; i < e.length; i++) y[i] += g2 * e[i - d]; e = y; }
+    }
+    const sm = new Float64Array(e.length); for (let i = 0; i < e.length; i++) { let s = 0, c = 0; for (let k = -2; k <= 2; k++) if (i + k >= 0 && i + k < e.length) { s += e[i + k]; c++; } sm[i] = s / c; }
+    const sorted = sm.slice().sort(), q = p => sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))];
+    o.depth = dB(q(.95) + 1e-12) - dB(q(.1) + 1e-12);
+    return o;
+  }
+  // The deepest gap a place allows: a tight kick on every beat, sent through the same rooms.
+  const TIGHT = new Map();
+  function tight(place, bpm = 126) {
+    const key = place.id + '/' + Math.round(bpm); if (TIGHT.has(key)) return TIGHT.get(key);
+    const hop = .005, n = 2400, e = new Float32Array(n), beat = 60 / bpm / hop; for (let i = 0; i < n; i++) e[i] = Math.exp(-((i % beat) * hop) / .045) + .03;
+    const d = hear({sr: 44100, df: 44100 / 8192, psdM: new Float64Array(3), psdS: new Float64Array(3), bassF: [], bassM: [], bassS: [], contrast: [], env: [e], envHop: hop}, compile(place, 44100)).depth;
+    TIGHT.set(key, d); return d;
+  }
+
+  // ---------------------------------------------------------------- verdicts
+  const FIXES = {
+    harmonics: ['Give the bassline harmonics', 'Saturator on the bass (Analog Clip, Drive 6–10 dB, Dry/Wet to taste), or duplicate the bass an octave up, band-pass it 200–900 Hz and blend it in around −12 dB. Stay in the phone place while you turn it up, and stop when the note comes back.'],
+    click: ['Give the kick a click', 'Layer a 10 ms tick on the kick (a rim, a closed hat or noise, 2–5 kHz), or lift the kick\'s own attack: EQ Eight bell +3 dB at 3 kHz, or Drum Buss with Transients up. The body stays as it is.'],
+    basswide: ['Put the low end in the centre', 'Utility on the bass bus with Bass Mono at 120 Hz, and take any chorus, widener or stereo reverb off the sub layer. Club subs and small speakers are mono: what differs between left and right down there cancels.'],
+    wide: ['Tame the widener', 'Something wide is out of phase and disappears in mono. Lower the widener or Haas delay on it, or keep a mono copy of the part in the centre under the wide one. Check with Utility set to Mono.'],
+    tail: ['Open gaps in the low end', 'Shorten the kick\'s tail (under about 200 ms at 125 BPM and up), shorten the bass notes, or sidechain the bass harder: Compressor, ratio ∞:1, release 80–120 ms. A room adds its own tail to every kick, so leave it some space to fill.'],
+    infra: ['Cut what no speaker plays', 'EQ Eight high-pass at 25–30 Hz, 24 dB/oct or steeper, on the sub or the master. Nothing in a club, a car or a kitchen reproduces it, and the limiter still has to carry it.'],
+    mud: ['Clear the low mids', 'High-pass pads, chords and reverb returns at 150–250 Hz, and dip 2–4 dB around 130–250 Hz on whatever is left holding a note there.'],
+    harsh: ['Soften 2–5 kHz', 'A club rig\'s horns are loudest exactly there. Find the part that owns that band (a lead, a clap, a hat bus) and dip 2–3 dB with a wide bell, or use a dynamic EQ that only works on the loud hits.'],
+    dull: ['Open the top', 'There is little above 5 kHz to lose. Raise the hats and percussion bus, or add a high shelf of 2–3 dB at 8 kHz on the tops only.'],
+    thin: ['Add weight under 120 Hz', 'Less of the energy sits in the bottom two octaves than a big system expects. Turn the kick and sub up against everything else, and check they are not being high-passed twice.'],
+    heavy: ['Take weight out of the bottom', 'Almost all of the energy is under 120 Hz. On a rig that already adds 7 dB down there, the limiter will pump and the rest of the track gets turned down with it.'],
+  };
+  const f1 = x => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(1), n1 = x => Math.abs(x).toFixed(1);
+  const lowShare = h => h.groups.sub + h.groups.bass;
+  const idx = (m, a, b, c, d) => { let x = 0, y = 0; for (let k = 1; k < m.psdM.length - 1; k++) { const f = k * m.df, p = m.psdM[k] + m.psdS[k]; if (f >= a && f < b) x += p; if (f >= c && f < d) y += p; } return dB(x + 1e-30) - dB(y + 1e-30); };
+  // Each check looks at one thing in one place and returns a finding, or nothing.
+  const CHECKS = {
+    bass(m, h, st, p) {
+      const drop = h.bass - st.bass;
+      if (drop > -12 && h.bass > -24) return {ok: `The bassline is ${n1(h.bass)} dB under the mix here (${n1(st.bass)} dB in the studio). The note still reads.`};
+      const gone = drop < -22 || h.bass < -34;
+      return {sev: gone ? 2 : 1, pen: gone ? 34 : 16, fix: 'harmonics', val: h.bass, unit: 'dB', head: gone ? 'The bassline is gone' : 'The bassline is thin',
+        text: `It sits ${n1(h.bass)} dB under the rest of the mix here, against ${n1(st.bass)} dB in the studio. ${p.id === 'bt' ? 'The speaker stops at 62 Hz' : 'This speaker plays nothing down there'}, and your bass has ${gone ? 'almost nothing' : 'little'} above it${m.lowNote ? ` (the low end is centred on ${m.lowNote}, ${m.lowHz.toFixed(0)} Hz)` : ''}.`};
+    },
+    kick(m, h) {
+      if (h.kick == null) return null;
+      if (h.kick >= 7) return {ok: `The kick stands ${n1(h.kick)} dB clear of what is around it in the band this speaker plays.`};
+      const gone = h.kick < 3.5;
+      return {sev: gone ? 2 : 1, pen: gone ? 26 : 12, fix: 'click', val: h.kick, unit: 'dB', head: gone ? 'The kick disappears' : 'The kick is faint',
+        text: `In the band this speaker plays, the kick only rises ${n1(h.kick)} dB above what is already there. Its body is below the speaker and it has ${gone ? 'no' : 'not much'} click to stand in for it.`};
+    },
+    mono(m, h, st, p) {
+      const out = [], wide = Math.min(h.mono.mid, h.mono.pres, h.mono.lowmid), lowOnly = p.chain.some(s => s.k === 'width' && s.below && s.w === 1);
+      if (h.bassMono < -1.5) { const bad = h.bassMono < -3; out.push({sev: bad ? 2 : 1, pen: bad ? 28 : 15, fix: 'basswide', val: h.bassMono, unit: 'dB', head: bad ? 'The bass cancels in mono' : 'The bass loses level in mono', text: `Summed to mono the bassline drops ${n1(h.bassMono)} dB. ${lowOnly ? 'The subs here are mono, so that is what the room gets.' : 'This place is mono, so that is all of it.'} Its left and right channels are out of step with each other.`}); }
+      if (!lowOnly && wide < -2) { const bad = wide < -5, which = h.mono.mid === wide ? 'mids' : h.mono.pres === wide ? 'presence band' : 'low mids'; out.push({sev: bad ? 2 : 1, pen: bad ? 22 : 10, fix: 'wide', val: wide, unit: 'dB', head: bad ? 'A wide part cancels' : 'A wide part gets quieter', text: `The ${which} lose ${n1(wide)} dB when left and right are folded together here. Something in that band is wide by being out of phase.`}); }
+      return out.length ? out : {ok: 'Folding left and right together costs less than 1.5 dB anywhere. Nothing here depends on being wide.'};
+    },
+    punch(m, h, st, p) {
+      const best = tight(p, m.bpm || 126), short = best - h.depth;
+      if (short < 3.5) return {ok: `The low end falls ${n1(h.depth)} dB between hits after this room (${n1(st.depth)} dB in the studio). The tightest kick there is manages ${n1(best)} dB here, so the kick has somewhere to land.`};
+      const bad = short > 6;
+      return {sev: bad ? 2 : 1, pen: bad ? 28 : 17, fix: 'tail', val: h.depth, unit: 'dB', head: bad ? 'The low end is one continuous note' : 'The low end smears',
+        text: `Between hits the low end only falls ${n1(h.depth)} dB in this room, where a tight kick and bass manage ${n1(best)} dB. It was ${n1(st.depth)} dB in the studio, and ${p.id === 'booth' ? 'the late bass from the floor' : `the room's ${p.chain.find(s => s.k === 'room').rt[0]} s of bass reverb`} filled what gap there was.`};
+    },
+    groove(m, h, st, p) {
+      const best = tight(p, m.bpm || 126), short = best - h.depth;
+      if (short < 3.5) return {ok: `Through the wall the low end still moves ${n1(h.depth)} dB between hits (the most this wall allows is ${n1(best)} dB). From here it sounds like a kick drum, not a hum.`};
+      const bad = short > 6;
+      return {sev: bad ? 2 : 1, pen: bad ? 32 : 20, fix: 'tail', val: h.depth, unit: 'dB', head: bad ? 'From here it is a hum' : 'The groove is blurred',
+        text: `All that gets through a wall is the low end, and yours only moves ${n1(h.depth)} dB between hits by the time it arrives, where a tight kick and bass manage ${n1(best)} dB. The kick and the bass have run together.`};
+    },
+    infra(m) {
+      let a = 0, t = 0; for (let k = 1; k < m.psdM.length - 1; k++) { const p = m.psdM[k] + m.psdS[k]; t += p; if (k * m.df < 30) a += p; }
+      const share = a / t;
+      if (share < .02) return {ok: `${(share * 100).toFixed(1)}% of the energy is under 30 Hz. Nothing wasted.`};
+      const bad = share > .08;
+      return {sev: bad ? 2 : 1, pen: bad ? 18 : 8, fix: 'infra', val: share * 100, unit: '%', head: 'Energy no speaker plays',
+        text: `${(share * 100).toFixed(0)}% of the track's energy is below 30 Hz. This rig is high-passed at 32 Hz, so the room never hears it, and removing it gives back about ${n1(dB(1 - share))} dB of headroom.`};
+    },
+    lows(m, h, st, p) {
+      const s = lowShare(st);
+      if (s < .35) return {sev: s < .2 ? 2 : 1, pen: s < .2 ? 22 : 10, fix: 'thin', val: s * 100, unit: '%', head: 'Light on a big system', text: `${(s * 100).toFixed(0)}% of the energy is under 120 Hz. Club records usually sit between 55 and 80%.${p.id === 'sub' ? ' At the stack that is all there is to hear.' : ''}`};
+      if (s > .92) return {sev: 1, pen: 10, fix: 'heavy', val: s * 100, unit: '%', head: 'Almost all bottom', text: `${(s * 100).toFixed(0)}% of the energy is under 120 Hz, before this place adds its own. Club records usually sit between 55 and 80%.`};
+      return {ok: `${(s * 100).toFixed(0)}% of the energy is under 120 Hz, inside the usual 55–80% for club records${s > .8 ? ' (at the heavy end)' : s < .55 ? ' (at the light end)' : ''}.`};
+    },
+    boom(m, h, st, p) {
+      const v = idx(m, 110, 260, 260, 2600);
+      if (v < 6) return {ok: `The low mids (110–260 Hz) sit ${f1(v)} dB against the mids. This place adds to that band, and there is room for it.`};
+      const bad = v > 10;
+      return {sev: bad ? 2 : 1, pen: bad ? 24 : 14, fix: 'mud', val: v, unit: 'dB', head: bad ? 'It booms' : 'Low mids build up',
+        text: `110–260 Hz is ${f1(v)} dB against the mids in your mix, and ${p.id === 'car' ? 'the door speakers add 5 dB at 130 Hz' : 'the back wall adds 3 dB at 140 Hz'} on top.`};
+    },
+    harsh(m) {
+      const v = idx(m, 2000, 5000, 250, 2000);
+      if (v < -4) return {ok: `2–5 kHz sits ${f1(v)} dB against the mids. Loud, that band is where a rig hurts, and yours has room.`};
+      const bad = v > -1;
+      return {sev: bad ? 2 : 1, pen: bad ? 20 : 9, fix: 'harsh', val: v, unit: 'dB', head: bad ? 'Harsh when loud' : 'Forward at 2–5 kHz', text: `2–5 kHz is ${f1(v)} dB against the mids. Most club records are 8 to 12 dB down there, and the horns add 2–3 dB more.`};
+    },
+    tops(m) {
+      const v = idx(m, 5000, 20000, 250, 2000);
+      if (v > -22) return {ok: `The top (above 5 kHz) is ${f1(v)} dB against the mids. After 9 dB of air loss there is still something left.`};
+      const bad = v < -28;
+      return {sev: bad ? 2 : 1, pen: bad ? 18 : 8, fix: 'dull', val: v, unit: 'dB', head: bad ? 'No top end reaches the back' : 'The top end is fragile', text: `Above 5 kHz your mix is already ${f1(v)} dB against the mids. Sixty metres of air takes another 9 dB.`};
+    },
+  };
+  const VERDICT = s => s >= 85 ? 'Survives' : s >= 62 ? 'Changes' : 'Falls apart';
+
+  // The whole report: one entry per place, an overall score, and the fixes ranked by how much they buy.
+  function report(m) {
+    const cps = PLACES.map(p => compile(p, m.sr)), hs = cps.map(cp => hear(m, cp)), st = hs[0], places = [];
+    PLACES.forEach((p, i) => {
+      const h = hs[i], found = [], good = [];
+      for (const c of p.checks) { const r = CHECKS[c](m, h, st, p); for (const x of Array.isArray(r) ? r : r ? [r] : []) x.ok ? good.push({check: c, text: x.ok}) : found.push({check: c, ...x}); }
+      found.sort((a, b) => b.pen - a.pen);
+      const score = p.id === 'studio' ? null : Math.round(clamp(100 - found.reduce((s, f) => s + f.pen, 0), 4, 100));
+      places.push({id: p.id, name: p.name, score, verdict: score == null ? '' : VERDICT(score), found, good, loud: h.lufs - st.lufs, lufs: h.lufs, groups: h.groups, bass: h.bass, kick: h.kick, depth: h.depth, monoLoss: h.monoLoss});
+    });
+    const scored = places.filter(p => p.score != null), overall = Math.round(scored.reduce((s, p) => s + p.score, 0) / scored.length), by = new Map();
+    for (const p of scored) for (const f of p.found) { const e = by.get(f.fix) || {id: f.fix, title: FIXES[f.fix][0], how: FIXES[f.fix][1], gain: 0, places: []}; e.gain += f.pen; if (!e.places.includes(p.name)) e.places.push(p.name); by.set(f.fix, e); }
+    const fixes = [...by.values()].sort((a, b) => b.gain - a.gain).map(f => ({...f, points: Math.round(f.gain / scored.length)}));
+    return {places, overall, verdict: VERDICT(overall), fixes, lufs: m.lufs, peak: m.peak, crest: m.crest, corr: m.corr, lowNote: m.lowNote, lowHz: m.lowHz, bpm: m.bpm, start: m.start, len: m.len, secs: m.secs};
+  }
+  const clock = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  function markdown(rep, name, ref, refName) {
+    const out = [`# Outside: ${name}`, '', `Translation score **${rep.overall} / 100** (${rep.verdict.toLowerCase()}), measured on ${clock(rep.start)}–${clock(rep.start + rep.len)}, the loudest ${Math.round(rep.len)} s.`,
+      `${rep.lufs.toFixed(1)} LUFS, peak ${rep.peak.toFixed(1)} dBFS, stereo correlation ${rep.corr.toFixed(2)}${rep.lowNote ? `, low end centred on ${rep.lowNote} (${rep.lowHz.toFixed(0)} Hz)` : ''}${rep.bpm ? `, about ${Math.round(rep.bpm)} BPM` : ''}.`, ''];
+    if (ref) out.push(`Reference: ${refName}, ${ref.overall} / 100.`, '');
+    if (rep.fixes.length) { out.push('## Fix first', ''); rep.fixes.forEach((f, i) => out.push(`${i + 1}. **${f.title}** (about +${f.points} overall; ${f.places.join(', ')}). ${f.how}`)); out.push(''); }
+    out.push('## Place by place', '', `| Place | Score |${ref ? ' Reference |' : ''} Loudness | What happens |`, `|---|---|${ref ? '---|' : ''}---|---|`);
+    rep.places.forEach((p, i) => { if (p.score != null) out.push(`| ${p.name} | ${p.score} |${ref ? ` ${ref.places[i].score} |` : ''} ${f1(p.loud)} LU | ${p.found.length ? p.found.map(f => `${f.head}. ${f.text}`).join(' ') : 'Nothing breaks. ' + p.good.map(g => g.text).join(' ')} |`); });
+    out.push('', 'Every place is a model built from typical figures, not a measurement of a real room or device. See OUTSIDE.md.');
+    return out.join('\n');
+  }
+
+  function wav(L, R, sr) {
+    const n = L.length, b = new DataView(new ArrayBuffer(44 + n * 4)), s = (o, t) => { for (let i = 0; i < t.length; i++) b.setUint8(o + i, t.charCodeAt(i)); };
+    s(0, 'RIFF'); b.setUint32(4, 36 + n * 4, true); s(8, 'WAVEfmt '); b.setUint32(16, 16, true); b.setUint16(20, 1, true); b.setUint16(22, 2, true); b.setUint32(24, sr, true); b.setUint32(28, sr * 4, true); b.setUint16(32, 4, true); b.setUint16(34, 16, true); s(36, 'data'); b.setUint32(40, n * 4, true);
+    for (let i = 0; i < n; i++) { b.setInt16(44 + i * 4, Math.round(clamp(L[i], -1, 1) * 32767), true); b.setInt16(46 + i * 4, Math.round(clamp(R[i], -1, 1) * 32767), true); }
+    return new Uint8Array(b.buffer);
+  }
+
+  return {tight, PLACES, GROUPS, GROUPS6, ENV_BANDS, FIXES, PLANTED, PA, placeById, rng, dB, lin, clamp, noteOf, clock, biquad, mag2, coefs, run, chainRun, rtAt, roomColour, compile, respond, impulse, ambience, demo, fftPlan, fft, overview, analyse, hear, report, markdown, wav, VERDICT};
+})();
+if (typeof module !== 'undefined') module.exports = OUTSIDE;
+</script>
+<script>// Outside audio: turns a place's chain spec into Web Audio nodes, plays a track through it with
+// crossfades between places, runs the ambience and the doors, and renders a place offline.
+// Works on AudioContext and OfflineAudioContext. The filter coefficients come from the engine,
+// so what you hear and what the report measures are the same filters.
+const OutsideAudio = (() => {
+  const O = OUTSIDE;
+  const gain = (ctx, v) => { const g = ctx.createGain(); g.gain.value = v; return g; };
+  const buf = (ctx, chans) => { const b = ctx.createBuffer(chans.length, chans[0].length, ctx.sampleRate); chans.forEach((c, i) => b.getChannelData(i).set(c)); return b; };
+  // a list of engine filters as IIR nodes
+  function filters(ctx, list) {
+    const k = O.coefs(list, ctx.sampleRate), input = gain(ctx, k.gain); let last = input;
+    for (const c of k.cs) { const f = ctx.createIIRFilter(c.b, c.a); last.connect(f); last = f; }
+    return {input, output: last};
+  }
+  function matrix(ctx, w) { // mid/side width: 0 is mono, 1 leaves it alone
+    const input = gain(ctx, 1), sp = ctx.createChannelSplitter(2), mg = ctx.createChannelMerger(2), a = (1 + w) / 2, b = (1 - w) / 2;
+    input.channelCount = 2; input.channelCountMode = 'explicit'; input.connect(sp);
+    [[0, 0, a], [0, 1, b], [1, 0, b], [1, 1, a]].forEach(([from, to, v]) => { const g = gain(ctx, v); sp.connect(g, from); g.connect(mg, 0, to); });
+    return {input, output: mg};
+  }
+  function curve(amount) { const n = 2048, c = new Float32Array(n), k = 1 + amount * 9, norm = Math.tanh(k); for (let i = 0; i < n; i++) { const x = i / (n - 1) * 2 - 1; c[i] = Math.tanh(k * x) / norm; } return c; }
+  const IRS = new Map(), AMBS = new Map();
+  function impulseBuffer(ctx, room) { const key = ctx.sampleRate + '/' + JSON.stringify(room); if (!IRS.has(key)) IRS.set(key, O.impulse(room, ctx.sampleRate)); return buf(ctx, IRS.get(key)); }
+  function ambience(ctx, kind) {
+    const key = ctx.sampleRate + '/' + kind;
+    if (!AMBS.has(key)) { const [l, r] = O.ambience(kind, ctx.sampleRate, 9), m = O.analyse(l, r, ctx.sampleRate, {start: 0, len: 9}); AMBS.set(key, {chans: [l, r], lufs: m.lufs}); }
+    const a = AMBS.get(key); return {buffer: buf(ctx, a.chans), lufs: a.lufs};
+  }
+
+  // One stage of a chain. Returns {input, output} plus anything that needs stopping or steering.
+  function stage(ctx, s, extras) {
+    if (s.k === 'eq') return filters(ctx, s.f);
+    if (s.k === 'width') {
+      if (!s.below) return matrix(ctx, s.w);
+      const input = gain(ctx, 1), out = gain(ctx, 1), x = [['lowpass', s.below, Math.SQRT1_2], ['lowpass', s.below, Math.SQRT1_2]], y = [['highpass', s.below, Math.SQRT1_2], ['highpass', s.below, Math.SQRT1_2]];
+      const lo = filters(ctx, x), hi = filters(ctx, y), mono = matrix(ctx, 0), wide = matrix(ctx, s.w);
+      input.connect(lo.input); lo.output.connect(mono.input); mono.output.connect(out); input.connect(hi.input); hi.output.connect(wide.input); wide.output.connect(out);
+      return {input, output: out};
+    }
+    if (s.k === 'room') { const input = gain(ctx, 1), out = gain(ctx, 1), cv = ctx.createConvolver(), wet = gain(ctx, O.lin(s.wet)); cv.normalize = false; cv.buffer = impulseBuffer(ctx, {rt: s.rt, pre: s.pre, er: s.er, seed: s.seed}); input.connect(out); input.connect(cv); cv.connect(wet); wet.connect(out); return {input, output: out}; }
+    if (s.k === 'slap') { const input = gain(ctx, 1), out = gain(ctx, 1), d = ctx.createDelay(.5), lp = filters(ctx, [['lowpass', s.lp, .71], ['gain', s.g]]); d.delayTime.value = s.ms / 1000; input.connect(out); input.connect(d); d.connect(lp.input); lp.output.connect(out); return {input, output: out}; }
+    if (s.k === 'door') {
+      const input = gain(ctx, 1), out = gain(ctx, 1), shut = filters(ctx, s.shut), open = filters(ctx, s.open), gs = gain(ctx, 1), go = gain(ctx, 0);
+      input.connect(shut.input); shut.output.connect(gs); gs.connect(out); input.connect(open.input); open.output.connect(go); go.connect(out);
+      extras.door = {spec: s, isOpen: false, set(on, t = .28) { const now = ctx.currentTime; this.isOpen = on; for (const [g, v] of [[go, on ? 1 : 0], [gs, on ? .25 : 1]]) { g.gain.cancelScheduledValues(now); g.gain.setValueAtTime(g.gain.value, now); g.gain.linearRampToValueAtTime(v, now + t); } }};
+      return {input, output: out};
+    }
+    // drive: quiet passages pass at unity, loud ones flatten
+    if (s.k === 'drive') { const k = 1 + s.amt * 9, input = gain(ctx, O.lin(s.pre)), sh = ctx.createWaveShaper(), out = gain(ctx, Math.tanh(k) / (k * O.lin(s.pre))); sh.curve = curve(s.amt); sh.oversample = '2x'; input.connect(sh); sh.connect(out); return {input, output: out}; }
+    if (s.k === 'limit') { const c = ctx.createDynamicsCompressor(); c.threshold.value = -9; c.knee.value = 5; c.ratio.value = 14; c.attack.value = .003; c.release.value = .14; return {input: c, output: c}; }
+    if (s.k === 'offset') { const input = gain(ctx, 1), sp = ctx.createChannelSplitter(2), mg = ctx.createChannelMerger(2), l = gain(ctx, O.lin(s.l)), r = gain(ctx, O.lin(s.r)), d = ctx.createDelay(.05); input.channelCount = 2; input.channelCountMode = 'explicit'; d.delayTime.value = s.ms / 1000; input.connect(sp); sp.connect(l, 0); l.connect(mg, 0, 0); sp.connect(d, 1); d.connect(r); r.connect(mg, 0, 1); return {input, output: mg}; }
+    if (s.k === 'wind') { // the top end comes and goes, and the whole thing breathes a little
+      const sh = ctx.createBiquadFilter(), out = gain(ctx, 1), n = Math.round(ctx.sampleRate * 11), r = O.rng(91), a = new Float32Array(n), b = new Float32Array(n), step = Math.round(ctx.sampleRate * .9);
+      let p = r(), q = r(), p2 = r(), q2 = r();
+      for (let i = 0; i < n; i++) { const k = i % step; if (!k && i) { p = q; q = i + step >= n ? a[0] / -1 : r(); p2 = q2; q2 = r(); } const t = k / step, e = t * t * (3 - 2 * t); a[i] = -(p + (q - p) * e); b[i] = (p2 + (q2 - p2) * e - .5) * .3; }
+      sh.type = 'highshelf'; sh.frequency.value = 2500; sh.gain.value = 0; sh.connect(out);
+      const mk = (data, depth, param) => { const src = ctx.createBufferSource(), g = gain(ctx, depth); src.buffer = buf(ctx, [data]); src.loop = true; src.connect(g); g.connect(param); src.start(); extras.sources.push(src); };
+      mk(a, s.depth, sh.gain); mk(b, 1, out.gain);
+      return {input: sh, output: out};
+    }
+    throw Error('Unknown stage ' + s.k);
+  }
+  function build(ctx, place) {
+    const input = gain(ctx, 1), extras = {sources: [], door: null}; input.channelCount = 2; input.channelCountMode = 'explicit';
+    let last = input; for (const s of place.chain) { const n = stage(ctx, s, extras); last.connect(n.input); last = n.output; }
+    const output = gain(ctx, 1); last.connect(output);
+    return {input, output, door: extras.door, stop() { for (const s of extras.sources) try { s.stop(); } catch { /* already stopped */ } }};
+  }
+
+  // The player: one track at a time through one place, with a crossfade when either changes.
+  function player(ctx) {
+    const src = gain(ctx, 1), mix = gain(ctx, 1), master = gain(ctx, 1), amb = gain(ctx, 0), safe = ctx.createDynamicsCompressor();
+    const mk = () => { const a = ctx.createAnalyser(); a.fftSize = 8192; a.smoothingTimeConstant = .82; return a; }, dry = mk(), wet = mk(), air = mk();
+    safe.threshold.value = -2; safe.knee.value = 2; safe.ratio.value = 20; safe.attack.value = .001; safe.release.value = .08;
+    src.connect(dry); mix.connect(wet); mix.connect(master); amb.connect(air); amb.connect(master); master.connect(safe); safe.connect(ctx.destination);
+    const P = {ctx, dry, wet, air, playing: false, place: null, chain: null, tracks: {}, which: 'mine', loop: null, onDoor: null, offset: 0, t0: 0, node: null, nodeGain: null, ambNode: null, doorTimer: null, doorHeld: false,
+      duration() { const t = P.tracks[P.which]; return t ? t.buffer.duration : 0; },
+      now() { // position in the current track, in seconds
+        if (!P.playing) return P.offset; const t = P.tracks[P.which]; if (!t) return 0; let p = P.offset + ctx.currentTime - P.t0; const lp = t.loop;
+        if (lp && P.offset < lp[1]) { if (p >= lp[1]) p = lp[0] + (p - lp[0]) % (lp[1] - lp[0]); } else p %= t.buffer.duration;
+        return p;
+      },
+      start(at) {
+        const t = P.tracks[P.which]; if (!t) return; P.halt(.03);
+        const n = ctx.createBufferSource(), g = gain(ctx, 0), now = ctx.currentTime, lp = t.loop; n.buffer = t.buffer; n.loop = true;
+        at = O.clamp(at == null ? P.offset : at, 0, t.buffer.duration - .01);
+        if (lp && at < lp[1]) { n.loopStart = lp[0]; n.loopEnd = lp[1]; } else { n.loopStart = 0; n.loopEnd = t.buffer.duration; }
+        n.connect(g); g.connect(src); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(O.lin(t.gain || 0), now + .03); n.start(now, at);
+        P.node = n; P.nodeGain = g; P.offset = at; P.t0 = now; P.playing = true; P.startAmb(); P.armDoor();
+      },
+      halt(fade = .05) { // stop the music source, keep the position
+        if (!P.node) return; const n = P.node, g = P.nodeGain, now = ctx.currentTime; P.offset = P.now();
+        g.gain.cancelScheduledValues(now); g.gain.setValueAtTime(g.gain.value, now); g.gain.linearRampToValueAtTime(0, now + fade); try { n.stop(now + fade + .02); } catch { /* not started */ }
+        setTimeout(() => { try { g.disconnect(); } catch { /* gone */ } }, (fade + .1) * 1000); P.node = P.nodeGain = null;
+      },
+      stop() { P.halt(); P.playing = false; P.stopAmb(); clearTimeout(P.doorTimer); if (P.chain && P.chain.door && !P.doorHeld) P.chain.door.set(false); },
+      seek(at) { if (P.playing) P.start(at); else P.offset = O.clamp(at, 0, Math.max(0, P.duration() - .01)); },
+      setTrack(which, mapPos) { if (!P.tracks[which] || which === P.which) return; const pos = mapPos == null ? P.now() : mapPos, was = P.playing; P.halt(.03); P.which = which; P.offset = O.clamp(pos, 0, P.tracks[which].buffer.duration - .01); if (was) P.start(); },
+      setLoop() { if (P.playing) P.start(P.now()); },
+      setGain(which, dBv) { const t = P.tracks[which]; if (!t) return; t.gain = dBv; if (which === P.which && P.nodeGain) P.nodeGain.gain.setTargetAtTime(O.lin(dBv), ctx.currentTime, .03); },
+      // Walk to a place: build its chain, fade it up over the old one, let the old room ring out.
+      setPlace(place, gainDb, ambDb, fade = .32) {
+        const now = ctx.currentTime, old = P.chain, c = build(ctx, place); c.out = gain(ctx, 0); c.output.connect(c.out); c.out.connect(mix); src.connect(c.input);
+        c.out.gain.setValueAtTime(0, now); c.out.gain.linearRampToValueAtTime(O.lin(gainDb), now + fade);
+        if (old) { try { src.disconnect(old.input); } catch { /* gone */ } old.out.gain.cancelScheduledValues(now); old.out.gain.setValueAtTime(old.out.gain.value, now); old.out.gain.linearRampToValueAtTime(0, now + fade * 1.4); setTimeout(() => { old.stop(); try { old.out.disconnect(); } catch { /* gone */ } }, 2600); }
+        P.chain = c; P.place = place; P.ambDb = ambDb; if (P.doorHeld && c.door) c.door.set(true, .05);
+        if (P.playing) { P.startAmb(); P.armDoor(); }
+      },
+      setLevels(gainDb, ambDb) { const now = ctx.currentTime; if (P.chain) P.chain.out.gain.setTargetAtTime(O.lin(gainDb), now, .05); P.ambDb = ambDb; if (P.ambNode) amb.gain.setTargetAtTime(ambDb == null ? 0 : O.lin(ambDb), now, .08); },
+      ambLufs(kind) { return ambience(ctx, kind).lufs; },
+      startAmb() {
+        const kind = P.place && P.place.noise && P.place.noise.kind, now = ctx.currentTime;
+        if (P.ambKind === kind && P.ambNode) { amb.gain.setTargetAtTime(P.ambDb == null ? 0 : O.lin(P.ambDb), now, .1); return; }
+        P.stopAmb(); if (!kind) return;
+        const n = ctx.createBufferSource(), g = gain(ctx, 0); n.buffer = ambience(ctx, kind).buffer; n.loop = true; n.connect(g); g.connect(amb); n.start(now, Math.random() * 3);
+        g.gain.linearRampToValueAtTime(1, now + .4); amb.gain.cancelScheduledValues(now); amb.gain.setTargetAtTime(P.ambDb == null ? 0 : O.lin(P.ambDb), now, .1); P.ambNode = n; P.ambG = g; P.ambKind = kind;
+      },
+      stopAmb() { if (!P.ambNode) return; const n = P.ambNode, g = P.ambG, now = ctx.currentTime; g.gain.cancelScheduledValues(now); g.gain.setValueAtTime(g.gain.value, now); g.gain.linearRampToValueAtTime(0, now + .3); try { n.stop(now + .35); } catch { /* not started */ } P.ambNode = null; P.ambKind = null; },
+      armDoor() { // doors open on their own every few seconds, and stay open while held
+        clearTimeout(P.doorTimer); const d = P.chain && P.chain.door; if (!d || !P.playing) return; const [a, b] = d.spec.every;
+        P.doorTimer = setTimeout(() => { if (!P.playing || P.chain.door !== d) return; if (!P.doorHeld) { d.set(true); P.onDoor && P.onDoor(true); setTimeout(() => { if (!P.doorHeld && P.chain && P.chain.door === d) { d.set(false, .5); P.onDoor && P.onDoor(false); } }, d.spec.hold * 1000); } P.armDoor(); }, (a + Math.random() * (b - a)) * 1000);
+      },
+      holdDoor(on) { P.doorHeld = on; const d = P.chain && P.chain.door; if (d) { d.set(on, on ? .2 : .45); P.onDoor && P.onDoor(on); } },
+    };
+    return P;
+  }
+
+  // A stretch of a track through a place, offline, with the door shut.
+  async function render(buffer, place, {start = 0, len = buffer.duration, gainDb = 0} = {}) {
+    const sr = buffer.sampleRate, tail = place.chain.some(s => s.k === 'room') ? 1.2 : .1, ctx = new OfflineAudioContext(2, Math.round((len + tail) * sr), sr), n = ctx.createBufferSource(), c = build(ctx, place), g = gain(ctx, O.lin(gainDb));
+    n.buffer = buffer; n.connect(c.input); c.output.connect(g); g.connect(ctx.destination); n.start(0, start, len);
+    return ctx.startRendering();
+  }
+  return {build, player, render, buf, ambience, curve};
+})();
+</script>
+<script>// Outside app: the map, the transport, the live spectrum and the report.
+(() => {
+  const O = OUTSIDE, A = OutsideAudio, $ = id => document.getElementById(id), NS = 'http://www.w3.org/2000/svg';
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const store = {get() { try { return JSON.parse(localStorage.getItem('outside:v1')) || {}; } catch { return {}; } }, set(v) { try { localStorage.setItem('outside:v1', JSON.stringify(v)); } catch { /* private mode */ } }};
+  const saved = store.get();
+  const state = {place: O.placeById(saved.place) ? saved.place : 'floor', last: 'floor', match: saved.match !== false, amb: Number.isFinite(saved.amb) ? saved.amb : 60, loop: saved.loop !== false};
+  const save = () => store.set({place: state.place === 'studio' ? state.last : state.place, match: state.match, amb: state.amb, loop: state.loop});
+  const tracks = {mine: null, ref: null};
+  let ctx = null, player = null;
+  const SPOTS = {booth: [280, 122], floor: [280, 290], sub: [108, 152], bar: [182, 414], toilets: [620, 140], smoke: [620, 390], queue: [330, 574]};
+  const CHECK_NAMES = {bass: 'The bass note', kick: 'The kick', mono: 'Mono', punch: 'Gaps in the low end', groove: 'The groove through the wall', infra: 'Energy under 30 Hz', lows: 'Weight under 120 Hz', boom: 'Low-mid build-up', harsh: '2–5 kHz when loud', tops: 'The top end'};
+  const grade = s => s == null ? '' : s >= 85 ? 'ok' : s >= 62 ? 'warn' : 'bad';
+  const colour = s => ({ok: 'var(--ok)', warn: 'var(--warn)', bad: 'var(--bad)'})[grade(s)] || 'var(--muted)';
+  const status = (text, err) => { const el = $('status'); el.textContent = text; el.classList.toggle('err', !!err); };
+  const paint = () => new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
+  const svg = (tag, attrs, parent) => { const el = document.createElementNS(NS, tag); for (const k in attrs) el.setAttribute(k, attrs[k]); parent && parent.appendChild(el); return el; };
+  const download = (name, data, type) => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], {type})); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
+  const signed = x => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(1);
+
+  // ------------------------------------------------------------ the map
+  function drawMap() {
+    const r = O.rng(3), rings = $('rings'), dancers = $('dancers'), q = $('queue-people'), spots = $('spots'), world = $('world');
+    for (const cx of [108, 452]) for (let i = 0; i < 3; i++) svg('circle', {cx, cy: 80, r: 18, class: 'ring-wave', style: `animation-delay:calc(var(--beat,.476s)*${-i / 3})`}, rings);
+    for (let i = 0; i < 64; i++) { const x = 70 + r() * 420, y = 150 + r() * 270; if (Object.values(SPOTS).some(([sx, sy]) => Math.hypot(sx - x, sy - y) < 34)) continue; svg('circle', {cx: x.toFixed(1), cy: y.toFixed(1), r: 3.2, class: 'dancer', style: `animation-delay:${(r() * .3).toFixed(2)}s`}, dancers); }
+    for (let i = 0; i < 9; i++) svg('circle', {cx: 372 + i * 17 + r() * 5, cy: 548 + r() * 6, r: 3.2, class: 'dancer'}, q);
+    for (let i = 0; i < 12; i++) svg('circle', {cx: 545 + r() * 150, cy: 285 + r() * 210, r: 3.2, class: 'dancer'}, q);
+    for (const p of O.PLACES) {
+      if (SPOTS[p.id]) {
+        const [x, y] = SPOTS[p.id], g = svg('g', {class: 'spot', transform: `translate(${x} ${y})`, tabindex: 0, role: 'button', 'aria-pressed': 'false', 'aria-label': p.name, 'data-place': p.id}, spots);
+        svg('circle', {r: 17, class: 'hit'}, g); svg('text', {class: 'sc'}, g); svg('text', {class: 'nm', y: 34}, g).textContent = p.short;
+      } else { const b = document.createElement('button'); b.dataset.place = p.id; b.setAttribute('aria-pressed', 'false'); b.innerHTML = `${esc(p.short)}<span class="sc"></span>`; world.appendChild(b); }
+    }
+    for (const el of document.querySelectorAll('[data-place]')) { el.addEventListener('click', () => go(el.dataset.place)); el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(el.dataset.place); } }); el.addEventListener('keyup', e => { if (e.key === ' ') e.preventDefault(); }); }
+    $('models').tBodies[0].innerHTML = O.PLACES.filter(p => p.id !== 'studio').map(p => `<tr><td><b>${esc(p.name)}</b></td><td>${p.model.map(esc).join(' · ')}</td><td>${p.checks.map(c => CHECK_NAMES[c]).join(', ')}</td></tr>`).join('');
+  }
+  function markMap() {
+    const rep = tracks.mine && tracks.mine.rep;
+    for (const el of document.querySelectorAll('[data-place]')) {
+      const id = el.dataset.place, p = rep && rep.places.find(x => x.id === id), sc = el.querySelector('.sc');
+      el.setAttribute('aria-pressed', String(id === state.place)); el.classList.remove('g-ok', 'g-warn', 'g-bad');
+      if (p && p.score != null) { el.classList.add('g-' + grade(p.score)); sc.textContent = p.score; } else sc.textContent = '';
+    }
+    const you = $('you'), at = SPOTS[state.place];
+    if (at) { you.classList.remove('away'); you.setAttribute('transform', `translate(${at[0] + 27} ${at[1] - 21})`); you.style.transform = ''; } else you.classList.add('away');
+    $('where').textContent = O.placeById(state.place).name; $('flip').setAttribute('aria-pressed', String(state.place === 'studio'));
+  }
+
+  // ------------------------------------------------------------ levels
+  const cur = () => tracks[player ? player.which : 'mine'] || tracks.mine;
+  function placeRow(t, id) { return t.rep.places.find(p => p.id === id); }
+  function levelsFor(id) { // output gain of the place and the level of its own noise, in dB
+    const t = cur(), p = O.placeById(id); if (!t) return [-5, null];
+    const row = placeRow(t, id), g = (state.match ? O.clamp(-row.loud, -14, 14) : p.level) - 5;
+    if (!p.noise || state.amb <= 0 || !player) return [g, null];
+    const music = t.m.lufs + (player.tracks[player.which].gain || 0) + row.loud + g;
+    return [g, O.clamp(music - p.noise.snr - player.ambLufs(p.noise.kind) + (state.amb - 60) / 4, -60, 12)];
+  }
+  function trackGains() { if (!player) return; const a = tracks.mine, b = tracks.ref, target = a && b ? Math.min(a.m.lufs, b.m.lufs) : null; for (const w of ['mine', 'ref']) if (tracks[w]) player.setGain(w, target == null ? 0 : target - tracks[w].m.lufs); }
+  function relevel() { if (!player || !player.chain) return; const [g, a] = levelsFor(state.place); player.setLevels(g, a); }
+
+  // ------------------------------------------------------------ places
+  function go(id, quiet) {
+    if (!O.placeById(id)) return;
+    if (id !== 'studio') state.last = id; state.place = id; save();
+    if (player) { const [g, a] = levelsFor(id); player.setPlace(O.placeById(id), g, a); showDoor(false); }
+    renderPlace(); markMap();
+    if (!quiet && window.innerWidth < 980 && tracks.mine) $('place').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  }
+  function walk(d) { const i = O.PLACES.findIndex(p => p.id === state.place); go(O.PLACES[(i + d + O.PLACES.length) % O.PLACES.length].id); }
+  function flip() { go(state.place === 'studio' ? state.last : 'studio', true); }
+  function showDoor(open) { for (const id of ['toilets', 'smoke', 'queue']) $('door-' + id).classList.toggle('open', open && id === state.place); $('door').classList.toggle('on', open); $('door').setAttribute('aria-pressed', String(open)); }
+  function bar(el, groups) { el.innerHTML = O.GROUPS6.map(([id, name]) => `<i style="width:${(groups[id] * 100).toFixed(2)}%;background:var(--${id})" title="${name} ${(groups[id] * 100).toFixed(0)}%"></i>`).join(''); }
+  function finding(f) { const fix = O.FIXES[f.fix]; return `<div class="finding s${f.sev}"><h4>${esc(f.head)}</h4><p>${esc(f.text)}</p><p class="fix"><b>${esc(fix[0])}.</b> ${esc(fix[1])}</p></div>`; }
+  function renderPlace() {
+    const p = O.placeById(state.place), t = tracks.mine, row = t && placeRow(t, p.id), group = (O.GROUPS.find(g => g[0] === p.group) || [0, 'Reference'])[1];
+    $('p-eyebrow').textContent = `${group} · ${p.tag}`; $('p-name').textContent = p.name; $('p-blurb').textContent = p.blurb; $('p-always').textContent = p.always;
+    $('p-model').innerHTML = p.model.map(x => `<li>${esc(x)}</li>`).join('');
+    $('door').hidden = !p.chain.some(s => s.k === 'door'); $('bounce').disabled = !t;
+    const ring = $('p-score'); ring.hidden = !row || row.score == null;
+    if (row && row.score != null) { ring.style.setProperty('--v', row.score); ring.style.setProperty('--c', colour(row.score)); ring.firstElementChild.textContent = row.score; ring.lastElementChild.textContent = row.verdict; }
+    $('p-mix').hidden = !row;
+    if (row) {
+      bar($('mix-studio'), t.rep.places[0].groups); bar($('mix-here'), row.groups);
+      $('mix-legend').innerHTML = O.GROUPS6.map(([id, name, a, b]) => `<span style="white-space:nowrap"><span class="sw" style="background:var(--${id})"></span> ${name} ${a < 1000 ? a : a / 1000 + 'k'}–${b < 1000 ? b : b / 1000 + 'k'}</span>`).join(' ');
+    }
+    const box = $('p-findings');
+    if (!row) box.innerHTML = '<p class="note">Drop a mix or play the demo to see what this place does to it.</p>';
+    else if (p.id === 'studio') box.innerHTML = `<p class="good">${t.rep.lufs.toFixed(1)} LUFS over the loudest ${Math.round(t.rep.len)} s, peak ${t.rep.peak.toFixed(1)} dBFS, stereo correlation ${t.rep.corr.toFixed(2)}${t.rep.lowNote ? `, low end centred on ${t.rep.lowNote} (${t.rep.lowHz.toFixed(0)} Hz)` : ''}.</p>`;
+    else {
+      const ref = tracks.ref && placeRow(tracks.ref, p.id);
+      box.innerHTML = row.found.map(finding).join('') + row.good.map(g => `<p class="good">${esc(g.text)}</p>`).join('') +
+        `<p class="note">Before matching, this place makes your track ${signed(row.loud)} LU ${row.loud >= 0 ? 'louder' : 'quieter'} than the studio.${ref ? ` The reference scores ${ref.score} here${ref.found.length ? ': ' + esc(ref.found.map(f => f.head.toLowerCase()).join(', ')) : ''}.` : ''}</p>`;
+    }
+  }
+
+  // ------------------------------------------------------------ the report
+  const LINES = {Survives: 'It survives the night.', Changes: 'It changes on the way out.', 'Falls apart': 'It falls apart outside the studio.'};
+  function renderReport() {
+    const t = tracks.mine; $('report-empty').hidden = !!t; $('report-body').hidden = !t; if (!t) return;
+    const rep = t.rep, ref = tracks.ref, ring = $('overall');
+    ring.style.setProperty('--v', rep.overall); ring.style.setProperty('--c', colour(rep.overall)); ring.firstElementChild.textContent = rep.overall; ring.lastElementChild.textContent = 'of 100';
+    $('overall-line').textContent = LINES[rep.verdict];
+    $('facts').textContent = `${t.name} · measured on ${O.clock(rep.start)}–${O.clock(rep.start + rep.len)} · ${rep.lufs.toFixed(1)} LUFS · peak ${rep.peak.toFixed(1)} dBFS · correlation ${rep.corr.toFixed(2)}${rep.lowNote ? ` · low end on ${rep.lowNote}` : ''}${rep.bpm ? ` · about ${Math.round(rep.bpm)} BPM` : ''}`;
+    $('ref-line').textContent = ref ? `Reference: ${ref.name} scores ${ref.rep.overall}. Where it breaks too, the place is hard on everybody.` : '';
+    $('report-body').classList.toggle('has-ref', !!ref); $('add-ref').textContent = ref ? '↻ Change the reference' : '＋ Add a reference track';
+    $('fixes').innerHTML = rep.fixes.length ? rep.fixes.map(f => `<li><b>${esc(f.title)}</b><span class="gain">about +${f.points} overall · ${esc(f.places.join(', '))}</span><p>${esc(f.how)}</p></li>`).join('') : '<li class="none">Nothing to fix. No check failed in any of the twelve places.</li>';
+    $('card').tBodies[0].innerHTML = rep.places.filter(p => p.score != null).map(p => { const r = ref && placeRow(ref, p.id); return `<tr data-go="${p.id}"><td>${esc(p.name)}</td><td class="num c-${grade(p.score)}">${p.score}</td><td class="num refcol c-${r ? grade(r.score) : ''}">${r ? r.score : ''}</td><td class="num">${signed(p.loud)} LU</td><td>${p.found.length ? p.found.map(f => `<b>${esc(f.head)}.</b>`).join(' ') : '<span class="c-ok">Nothing breaks.</span>'}</td></tr>`; }).join('');
+    for (const tr of $('card').tBodies[0].rows) tr.addEventListener('click', () => { go(tr.dataset.go, true); $('night').scrollIntoView({behavior: 'smooth'}); });
+    const box = $('planted'); box.hidden = !t.demo;
+    if (t.demo) { const found = new Set(rep.fixes.map(f => f.id)), n = O.PLANTED.filter(p => found.has(p[0])).length;
+      box.innerHTML = t.demo === 'bad' ? `<p class="label">Planted in this mix: ${O.PLANTED.length} · found by the report: ${n}</p><ul>${O.PLANTED.map(([id, what, why]) => `<li class="${found.has(id) ? '' : 'miss'}"><b>${esc(what)}</b>${esc(why)} → ${esc(O.FIXES[id][0])}</li>`).join('')}</ul>`
+        : `<p class="label">The same sixteen bars with all seven problems fixed</p><p class="note">The bass has harmonics and sits in the centre, the kick is short with a click, the bass ducks under it, the rumble is gone, the stab is bright and mono-safe, the pad is high-passed. ${n ? n + ' of the planted problems are still reported.' : 'None of the seven is reported any more.'} Play both and walk to the phone.</p>`; }
+  }
+  const render = () => { renderPlace(); renderReport(); markMap(); drawWave(); };
+
+  // ------------------------------------------------------------ loading
+  function ensure() { if (ctx) return; ctx = new (window.AudioContext || window.webkitAudioContext)(); player = A.player(ctx); player.onDoor = showDoor; QA.player = player; QA.ctx = ctx; }
+  function loops() { for (const w of ['mine', 'ref']) { const t = tracks[w]; if (t && player.tracks[w]) player.tracks[w].loop = state.loop && t.buffer.duration > t.ov.len + 2 ? [t.ov.start, t.ov.start + t.ov.len] : null; } }
+  async function take(which, L, R, name, demo) {
+    ensure(); status(`Measuring ${name}…`); await paint();
+    const sr = ctx.sampleRate, ov = O.overview(L, R, sr), m = O.analyse(L, R, sr, ov), rep = O.report(m);
+    tracks[which] = {name, buffer: A.buf(ctx, [L, R]), ov, m, rep, demo}; player.tracks[which] = {buffer: tracks[which].buffer, gain: 0, loop: null};
+    loops(); trackGains(); $('bar').hidden = false; $('ab-ref').disabled = !tracks.ref;
+    document.documentElement.style.setProperty('--beat', (60 / (tracks.mine.rep.bpm || 126)).toFixed(4) + 's');
+    if (which === 'mine') { player.stop(); player.which = 'mine'; player.offset = ov.start; setAB(); }
+    if (!player.chain) go(state.place, true); else relevel();
+    render(); status(which === 'mine' ? `${name}: ${rep.overall} out of 100. Walk the night, then read the report below.` : `Reference loaded: ${name} scores ${rep.overall}. Press R to switch between yours and the reference.`);
+    if (which === 'mine') { try { await ctx.resume(); } catch { /* needs a click */ } if (ctx.state === 'running') play(true); }
+  }
+  async function takeFile(which, file) {
+    if (!file) return; ensure(); status(`Decoding ${file.name}…`);
+    try {
+      const bytes = await file.arrayBuffer(), b = await new Promise((res, rej) => { const p = ctx.decodeAudioData(bytes, res, rej); if (p && p.then) p.then(res, rej); });
+      if (b.duration < 4) throw Error('That file is shorter than four seconds.');
+      await take(which, b.getChannelData(0), b.numberOfChannels > 1 ? b.getChannelData(1) : b.getChannelData(0), file.name.replace(/\.[a-z0-9]+$/i, ''));
+    } catch (e) { status(e && e.message && /shorter/.test(e.message) ? e.message : `Could not read ${file.name}. Try a WAV, MP3, FLAC or AAC file.`, true); }
+  }
+  async function takeDemo(fixed) { ensure(); status('Writing the demo mix…'); await paint(); const d = O.demo(fixed, ctx.sampleRate); await take('mine', d.L, d.R, d.name, fixed ? 'good' : 'bad'); $('night').scrollIntoView({behavior: 'smooth'}); }
+
+  // ------------------------------------------------------------ transport
+  function play(on) {
+    if (!player || !tracks.mine) return; if (on == null) on = !player.playing;
+    if (on) { ctx.resume(); player.start(); } else player.stop();
+    $('play').textContent = on ? '❚❚' : '▶'; $('play').setAttribute('aria-label', on ? 'Pause' : 'Play'); $('map').classList.toggle('playing', on); if (!on) showDoor(false);
+  }
+  function setAB(which) {
+    if (which && player && tracks[which] && which !== player.which) {
+      const from = tracks[player.which], to = tracks[which], pos = player.now(), rel = pos - from.ov.start;
+      player.setTrack(which, state.loop && rel >= 0 && rel < from.ov.len ? to.ov.start + Math.min(rel, to.ov.len - .05) : pos % to.buffer.duration); relevel(); drawWave();
+    }
+    const w = player ? player.which : 'mine'; $('ab-mine').setAttribute('aria-pressed', String(w === 'mine')); $('ab-ref').setAttribute('aria-pressed', String(w === 'ref'));
+  }
+  let waveImg = null;
+  function fit(c) { if (!c._css) { c._css = Number(c.getAttribute('height')); c.style.height = c._css + 'px'; } const dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.max(50, Math.round(c.clientWidth * dpr)), h = Math.round(c._css * dpr); if (c.width !== w || c.height !== h) { c.width = w; c.height = h; } return dpr; }
+  function drawWave() {
+    const c = $('wave'), t = cur(); if (!t || $('bar').hidden) return; fit(c);
+    const off = document.createElement('canvas'), g = off.getContext('2d'), w = off.width = c.width, h = off.height = c.height, rms = t.ov.rms, peak = rms.reduce((a, b) => Math.max(a, b), 1e-6);
+    g.fillStyle = 'rgba(255,179,71,.13)'; g.fillRect(t.ov.start / t.ov.secs * w, 0, t.ov.len / t.ov.secs * w, h);
+    g.fillStyle = '#59627f'; for (let x = 0; x < w; x += 2) { const a = Math.floor(x / w * rms.length), b = Math.max(a + 1, Math.floor((x + 2) / w * rms.length)); let v = 0; for (let i = a; i < b && i < rms.length; i++) v = Math.max(v, rms[i]); const y = Math.max(1, v / peak * h * .9); g.fillRect(x, (h - y) / 2, 1.4, y); }
+    waveImg = off;
+  }
+  function frame() {
+    requestAnimationFrame(frame); if (!player || $('bar').hidden) return;
+    const c = $('wave'), t = cur(); if (t && waveImg) { const g = c.getContext('2d'), pos = player.now(), x = pos / t.buffer.duration * c.width; g.clearRect(0, 0, c.width, c.height); g.drawImage(waveImg, 0, 0); g.fillStyle = '#4de3ff'; g.fillRect(x - 1, 0, 2.5, c.height); $('time').textContent = `${O.clock(pos)} / ${O.clock(t.buffer.duration)}`; }
+    drawScope();
+  }
+  const bins = {};
+  function drawScope() {
+    const c = $('scope'), dpr = fit(c), g = c.getContext('2d'), w = c.width, h = c.height, lo = 20, hi = 20000, top = -18, bot = -98, sr = ctx.sampleRate;
+    g.clearRect(0, 0, w, h); g.font = `${10 * dpr}px "JetBrains Mono", monospace`; g.fillStyle = '#48506a'; g.strokeStyle = '#161a26'; g.lineWidth = 1;
+    for (const f of [30, 60, 125, 250, 500, 1000, 2000, 4000, 8000, 16000]) { const x = Math.log(f / lo) / Math.log(hi / lo) * w; g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); g.fillText(f < 1000 ? f : f / 1000 + 'k', x + 3 * dpr, h - 4 * dpr); }
+    const line = (an, shift) => { const n = an.frequencyBinCount, d = bins[n] || (bins[n] = new Float32Array(n)); an.getFloatFrequencyData(d); const pts = [], cols = Math.round(w / (3 * dpr)); for (let i = 0; i <= cols; i++) { const f0 = lo * Math.pow(hi / lo, (i - .5) / cols), f1 = lo * Math.pow(hi / lo, (i + .5) / cols), a = Math.max(1, Math.floor(f0 / sr * 2 * n)), b = Math.max(a + 1, Math.ceil(f1 / sr * 2 * n)); let v = -200; for (let k = a; k < b && k < n; k++) v = Math.max(v, d[k]); v += shift + 3 * Math.log2(Math.max(f0, 20) / 1000) * .75; pts.push([i / cols * w, O.clamp((top - v) / (top - bot), 0, 1) * h]); } return pts; };
+    const path = pts => { g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); };
+    const [pg] = levelsFor(state.place), here = line(player.wet, 0), ghost = line(player.dry, pg);
+    path(here); g.lineTo(w, h); g.lineTo(0, h); g.closePath(); const grad = g.createLinearGradient(0, 0, 0, h); grad.addColorStop(0, 'rgba(77,227,255,.5)'); grad.addColorStop(1, 'rgba(77,227,255,.03)'); g.fillStyle = grad; g.fill();
+    path(here); g.strokeStyle = '#4de3ff'; g.lineWidth = 1.6 * dpr; g.stroke();
+    path(ghost); g.strokeStyle = '#7b84a3'; g.lineWidth = 1.2 * dpr; g.setLineDash([4 * dpr, 3 * dpr]); g.stroke(); g.setLineDash([]);
+    if (player.ambNode && player.ambDb != null) { path(line(player.air, 0)); g.strokeStyle = 'rgba(255,179,71,.8)'; g.lineWidth = 1.1 * dpr; g.stroke(); }
+  }
+
+  // ------------------------------------------------------------ wiring
+  const QA = window.OUTSIDE_QA = {state, tracks, go, play, take, takeDemo, levelsFor, O, A, player: null, ctx: null};
+  drawMap(); render();
+  $('demo-bad').addEventListener('click', () => takeDemo(false)); $('demo-good').addEventListener('click', () => takeDemo(true));
+  const drop = $('drop'), file = $('file');
+  drop.addEventListener('click', () => file.click()); drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); } });
+  file.addEventListener('change', () => { takeFile('mine', file.files[0]); file.value = ''; });
+  document.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); }); document.addEventListener('dragleave', () => drop.classList.remove('over'));
+  document.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) takeFile(e.target.closest && e.target.closest('#report') && tracks.mine ? 'ref' : 'mine', f); });
+  $('add-ref').addEventListener('click', () => $('ref-file').click()); $('ref-file').addEventListener('change', e => { takeFile('ref', e.target.files[0]); e.target.value = ''; });
+  $('play').addEventListener('click', () => play()); $('flip').addEventListener('click', flip);
+  $('ab-mine').addEventListener('click', () => setAB('mine')); $('ab-ref').addEventListener('click', () => setAB('ref'));
+  $('loop').checked = state.loop; $('match').checked = state.match; $('amb').value = state.amb;
+  $('loop').addEventListener('change', e => { state.loop = e.target.checked; save(); if (player) { loops(); player.setLoop(); } });
+  $('match').addEventListener('change', e => { state.match = e.target.checked; save(); relevel(); });
+  $('amb').addEventListener('input', e => { state.amb = Number(e.target.value); save(); relevel(); });
+  $('wave').addEventListener('click', e => { const t = cur(); if (!t) return; const r = e.currentTarget.getBoundingClientRect(); player.seek((e.clientX - r.left) / r.width * t.buffer.duration); });
+  const hold = on => { if (player) player.holdDoor(on); };
+  $('door').addEventListener('pointerdown', () => hold(true)); for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) $('door').addEventListener(ev, () => player && player.doorHeld && hold(false));
+  $('door').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) { e.preventDefault(); e.stopPropagation(); hold(!player.doorHeld); } });
+  $('bounce').addEventListener('click', async () => { const t = cur(), p = O.placeById(state.place); if (!t) return; status(`Rendering ${p.name}…`); const [g] = levelsFor(p.id), b = await A.render(t.buffer, p, {start: t.ov.start, len: t.ov.len, gainDb: g}); download(`${t.name} - ${p.short}.wav`, O.wav(b.getChannelData(0), b.getChannelData(1), b.sampleRate), 'audio/wav'); status(`Saved ${Math.round(t.ov.len)} s of ${t.name} in ${p.name.toLowerCase()}.`); });
+  const md = () => O.markdown(tracks.mine.rep, tracks.mine.name, tracks.ref && tracks.ref.rep, tracks.ref && tracks.ref.name);
+  $('md').addEventListener('click', () => download(`Outside - ${tracks.mine.name}.md`, md(), 'text/markdown'));
+  $('copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(md()); $('copy').textContent = 'Copied'; } catch { $('copy').textContent = 'Copy failed'; } setTimeout(() => { $('copy').textContent = 'Copy report'; }, 1600); });
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('input, select, textarea') || e.metaKey || e.ctrlKey || e.altKey) return; const k = e.key.toLowerCase();
+    if (k === ' ') { if (!e.target.closest('[data-place]') && e.target.closest('button, a, summary, [role=button]')) return; e.preventDefault(); play(); } // on a place, space still plays
+    else if (k === 'arrowright') { e.preventDefault(); walk(1); } else if (k === 'arrowleft') { e.preventDefault(); walk(-1); }
+    else if (k === 's') flip(); else if (k === 'r') setAB(player && player.which === 'mine' ? 'ref' : 'mine');
+    else if (k === 'd' && !e.repeat) hold(true); else if (k === 'm') $('match').click(); else if (k === 'l') $('loop').click();
+  });
+  document.addEventListener('keyup', e => { if (e.key.toLowerCase() === 'd') hold(false); });
+  window.addEventListener('resize', drawWave);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body></html>

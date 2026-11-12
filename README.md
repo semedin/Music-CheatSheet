@@ -9,7 +9,7 @@ synthesis. There is no server, account, install or package manager.
 
 1. Keep every file in **one folder**. Pages link to each other by file name.
 2. Open **[`index.html`](index.html)**, the home page. It lists every page, the notes and the MIDI packs, with search (<kbd>/</kbd>).
-3. Every page has the same top bar: **Home · Motif Studio · Breeder · Arps · Pocket · Basslines · Tech House · V2 Studio · Trance · X-Ray · Blueprint · Transplant · Drums · Rumble · Sound design · Field guides**.
+3. Every page has the same top bar: **Home · Motif Studio · Breeder · Arps · Pocket · Basslines · Tech House · V2 Studio · Trance · X-Ray · Blueprint · Transplant · Outside · Drums · Rumble · Sound design · Field guides**.
 
 Use headphones or monitors: several labs work below 150 Hz, where laptop speakers are silent.
 
@@ -33,6 +33,7 @@ Use headphones or monitors: several labs work below 150 Hz, where laptop speaker
 
 | Page | What it is | Notes | Built from |
 |---|---|---|---|
+| [`outside.html`](outside.html) | **Outside, hear your track everywhere but the studio.** Drop in your mix and walk it through a club night while it plays: the booth, the floor, the sub stack, the back bar, the toilets, the smoking area, the queue, a festival field, the car home, a Bluetooth speaker, a laptop and a phone. Each place is a modelled room and playback system, with synthesised crowds, road noise and doors that swing. A report scores all twelve, says what broke (the bass note, the kick, mono, the gaps in the low end, low-mid build-up) and ranks the fixes as steps in Live. Flip to the studio and back with one key, A/B a reference in the same room, export the report and a WAV of the drop in any place. | [OUTSIDE.md](OUTSIDE.md) | `outside-src/` |
 | [`xray.html`](xray.html) | **X-Ray, look inside a reference track.** Drop in an MP3, WAV, FLAC or AAC. Get tempo, key, the arrangement in bars, drum pattern and swing, chords, kick note, LUFS and tonal balance; A/B it loudness-matched against your mix; export a skeleton MIDI for Ableton. | [XRAY.md](XRAY.md) | hand-edited (tested by `xray-tests.mjs`) |
 | [`blueprint.html`](blueprint.html) | **Blueprint, the arrangement and every move in it.** Drop in a reference track. Get its arrangement drawn bar by bar, every transition move found (filter sweeps with the cutoff traced, risers, rolls, gaps, delay throws, stutters, tape stops, sidechain, width, fades) and a recipe for each in Live; export it as MIDI with CC74 automation. | [BLUEPRINT.md](BLUEPRINT.md) | `blueprint-src/` |
 
@@ -112,6 +113,7 @@ folder yet".
 | `trance.html` | `trance-src/` + `material/` | `node trance-src/build.mjs` (`node trance-src/pack.mjs` rebuilds the zip) |
 | `blueprint.html` | `blueprint-src/` + X-Ray's engine from `xray.html` + `transplant-src/handoff.js` | `node blueprint-src/build.mjs` |
 | `wow.html` | `wow-src/` | `node wow-src/build.mjs` |
+| `outside.html` | `outside-src/` | `node outside-src/build.mjs` |
 | `breeder.html` | `breeder-src/` + Orbit's theory, patches, bank and engine + Transplant's loop reader and audio | `node breeder-src/build.mjs` |
 | `transplant.html` | `transplant-src/` + X-Ray's and Blueprint's engines + Orbit's theory and patches | `node transplant-src/build.mjs` |
 | `pocket.html` | `pocket-src/` + Orbit theory/MIDI helpers | `node pocket-src/build.mjs` |
@@ -143,6 +145,7 @@ node rumble-tests.mjs            # rumble lab
 node xray-tests.mjs              # X-Ray analysis engine against known answers
 node blueprint-src/test.mjs      # Blueprint's move detectors against a planted demo and an effect-free control
 node wow-src/test.mjs            # Wow: the grammar of 102 written and 10,200 generated basslines, all six sections, every option, MIDI
+node outside-src/test.mjs        # Outside: filters, rooms, loudness, mono loss, every check, and the seven planted problems found in one demo mix and none in the fixed one
 node breeder-src/test.mjs        # Breeder: seeding, the grammar under 2,800 mutations, crossover, locks, selection, drift, exports
 node transplant-src/test.mjs     # Transplant: lanes, shapes, Blueprint files, MIDI loops, the arrangement grammar, the analysed demo
 node trance-src/test.mjs         # trance room
@@ -151,7 +154,7 @@ node pocket-src/test.mjs         # Pocket responses, timing, import/export and s
 node arp-src/test.mjs            # Orbit: theory, engine, bank against its genres, generator, export
 ```
 
-`pocket-src/browser-check.mjs` checks Pocket with Playwright and saves QA artifacts under `/tmp/pocket-qa`. `talk-src/browser-check.mjs` does the same for Talk (`/tmp/talk-qa`), including offline renders of the mix, each part and all eight hooks. `wow-src/browser-check.mjs` does the same for Wow (`/tmp/wow-qa`): playback, lane and section switches, the whole-track mode, offline renders of all 34 lanes, the option selects, the wow, sub and space knobs, exports and a phone layout. `breeder-src/browser-check.mjs` does the same for Breeder (`/tmp/breeder-qa`): breeding, bar-synced swaps across tempos, locks, offline renders, exports, a MIDI loop, a reload and the hand-off to Transplant. `transplant-src/browser-check.mjs` does the same for Transplant (`/tmp/transplant-qa`): playback, MIDI upload, painting, offline renders of the drop, the build, the break and every FX, a silent gap, every download, the in-page analysis of the demo track with its A/B, and the hand-off from Blueprint.
+`pocket-src/browser-check.mjs` checks Pocket with Playwright and saves QA artifacts under `/tmp/pocket-qa`. `talk-src/browser-check.mjs` does the same for Talk (`/tmp/talk-qa`), including offline renders of the mix, each part and all eight hooks. `wow-src/browser-check.mjs` does the same for Wow (`/tmp/wow-qa`): playback, lane and section switches, the whole-track mode, offline renders of all 34 lanes, the option selects, the wow, sub and space knobs, exports and a phone layout. `outside-src/browser-check.mjs` does the same for Outside (`/tmp/outside-qa`): all thirteen places played and measured from the analysers, the door held open, loudness matching, offline renders of every place, a file upload, a reference with its A/B, every download and a phone layout. `breeder-src/browser-check.mjs` does the same for Breeder (`/tmp/breeder-qa`): breeding, bar-synced swaps across tempos, locks, offline renders, exports, a MIDI loop, a reload and the hand-off to Transplant. `transplant-src/browser-check.mjs` does the same for Transplant (`/tmp/transplant-qa`): playback, MIDI upload, painting, offline renders of the drop, the build, the break and every FX, a silent gap, every download, the in-page analysis of the demo track with its A/B, and the hand-off from Blueprint.
 
 `v3-src/browser-check.mjs`, `drum-library-src/browser-check.mjs`,
 `sound-design-src/check.mjs`, `trance-src/check.mjs` and `arp-src/browser-check.mjs` (Playwright) drive a real browser and write reports into each `qa/` folder.
@@ -164,7 +167,7 @@ node arp-src/test.mjs            # Orbit: theory, engine, bank against its genre
   links need a connection.
 - **MIDI export** is written byte by byte in JavaScript and downloaded as a `Blob`, so it
   works from `file://`.
-- **Saving.** The V2 Studio, drum studio, Rumble, Sound Design V2, Trance, Orbit and Talk keep sessions, notes or
+- **Saving.** The V2 Studio, drum studio, Rumble, Sound Design V2, Trance, Orbit, Talk and Outside keep sessions, notes or
   favourites in `localStorage`, and several studios export/import session files. The V1
   guides keep everything in memory only.
 - **Browsers.** Everything works in current Chrome, Edge, Firefox and Safari. Audio starts
@@ -172,6 +175,7 @@ node arp-src/test.mjs            # Orbit: theory, engine, bank against its genre
 
 ## Release history
 
+- **Outside**: the translation check. Twelve modelled places from the booth to a phone speaker, walked while the track plays, with synthesised rooms, walls, doors and crowds; a report that scores each place and ranks the fixes; a reference A/B in the same room. Validated against a demo mix with seven planted problems and the same mix fixed. See [OUTSIDE.md](OUTSIDE.md).
 - **Breeder**: grow a groove by interactive evolution on Orbit's genres. Crossover by gene group, mutation inside the genre's grammar, quality-diversity selection, drift with genre migration, locks, a family tree, lineage MIDI, WAV loops, breeding from your own MIDI, and a hand-off to Transplant (which now accepts loops from Breeder). The shared audio player now swaps plans on the next bar line, re-anchored across tempo changes. See [BREEDER.md](BREEDER.md).
 - **Transplant**: your loop in someone else's arrangement. A reference track (measured in the page), a Blueprint file or one of six shapes; your loop's MIDI with Drum Racks split by pad; parts that follow the reference's lanes and stack by fullness on phrase lines; every move rebuilt on your notes; a loudness-matched A/B; shape match, change rate and lane fidelity measured; arranged MIDI, FX audio, stems and a plan. Blueprint's JSON is now version 2 (exact beats and lanes per beat) and Blueprint hands its analysis to Transplant. See [TRANSPLANT.md](TRANSPLANT.md).
 - **Orbit 1.3**: 333 patterns (154 before): techno from 8 to 45 with sparse drop riffs, tech house from 49 to 85, every genre at least 14, and two new genres, Dub techno and Detroit techno. The **Song sketch** turns any idea into a measured club track, short edit or long journey and exports it as one arranged MIDI. See [ORBIT.md](ORBIT.md).
