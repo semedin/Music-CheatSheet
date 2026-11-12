@@ -5,7 +5,11 @@
   let state = W.defaults();
   try { state = W.validate(JSON.parse(localStorage.getItem(KEY) || 'null')); } catch {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
-  const lane = () => W.styleById(state.style), style = () => W.withOptions(lane(), state), idea = () => W.ideaFor(style(), state.idea, state.seed), root = () => W.rootMidi(state.key);
+  const KEYS = Object.keys(W.defaults());
+  const pack = s => btoa(unescape(encodeURIComponent(JSON.stringify(Object.fromEntries(KEYS.filter(k => k !== 'family').map(k => [k, s[k]])))))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const unpack = t => W.validate(JSON.parse(decodeURIComponent(escape(atob(t.replace(/-/g, '+').replace(/_/g, '/'))))));
+  try { const m = /[#&]w=([\w-]+)/.exec(location.hash); if (m) { state = {...unpack(m[1]), family: state.family}; history.replaceState(null, '', location.pathname + location.search); } } catch {}
+  const lane = () => W.styleById(state.style), idea = () => W.ideaFor(lane(), state.idea, state.seed, state.custom), style = () => W.withOptions(lane(), state, idea()), root = () => W.rootMidi(state.key);
   const sec = id => W.sectionFor(style(), idea(), id || state.section);
   const KNOBS = ['wow', 'drive', 'sub', 'tone', 'drums', 'swing', 'gate', 'pump', 'space'];
   const STARTS = []; { let n = 0; for (const s of W.SECTIONS) { STARTS.push(n); n += s.reps * W.BARS; } }
@@ -23,8 +27,8 @@
   }
   function renderStyles() {
     const n = f => W.STYLES.filter(s => f === 'all' || s.family === f || s.era === f).length;
-    $('family').innerHTML = [['all', 'All'], ['house', 'House'], ['techno', 'Techno'], ['now', 'Right now'], ['classic', 'Classics & revivals']].map(([id, label]) => [id, `${label} · ${n(id)}`]).map(([id, label]) => `<button data-family="${id}" aria-pressed="${state.family === id}">${label}</button>`).join('');
-    $('styles').innerHTML = W.STYLES.filter(s => state.family === 'all' || s.family === state.family || s.era === state.family).map(s =>
+    $('family').innerHTML = [['all', 'All'], ['techno', 'Techno'], ['house', 'House'], ['now', 'Right now'], ['classic', 'Classics & revivals']].map(([id, label]) => [id, `${label} · ${n(id)}`]).map(([id, label]) => `<button data-family="${id}" aria-pressed="${state.family === id}">${label}</button>`).join('');
+    $('styles').innerHTML = [...W.STYLES].sort((a, b) => (a.family === 'techno' ? 0 : 1) - (b.family === 'techno' ? 0 : 1) || (a.era === 'now' ? 0 : 1) - (b.era === 'now' ? 0 : 1)).filter(s => state.family === 'all' || s.family === state.family || s.era === state.family).map(s =>
       `<button class="style ${s.family}" role="listitem" data-style="${s.id}" aria-pressed="${s.id === state.style}"><span class="meta"><span>${esc(s.genre)}</span><span>${s.bpm}</span></span><b>${esc(s.name)}</b><small><i>${esc(s.year)}</i> · ${esc(s.lane)}</small>${mini(s.ideas[0].notes)}</button>`).join('');
   }
 
@@ -35,12 +39,14 @@
     $('deck-genre').textContent = `${s.genre} · ${s.year} · ${s.bpm} BPM · ${s.family}`;
     $('deck-name').textContent = s.name; $('deck-idea').textContent = s.idea; $('deck-lane').textContent = 'In the lane of ' + s.lane + '.';
     $('ideas').innerHTML = s.ideas.map((x, i) => `<button data-idea="${i}" aria-pressed="${state.idea === i}">${esc(x.name)}</button>`).join('') +
+      (state.custom ? `<button class="mine" data-idea="-2" aria-pressed="${state.idea === -2}">✎ Your loop</button>` : '') +
       `<button class="dice" data-idea="-1" aria-pressed="${state.idea === -1}" title="Write a new loop in this lane's grammar">⚄ New idea${state.idea === -1 ? ' #' + state.seed : ''}</button>`;
     const t = id.text.replace(/\|/g, ' ').trim().split(/\s+/), row = b => [0, 4, 8, 12].map(q => t.slice(b * 16 + q, b * 16 + q + 4).map(x => x.padEnd(4)).join('')).join('│ ');
-    $('pattern').textContent = 'bar 1  ' + row(0) + '\nbar 2  ' + row(1) + '\n\n.  rest   -  hold   !  accent   ~  slide   w  wow   \'  short';
+    $('pattern').textContent = 'bar 1  ' + row(0) + '\nbar 2  ' + row(1) + '\n\n.  rest   -  hold   !  accent   ~  slide   w  wow   \'  short   g  ghost';
     $('bpm').value = state.bpm; $('key').value = state.key;
     const hzv = W.hz(root());
-    $('hz').textContent = `${W.noteName(root())} = ${hzv.toFixed(1)} Hz · ${W.subVerdict(hzv)}`;
+    $('hz').textContent = `${W.noteName(root())} = ${hzv.toFixed(1)} Hz · ${W.subVerdict(hzv)} · kick ${state.tune ? 'tuned to ' + W.noteName(root()) : 'at ' + s.kit.kick + ' Hz, the lane\'s own'}`;
+    $('tune').checked = !!state.tune;
     $('why').innerHTML = s.why.map(x => `<li>${esc(x)}</li>`).join('');
     $('recipe').innerHTML = s.recipe.map(x => `<li>${esc(x)}</li>`).join('');
     $('sound-note').textContent = `Preview voice "${s.sound.name}": ${s.sound.osc.map(o => o.w).join(' + ')}${s.sound.fm ? ', FM' : ''}${s.sound.vowel ? `, formant filter saying "${s.sound.say}"` : ''}${s.sound.lfo ? ', filter wobble on 8ths' : ''}${s.sound.rumble ? ', kick reverb rumble' : ''}${s.sound.echo ? ', dotted-8th echo' : ''}${s.sound.width ? ', stereo spread above 300 Hz' : ''}; sidechain ${Math.round(s.kit.duck * 100)}%. A browser synth for judging the notes. Build the real one in your own synth.`;
@@ -51,11 +57,70 @@
       return `<tr data-row="${x.id}" class="${x.id === state.section ? 'cur' : ''}"><td>${x.name}</td><td class="num">${x.reps * W.BARS}</td><td>${esc(sc.what[0])}</td><td class="num">${m.perBar.toFixed(1)}</td><td class="num">${pct(cuts[0])} → ${pct(cuts[7])}</td><td class="num">${span(subs)}</td><td class="num">${span(kicks)}</td></tr>`;
     }).join('');
     for (const k of KNOBS) { $(k).value = state[k]; $(k + '-o').textContent = state[k]; }
-    $('sound').value = state.sound || state.style; $('move').value = state.move; $('brk').value = state.brk; $('fill').value = state.fill;
+    $('sound').value = state.sound || state.style; $('move').value = state.move; $('brk').value = state.brk; $('fill').value = state.fill; $('accent').value = state.accent;
+    renderEditor(); renderCrate();
+    for (const b of document.querySelectorAll('.bankcard')) b.setAttribute('aria-pressed', state.idea === -2 && b.dataset.text === state.custom);
     $('recipe-title').textContent = state.sound && state.sound !== state.style ? `The sound this lane was written for (you are hearing “${s.sound.name}”)` : 'The sound';
     for (const b of document.querySelectorAll('.style')) b.setAttribute('aria-pressed', b.dataset.style === state.style);
     renderSection();
   }
+
+  // ---------------------------------------------------------------- editor
+  // Click a cell to add a note. Click a note to apply the tool. Every section rewrites itself.
+  const EW = 1280, ETOP = 16, EROW = 13, EHI = 15, ELO = -5, ECOL = EW / W.LOOP;
+  const TOOLS = [['draw', 'Add / remove'], ['long', 'Longer'], ['cut', 'Shorter'], ['short', "Short '"], ['acc', 'Accent !'], ['ghost', 'Ghost g'], ['wow', 'Wow w'], ['slide', 'Slide ~']];
+  let tool = 'draw';
+  function renderEditor() {
+    const notes = idea().notes, kicks = lane().kit.kicks || W.KICK;
+    $('tools').innerHTML = TOOLS.map(([id, label]) => `<button data-tool="${id}" aria-pressed="${tool === id}">${label}</button>`).join('') + `<button id="clear-loop" title="Back to the lane's first idea">Reset</button>`;
+    let g = '';
+    for (let s = 0; s < W.LOOP; s++) g += `<rect class="${kicks.includes(s % 16) ? 'k' : s % 2 ? 'o' : 'e'}" x="${s * ECOL}" y="${ETOP}" width="${ECOL}" height="${(EHI - ELO + 1) * EROW}"/>`;
+    for (const semi of [0, 12, 7]) g += `<rect class="r${semi}" x="0" y="${ETOP + (EHI - semi) * EROW}" width="${EW}" height="${EROW}"/>`;
+    for (let s = 0; s <= W.LOOP; s += 4) g += `<line class="${s % 16 ? 'beat' : 'bar'}" x1="${s * ECOL}" x2="${s * ECOL}" y1="0" y2="${ETOP + (EHI - ELO + 1) * EROW}"/>`;
+    for (let b = 0; b < 8; b++) g += `<text x="${b * 4 * ECOL + 5}" y="11">${Math.floor(b / 4) + 1}.${b % 4 + 1}</text>`;
+    g += `<text class="lab" x="${EW - 6}" y="${ETOP + (EHI - 0) * EROW + 10}" text-anchor="end">root</text><text class="lab" x="${EW - 6}" y="${ETOP + (EHI - 12) * EROW + 10}" text-anchor="end">octave</text><text class="lab" x="${EW - 6}" y="${ETOP + (EHI - 7) * EROW + 10}" text-anchor="end">fifth</text>`;
+    notes.forEach((n, i) => {
+      const x = n.s * ECOL + 1, w = (n.short ? .55 : n.l) * ECOL - 2, y = ETOP + (EHI - n.semi) * EROW + 1;
+      if (n.slide && i) g += `<path class="sl" d="M${x - 6} ${ETOP + (EHI - notes[i - 1].semi) * EROW + EROW / 2} L${x + 5} ${y + EROW / 2}"/>`;
+      g += `<rect class="n${n.wow ? ' w' : ''}${n.ghost ? ' g' : ''}" x="${x}" y="${y}" width="${w.toFixed(1)}" height="${EROW - 2}" rx="3"${n.acc ? ' stroke="#fff" stroke-width="2"' : ''}/>`;
+    });
+    $('edit').innerHTML = g;
+  }
+  function editAt(step, semi) {
+    if (step < 0 || step >= W.LOOP || semi > EHI || semi < ELO) return;
+    let notes = idea().notes.map(n => ({...n}));
+    const hit = notes.find(n => n.semi === semi && n.s <= step && step < n.s + n.l);
+    if (!hit) notes.push({s: step, l: 1, semi, acc: tool === 'acc', slide: tool === 'slide', wow: tool === 'wow', short: tool === 'short', ...(tool === 'ghost' ? {ghost: true, short: true} : {})});
+    else if (tool === 'draw') { if (notes.length > 1) notes = notes.filter(n => n !== hit); }
+    else if (tool === 'long') { const next = notes.find(n => n.s >= hit.s + hit.l); hit.short = false; delete hit.ghost; if (hit.s + hit.l < (next ? next.s : W.LOOP)) hit.l++; }
+    else if (tool === 'cut') { if (hit.l > 1) hit.l--; else hit.short = true; }
+    else if (tool === 'short') { hit.short = !hit.short; delete hit.ghost; if (hit.short) hit.l = 1; }
+    else if (tool === 'ghost') { if (hit.ghost) { delete hit.ghost; hit.short = false; } else { hit.ghost = true; hit.short = true; hit.l = 1; } }
+    else hit[tool] = !hit[tool];
+    notes = W.normalize(notes);
+    if (!notes.length) return;
+    state.custom = W.unparse(notes); state.idea = -2; save(); renderDeck();
+  }
+  $('edit').addEventListener('click', e => {
+    const r = $('edit').getBoundingClientRect(), x = (e.clientX - r.left) / r.width * EW, y = (e.clientY - r.top) / r.height * (ETOP + (EHI - ELO + 1) * EROW);
+    editAt(Math.floor(x / ECOL), EHI - Math.floor((y - ETOP) / EROW));
+  });
+
+  // ------------------------------------------------------------------ bank
+  function renderBank() {
+    $('bank').innerHTML = W.BANK.map(b => `<button class="bankcard" role="listitem" data-bank="${b.id}" data-text="${esc(W.unparse(b.notes))}" aria-pressed="false">${mini(b.notes)}<b>${esc(b.name)}</b><small>${esc(b.why)}</small><i>${esc(b.home)}</i></button>`).join('');
+    $('sources').innerHTML = W.SOURCES.map(s => `<li><a href="${s.url}" rel="noopener" target="_blank">${esc(s.title)}</a>: ${esc(s.used)}.</li>`).join('');
+  }
+
+  // ----------------------------------------------------------------- crate
+  const CRATE = 'fieldwork-wow-crate-1';
+  const crate = () => { try { const c = JSON.parse(localStorage.getItem(CRATE) || '[]'); return Array.isArray(c) ? c.filter(x => x && typeof x.n === 'string' && typeof x.s === 'string').slice(0, 40) : []; } catch { return []; } };
+  const putCrate = c => { try { localStorage.setItem(CRATE, JSON.stringify(c.slice(0, 40))); } catch {} };
+  function renderCrate() {
+    const c = crate(), now = pack(state);
+    $('crate').innerHTML = c.length ? c.map((x, i) => `<li><button data-crate="${i}" aria-pressed="${x.s === now}">${esc(x.n)}</button><button data-uncrate="${i}" aria-label="Remove ${esc(x.n)} from the crate">×</button></li>`).join('') : '<li class="empty">Nothing saved yet. Save a setup you like and it stays in this browser.</li>';
+  }
+  const setupName = () => `${lane().name} · ${idea().name}${state.sound && state.sound !== state.style ? ' · ' + style().sound.name : ''} · ${W.NAMES[state.key]} ${state.bpm}`;
 
   // --------------------------------------------------------------- section
   const RW = 1280, RH = 330, PAD = 20, LANES = 62;
@@ -189,29 +254,46 @@
     if (b.dataset.family) { state.family = b.dataset.family; save(); renderStyles(); }
     else if (b.dataset.style) {
       const first = b.dataset.style !== state.style; state.style = b.dataset.style;
-      if (first) { const s = lane(); state.bpm = s.bpm; state.key = s.key; state.idea = 0; state.swing = Math.round(s.swing * 100); state.sound = ''; state.move = state.brk = state.fill = 'auto'; }
+      if (first) { const s = lane(); state.bpm = s.bpm; state.key = s.key; state.idea = 0; state.swing = Math.round(s.swing * 100); state.sound = ''; state.move = state.brk = state.fill = state.accent = 'auto'; }
       save(); renderDeck();
       if (!player.playing) { mode = 'loop'; player.start(0); buttons(); }
       if (first && innerWidth < 980) $('deck').scrollIntoView({block: 'start'});
     }
+    else if (b.dataset.bank) {
+      state.custom = b.dataset.text; state.idea = -2; save(); renderDeck();
+      if (!player.playing) { mode = 'loop'; player.start(0); buttons(); }
+      $('export-note').textContent = `"${b.querySelector('b').textContent}" is now your loop on ${lane().name}. Edit it below, or pick another lane to hear it there.`;
+    }
+    else if (b.dataset.tool) { tool = b.dataset.tool; renderEditor(); }
+    else if (b.dataset.crate != null) { const c = crate()[+b.dataset.crate]; if (c) { try { state = {...unpack(c.s), family: state.family}; } catch {} save(); renderStyles(); renderDeck(); } }
+    else if (b.dataset.uncrate != null) { const c = crate(); c.splice(+b.dataset.uncrate, 1); putCrate(c); renderCrate(); }
     else if (b.dataset.idea != null) { const i = +b.dataset.idea; if (i === -1) state.seed = state.idea === -1 ? state.seed + 1 : state.seed; state.idea = i; save(); renderDeck(); }
     else if (b.dataset.section) setSection(b.dataset.section);
   });
   $('play').onclick = () => toggle('loop'); $('journey').onclick = () => toggle('journey');
   $('hero-play').onclick = () => { if (player.playing) { player.stop(); buttons(); } else { state.section = 'drop1'; renderSection(); toggle('loop'); } };
   $('bpm').onchange = () => { state.bpm = W.validate({...state, bpm: $('bpm').value}).bpm; save(); renderDeck(); };
-  $('sound').innerHTML = ['house', 'techno'].map(f => `<optgroup label="${f === 'house' ? 'House voices' : 'Techno voices'}">${W.STYLES.filter(s => s.family === f).map(s => `<option value="${s.id}">${esc(s.sn)} (${esc(s.name)})</option>`).join('')}</optgroup>`).join('');
+  $('sound').innerHTML = ['house', 'techno'].map(f => `<optgroup label="${f === 'house' ? 'House voices' : 'Techno voices'}">${W.STYLES.filter(s => s.family === f).map(s => `<option value="${s.id}">${esc(s.sn)} (${esc(s.name)})</option>`).join('')}</optgroup>`).join('') +
+    `<optgroup label="More voices">${W.SOUNDS.filter(s => s.extra).map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('')}</optgroup>`;
   const options = (id, map) => { $(id).innerHTML = Object.entries(map).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join(''); };
-  options('move', W.MOVE_NAMES); options('brk', W.BREAKS); options('fill', W.FILL_NAMES);
+  options('move', W.MOVE_NAMES); options('brk', W.BREAKS); options('fill', W.FILL_NAMES); options('accent', W.ACCENT_NAMES);
+  $('tune').onchange = () => { state.tune = $('tune').checked ? 1 : 0; save(); renderDeck(); };
   $('sound').onchange = () => { state.sound = $('sound').value === state.style ? '' : $('sound').value; save(); renderDeck(); };
-  for (const k of ['move', 'brk', 'fill']) $(k).onchange = () => { state[k] = $(k).value; save(); renderDeck(); };
+  for (const k of ['move', 'brk', 'fill', 'accent']) $(k).onchange = () => { state[k] = $(k).value; save(); renderDeck(); };
   $('surprise').onclick = () => {
     const pick = a => a[Math.floor(Math.random() * a.length)], s = pick(W.STYLES);
-    Object.assign(state, {style: s.id, bpm: s.bpm, key: s.key, swing: Math.round(s.swing * 100), idea: pick([0, 1, 2, -1]), seed: 1 + Math.floor(Math.random() * 999), sound: '', move: 'auto', brk: 'auto', fill: 'auto', family: 'all'});
+    Object.assign(state, {style: s.id, bpm: s.bpm, key: s.key, swing: Math.round(s.swing * 100), idea: pick([0, 1, 2, -1]), seed: 1 + Math.floor(Math.random() * 999), sound: '', move: 'auto', brk: 'auto', fill: 'auto', accent: 'auto', family: 'all'});
     save(); renderStyles(); renderDeck(); if (!player.playing) { mode = 'loop'; player.start(0); buttons(); }
   };
   $('key').onchange = () => { state.key = +$('key').value; save(); renderDeck(); };
   for (const k of KNOBS) $(k).oninput = () => { state[k] = +$(k).value; $(k + '-o').textContent = state[k]; save(); player.knobs(); };
+  $('crate-save').onclick = () => { const c = crate().filter(x => x.s !== pack(state)); c.unshift({n: setupName(), s: pack(state)}); putCrate(c); renderCrate(); };
+  $('share').onclick = async () => {
+    const url = location.href.split('#')[0] + '#w=' + pack(state);
+    try { await navigator.clipboard.writeText(url); $('export-note').textContent = 'Link copied. It opens this exact lane, loop, sound and settings.'; }
+    catch { $('export-note').innerHTML = `Copy this link: <a href="${esc(url)}">${esc(url.slice(0, 60))}…</a>`; }
+  };
+  document.addEventListener('click', e => { if (e.target.id === 'clear-loop') { state.idea = 0; state.custom = ''; save(); renderDeck(); } });
   $('midi-sec').onclick = () => exportMidi(false); $('midi-all').onclick = () => exportMidi(true);
   $('wav-sec').onclick = e => renderWav(false, e.currentTarget); $('wav-all').onclick = e => renderWav(true, e.currentTarget);
   addEventListener('keydown', e => {
@@ -219,6 +301,6 @@
     if (e.code === 'Space') { if (e.target.closest('button,a')) return; e.preventDefault(); toggle(mode); }
     else if (/^[1-6]$/.test(e.key)) setSection(W.SECTIONS[+e.key - 1].id);
   });
-  renderStyles(); renderDeck(); buttons(); requestAnimationFrame(frame);
+  renderStyles(); renderBank(); renderDeck(); buttons(); requestAnimationFrame(frame);
   window.WOW_QA = {get state() { return state; }, player, style, idea, sec, get mode() { return mode; }};
 })();
